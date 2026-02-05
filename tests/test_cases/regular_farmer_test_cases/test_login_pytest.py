@@ -32,7 +32,7 @@ class TestLogin:
         
         # --- Locators ---
         login_screen_xpaths = xpaths.get("login_screen", {})
-        # dashboard_xpaths = xpaths.get("dashboard", {})
+        dashboard_xpaths = xpaths.get("dashboard", {})
         language_next_xpath = login_screen_xpaths.get("next_button_language_login")
         allow_picture_button_xpath = login_screen_xpaths.get("allow_picture_button")
         allow_location_button_xpath = login_screen_xpaths.get("allow_location_button")
@@ -41,7 +41,7 @@ class TestLogin:
         phone_number_input_xpath = login_screen_xpaths.get("phone_number_input")
         next_button_login_xpath = login_screen_xpaths.get("next_button_login")
         verify_button_login_xpath = login_screen_xpaths.get("verify_button_login")
-        # dashboard_title_xpath = dashboard_xpaths.get("dashboard_title")   
+        dashboard_title_xpath = dashboard_xpaths.get("dashboard_title")   
         dashboard_xpaths = xpaths.get("dashboard_screen", {})
         add_farm_button_xpath = dashboard_xpaths.get("add_farm_button")
         determine_boundary_modal_xpaths = xpaths.get("determine_boundary_modal", {})
@@ -109,6 +109,79 @@ class TestLogin:
                 if not find_and_click(driver, AppiumBy.XPATH, verify_button_login_xpath, "Verify"):
                     pytest.fail("Could not find or click the 'Verify' button.")
                 test_flow_steps.append({"step": "Click Verify OTP", "status": "Success"})
+
+            with allure.step("9. Verify Dashboard"):
+               print("[INFO] Waiting for dashboard screen...")
+               dashboard = None
+               timeout = 15  # seconds
+               poll_interval = 2
+               start_time = time.time()
+               ocr_dashboard_found = False
+               
+               while time.time() - start_time < timeout:
+                   # FIX: Use text that ACTUALLY appears on the dashboard (from your logs)
+                   found_element, used_ocr = smart_find_element(
+                       driver,
+                       name="dashboard_title",
+                       xpath=dashboard_title_xpath, 
+                       fallback_text="Pramod" 
+                   )
+                   
+                   if found_element or used_ocr:
+                       print(f"[INFO] Dashboard found via {'OCR' if used_ocr else 'XPath'}.")
+                       dashboard = found_element
+                       ocr_dashboard_found = used_ocr 
+                       break
+                   
+                   # Manual Fallback: Check for robust keywords
+                   try:
+                       screenshot_path = "screenshots/dashboard_check.png"
+                       os.makedirs("screenshots", exist_ok=True)
+                       driver.save_screenshot(screenshot_path)
+                       ocr_text = extract_text_with_coordinates(screenshot_path)
+                       
+                       detected_texts = [item.get("text", "").lower() for item in ocr_text]
+                       
+                       # FIX: Removed "pramod" and "agent". Only allow distinct dashboard elements.
+                       valid_keywords = ["total records", "business unit"]
+                       
+                       matched_keyword = next((k for k in valid_keywords if any(k in t for t in detected_texts)), None)
+                       
+                       if matched_keyword:
+                           ocr_dashboard_found = True
+                           print(f"[INFO] Dashboard detected by OCR. Keyword found: '{matched_keyword}'")
+                           break
+                   except Exception as e:
+                       print(f"[WARN] OCR Check failed: {e}")
+                       
+                   time.sleep(poll_interval)
+               
+               if dashboard is None and not ocr_dashboard_found:
+                   # Capture failure screenshot
+                   allure.attach(driver.get_screenshot_as_png(), name="Dashboard Missing", attachment_type=allure.attachment_type.PNG)
+                   pytest.fail(f"❌ Login Verification Failed: Dashboard did not appear within {timeout} seconds.")
+               
+               test_flow_steps.append({"step": "Dashboard Verified", "status": "Success"})
+
+            with allure.step("10. add farm"):
+                # time.sleep(20)
+                if not find_and_click(driver, AppiumBy.XPATH, add_farm_button_xpath, "Add farm"):
+                    pytest.fail("Could not find or click the 'Verify' button.")
+                test_flow_steps.append({"step": "Click Verify OTP", "status": "Success"})
+            
+            with allure.step("11. draw on map button"):
+                time.sleep(3)
+                if not find_and_click(driver, AppiumBy.XPATH, draw_on_map_button_xpath, "Verify"):
+                    pytest.fail("Could not find or click the 'Verify' button.")
+                test_flow_steps.append({"step": "Click Verify OTP", "status": "Success"})
+
+            with allure.step("12. submit button in add farm"):
+                time.sleep(3)
+                if not find_and_click(driver, AppiumBy.XPATH, submit_button_xpath, "Verify"):
+                    pytest.fail("Could not find or click the 'Verify' button.")
+                test_flow_steps.append({"step": "Click Verify OTP", "status": "Success"})
+
+
             
                 
             # with allure.step("2. Allow picture"):

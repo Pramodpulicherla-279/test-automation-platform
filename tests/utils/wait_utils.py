@@ -56,34 +56,89 @@ def find_and_click(driver, by, value, fallback_text=None, timeout=20):
     return False
 
 
+# def smart_find_element(driver, name, xpath, fallback_text=None, screenshot_path="screenshots/ocr_fallback.png"):
+#     """
+#     Find element with OCR fallback.
+#     Returns tuple: (element, was_found_by_ocr)
+#     """
+#     try:
+#         # Try finding by XPath first
+#         element = WebDriverWait(driver, 10).until(
+#             EC.presence_of_element_located((By.XPATH, xpath))
+#         )
+#         return element, False
+#     except:
+#         print(f"Element '{name}' not found via XPath. Trying OCR fallback...")
+
+#         # Take screenshot
+#         driver.save_screenshot(screenshot_path)
+
+#         # Try clicking by text via OCR
+#         if fallback_text:
+#             found = click_element_by_ocr_text(driver, fallback_text, screenshot_path)
+#             if found:
+#                 print(f"OCR clicked on '{fallback_text}' successfully.")
+#                 return None, True  # Indicate OCR was used
+#             else:
+#                 print(f"OCR failed to find '{fallback_text}' on screen.")
+
+#         return None, False
+    
 def smart_find_element(driver, name, xpath, fallback_text=None, screenshot_path="screenshots/ocr_fallback.png"):
     """
-    Find element with OCR fallback.
-    Returns tuple: (element, was_found_by_ocr)
+    Find element with DOM text fallback before expensive OCR.
+    Strategy:
+    1. Precise XPath
+    2. DOM Text Search (Fast)
+    3. OCR (Slow Visual Fallback)
     """
+    # 1. Primary XPath Strategy
     try:
-        # Try finding by XPath first
         element = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, xpath))
+            EC.presence_of_element_located((AppiumBy.XPATH, xpath))
         )
         return element, False
     except:
-        print(f"Element '{name}' not found via XPath. Trying OCR fallback...")
+        print(f"[{name}] Not found via Primary XPath.")
 
-        # Take screenshot
-        driver.save_screenshot(screenshot_path)
+    # 2. Secondary Strategy: DOM Text Search (Much faster than OCR)
+    if fallback_text:
+        try:
+            print(f"   -> Attempting DOM fallback for text '{fallback_text}'...")
+            # Search for any element containing the text
+            text_xpath = f"//*[contains(@text, '{fallback_text}') or contains(@content-desc, '{fallback_text}')]"
+            
+            # Simple scroll attempts to find the text in DOM
+            for i in range(3): 
+                try:
+                    element = WebDriverWait(driver, 1).until(
+                        EC.presence_of_element_located((AppiumBy.XPATH, text_xpath))
+                    )
+                    print(f"   -> Found '{fallback_text}' via DOM search! Skipping OCR.")
+                    return element, False
+                except:
+                    # Scroll down a bit and retry
+                    if i < 2:
+                        print("   -> Text not visible, scrolling down...")
+                        size = driver.get_window_size()
+                        driver.swipe(size['width']//2, int(size['height']*0.8), size['width']//2, int(size['height']*0.2), 400)
+        except Exception as e:
+            print(f"   -> DOM text search failed: {e}")
 
-        # Try clicking by text via OCR
-        if fallback_text:
-            found = click_element_by_ocr_text(driver, fallback_text, screenshot_path)
-            if found:
-                print(f"OCR clicked on '{fallback_text}' successfully.")
-                return None, True  # Indicate OCR was used
-            else:
-                print(f"OCR failed to find '{fallback_text}' on screen.")
+    # 3. OCR Strategy (Last Resort - Slow)
+    print("   -> Initiating OCR fallback (this may take time)...")
+    driver.save_screenshot(screenshot_path)
 
-        return None, False
-    
+    if fallback_text:
+        found = click_element_by_ocr_text(driver, fallback_text, screenshot_path)
+        if found:
+            print(f"OCR clicked on '{fallback_text}' successfully.")
+            return None, True 
+        else:
+            print(f"OCR failed to find '{fallback_text}' on screen.")
+
+    return None, False
+
 def scroll_and_click_by_text_robust(driver, text_to_find, max_swipes=5):
     """
     Scrolls down to find an element with specific text, then attempts to click it.

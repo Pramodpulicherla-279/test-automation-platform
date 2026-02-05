@@ -23,7 +23,7 @@ const APP_VARIANTS = {
     id: "regular_client",
     label: "Krishivaas Client (Regular)",
     modules: [
-      { name: 'Login', path: 'tests/test_cases/regular_client_test_cases/test_login_pytest.py' },
+      { name: 'Login', path: 'tests/test_cases/regular_client_test_cases/login_pytest.py' },
       { name: 'Marketplace', path: 'tests/client/test_marketplace.py' },
       { name: 'Cart', path: 'tests/client/test_cart.py' },
     ]

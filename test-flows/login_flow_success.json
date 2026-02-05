@@ -31,5 +31,21 @@
     {
         "step": "Click Verify OTP",
         "status": "Success"
+    },
+    {
+        "step": "Dashboard Verified",
+        "status": "Success"
+    },
+    {
+        "step": "Click Verify OTP",
+        "status": "Success"
+    },
+    {
+        "step": "Click Verify OTP",
+        "status": "Success"
+    },
+    {
+        "step": "Click Verify OTP",
+        "status": "Success"
     }
 ]
