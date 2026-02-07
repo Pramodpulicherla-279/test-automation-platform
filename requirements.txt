@@ -1,0 +1,14 @@
+# Core Automation Framework
+Appium-Python-Client>=3.0.0
+selenium>=4.10.0
+pytest>=7.0.0
+
+# Reporting
+allure-pytest>=2.13.2
+
+# Image Processing & OCR (Required for your visuals & OCR utils)
+opencv-python
+Pillow
+pytesseract
+numpy
+

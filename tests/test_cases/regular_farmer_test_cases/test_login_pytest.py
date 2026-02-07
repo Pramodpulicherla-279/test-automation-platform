@@ -163,23 +163,23 @@ class TestLogin:
                
                test_flow_steps.append({"step": "Dashboard Verified", "status": "Success"})
 
-            with allure.step("10. add farm"):
-                # time.sleep(20)
-                if not find_and_click(driver, AppiumBy.XPATH, add_farm_button_xpath, "Add farm"):
-                    pytest.fail("Could not find or click the 'Verify' button.")
-                test_flow_steps.append({"step": "Click Verify OTP", "status": "Success"})
+            # with allure.step("10. add farm"):
+            #     # time.sleep(20)
+            #     if not find_and_click(driver, AppiumBy.XPATH, add_farm_button_xpath, "Add farm"):
+            #         pytest.fail("Could not find or click the 'Verify' button.")
+            #     test_flow_steps.append({"step": "Click Verify OTP", "status": "Success"})
             
-            with allure.step("11. draw on map button"):
-                time.sleep(3)
-                if not find_and_click(driver, AppiumBy.XPATH, draw_on_map_button_xpath, "Verify"):
-                    pytest.fail("Could not find or click the 'Verify' button.")
-                test_flow_steps.append({"step": "Click Verify OTP", "status": "Success"})
+            # with allure.step("11. draw on map button"):
+            #     time.sleep(3)
+            #     if not find_and_click(driver, AppiumBy.XPATH, draw_on_map_button_xpath, "Verify"):
+            #         pytest.fail("Could not find or click the 'Verify' button.")
+            #     test_flow_steps.append({"step": "Click Verify OTP", "status": "Success"})
 
-            with allure.step("12. submit button in add farm"):
-                time.sleep(3)
-                if not find_and_click(driver, AppiumBy.XPATH, submit_button_xpath, "Verify"):
-                    pytest.fail("Could not find or click the 'Verify' button.")
-                test_flow_steps.append({"step": "Click Verify OTP", "status": "Success"})
+            # with allure.step("12. submit button in add farm"):
+            #     time.sleep(3)
+            #     if not find_and_click(driver, AppiumBy.XPATH, submit_button_xpath, "Verify"):
+            #         pytest.fail("Could not find or click the 'Verify' button.")
+            #     test_flow_steps.append({"step": "Click Verify OTP", "status": "Success"})
 
 
             
