@@ -16,25 +16,25 @@
         },
         "data_source": "Sentinel-2",
         "acquisition_date": "2026-02-08",
-        "cloud_coverage": 4,
+        "cloud_coverage": 12,
         "scene_id": "S2A_MSIL2A_20260208",
         "message": "Mock data for testing purposes. In production, connect to actual Sentinel API."
     },
     "crop_health_analysis": {
         "status": "success",
         "statistics": {
-            "mean_ndvi": 0.6139394463307931,
-            "median_ndvi": 0.6111478686652985,
-            "std_ndvi": 0.11309006671079849,
-            "min_ndvi": 0.22269017708845537,
+            "mean_ndvi": 0.6185638092917437,
+            "median_ndvi": 0.6159160711002212,
+            "std_ndvi": 0.11316898697793834,
+            "min_ndvi": 0.12040576135053664,
             "max_ndvi": 1.0
         },
         "classification": "Moderate Vegetation / Fair Health",
         "distribution": {
-            "healthy_percent": 21.58,
-            "moderate_percent": 63.029999999999994,
-            "poor_percent": 15.39,
-            "unhealthy_percent": 0.0
+            "healthy_percent": 23.0,
+            "moderate_percent": 62.69,
+            "poor_percent": 14.299999999999999,
+            "unhealthy_percent": 0.01
         },
         "total_pixels_analyzed": 10000
     }

@@ -291,6 +291,8 @@ def save_analysis_results(results: Dict, output_path: str) -> None:
         results: Analysis results dictionary
         output_path: Path to save the results
     """
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    dir_path = os.path.dirname(output_path)
+    if dir_path:  # Only create directory if path has a directory component
+        os.makedirs(dir_path, exist_ok=True)
     with open(output_path, 'w') as f:
         json.dump(results, f, indent=4)
