@@ -6,3 +6,7 @@ allure-results
 allure-report
 *.part
 # *.pyc
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/

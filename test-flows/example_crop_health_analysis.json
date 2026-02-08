@@ -1,0 +1,41 @@
+{
+    "farm_info": {
+        "name": "Example Farm",
+        "latitude": 28.7041,
+        "longitude": 77.1025,
+        "description": "Sample farmland for demonstration"
+    },
+    "satellite_data": {
+        "status": "success",
+        "query_parameters": {
+            "latitude": 28.7041,
+            "longitude": 77.1025,
+            "start_date": "2026-01-09",
+            "end_date": "2026-02-08",
+            "cloud_coverage_max": 20
+        },
+        "data_source": "Sentinel-2",
+        "acquisition_date": "2026-02-08",
+        "cloud_coverage": 4,
+        "scene_id": "S2A_MSIL2A_20260208",
+        "message": "Mock data for testing purposes. In production, connect to actual Sentinel API."
+    },
+    "crop_health_analysis": {
+        "status": "success",
+        "statistics": {
+            "mean_ndvi": 0.6139394463307931,
+            "median_ndvi": 0.6111478686652985,
+            "std_ndvi": 0.11309006671079849,
+            "min_ndvi": 0.22269017708845537,
+            "max_ndvi": 1.0
+        },
+        "classification": "Moderate Vegetation / Fair Health",
+        "distribution": {
+            "healthy_percent": 21.58,
+            "moderate_percent": 63.029999999999994,
+            "poor_percent": 15.39,
+            "unhealthy_percent": 0.0
+        },
+        "total_pixels_analyzed": 10000
+    }
+}
