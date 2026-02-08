@@ -1,0 +1,8 @@
+[
+    {
+        "test": "NDVI Healthy",
+        "status": "Passed",
+        "mean_ndvi": 0.7748592870544091,
+        "classification": "Dense Vegetation / Healthy"
+    }
+]

@@ -20,6 +20,11 @@ if BASE_DIR not in sys.path:
     sys.path.append(BASE_DIR)
 
 from tests.test_runner import run_tests_and_get_suggestions, stop_current_tests, generate_report
+from tests.utils.satellite_utils import (
+    SentinelDataProcessor,
+    MockSentinelDataFetcher,
+    validate_satellite_data
+)
 # from gdrive_loader import download_apk, 
 
 # --- NEW: Cleanup Handler (Lifespan) ---
@@ -535,6 +540,157 @@ async def api_generate_report():
         return {"status": "ok", "message": "Report generation started"}
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
+
+# --- NEW: Satellite Crop Health Endpoints ---
+
+class SatelliteDataRequest(BaseModel):
+    latitude: float
+    longitude: float
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
+    cloud_coverage_max: int = 20
+
+class CropHealthAnalysisRequest(BaseModel):
+    latitude: float
+    longitude: float
+    health_level: Optional[str] = "moderate"  # healthy, moderate, poor, unhealthy
+    size: Optional[int] = 100
+
+@app.post("/api/satellite/fetch-data")
+async def fetch_satellite_data(request: SatelliteDataRequest):
+    """
+    Fetch Sentinel satellite data for a given location.
+    This endpoint simulates fetching satellite data for crop monitoring.
+    """
+    try:
+        fetcher = MockSentinelDataFetcher()
+        data = fetcher.fetch_satellite_data(
+            latitude=request.latitude,
+            longitude=request.longitude,
+            start_date=request.start_date,
+            end_date=request.end_date,
+            cloud_coverage_max=request.cloud_coverage_max
+        )
+        
+        is_valid, message = validate_satellite_data(data)
+        if not is_valid:
+            raise HTTPException(status_code=400, detail=message)
+        
+        return JSONResponse(content=data)
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to fetch satellite data: {str(e)}")
+
+@app.post("/api/satellite/analyze-crop-health")
+async def analyze_crop_health(request: CropHealthAnalysisRequest):
+    """
+    Analyze crop health using satellite data for a given location.
+    Returns NDVI statistics and health classification.
+    """
+    try:
+        # Initialize processor and fetcher
+        processor = SentinelDataProcessor()
+        fetcher = MockSentinelDataFetcher()
+        
+        # Fetch satellite data
+        sat_data = fetcher.fetch_satellite_data(
+            latitude=request.latitude,
+            longitude=request.longitude
+        )
+        
+        # Generate band data for analysis
+        band_data = fetcher.generate_mock_band_data(
+            size=(request.size, request.size),
+            health_level=request.health_level
+        )
+        
+        # Calculate NDVI
+        import numpy as np
+        ndvi = processor.calculate_ndvi(band_data["red"], band_data["nir"])
+        
+        # Analyze crop health
+        analysis = processor.analyze_crop_health(ndvi)
+        
+        # Combine satellite metadata with analysis
+        response = {
+            "satellite_info": {
+                "acquisition_date": sat_data.get("acquisition_date"),
+                "cloud_coverage": sat_data.get("cloud_coverage"),
+                "scene_id": sat_data.get("scene_id"),
+                "location": {
+                    "latitude": request.latitude,
+                    "longitude": request.longitude
+                }
+            },
+            "crop_health_analysis": analysis
+        }
+        
+        await manager.broadcast({
+            "type": "LOG",
+            "payload": {
+                "message": f"Crop health analyzed for location ({request.latitude}, {request.longitude}): {analysis['classification']}",
+                "status": "SUCCESS"
+            }
+        })
+        
+        return JSONResponse(content=response)
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to analyze crop health: {str(e)}")
+
+@app.post("/api/satellite/run-tests")
+async def run_satellite_tests(background_tasks: BackgroundTasks):
+    """
+    Run automated tests for satellite-based crop health monitoring.
+    """
+    try:
+        await manager.broadcast({
+            "type": "LOG",
+            "payload": {
+                "message": "Starting satellite crop health tests...",
+                "status": "INFO"
+            }
+        })
+        
+        # Run the satellite tests
+        test_script = "tests/test_cases/test_crop_health_satellite.py"
+        
+        def run_satellite_tests_background():
+            import subprocess
+            project_root = BASE_DIR
+            cmd = [
+                sys.executable,
+                "-m",
+                "pytest",
+                test_script,
+                "-v",
+                "-s",
+                f"--alluredir=allure-results"
+            ]
+            
+            proc = subprocess.run(
+                cmd,
+                cwd=project_root,
+                capture_output=True,
+                text=True
+            )
+            
+            # Generate report after tests complete
+            if proc.returncode == 0:
+                generate_report(project_root)
+            
+            return proc.returncode
+        
+        background_tasks.add_task(run_satellite_tests_background)
+        
+        return {
+            "status": "started",
+            "message": "Satellite crop health tests started in background"
+        }
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to start tests: {str(e)}")
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
