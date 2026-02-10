@@ -139,6 +139,22 @@ def smart_find_element(driver, name, xpath, fallback_text=None, screenshot_path=
 
     return None, False
 
+def smart_click(driver, name, xpath, fallback_text=None, screenshot_path="screenshots/ocr_fallback.png"):
+    """
+    Wrapper around smart_find_element to perform a click.
+    Handles the case where smart_find_element returns an element (which needs clicking)
+    or where it already clicked via OCR.
+    """
+    element, used_ocr = smart_find_element(driver, name, xpath, fallback_text, screenshot_path)
+    if element:
+        try:
+            element.click()
+            return True
+        except Exception as e:
+            print(f"Failed to click element '{name}': {e}")
+            return False
+    return used_ocr
+
 def scroll_and_click_by_text_robust(driver, text_to_find, max_swipes=5):
     """
     Scrolls down to find an element with specific text, then attempts to click it.

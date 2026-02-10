@@ -229,7 +229,7 @@ def run_pytest_streaming(pytest_args: list[str], module_mapping: Dict[str, str],
 
     cmd = [
         sys.executable, "-m", "pytest", "-p", "allure_pytest", 
-        "-s", "-vv", f"--alluredir={RESULTS_DIR}",
+        "-s", "-v", "--tb=short", f"--alluredir={RESULTS_DIR}",
     ]
     if clean_allure: cmd.append("--clean-alluredir")
     cmd += pytest_args
@@ -377,7 +377,7 @@ def run_pytest_streaming_with_tracking(pytest_args: list[str], path_mapping: dic
     global CURRENT_PROC, STOP_FLAG
     project_root = os.path.dirname(os.path.dirname(__file__))
     
-    cmd = [sys.executable, "-m", "pytest", "-p", "allure_pytest", "-s", "-vv", f"--alluredir={RESULTS_DIR}"]
+    cmd = [sys.executable, "-m", "pytest", "-p", "allure_pytest", "-s", "-v", "--tb=short", f"--alluredir={RESULTS_DIR}"]
     if clean_allure: cmd.append("--clean-alluredir")
     cmd += pytest_args
 
@@ -399,12 +399,18 @@ def run_pytest_streaming_with_tracking(pytest_args: list[str], path_mapping: dic
         
         raw_line = line.rstrip("\n")
         send_log(raw_line, "INFO")
+        
+        # Normalize line for path matching (Windows uses backslashes)
+        normalized_line = raw_line.replace("\\", "/")
 
         # LOGIC: Identify which module is currently executing
         for path, name in path_mapping.items():
-            if path in raw_line and "::" in raw_line:
+            # Normalize config path as well
+            normalized_path = path.replace("\\", "/")
+            
+            if normalized_path in normalized_line and "::" in normalized_line:
                 if active_module_name != name:
-                    # Before switching, if the previous module wasn't marked failed, mark it completed
+                    # Before switching, if the previous module wasn't marked failed, mark it completed/passed
                     if active_module_name and active_module_name not in failed_modules:
                         send_module_status(active_module_name, "completed", "Module passed")
                     
@@ -412,8 +418,11 @@ def run_pytest_streaming_with_tracking(pytest_args: list[str], path_mapping: dic
                     send_module_status(name, "running", "Executing tests...")
 
         # CRITICAL FIX: Detect app crashes or assertion failures
-        # Pytest outputs 'FAILED' in uppercase for failed tests
-        if " FAILED " in raw_line or "Application Crash Detected" in raw_line:
+        # 1. "FAILED" appearing as a standalone word (e.g. at end of line)
+        # 2. " ERROR " for errors outside of test functions
+        # 3. Crash detection
+        parts = raw_line.split()
+        if "FAILED" in parts or " ERROR " in raw_line or "Application Crash Detected" in raw_line:
             if active_module_name:
                 failed_modules.add(active_module_name)
                 # Immediately notify frontend of the failure

@@ -4,7 +4,7 @@ import pytest
 from appium.webdriver.common.appiumby import AppiumBy
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from utils.wait_utils import smart_find_element
+from utils.wait_utils import smart_find_element, smart_click
 from utils.ocr_utils import extract_text_with_coordinates
 import json
 import os
@@ -66,28 +66,29 @@ class TestLogin:
             #         raise Exception("Next button in language selection not found")
             
             with allure.step("1. Next button on language selection screen"):
-                if not find_and_click(driver, AppiumBy.XPATH, language_next_xpath, "Next"):
+                # Use smart_click for robust finding (XPath -> DOM Text -> OCR)
+                if not smart_click(driver, "Next Button (Language)", language_next_xpath, "Next"):
                     pytest.fail("Could not find or click the 'Next button on language selection' button.")
                 test_flow_steps.append({"step": "Click Next button on language selection", "status": "Success"})
 
             
             with allure.step("2. Allow picture"):
-                if not find_and_click(driver, AppiumBy.XPATH, allow_picture_button_xpath, "While using the app"):
+                if not smart_click(driver, "While using the app (allow picture)", allow_picture_button_xpath, "While using the app"):
                     pytest.fail("Could not find or click the 'Allow picture' button.")
                 test_flow_steps.append({"step": "Allow picture permission", "status": "Success"})
             
             with allure.step("3. Allow location"):
-                if not find_and_click(driver, AppiumBy.XPATH, allow_location_button_xpath, "While using"):
+                if not smart_click(driver, "While using (allow location)", allow_location_button_xpath, "While using"):
                     pytest.fail("Could not find or click the 'Allow location' button.")
                 test_flow_steps.append({"step": "Allow location permission", "status": "Success"})
 
             with allure.step("4. Allow audio"):
-                if not find_and_click(driver, AppiumBy.XPATH, allow_audio_button_xpath, "While using the app"):
+                if not smart_click(driver, "While using the app (allow audio)", allow_audio_button_xpath, "While using the app"):
                     pytest.fail("Could not find or click the 'Allow audio' button.")
                 test_flow_steps.append({"step": "Allow audio permission", "status": "Success"})
             
             with allure.step("5. Allow notifications"):
-                if not find_and_click(driver, AppiumBy.XPATH, allow_notifications_button_xpath, "Allow"):
+                if not smart_click(driver, "Allow notifications", allow_notifications_button_xpath, "Allow"):
                     pytest.fail("Could not find or click the 'Allow notifications' button.")
                 test_flow_steps.append({"step": "Allow notifications permission", "status": "Success"})
 
@@ -100,13 +101,13 @@ class TestLogin:
                 test_flow_steps.append({"step": "Enter valid phone number", "status": "Success", "value": "7660852538"})
             
             with allure.step("7. Tap next button"):
-                if not find_and_click(driver, AppiumBy.XPATH, next_button_login_xpath, "Next"):
+                if not smart_click(driver, "Next (login)", next_button_login_xpath, "Next"):
                     pytest.fail("Could not find or click the 'Next' button after entering phone number.")
                 test_flow_steps.append({"step": "Click Next after entering phone number", "status": "Success"})
             
             with allure.step("8. Wait for OTP and verify"):
                 time.sleep(20)
-                if not find_and_click(driver, AppiumBy.XPATH, verify_button_login_xpath, "Verify"):
+                if not smart_click(driver, "Verify (login)", verify_button_login_xpath, "Verify"):
                     pytest.fail("Could not find or click the 'Verify' button.")
                 test_flow_steps.append({"step": "Click Verify OTP", "status": "Success"})
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { Play, Terminal, Activity, CheckCircle, Circle, AlertCircle, Cpu, Smartphone, Server } from 'lucide-react';
+import { Play, Terminal, Activity, CheckCircle, Circle, AlertCircle, Cpu, Smartphone, Server, Maximize2, Minimize2 } from 'lucide-react';
 
 import './App.css'; // Import the new CSS file
 
@@ -139,6 +139,8 @@ const MetricsChart = ({ data }) => {
 const LogConsole = ({ logs, statusMode = 'idle' }) => {
   const endRef = useRef(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isFullScreen, setIsFullScreen] = useState(false);
+
   const filteredLogs = logs.filter((log) => {
     if (!searchTerm) return true;
     const q = searchTerm.toLowerCase();
@@ -198,7 +200,7 @@ const LogConsole = ({ logs, statusMode = 'idle' }) => {
   };
 
   return (
-    <div className="log-console">
+    <div className={`log-console ${isFullScreen ? 'full-screen' : ''}`}>
       <style>{`
         @keyframes gradientLoad {
           0% { background-position: 100% 0; }
@@ -229,6 +231,22 @@ const LogConsole = ({ logs, statusMode = 'idle' }) => {
             className="text-input"
           />
         </div>
+        <button
+          onClick={() => setIsFullScreen(!isFullScreen)}
+          style={{
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            marginLeft: '8px',
+            color: '#94a3b8',
+            display: 'flex',
+            alignItems: 'center',
+            padding: '4px'
+          }}
+          title={isFullScreen ? "Exit Full Screen" : "Full Screen"}
+        >
+          {isFullScreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
+        </button>
       </div>
       <div className="console-body">
         {logs.map((log, i) => {
