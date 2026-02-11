@@ -153,70 +153,112 @@ from utils.ocr_utils import extract_text_with_coordinates
 import json
 import os
 from selenium.common.exceptions import WebDriverException
-from utils.wait_utils import find_and_click
+from utils.wait_utils import find_and_click, smart_click
 
 
 @allure.epic("Onboarding Flow")
 @allure.feature("Authentication")
 class TestOnboarding:
 
-    @allure.story("Successful Onboarding")
-    @allure.title("Onboarding the farms and crops")
-    def test_onboarding_success(self, driver):
-        # This list will store the details of each step in the test flow
-        test_flow_steps = []
-
-         # Compute project root (…/test-automation-platform)
+    @pytest.fixture(scope="class", autouse=True)
+    def _load_locators_once(self, request):
+        """Loads locators once per test class and attaches them to the class."""
         project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
         locators_path = os.path.join(project_root, "locators", "regular_farmer.json")
 
-        with open(locators_path, 'r') as f:
+        with open(locators_path, "r", encoding="utf-8") as f:
             xpaths = json.load(f)
 
-        
-        # # --- Locators ---
-        # login_screen_xpaths = xpaths.get("login_screen", {})
-        dashboard_xpaths = xpaths.get("dashboard", {})
-        # language_next_xpath = login_screen_xpaths.get("next_button_language_login")
-        # allow_picture_button_xpath = login_screen_xpaths.get("allow_picture_button")
-        # allow_location_button_xpath = login_screen_xpaths.get("allow_location_button")
-        # allow_audio_button_xpath = login_screen_xpaths.get("allow_audio_button")
-        # allow_notifications_button_xpath = login_screen_xpaths.get("allow_notifications_button")
-        # phone_number_input_xpath = login_screen_xpaths.get("phone_number_input")
-        # next_button_login_xpath = login_screen_xpaths.get("next_button_login")
-        # verify_button_login_xpath = login_screen_xpaths.get("verify_button_login")
-        # dashboard_title_xpath = dashboard_xpaths.get("dashboard_title")   
+        # Attach commonly used locators to the class
         dashboard_xpaths = xpaths.get("dashboard_screen", {})
-        add_farm_button_xpath = dashboard_xpaths.get("add_farm_button")
+        determine_boundary_modal_xpaths = xpaths.get("determine_boundary_modal", {})
+        add_farm_screen_xpaths = xpaths.get("add_farm_screen", {})
         determine_boundary_modal_xpaths = xpaths.get("determine_boundary_modal", {})
         draw_on_map_button_xpath = determine_boundary_modal_xpaths.get("draw_on_map_button")
         add_farm_screen_xpaths = xpaths.get("add_farm_screen", {})
         submit_button_xpath = add_farm_screen_xpaths.get("submit_button")
-        # add_crop_screen_xpaths = xpaths.get("add_crop_screen", {})
-        # skip_button_xpath = add_crop_screen_xpaths.get("skip_button")
-        # draw_on_map_screen_xpaths = xpaths.get("draw_on_map_screen", {})
-        # save_approve_button_xpath = draw_on_map_screen_xpaths.get("save_approve_button")
-        # back_arrow_icon_xpath = draw_on_map_screen_xpaths.get("back_arrow_icon")
-        
+
+        request.cls.xpaths = xpaths  # optional: full dict if you need it later
+        request.cls.add_farm_button_xpath = dashboard_xpaths.get("add_farm_button")
+        request.cls.draw_on_map_button_xpath = determine_boundary_modal_xpaths.get("draw_on_map_button")
+        request.cls.submit_button_xpath = add_farm_screen_xpaths.get("submit_button")
+
+    def _android_back(self, driver) -> bool:
+        """Navigate back on Android (driver.back() + fallback to KEYCODE_BACK)."""
+        try:
+            driver.back()
+            return True
+        except WebDriverException:
+            pass
+        except Exception:
+            pass    
+        # Fallback for Android-specific drivers
+        try:
+            driver.press_keycode(4)  # KEYCODE_BACK
+            return True
+        except Exception:
+            return False
+
+    @allure.story("Successful Onboarding")
+    @allure.title("Onboarding the farms")
+    def test_onboarding_success(self, driver):
+        # This list will store the details of each step in the test flow
+        test_flow_steps = []
 
         try:
 
             with allure.step("1. add farm"):
                 # time.sleep(20)
-                if not find_and_click(driver, AppiumBy.XPATH, add_farm_button_xpath, "Add farm"):
-                    pytest.fail("Could not find or click the 'Verify' button.")
+                if not smart_click(driver,"Add farm (button in active farms)", self.add_farm_button_xpath, "Add farm"):
+                    pytest.fail("Could not find or click the 'add farm' button.")
                 test_flow_steps.append({"step": "Click Verify OTP", "status": "Success"})
             
             with allure.step("2. draw on map button"):
                 time.sleep(3)
-                if not find_and_click(driver, AppiumBy.XPATH, draw_on_map_button_xpath, "Verify"):
-                    pytest.fail("Could not find or click the 'Verify' button.")
+                if not smart_click(driver, "Draw on map (button in determine boundary)", self.draw_on_map_button_xpath, "Draw on map"):
+                    pytest.fail("Could not find or click the 'draw on map button' button.")
                 test_flow_steps.append({"step": "Click Verify OTP", "status": "Success"})
 
             with allure.step("3. submit button in add farm"):
                 time.sleep(3)
-                if not find_and_click(driver, AppiumBy.XPATH, submit_button_xpath, "Verify"):
-                    pytest.fail("Could not find or click the 'Verify' button.")
+                if not smart_click(driver, "Submit (button in add farm)", self.submit_button_xpath, "Submit"):
+                    pytest.fail("Could not find or click the 'submit' button.")
+                test_flow_steps.append({"step": "Click Verify OTP", "status": "Success"})
+
+            with allure.step("4. Android back"):
+                if not self._android_back(driver):
+                    pytest.fail("Failed to navigate back on Android.")
+                test_flow_steps.append({"step": "Android back", "status": "Success"})
+            
+        finally:
+            # Save the captured flow to a file
+            os.makedirs("test-flows", exist_ok=True)
+            with open("test-flows/onboarding_flow_success.json", "w") as f:
+                json.dump(test_flow_steps, f, indent=4)
+                
+    @allure.title("Onboarding the farms and crops")
+    def test_addfarm_addcrop_success(self, driver):
+        # This list will store the details of each step in the test flow
+        test_flow_steps = []
+
+        try:
+
+            with allure.step("1. add farm"):
+                # time.sleep(20)
+                if not smart_click(driver,"Add farm (button in active farms)", self.add_farm_button_xpath, "Add farm"):
+                    pytest.fail("Could not find or click the 'add farm' button.")
+                test_flow_steps.append({"step": "Click Verify OTP", "status": "Success"})
+            
+            with allure.step("2. draw on map button"):
+                time.sleep(3)
+                if not smart_click(driver, "Draw on map (button in determine boundary)", self.draw_on_map_button_xpath, "Draw on map"):
+                    pytest.fail("Could not find or click the 'draw on map' button.")
+                test_flow_steps.append({"step": "Click Verify OTP", "status": "Success"})
+
+            with allure.step("3. submit button in add farm"):
+                time.sleep(3)
+                if not smart_click(driver, "Submit (button in add farm)", self.submit_button_xpath, "Submit"):
+                    pytest.fail("Could not find or click the 'Submit' button.")
                 test_flow_steps.append({"step": "Click Verify OTP", "status": "Success"})
             
         finally:
