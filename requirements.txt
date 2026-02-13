@@ -11,4 +11,7 @@ opencv-python
 Pillow
 pytesseract
 numpy
+gdown
+dotenv
+androguard
 
