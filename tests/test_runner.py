@@ -21,29 +21,29 @@ REPORT_DIR = "allure-report"
 
 # --- CONFIGURATION: Test Registry for Krishivaas Apps ---
 # Define the mapping of App Types -> Modules -> Script Paths here.
-# TEST_REGISTRY = {
-#     "farmer": {
-#         "login": "tests/test_cases/regular_farmer_test_cases/test_login_pytest.py",
-#         "onboarding": "tests/regular_farmer/test_onboarding_pytest.py",
-#         "dashboard": "tests/regular_farmer/test_dashboard_pytest.py",
-#         "crop_advisory": "tests/regular_farmer/test_crop_advisory_pytest.py",
-#     },
-#     "client": {
-#         "login": "tests/test_cases/regular_client_test_cases/test_login_pytest.py",
-#         "orders": "tests/regular_client/test_orders.py",
-#         "payments": "tests/regular_client/test_payments.py",
-#     },
-#     "state_farmer": {
-#         "login": "tests/state_farmer/test_login.py",
-#         "schemes": "tests/state_farmer/test_schemes.py",
-#         "subsidy": "tests/state_farmer/test_subsidy.py",
-#     },
-#     "state_client": {
-#         "login": "tests/state_client/test_login.py",
-#         "reports": "tests/state_client/test_reports.py",
-#         "audit": "tests/state_client/test_audit.py",
-#     }
-# }
+TEST_REGISTRY = {
+    "farmer": {
+        "login": "tests/test_cases/regular_farmer_test_cases/test_login_pytest.py",
+        "onboarding": "tests/regular_farmer/test_onboarding_pytest.py",
+        "dashboard": "tests/regular_farmer/test_dashboard_pytest.py",
+        "crop_advisory": "tests/regular_farmer/test_crop_advisory_pytest.py",
+    },
+    "client": {
+        "login": "tests/test_cases/regular_client_test_cases/test_login_pytest.py",
+        "onboarding": "tests/test_cases/regular_client_test_cases/test_onboarding_pytest.py",
+        "payments": "tests/regular_client/test_payments_pytest.py",
+    },
+    "state_farmer": {
+        "login": "tests/state_farmer/test_login.py",
+        "schemes": "tests/state_farmer/test_schemes.py",
+        "subsidy": "tests/state_farmer/test_subsidy.py",
+    },
+    "state_client": {
+        "login": "tests/state_client/test_login.py",
+        "reports": "tests/state_client/test_reports.py",
+        "audit": "tests/state_client/test_audit.py",
+    }
+}
 
 def _ensure_clean_allure_dirs(project_root: str) -> None:
     os.makedirs(os.path.join(project_root, RESULTS_DIR), exist_ok=True)
