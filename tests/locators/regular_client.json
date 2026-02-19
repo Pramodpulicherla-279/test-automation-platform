@@ -37,26 +37,25 @@
     "save_approve_button": "//android.widget.Button[@text=\"Save & Approve\"]",
 
     "_COMMENT_2": "--- CROP KEYS (UPDATED) ---",
-    "crop_name_input": "//*[contains(@text, 'Search Crop Name') or contains(@text, 'Crop Name')]",
+    "crop_name_input": "//android.widget.TextView[@text=\"Search Crop Name\"]",
     "areca_nut_item": "//*[contains(@text, 'Areca Nut')]",
     
     "_COMMENT_3": "--- INTER-CROP KEYS (ADDED) ---",
-    "inter_crop_input": "//*[contains(@text, 'Inter') or contains(@content-desc, 'Inter') and contains(@class, 'EditText')]",
-    "beetroot_item": "//*[contains(@text, 'Beetroot')]",
+    "inter_crop_input": "//android.widget.TextView[@text=\"Search Inter Crop Name\"]",
+    "bananas_item": "//*[contains(@text, 'Bananas')]",
+    "inter_sowing_date_input": "//android.view.ViewGroup[@content-desc=\"Inter-Crop Sowing Date *, --/--/----, \"]",
     
     "_COMMENT_4": "--- CROP DETAILS (ADDED) ---",
-    "short_duration_button": "//android.view.ViewGroup[@content-desc=\"Short, 90 Days\"]",
+    "short_duration_button": "//android.view.ViewGroup[@content-desc=\"Short, 140 Days\"]",
     "medium_duration_button": "//android.view.ViewGroup[@content-desc=\"Medium, 120 Days\"]",
     "long_duration_button": "//android.view.ViewGroup[@content-desc=\"Long, 150 Days\"]",
-    "direct_sowing_btn": "//*[contains(@text, 'Direct Sowing') or contains(@text, 'Direct sowing')]",
+    "direct_sowing_btn": "//android.view.ViewGroup[@content-desc=\"Direct Sowing\"]",
     "transplanted_button": "//android.view.ViewGroup[@content-desc=\"Transplanted\"]",
     
-    "sowing_date_input": "//*[contains(@text, 'Sowing Date')]",
-    "inter_sowing_date_input": "//*[contains(@text, 'Sowing Date')]", 
+    "sowing_date_input": "//android.view.ViewGroup[@content-desc=\"Sowing Date *, --/--/----, \"]",
     "harvest_date_input": "//*[contains(@text, 'Harvest Date')]",
-    
-    "calendar_ok_btn": "//*[contains(@text, 'OK') or @resource-id='android:id/button1']",
-    "submit_crop_btn": "//*[contains(@text, 'Submit')]"
+    "calendar_ok_btn": "//android.widget.Button[@resource-id=\"android:id/button1\"]",
+    "submit_crop_btn": "//android.view.ViewGroup[@content-desc=\"Submit\"]"
   },
   "coordinates": {
     "login_screen": {

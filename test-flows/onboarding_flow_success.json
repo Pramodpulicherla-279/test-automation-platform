@@ -2,5 +2,25 @@
     {
         "step": "Farmer Created",
         "status": "Success"
+    },
+    {
+        "step": "Select Crop Name",
+        "status": "Success"
+    },
+    {
+        "step": "Type Bananas in Search",
+        "status": "Success"
+    },
+    {
+        "step": "Select Bananas",
+        "status": "Success"
+    },
+    {
+        "step": "Click Sowing Date input",
+        "status": "Success"
+    },
+    {
+        "step": "Click OK for Sowing Date",
+        "status": "Success"
     }
 ]
