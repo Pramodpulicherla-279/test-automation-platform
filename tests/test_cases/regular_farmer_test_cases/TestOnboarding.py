@@ -218,82 +218,48 @@ class TestOnboarding:
             return False
 
     @allure.story("Successful Onboarding")
-    # @allure.title("add farm")
-    # def test_addfarm(self, driver):
-    #     # This list will store the details of each step in the test flow
-    #     test_flow_steps = []
-
-    #     try:
-
-    #         with allure.step("1. add farm"):
-    #             # time.sleep(20)
-    #             if not smart_click(driver,"Add farm (button in active farms)", self.add_farm_button_xpath, "Add farm"):
-    #                 pytest.fail("Could not find or click the 'add farm' button.")
-    #             test_flow_steps.append({"step": "Click Verify OTP", "status": "Success"})
-            
-    #         with allure.step("2. draw on map button"):
-    #             time.sleep(3)
-    #             if not smart_click(driver, "Draw on map (button in determine boundary)", self.draw_on_map_button_xpath, "Draw on map"):
-    #                 pytest.fail("Could not find or click the 'draw on map button' button.")
-    #             test_flow_steps.append({"step": "Click Verify OTP", "status": "Success"})
-
-    #         with allure.step("3. submit button in add farm"):
-    #             time.sleep(3)
-    #             if not smart_click(driver, "Submit (button in add farm)", self.submit_button_xpath, "Submit"):
-    #                 pytest.fail("Could not find or click the 'submit' button.")
-    #             test_flow_steps.append({"step": "Click Verify OTP", "status": "Success"})
-
-    #         with allure.step("4. Android back"):
-    #             if not self._android_back(driver):
-    #                 pytest.fail("Failed to navigate back on Android.")
-    #             test_flow_steps.append({"step": "Android back", "status": "Success"})
-            
-    #     finally:
-    #         # Save the captured flow to a file
-    #         os.makedirs("test-flows", exist_ok=True)
-    #         with open("test-flows/onboarding_flow_success.json", "w") as f:
-    #             json.dump(test_flow_steps, f, indent=4)
-                
-    # @allure.title("Onboarding the farms and crops")
-    # def test_addfarm_addcrop_success(self, driver):
-    #     # This list will store the details of each step in the test flow
-    #     test_flow_steps = []
-
-    #     try:
-
-    #         with allure.step("1. add farm"):
-    #             # time.sleep(20)
-    #             if not smart_click(driver,"Add farm (button in active farms)", self.add_farm_button_xpath, "Add farm"):
-    #                 pytest.fail("Could not find or click the 'add farm' button.")
-    #             test_flow_steps.append({"step": "Click Verify OTP", "status": "Success"})
-            
-    #         with allure.step("2. draw on map button"):
-    #             time.sleep(3)
-    #             if not smart_click(driver, "Draw on map (button in determine boundary)", self.draw_on_map_button_xpath, "Draw on map"):
-    #                 pytest.fail("Could not find or click the 'draw on map' button.")
-    #             test_flow_steps.append({"step": "Click Verify OTP", "status": "Success"})
-
-    #         with allure.step("3. submit button in add farm"):
-    #             time.sleep(3)
-    #             if not smart_click(driver, "Submit (button in add farm)", self.submit_button_xpath, "Submit"):
-    #                 pytest.fail("Could not find or click the 'Submit' button.")
-    #             test_flow_steps.append({"step": "Click Verify OTP", "status": "Success"})
-            
-    #         with allure.step("4. Android back"):
-    #            if not self._android_back(driver):
-    #                pytest.fail("Failed to navigate back on Android.")
-    #            test_flow_steps.append({"step": "Android back", "status": "Success"})
-            
-    #     finally:
-    #         # Save the captured flow to a file
-    #         os.makedirs("test-flows", exist_ok=True)
-    #         with open("test-flows/onboarding_flow_success.json", "w") as f:
-    #             json.dump(test_flow_steps, f, indent=4)
-
-    @allure.title("add farm > add crop > add boundary")
-    def test_addfarm_addcrop_addboundary_success(self, driver):
+    @allure.title("add farm")
+    def test_addfarm(self, driver):
+        # This list will store the details of each step in the test flow
         test_flow_steps = []
+
         try:
+
+            with allure.step("1. add farm"):
+                # time.sleep(20)
+                if not smart_click(driver,"Add farm (button in active farms)", self.add_farm_button_xpath, "Add farm"):
+                    pytest.fail("Could not find or click the 'add farm' button.")
+                test_flow_steps.append({"step": "Click Verify OTP", "status": "Success"})
+            
+            with allure.step("2. draw on map button"):
+                time.sleep(3)
+                if not smart_click(driver, "Draw on map (button in determine boundary)", self.draw_on_map_button_xpath, "Draw on map"):
+                    pytest.fail("Could not find or click the 'draw on map button' button.")
+                test_flow_steps.append({"step": "Click Verify OTP", "status": "Success"})
+
+            with allure.step("3. submit button in add farm"):
+                time.sleep(3)
+                if not smart_click(driver, "Submit (button in add farm)", self.submit_button_xpath, "Submit"):
+                    pytest.fail("Could not find or click the 'submit' button.")
+                test_flow_steps.append({"step": "Click Verify OTP", "status": "Success"})
+
+            with allure.step("4. Android back"):
+                if not self._android_back(driver):
+                    pytest.fail("Failed to navigate back on Android.")
+                test_flow_steps.append({"step": "Android back", "status": "Success"})
+            
+        finally:
+            # Save the captured flow to a file
+            os.makedirs("test-flows", exist_ok=True)
+            with open("test-flows/onboarding_flow_success.json", "w") as f:
+                json.dump(test_flow_steps, f, indent=4)
+                
+    @allure.title("Onboarding the farms and crops")
+    def test_addfarm_addcrop_success(self, driver):
+        test_flow_steps = []
+
+        try:
+
             with allure.step("1. add farm"):
                 # time.sleep(20)
                 if not smart_click(driver,"Add farm (button in active farms)", self.add_farm_button_xpath, "Add farm"):
@@ -311,7 +277,7 @@ class TestOnboarding:
                 if not smart_click(driver, "Submit (button in add farm)", self.submit_button_xpath, "Submit"):
                     pytest.fail("Could not find or click the 'Submit' button.")
                 test_flow_steps.append({"step": "Click Verify OTP", "status": "Success"})
-
+            
             with allure.step("4. Click on 'Crop Name' input field"):
                 time.sleep(10)
                 if not smart_click(driver, "Crop Name input", self.crop_name_input_xpath, "Crop Name"):
@@ -376,36 +342,134 @@ class TestOnboarding:
                 if not smart_click(driver, "submit in add crop", self.submit_crop_button_xpath, "Submit"):
                     pytest.fail("Could not find or click the 'Submit' button.")
                 test_flow_steps.append({"step": "Click Submit Crop button", "status": "Success"})
-
-            with allure.step("13. Add Boundary - Draw On Map"):
-                time.sleep(10)  # Wait for the map to load
-                coordinates = [
-                    (390, 760),  # Top-left corner
-                    (690, 760),  # Top-right corner
-                    (690, 1160), # Bottom-right corner
-                    (390, 1160), # Bottom-left corner
-                    (390, 760),  # Closing the box
-                    (390, 760)   # Closing the box
-                ]
-                for coord in coordinates:
-                    driver.tap([coord], 100)  # duration=100ms per tap
-                test_flow_steps.append({"step": "Draw Boundary on Map", "status": "Success"})
-            
-            with allure.step("14. Save & Approve Boundary"):
-                if not smart_click(driver, "Save & Approve Boundary", self.save_approve_button_xpath, "Save & Approve Boundary"):
-                    pytest.fail("Could not find or click the 'Save & Approve Boundary' button.")
-                test_flow_steps.append({"step": "Click Save & Approve Boundary", "status": "Success"})
-            
-            with allure.step("15. Android back"):
+         
+            with allure.step("4. Android back"):
                if not self._android_back(driver):
                    pytest.fail("Failed to navigate back on Android.")
                test_flow_steps.append({"step": "Android back", "status": "Success"})
-   
+            
         finally:
-           # Save the captured flow to a file
-           os.makedirs("test-flows", exist_ok=True)
-           with open("test-flows/onboarding_flow_success.json", "w") as f:
-               json.dump(test_flow_steps, f, indent=4)
+            # Save the captured flow to a file
+            os.makedirs("test-flows", exist_ok=True)
+            with open("test-flows/onboarding_flow_success.json", "w") as f:
+                json.dump(test_flow_steps, f, indent=4)
+
+    # @allure.title("add farm > add crop > add boundary")
+    # def test_addfarm_addcrop_addboundary_success(self, driver):
+    #     test_flow_steps = []
+    #     try:
+    #         with allure.step("1. add farm"):
+    #             # time.sleep(20)
+    #             if not smart_click(driver,"Add farm (button in active farms)", self.add_farm_button_xpath, "Add farm"):
+    #                 pytest.fail("Could not find or click the 'add farm' button.")
+    #             test_flow_steps.append({"step": "Click Verify OTP", "status": "Success"})
+            
+    #         with allure.step("2. draw on map button"):
+    #             time.sleep(3)
+    #             if not smart_click(driver, "Draw on map (button in determine boundary)", self.draw_on_map_button_xpath, "Draw on map"):
+    #                 pytest.fail("Could not find or click the 'draw on map' button.")
+    #             test_flow_steps.append({"step": "Click Verify OTP", "status": "Success"})
+
+    #         with allure.step("3. submit button in add farm"):
+    #             time.sleep(3)
+    #             if not smart_click(driver, "Submit (button in add farm)", self.submit_button_xpath, "Submit"):
+    #                 pytest.fail("Could not find or click the 'Submit' button.")
+    #             test_flow_steps.append({"step": "Click Verify OTP", "status": "Success"})
+
+    #         with allure.step("4. Click on 'Crop Name' input field"):
+    #             time.sleep(10)
+    #             if not smart_click(driver, "Crop Name input", self.crop_name_input_xpath, "Crop Name"):
+    #                 pytest.fail("Could not find or click the 'Crop Name' input field.")
+    #             test_flow_steps.append({"step": "Click Crop Name input", "status": "Success"})
+
+    #         with allure.step("5. Click on 'Crop Name' list item in dropdown"):
+    #             time.sleep(2)  # small settle time for dropdown animation
+    #             if not smart_click(
+    #                 driver,
+    #                 "select crop from dropdown (OCR)",
+    #                 self.crop_name_item_xpath,   # still tried first (safe), then OCR
+    #                 "Areca",
+    #                 screenshot_path="screenshots/crop_dropdown.png",
+    #                 force_ocr=True,              # <- key: skip scrolling/DOM, go to OCR
+    #                 ocr_attempts=3,
+    #             ):
+    #                 pytest.fail("Could not select the crop name via OCR.")
+    #             test_flow_steps.append({"step": "Click Crop Name item", "status": "Success"})
+            
+    #         with allure.step("6. Click on Inter Crop Name' input field"):
+    #             time.sleep(10)
+    #             if not smart_click(driver, "Crop Name input", self.intercrop_name_xpath, "Inter-Crop Name"):
+    #                 pytest.fail("Could not find or click the 'Inter Crop Name' input field.")
+    #             test_flow_steps.append({"step": "Click Inter Crop Name input", "status": "Success"})
+
+    #         with allure.step("7. Click on 'Crop Name' list item in intercrop dropdown"):
+    #             time.sleep(2)  # small settle time for dropdown animation
+    #             if not smart_click(
+    #                 driver,
+    #                 "select crop from dropdown (OCR)",
+    #                 self.crop_name_item_xpath,   # still tried first (safe), then OCR
+    #                 "Beetroot",
+    #                 screenshot_path="screenshots/crop_dropdown.png",
+    #                 force_ocr=True,              # <- key: skip scrolling/DOM, go to OCR
+    #                 ocr_attempts=3,
+    #             ):
+    #                 pytest.fail("Could not select the inter crop name via OCR.")
+    #             test_flow_steps.append({"step": "Click Crop Name item in intercrop", "status": "Success"})
+
+    #         with allure.step("8. Intercrop Sowing Date input"):
+    #             if not smart_click(driver,  "sowing date input", self.intercrop_sowingdate_xpath, "Inter-Crop Sowing Date"):
+    #                 pytest.fail("Could not find or click the 'Intercrop Sowing Date' input field.")
+    #             test_flow_steps.append({"step": "Click Intercrop Sowing Date input", "status": "Success"})
+
+    #         with allure.step("9. OK button on calendar"):
+    #             if not smart_click(driver, "Ok in calendar", self.ok_button_xpath, "OK"):
+    #                 pytest.fail("Could not find or click the 'OK' button.")
+    #             test_flow_steps.append({"step": "Click OK button on calendar", "status": "Success"})
+
+    #         with allure.step("10. Sowing Date input"):
+    #             if not smart_click(driver,  "sowing date input", self.sowing_date_input_xpath, "Sowing Date"):
+    #                 pytest.fail("Could not find or click the 'Sowing Date' input field.")
+    #             test_flow_steps.append({"step": "Click Sowing Date input", "status": "Success"})
+
+    #         with allure.step("11. OK button on calendar"):
+    #             if not smart_click(driver, "Ok in calendar", self.ok_button_xpath, "OK"):
+    #                 pytest.fail("Could not find or click the 'OK' button.")
+    #             test_flow_steps.append({"step": "Click OK button on calendar", "status": "Success"})
+
+    #         with allure.step("12. Submit Crop button"):
+    #             if not smart_click(driver, "submit in add crop", self.submit_crop_button_xpath, "Submit"):
+    #                 pytest.fail("Could not find or click the 'Submit' button.")
+    #             test_flow_steps.append({"step": "Click Submit Crop button", "status": "Success"})
+
+    #         with allure.step("13. Add Boundary - Draw On Map"):
+    #             time.sleep(10)  # Wait for the map to load
+    #             coordinates = [
+    #                 (390, 760),  # Top-left corner
+    #                 (690, 760),  # Top-right corner
+    #                 (690, 1160), # Bottom-right corner
+    #                 (390, 1160), # Bottom-left corner
+    #                 (390, 760),  # Closing the box
+    #                 (390, 760)   # Closing the box
+    #             ]
+    #             for coord in coordinates:
+    #                 driver.tap([coord], 100)  # duration=100ms per tap
+    #             test_flow_steps.append({"step": "Draw Boundary on Map", "status": "Success"})
+            
+    #         with allure.step("14. Save & Approve Boundary"):
+    #             if not smart_click(driver, "Save & Approve Boundary", self.save_approve_button_xpath, "Save & Approve Boundary"):
+    #                 pytest.fail("Could not find or click the 'Save & Approve Boundary' button.")
+    #             test_flow_steps.append({"step": "Click Save & Approve Boundary", "status": "Success"})
+            
+    #         with allure.step("15. Android back"):
+    #            if not self._android_back(driver):
+    #                pytest.fail("Failed to navigate back on Android.")
+    #            test_flow_steps.append({"step": "Android back", "status": "Success"})
+   
+    #     finally:
+    #        # Save the captured flow to a file
+    #        os.makedirs("test-flows", exist_ok=True)
+    #        with open("test-flows/onboarding_flow_success.json", "w") as f:
+    #            json.dump(test_flow_steps, f, indent=4)
 
     # @allure.title("add farm > skip crop > add boundary")
     # def test_addfarm_skipcrop_addboundary_success(self, driver):

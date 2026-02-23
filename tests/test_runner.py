@@ -9,6 +9,8 @@ import requests
 import subprocess
 from dotenv import load_dotenv
 from typing import Optional, List, Dict
+import threading
+import queue
 
 load_dotenv()
 
@@ -19,31 +21,33 @@ STOP_FLAG = False  # New global flag to control execution flow
 RESULTS_DIR = "allure-results"
 REPORT_DIR = "allure-report"
 
-# --- CONFIGURATION: Test Registry for Krishivaas Apps ---
-# Define the mapping of App Types -> Modules -> Script Paths here.
-# TEST_REGISTRY = {
-#     "farmer": {
-#         "login": "tests/test_cases/regular_farmer_test_cases/test_login_pytest.py",
-#         "onboarding": "tests/regular_farmer/test_onboarding_pytest.py",
-#         "dashboard": "tests/regular_farmer/test_dashboard_pytest.py",
-#         "crop_advisory": "tests/regular_farmer/test_crop_advisory_pytest.py",
-#     },
-#     "client": {
-#         "login": "tests/test_cases/regular_client_test_cases/test_login_pytest.py",
-#         "orders": "tests/regular_client/test_orders.py",
-#         "payments": "tests/regular_client/test_payments.py",
-#     },
-#     "state_farmer": {
-#         "login": "tests/state_farmer/test_login.py",
-#         "schemes": "tests/state_farmer/test_schemes.py",
-#         "subsidy": "tests/state_farmer/test_subsidy.py",
-#     },
-#     "state_client": {
-#         "login": "tests/state_client/test_login.py",
-#         "reports": "tests/state_client/test_reports.py",
-#         "audit": "tests/state_client/test_audit.py",
-#     }
-# }
+# --- NEW: log queue + worker ---
+_LOG_Q: "queue.Queue[tuple[str, str]]" = queue.Queue(maxsize=5000)
+_LOG_WORKER_STARTED = False
+
+def _start_log_worker() -> None:
+    global _LOG_WORKER_STARTED
+    if _LOG_WORKER_STARTED:
+        return
+    _LOG_WORKER_STARTED = True
+
+    def _worker() -> None:
+        session = requests.Session()
+        while True:
+            message, status = _LOG_Q.get()
+            try:
+                session.post(
+                    f"{BACKEND_URL}/api/log-step",
+                    json={"message": message, "status": status},
+                    timeout=1,  # keep small; don't stall the worker either
+                )
+            except Exception:
+                pass
+            finally:
+                _LOG_Q.task_done()
+
+    t = threading.Thread(target=_worker, name="log-step-worker", daemon=True)
+    t.start()
 
 def _ensure_clean_allure_dirs(project_root: str) -> None:
     os.makedirs(os.path.join(project_root, RESULTS_DIR), exist_ok=True)
@@ -134,15 +138,14 @@ def notify_allure_open() -> None:
         pass
 
 def send_log(message: str, status: str = "INFO") -> None:
-    """Send one log line to the frontend via /api/log-step."""
+    """Queue one log line for the frontend via /api/log-step (non-blocking)."""
     try:
-        requests.post(
-            f"{BACKEND_URL}/api/log-step",
-            json={"message": message, "status": status},
-            timeout=3,
-        )
+        _start_log_worker()
+        _LOG_Q.put_nowait((message, status))
+    except queue.Full:
+        # If logs are too noisy, drop instead of blocking the test run.
+        pass
     except Exception:
-        # Don't break tests if backend logging fails
         pass
 
 def run_pytest_with_logs(pytest_args, module_name: str) -> bool:
@@ -154,7 +157,14 @@ def run_pytest_with_logs(pytest_args, module_name: str) -> bool:
   send_log(f"==== Running {module_name} tests ====", "INFO")
 
   # Build command: python -m pytest <args>
-  cmd = [os.sys.executable, "-m", "pytest"] + pytest_args
+  cmd = [
+        os.sys.executable, "-u", "-m", "pytest",
+        "-s", "--capture=no", "-v", "--tb=short",
+        "-o", "log_cli=true",
+        "-o", "log_cli_level=INFO",
+    ] + pytest_args
+  env = os.environ.copy()
+  env.update({"PYTHONIOENCODING": "utf-8", "PYTHONUTF8": "1", "PYTHONUNBUFFERED": "1"})
 
   proc = subprocess.Popen(
     cmd,
@@ -163,6 +173,7 @@ def run_pytest_with_logs(pytest_args, module_name: str) -> bool:
     text=True,
     bufsize=1,
     cwd=os.path.dirname(os.path.dirname(__file__)),  # project root
+    env=env
   )
 
   # Stream each line to frontend
@@ -228,7 +239,7 @@ def run_pytest_streaming(pytest_args: list[str], module_mapping: Dict[str, str],
     send_log("==== Starting Sequential Test Suite ====", "INFO")
 
     cmd = [
-        sys.executable, "-m", "pytest", "-p", "allure_pytest", 
+        sys.executable, "-u", "-m", "pytest", "-p", "allure_pytest", 
         "-s", "-v", "--tb=short", f"--alluredir={RESULTS_DIR}",
     ]
     if clean_allure: cmd.append("--clean-alluredir")
@@ -377,7 +388,12 @@ def run_pytest_streaming_with_tracking(pytest_args: list[str], path_mapping: dic
     global CURRENT_PROC, STOP_FLAG
     project_root = os.path.dirname(os.path.dirname(__file__))
     
-    cmd = [sys.executable, "-m", "pytest", "-p", "allure_pytest", "-s", "-v", "--tb=short", f"--alluredir={RESULTS_DIR}"]
+    cmd = [
+        sys.executable, "-u", "-m", "pytest", "-p", "allure_pytest",
+        "-s", "-v", "--tb=short", f"--alluredir={RESULTS_DIR}",
+        "-o", "log_cli=true",
+        "-o", "log_cli_level=INFO",
+    ]    
     if clean_allure: cmd.append("--clean-alluredir")
     cmd += pytest_args
 

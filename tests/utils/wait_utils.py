@@ -1,3 +1,6 @@
+import os
+import time
+import allure
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -5,11 +8,12 @@ from appium.webdriver.common.appiumby import AppiumBy
 from utils.ocr_utils import click_element_by_ocr_text
 from selenium.common.exceptions import NoSuchElementException
 from appium.webdriver.common.appiumby import AppiumBy
-import allure
-# --- NEW IMPORTS for the modern W3C Actions API ---
 from selenium.webdriver.common.actions.action_builder import ActionBuilder
-import os
-import time
+
+
+def _console_log(msg: str) -> None:
+    # flush=True is important when output is piped (subprocess -> backend -> UI)
+    print(msg, flush=True)
 
 def find_and_click(driver, by, value, fallback_text=None, timeout=20):
     """
@@ -177,6 +181,7 @@ def smart_find_element(
         element = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((AppiumBy.XPATH, xpath))
         )
+        _console_log(f"[FOUND] name='{name}' via XPATH")
         return element, False
     except TimeoutException:
         print(f"[{name}] Not found via Primary XPath.")

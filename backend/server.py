@@ -13,6 +13,7 @@ import socket
 import asyncio
 from gdrive_loader import download_apk, extract_app_icon, get_apk_info
 from typing import List, Optional, Dict
+from starlette.websockets import WebSocketDisconnect
 
 # Add project root to sys.path so we can import tests.*
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))  # root: f:\projects\test-automation-platform
@@ -145,14 +146,41 @@ DOWNLOAD_PROCESS_OBJ = None  # Holds the asyncio Process object
 class ConnectionManager:
     def __init__(self):
         self.active_connections: list[WebSocket] = []
+        self._lock = asyncio.Lock()
 
     async def connect(self, websocket: WebSocket):
         await websocket.accept()
-        self.active_connections.append(websocket)
+        async with self._lock:
+            self.active_connections.append(websocket)
+    
+    async def disconnect(self, websocket: WebSocket):
+        async with self._lock:
+            try:
+                self.active_connections.remove(websocket)
+            except ValueError:
+                pass
 
     async def broadcast(self, message: dict):
-        for connection in self.active_connections:
-            await connection.send_json(message)
+        # Send concurrently + drop dead sockets (prevents one bad client from killing logs)
+        async with self._lock:
+            connections = list(self.active_connections)
+
+        if not connections:
+            return
+
+        async def _safe_send(ws: WebSocket):
+            try:
+                await ws.send_json(message)
+                return True
+            except Exception:
+                return False
+
+        results = await asyncio.gather(*(_safe_send(ws) for ws in connections), return_exceptions=True)
+
+        # Remove failed connections
+        for ws, ok in zip(connections, results):
+            if ok is not True:
+                await self.disconnect(ws)
 
 class TestRequest(BaseModel):
     url: str
@@ -215,47 +243,45 @@ async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
     try:
         while True:
-            await websocket.receive_text() # Keep connection open
-    except:
-        manager.active_connections.remove(websocket)
+            # Most frontends never send messages; this just keeps the socket open
+            await websocket.receive_text()
+    except WebSocketDisconnect:
+        await manager.disconnect(websocket)
+    except Exception:
+        await manager.disconnect(websocket)
+
+def _broadcast_async(message: dict) -> None:
+    # Fire-and-forget broadcast so HTTP endpoints return immediately
+    try:
+        asyncio.create_task(manager.broadcast(message))
+    except RuntimeError:
+        # If no running loop (rare), just skip
+        pass
 
 # 3. The "Loopback" Endpoint (Pytest calls this)
 @app.post("/api/log-step")
 async def log_step(msg: LogMessage):
-    # Broadcast log to UI immediately
-    await manager.broadcast({
+    _broadcast_async({
         "type": "LOG",
-        "payload": {
-            "message": msg.message,
-            "status": msg.status,
-        }
+        "payload": {"message": msg.message, "status": msg.status},
     })
     return {"status": "ok"}
 
 # 4. The "Profiler" Endpoint (Sidecar calls this)
 @app.post("/api/metric")
 async def log_metric(data: dict):
-    # Broadcast CPU/Memory data to UI
-    await manager.broadcast({"type": "METRIC", "payload": data})
+    _broadcast_async({"type": "METRIC", "payload": data})
     return {"status": "ok"}
 
 @app.post("/api/module-status")
 async def module_status(data: dict):
-    """
-    Accepts { "module": "Login", "status": "running/completed/failed", "message": "optional" }
-    and broadcasts it to all WebSocket clients.
-    """
     module = data.get("module")
     status = data.get("status")
     message = data.get("message", "")
 
-    await manager.broadcast({
+    _broadcast_async({
         "type": "MODULE",
-        "payload": {
-            "module": module,
-            "status": status,
-            "message": message,
-        }
+        "payload": {"module": module, "status": status, "message": message},
     })
     return {"status": "ok"}
 
