@@ -63,7 +63,7 @@ def generate_report(project_root: Optional[str] = None) -> None:
     # improved command resolution
     allure_cmd = "allure"
     # specific check for user's scoop path if regular allure isn't found
-    scoop_path = r"C:\Users\Pramo\scoop\shims\allure.cmd" 
+    scoop_path = r"C:\Users\ABDUL SAMAD\scoop\shims\allure.cmd" 
     if os.path.exists(scoop_path):
         allure_cmd = scoop_path
     elif shutil.which("allure.cmd"):
@@ -97,7 +97,7 @@ def _generate_and_open_allure_report(project_root: str) -> None:
     """
     Generates and opens Allure HTML report.
     """
-    allure_cmd = r"C:\Users\Pramo\scoop\shims\allure"
+    allure_cmd = r"C:\Users\ABDUL SAMAD\scoop\shims\allure"
 
     # Fallback to system 'allure' if the hardcoded path doesn't exist
     if not os.path.exists(allure_cmd) and shutil.which("allure"):

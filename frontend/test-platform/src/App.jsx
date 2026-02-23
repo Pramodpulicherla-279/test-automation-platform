@@ -40,8 +40,8 @@ const APP_VARIANTS = {
     id: "state_client",
     label: "State Client App",
     modules: [
-      { name: 'Login', path: 'tests/state_client/test_login.py' },
-      { name: 'Tenders', path: 'tests/state_client/test_tenders.py' },
+      { name: 'Login', path: 'tests/test_cases/state_client_test_cases/test_login_pytest.py' },
+      { name: 'Onboarding', path: 'tests/test_cases/state_client_test_cases/test_Onboarding.py' },
     ]
   }
 };
@@ -74,8 +74,8 @@ const ModuleFlow = ({ modules, isRunning, onToggleModule }) => {
 
           return (
             <div key={idx} className={`module-item ${statusClass} ${interactiveClass}`}
-            onClick={() => !isRunning && onToggleModule(idx)}
-            style={{
+              onClick={() => !isRunning && onToggleModule(idx)}
+              style={{
                 cursor: !isRunning ? 'pointer' : 'default',
               }}>
               {/* Show checkbox only if NOT running */}
@@ -84,7 +84,7 @@ const ModuleFlow = ({ modules, isRunning, onToggleModule }) => {
                   type="checkbox"
                   checked={!!mod.isSelected}
                   // Stop propagation so clicking checkbox doesn't trigger row click twice
-                  onClick={(e) => e.stopPropagation()} 
+                  onClick={(e) => e.stopPropagation()}
                   onChange={() => onToggleModule(idx)}
                   className="mr-2 cursor-pointer"
                   style={{ marginRight: '0px' }}
@@ -325,7 +325,7 @@ function App() {
   // Helper to determine status bar state
   const getConsoleStatus = () => {
     if (isRunning) return 'running';
-    
+
     const active = modules.filter(m => m.isSelected);
     // If no modules or all correspond to 'pending', we are idle/start
     if (active.length === 0) return 'idle';
@@ -339,7 +339,7 @@ function App() {
 
     // If all completed -> success
     if (hasCompleted && !hasRunning) return 'success';
-    
+
     return 'idle';
   };
 
@@ -396,10 +396,10 @@ function App() {
           if (prev.length > 0 && prev[prev.length - 1].type === 'PROGRESS') {
             // Replace the last log entry
             const newLogs = [...prev];
-            newLogs[newLogs.length - 1] = { 
-              time: new Date().toLocaleTimeString(), 
-              message, 
-              type: status 
+            newLogs[newLogs.length - 1] = {
+              time: new Date().toLocaleTimeString(),
+              message,
+              type: status
             };
             return newLogs;
           }
@@ -408,7 +408,7 @@ function App() {
         });
         return; // Skip the rest of the logic for progress
       }
-      
+
       setLogs(prev => [...prev, { time: new Date().toLocaleTimeString(), message, type: status || 'INFO' }]);
 
       // FAILSAFE: Force stop running state if we see end-of-run log messages
@@ -540,17 +540,17 @@ function App() {
     setShowStopPopup(true);
   };
 
-    const handleGenerateReport = async () => {
+  const handleGenerateReport = async () => {
     setShowStopPopup(false);
     try {
-       await fetch(`${API_URL}/api/generate-report`, { method: 'POST' });
-       handleIncomingData({ type: 'LOG', payload: { message: 'Generating partial report...', status: 'INFO' } });
+      await fetch(`${API_URL}/api/generate-report`, { method: 'POST' });
+      handleIncomingData({ type: 'LOG', payload: { message: 'Generating partial report...', status: 'INFO' } });
     } catch (e) {
-       console.error("Failed to generate report", e);
+      console.error("Failed to generate report", e);
     }
   };
 
-   // --- NEW: Reset Handler ---
+  // --- NEW: Reset Handler ---
   const handleReset = () => {
     // 1. Reset UI State
     setIsRunning(false);
@@ -615,7 +615,7 @@ function App() {
 
     loadApks();
     checkDevice();
-    checkAppiumStatus(); 
+    checkAppiumStatus();
     const id = setInterval(() => {
       checkDevice();
       checkAppiumStatus();
@@ -681,7 +681,7 @@ function App() {
 
       {showStopPopup && (
         <div style={{
-          position: 'fixed', top:'30%', left: 0, right: 0, 
+          position: 'fixed', top: '30%', left: 0, right: 0,
           // backgroundColor: 'rgba(0,0,0,0.7)',
           // height: '50vh',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -723,25 +723,25 @@ function App() {
         <div className="dashboard-card control-panel">
           {/* <h2 className="card-title">Test Execution</h2> */}
           {/* --- NEW: Appium Control Row --- */}
-          <div style={{ 
-            display: 'flex', 
-            justifyContent: 'space-between', 
-            alignItems: 'center', 
-            paddingBottom: '15px', 
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingBottom: '15px',
             marginBottom: '15px',
-            borderBottom: '1px solid #334155' 
+            borderBottom: '1px solid #334155'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <div style={{ 
-                width: '10px', 
-                height: '10px', 
-                borderRadius: '50%', 
+              <div style={{
+                width: '10px',
+                height: '10px',
+                borderRadius: '50%',
                 backgroundColor: appiumStatus === 'running' ? '#4ade80' : '#ef4444',
                 boxShadow: appiumStatus === 'running' ? '0 0 8px #4ade80' : 'none'
               }}></div>
               <span className="input-label" style={{ marginBottom: 0 }}>Appium Server</span>
             </div>
-            
+
             <button
               onClick={toggleAppium}
               style={{
@@ -852,7 +852,7 @@ function App() {
         {/* Panel 4: Logs */}
         <div className="grid-item-logs">
           <LogConsole logs={logs}
-          statusMode={getConsoleStatus()} 
+            statusMode={getConsoleStatus()}
           />
         </div>
       </div>

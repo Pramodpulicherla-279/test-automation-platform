@@ -225,4 +225,3 @@ class TestOnboarding:
             with open("test-flows/onboarding_flow_success.json", "w") as f:
                 json.dump(test_flow_steps, f, indent=4)
 
- 

@@ -91,7 +91,7 @@ _allure_port: int | None = None
 _appium_proc: subprocess.Popen | None = None
 APPIUM_PORT = 4723
 
-ALLURE_CMD = r"C:\Users\Pramo\scoop\shims\allure"
+ALLURE_CMD = r"C:\Users\Abdul Samad\scoop\shims\allure"
 
 def _start_allure_server() -> str:
     """

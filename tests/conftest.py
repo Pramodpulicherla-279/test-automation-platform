@@ -34,11 +34,11 @@ def driver(request):
     options = UiAutomator2Options()
     options.platform_name = "Android"
     options.device_name = "AndroidDevice"
-    # options.no_reset = False
-    # options.full_reset = True
-    # options.auto_grant_permissions = False
-    # options.dont_stop_app_on_reset = True
-    options.app = apk_path   # ✅ use the same --apk value
+    options.no_reset = False
+    options.full_reset = True
+    options.auto_grant_permissions = False
+    options.dont_stop_app_on_reset = True
+    options.app = apk_path   
 
     # TODO: adjust URL / capabilities to your setup
     driver = webdriver.Remote("http://127.0.0.1:4723", options=options)

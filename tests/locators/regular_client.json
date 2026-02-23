@@ -26,6 +26,7 @@
     "dashboard_screen": {
         "add_button_dashboard": "//android.view.ViewGroup[@content-desc=\"Add\"]",
         "add_new_farmer_option": "//android.view.ViewGroup[@content-desc=\"Add New Farmer\"]/android.view.ViewGroup"
+       
     },
 
     "farmer_screen": {

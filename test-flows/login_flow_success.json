@@ -1,9 +1,5 @@
 [
     {
-        "step": "Click Next button on language selection",
-        "status": "Success"
-    },
-    {
         "step": "Allow picture permission",
         "status": "Success"
     },
@@ -20,9 +16,13 @@
         "status": "Success"
     },
     {
+        "step": "Click Next button on language selection",
+        "status": "Success"
+    },
+    {
         "step": "Enter valid phone number",
         "status": "Success",
-        "value": "7660852538"
+        "value": "9603824348"
     },
     {
         "step": "Click Next after entering phone number",
@@ -30,10 +30,6 @@
     },
     {
         "step": "Click Verify OTP",
-        "status": "Success"
-    },
-    {
-        "step": "Dashboard Verified",
         "status": "Success"
     }
 ]
