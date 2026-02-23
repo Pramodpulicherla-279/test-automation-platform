@@ -23,6 +23,18 @@ def tap_at_coordinates(driver, x, y):
     actions.perform()
     return True
 
+def tap_at_coordinates(driver, x, y):
+    """
+    Taps at the specified X and Y coordinates using Appium's native click gesture.
+    This replaces the unstable ActionBuilder to prevent session crashes.
+    """
+    try:
+        driver.execute_script("mobile: clickGesture", {"x": int(x), "y": int(y)})
+    except Exception as e:
+        print(f"Failed to tap at coordinates ({x}, {y}): {e}")
+        raise e
+    
+
 def perform_scroll(driver, start_x=500, start_y=1500, end_x=500, end_y=500, duration=600):
     """
     Scrolls using W3C Pointer Actions.

@@ -43,7 +43,7 @@
     "_COMMENT_3": "--- INTER-CROP KEYS (ADDED) ---",
     "inter_crop_input": "//android.widget.TextView[@text=\"Search Inter Crop Name\"]",
     "bananas_item": "//*[contains(@text, 'Bananas')]",
-    "inter_sowing_date_input": "//android.view.ViewGroup[@content-desc=\"Inter-Crop Sowing Date *, --/--/----, \"]",
+    "inter_sowing_date_input": "//android.widget.TextView[@text=\"Inter-Crop Sowing Date\"]",
     
     "_COMMENT_4": "--- CROP DETAILS (ADDED) ---",
     "short_duration_button": "//android.view.ViewGroup[@content-desc=\"Short, 140 Days\"]",
@@ -55,7 +55,7 @@
     "sowing_date_input": "//android.view.ViewGroup[@content-desc=\"Sowing Date *, --/--/----, \"]",
     "harvest_date_input": "//*[contains(@text, 'Harvest Date')]",
     "calendar_ok_btn": "//android.widget.Button[@resource-id=\"android:id/button1\"]",
-    "submit_crop_btn": "//android.view.ViewGroup[@content-desc=\"Submit\"]"
+    "submit_crop_btn": "//android.widget.TextView[@text=\"Submit\"]"
   },
   "coordinates": {
     "login_screen": {

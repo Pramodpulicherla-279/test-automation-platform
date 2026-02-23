@@ -3,16 +3,30 @@ import allure
 import pytest
 import json
 import os
+from appium.webdriver.common.appiumby import AppiumBy
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 # --- IMPORT CUSTOM UTILITIES ---
-from tests.utils.wait_utils import smart_click, smart_send_keys
+from tests.utils.wait_utils import smart_click, smart_send_keys, find_and_click
 
 @allure.epic("Onboarding Flow")
 @allure.feature("Farmer, Farm, Crop & Boundary Creation")
 class TestOnboarding:
+
+    @pytest.fixture(scope="class", autouse=True)
+    def _load_locators_once(self, request):
+        """Loads locators once per test class and attaches them to the class."""
+        project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+        locators_path = os.path.join(project_root, "locators", "regular_farmer.json")
+
+        with open(locators_path, "r", encoding="utf-8") as f:
+            xpaths = json.load(f)
+
+        farmer_screen_xpaths = xpaths.get("farmer_screen", {})
+
+        request.cls.inter_sowing_date_input = farmer_screen_xpaths.get("inter_sowing_date_input")
 
     def _dismiss_coachmarks(self, driver):
         try:
@@ -253,8 +267,8 @@ class TestOnboarding:
                 test_flow_steps.append({"step": "Select Bananas", "status": "Success"})
 
                 # Handle Sowing Date for Intercrop
-                smart_click(driver, "Inter-Crop Sowing Date", self.intercrop_sowingdate_xpath, "Sowing Date")
-                smart_click(driver, "Ok in calendar", self.ok_button_xpath, "OK")
+                smart_click(driver, "Inter-Crop Sowing Date", locators["inter_sowing_date"], "Sowing Date")
+                smart_click(driver, "Ok in calendar", locators["calendar_ok"], "OK")
 
             # with allure.step("7. Select Crop Duration (Short)"):
             #     time.sleep(2)
@@ -276,32 +290,55 @@ class TestOnboarding:
             #     except Exception as e:
             #         print(f"Error selecting Direct Sowing type: {e}")
 
-            with allure.step("9. Sowing Date input"):
-                time.sleep(2)
-                try:
-                    # Added force_ocr=True to prevent DOM scroll session crashes
-                    if not smart_click(driver, "Sowing Date", self.sowing_date_input_xpath, "Sowing Date", force_ocr=True):
-                        print("Fallback: Tapping approximate coordinate for Sowing Date")
-                        driver.execute_script("mobile: clickGesture", {"x": 350, "y": 1690}) 
-                    
-                    test_flow_steps.append({"step": "Click Sowing Date input", "status": "Success"})
+            with allure.step("8. Sowing Date input"):
+                if not smart_click(driver,  "sowing date input", self.inter_sowing_date_input, "Inter-Crop Sowing Date"):
+                    pytest.fail("Could not find or click the 'Intercrop Sowing Date' input field.")
+                test_flow_steps.append({"step": "Click Intercrop Sowing Date input", "status": "Success"})
 
-                    time.sleep(1)
-                    smart_click(driver, "Ok in calendar", self.ok_button_xpath, "OK", force_ocr=True)
-                    test_flow_steps.append({"step": "Click OK for Sowing Date", "status": "Success"})
-                except Exception as e:
-                    print(f"Error during Sowing Date selection: {e}")
+            # with allure.step("9. Sowing Date input"):
+            #     time.sleep(2)
+            #     try:
+            #         # Bypass OCR to prevent the 60-second Appium idle timeout crash
+            #         print("Tapping approximate coordinate for Sowing Date...")
+            #         driver.execute_script("mobile: clickGesture", {"x": 350, "y": 1690}) 
+            #         test_flow_steps.append({"step": "Click Sowing Date input", "status": "Success"})
+
+            #         time.sleep(2) # Give calendar time to open
+                    
+                    
+            #         print("Tapping coordinate for 'OK' in calendar...")
+            #         driver.execute_script("mobile: clickGesture", {"x": 790, "y": 1750})
+            #         test_flow_steps.append({"step": "Click OK for Sowing Date", "status": "Success"})
+                    
+            #     except Exception as e:
+            #         print(f"Error during Sowing Date selection: {e}")
 
             with allure.step("11. Submit Crop"):
-                time.sleep(2)
                 try:
-                    # Added force_ocr=True to prevent DOM scroll session crashes
-                    if not smart_click(driver, "Submit Crop", self.submit_crop_button_xpath, "Submit", force_ocr=True):
+                    time.sleep(3) 
+                    try: driver.hide_keyboard() 
+                    except: pass
+                    
+                    # --- NEW SCROLL ADDED HERE ---
+                    print("Scrolling down to reveal Submit button...")
+                    driver.execute_script("mobile: swipeGesture", {
+                        "left": 500, "top": 1500, 
+                        "width": 100, "height": 1000,
+                        "direction": "up", # 'up' means swipe finger up, which scrolls page down
+                        "percent": 0.75
+                    })
+                    time.sleep(2) # Let the scroll settle
+                    # -----------------------------
+                    
+                    if not smart_click(driver, "Submit Crop", locators["submit_crop"], "Submit", force_ocr=True):
+                        print("OCR failed or timed out. Falling back to native coordinate tap.")
                         driver.execute_script("mobile: clickGesture", {"x": 540, "y": 2200})
+                    
                     test_flow_steps.append({"step": "Click Submit Crop", "status": "Success"})
+                    
                 except Exception as e:
                     print(f"Error submitting crop: {e}")
-
+                
             # PART 4: BOUNDARY
             print("\n--- STARTING BOUNDARY DRAWING ---\n")
             with allure.step("14. Click Add Boundary"):
