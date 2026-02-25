@@ -10,7 +10,6 @@ from selenium.webdriver.common.actions import interaction
 # --- IMPORT CUSTOM UTILITIES ---
 # Ensure these files exist in tests/utils/ as created previously
 from tests.utils.touch_utils import tap_at_coordinates, perform_scroll
-from tests.utils.wait_utils import scroll_to_find
 from tests.utils.ui_actions import smart_click, smart_send_keys, smart_select_dropdown
 
 @allure.epic("Login Flow")

@@ -1,5 +1,19 @@
 [
     {
+        "step": "Enter Farmer Name",
+        "status": "Success",
+        "value": "Test Farmer 4487"
+    },
+    {
+        "step": "Enter Farmer Mobile",
+        "status": "Success",
+        "value": "4422551234"
+    },
+    {
+        "step": "Submit Farmer Clicked",
+        "status": "Success"
+    },
+    {
         "step": "Farmer Created",
         "status": "Success"
     },
@@ -8,23 +22,40 @@
         "status": "Success"
     },
     {
-        "step": "Type Bananas in Search",
-        "status": "Success"
+        "step": "Search Inter-Crop",
+        "status": "Success",
+        "value": "Bananas"
     },
     {
         "step": "Select Bananas",
         "status": "Success"
     },
     {
-        "step": "Click Sowing Date input",
+        "step": "Click Inter-Crop Sowing Date",
         "status": "Success"
     },
     {
-        "step": "Click OK for Sowing Date",
+        "step": "Confirm Calendar OK",
+        "status": "Success"
+    },
+    {
+        "step": "Click Transplanted Date input",
+        "status": "Success"
+    },
+    {
+        "step": "Click OK for Transplanted Date",
         "status": "Success"
     },
     {
         "step": "Click Submit Crop",
+        "status": "Success"
+    },
+    {
+        "step": "Boundary Drawn",
+        "status": "Success"
+    },
+    {
+        "step": "Farm & Boundary Added",
         "status": "Success"
     }
 ]
