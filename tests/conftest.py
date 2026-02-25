@@ -5,6 +5,13 @@ import time
 from appium import webdriver
 from appium.options.android import UiAutomator2Options
 
+# Import the Jira utility you created
+try:
+    from tests.utils.jira_utils import create_jira_bug
+except ImportError:
+    create_jira_bug = None
+    print("Warning: tests.utils.jira_utils not found. Jira tickets will not be generated.")
+
 # 1. Register the custom command-line option
 def pytest_addoption(parser):
     """
@@ -39,6 +46,7 @@ def driver(request):
     # options.auto_grant_permissions = False
     # options.dont_stop_app_on_reset = True
     options.app = apk_path   # ✅ use the same --apk value
+    options.set_capability("appium:ignoreHiddenApiPolicyError", True)
 
     # TODO: adjust URL / capabilities to your setup
     driver = webdriver.Remote("http://127.0.0.1:4723", options=options)
@@ -117,15 +125,18 @@ def check_for_crashes(driver):
         
     return None
 
-@pytest.hookimpl(hookwrapper=True)
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
-    """Add Allure attachments on test failure"""
+    """Add Allure attachments on test failure and Create Jira Tickets"""
     outcome = yield
     report = outcome.get_result()
 
     # Check execution phase is 'call' (the actual test run)
     if report.when == "call":
         driver = item.funcargs.get('driver')
+        crash_log = None
+        local_screenshot_path = None
+
         if driver:
             # This is critical for React Native crashes that happen right at the end of a test
             time.sleep(2)
@@ -135,7 +146,6 @@ def pytest_runtest_makereport(item, call):
             # 2. If crash found, attach logs and force failure
             if crash_log:
                 print(f"CRASH DETECTED in {item.nodeid}")
-                # print(f"\n--- CRASH LOGS ---\n{crash_log}\n------------------\n")
                 allure.attach(
                     crash_log, 
                     name="Crash Logs", 
@@ -151,13 +161,38 @@ def pytest_runtest_makereport(item, call):
             if report.outcome == "failed":
                 try:
                     screenshot = driver.get_screenshot_as_png()
+                    # Attach to Allure
                     allure.attach(
                         screenshot,
                         name="Failure Screenshot",
                         attachment_type=allure.attachment_type.PNG
                     )
+                    
+                    # Save locally so the Jira API can upload it as an attachment
+                    os.makedirs("screenshots", exist_ok=True)
+                    local_screenshot_path = f"screenshots/{item.name}_failure.png"
+                    with open(local_screenshot_path, "wb") as f:
+                        f.write(screenshot)
+                        
                 except Exception as e:
                     print(f"Failed to capture screenshot: {str(e)}")
+
+        # 4. Trigger Jira Automation on Failure
+        if report.outcome == "failed" and create_jira_bug:
+            print(f"\n--- TEST FAILED: Triggering Jira Creation for {item.name} ---")
+            
+            # Format the error message for Jira
+            if call.excinfo:
+                error_message = str(call.excinfo.getrepr(style="short"))
+            else:
+                error_message = str(getattr(report, "longrepr", "Unknown Application Crash/Failure"))
+            
+            # Append logcat crash details to the Jira description if they exist
+            if crash_log:
+                error_message += f"\n\n*Logcat Crash Details:*\n{crash_log}"
+                
+            # Create the ticket
+            create_jira_bug(item.name, error_message, local_screenshot_path)
 
 def notReportFailed(report):
     return report.outcome != "failed"
