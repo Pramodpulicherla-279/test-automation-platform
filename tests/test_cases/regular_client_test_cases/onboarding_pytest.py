@@ -9,7 +9,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from tests.utils.wait_utils import smart_click
 from tests.utils.ui_actions import smart_send_keys
-from tests.utils.auth_utils import ensure_logged_in
 
 @allure.epic("Onboarding Flow")
 @allure.feature("Farmer, Farm, Crop & Boundary Creation")
