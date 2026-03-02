@@ -10,6 +10,9 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.actions.action_builder import ActionBuilder
 from selenium.webdriver.common.actions.pointer_input import PointerInput
 from selenium.webdriver.common.actions import interaction
+import sys
+sys.dont_write_bytecode = True
+
 
 @allure.epic("Login & Farmer Flow")
 @allure.feature("Authentication & Data Entry")

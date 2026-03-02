@@ -9,6 +9,8 @@ from utils.ocr_utils import click_element_by_ocr_text
 from selenium.common.exceptions import NoSuchElementException
 from appium.webdriver.common.appiumby import AppiumBy
 from selenium.webdriver.common.actions.action_builder import ActionBuilder
+import sys
+sys.dont_write_bytecode = True
 
 
 def _console_log(msg: str) -> None:

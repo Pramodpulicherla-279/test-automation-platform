@@ -2,6 +2,8 @@
 import time
 import subprocess
 import requests
+import sys
+sys.dont_write_bytecode = True
 
 def get_cpu(package_name):
     # Run ADB command to get CPU usage

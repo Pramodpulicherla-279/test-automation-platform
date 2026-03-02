@@ -154,6 +154,8 @@ import json
 import os
 from selenium.common.exceptions import WebDriverException
 from utils.wait_utils import find_and_click, smart_click
+import sys
+sys.dont_write_bytecode = True
 
 
 @allure.epic("Onboarding Flow")

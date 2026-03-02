@@ -2,6 +2,8 @@ import logging
 import allure
 import time
 from functools import wraps
+import sys
+sys.dont_write_bytecode = True
 
 class TestLogger:
     def __init__(self, name=__name__):

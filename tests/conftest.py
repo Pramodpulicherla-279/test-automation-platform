@@ -4,6 +4,8 @@ import allure
 import time
 from appium import webdriver
 from appium.options.android import UiAutomator2Options
+import sys
+sys.dont_write_bytecode = True
 
 # 1. Register the custom command-line option
 def pytest_addoption(parser):

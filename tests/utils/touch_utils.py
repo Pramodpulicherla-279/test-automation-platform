@@ -1,6 +1,8 @@
 import allure
 # --- NEW IMPORTS for the modern W3C Actions API ---
 from selenium.webdriver.common.actions.action_builder import ActionBuilder
+import sys
+sys.dont_write_bytecode = True
 
 def tap_at_coordinates(driver, x, y):
     """

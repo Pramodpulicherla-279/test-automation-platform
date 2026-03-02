@@ -56,7 +56,7 @@
   /* Slate 700 */
   --accent-blue: #3b82f6;
   --accent-purple: #a855f7;
-  --status-green: #4ade80;
+  --status-green: #1a753c;
   --status-red: #f87171;
   --input-bg: #EEF2F7;
 }
@@ -107,6 +107,9 @@ body {
 .status-box{
   display: flex;
   gap: 1rem;
+  padding: 12px 0px 12px 12px;
+  border: 1.5px solid #CBD5E1;
+  border-radius: 12px;
 }
 
 .action-row{
@@ -181,6 +184,8 @@ body {
   gap: 0.5rem;
   font-size: 0.75rem;
   color: var(--text-secondary);
+  padding-right: 12px;
+  border-right: 1.5px solid #CBD5E1;
 }
 
 .status-dot {
@@ -390,9 +395,7 @@ body {
 
 }
 
-.log-search {
-  /* margin-bottom: 0.5rem; */
-}
+
 
 .log-search .text-input {
   width: 200px;
