@@ -1,6 +1,31 @@
 [
     {
-        "step": "Login",
+        "step": "Click Next button on language selection",
+        "status": "Success"
+    },
+    {
+        "step": "Allow picture permission",
+        "status": "Success"
+    },
+    {
+        "step": "Allow location permission",
+        "status": "Success"
+    },
+    {
+        "step": "Allow audio permission",
+        "status": "Success"
+    },
+    {
+        "step": "Allow notifications permission",
+        "status": "Success"
+    },
+    {
+        "step": "Enter valid phone number",
+        "status": "Success",
+        "value": "9618574550"
+    },
+    {
+        "step": "Click Next after entering phone number",
         "status": "Success"
     }
 ]

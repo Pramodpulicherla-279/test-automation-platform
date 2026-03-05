@@ -2,21 +2,29 @@ import os
 import pytest
 import allure
 import time
+import sys
 from appium import webdriver
 from appium.options.android import UiAutomator2Options
 
-# Import the Jira utility you created
-try:
-    from tests.utils.jira_utils import create_jira_bug
-except ImportError:
-    create_jira_bug = None
-    print("Warning: tests.utils.jira_utils not found. Jira tickets will not be generated.")
+from jira_integration.jira_service import create_jira_issue
+from jira_integration.jira_attachment import attach_screenshot
+from jira_integration.jira_config import config
 
-# 1. Register the custom command-line option
+sys.dont_write_bytecode = True
+
+
+# -----------------------------------------------------------
+# Global Jira Ticket Tracker
+# -----------------------------------------------------------
+
+created_jira_tickets = []
+
+
+# -----------------------------------------------------------
+# Pytest CLI option
+# -----------------------------------------------------------
+
 def pytest_addoption(parser):
-    """
-    Define a single CLI option: --apk
-    """
     parser.addoption(
         "--apk",
         action="store",
@@ -24,10 +32,14 @@ def pytest_addoption(parser):
         help="Path to the APK file under test",
     )
 
+
+# -----------------------------------------------------------
+# Driver Fixture
+# -----------------------------------------------------------
+
 @pytest.fixture(scope="session")
 def driver(request):
-    """Appium driver fixture with APK path passed via --apk."""
-    # Get APK path from CLI
+
     apk_path = request.config.getoption("--apk")
 
     if not apk_path:
@@ -41,19 +53,13 @@ def driver(request):
     options = UiAutomator2Options()
     options.platform_name = "Android"
     options.device_name = "AndroidDevice"
-    # options.no_reset = False
-    # options.full_reset = True
-    # options.auto_grant_permissions = False
-    # options.dont_stop_app_on_reset = True
-    options.app = apk_path   # ✅ use the same --apk value
+    options.app = apk_path
     options.set_capability("appium:ignoreHiddenApiPolicyError", True)
 
-    # TODO: adjust URL / capabilities to your setup
     driver = webdriver.Remote("http://127.0.0.1:4723", options=options)
 
-    # Clear logs at start to ensure we capture fresh data
     try:
-        driver.get_log('logcat')
+        driver.get_log("logcat")
     except Exception:
         pass
 
@@ -61,138 +67,193 @@ def driver(request):
 
     driver.quit()
 
+
+# -----------------------------------------------------------
+# Crash Detection
+# -----------------------------------------------------------
+
 def check_for_crashes(driver):
-    """
-    Retrieves logcat logs and looks for crash signatures.
-    If a crash is detected, it captures the surrounding log lines (stack trace) 
-    to provide meaningful context.
-    """
+
     try:
-        # Get logcat logs
-        logs = driver.get_log('logcat')
-        
-        # Enhanced crash signatures based on your React Native log
+
+        logs = driver.get_log("logcat")
+
         crash_signatures = [
-            "fatal exception", 
-            "force removing activity", 
-            "androidruntime",       # Java stacktrace hook
-            "beginning of crash", 
+            "fatal exception",
+            "force removing activity",
+            "androidruntime",
+            "beginning of crash",
             "system.err",
-            "am_crash",             # Activity Manager crash event
-            "anr in",               # Application Not Responding
-            "vm aborting",          # Native code crash
-            "com.facebook.react.bridge", # React Native Bridge errors
-            "jsapplicationillegalargumentexception" # Specific RN error from your log
+            "am_crash",
+            "anr in",
+            "vm aborting",
+            "com.facebook.react.bridge",
+            "jsapplicationillegalargumentexception",
         ]
-        
-        crash_details = []
-        crash_detected = False
-        limit_stack_trace = 100 # How many lines to capture after a crash
-        lines_captured = 0
+
+        crash_lines = []
+        capture = False
+        limit = 80
 
         for entry in logs:
-            message = entry.get('message', '')
-            msg_lower = message.lower()
-            
-            # Logic: If we haven't found a crash yet, look for signatures.
-            # If we HAVE found a crash, keep capturing lines (for the stack trace).
-            
-            if not crash_detected:
-                # 1. Check for standard signatures
-                if any(sig in msg_lower for sig in crash_signatures):
-                    crash_detected = True
-                    crash_details.append(f"🔴 CRASH START: {message}")
-                    lines_captured += 1
-                    continue # Skip to next loop to avoid double adding
-                
-                # 2. Check for process death
-                if "process" in msg_lower and "has died" in msg_lower:
-                    crash_detected = True
-                    crash_details.append(f"💀 PROCESS DIED: {message}")
-                    lines_captured += 1
-            
+
+            message = entry.get("message", "")
+            lower = message.lower()
+
+            if not capture:
+                if any(sig in lower for sig in crash_signatures):
+                    capture = True
+                    crash_lines.append(f"CRASH START: {message}")
+                    continue
+
             else:
-                # We are in "Capture Mode" - grab the stack trace!
-                if lines_captured < limit_stack_trace:
-                    crash_details.append(message)
-                    lines_captured += 1
-        
-        if crash_details:
-            return "\n".join(crash_details)
-            
+                if len(crash_lines) < limit:
+                    crash_lines.append(message)
+
+        if crash_lines:
+            return "\n".join(crash_lines)
+
     except Exception as e:
-        print(f"Could not retrieve logs (Driver might be disconnected): {e}")
-        
+        print("Logcat crash detection failed:", e)
+
     return None
 
-@pytest.hookimpl(tryfirst=True, hookwrapper=True)
+
+# -----------------------------------------------------------
+# Pytest Failure Hook
+# -----------------------------------------------------------
+
+@pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item, call):
-    """Add Allure attachments on test failure and Create Jira Tickets"""
+
     outcome = yield
     report = outcome.get_result()
 
-    # Check execution phase is 'call' (the actual test run)
-    if report.when == "call":
-        driver = item.funcargs.get('driver')
-        crash_log = None
-        local_screenshot_path = None
+    if report.when != "call":
+        return
 
-        if driver:
-            # This is critical for React Native crashes that happen right at the end of a test
-            time.sleep(2)
-            # 1. Always check for crashes, even if test passed so far
-            crash_log = check_for_crashes(driver)
-            
-            # 2. If crash found, attach logs and force failure
-            if crash_log:
-                print(f"CRASH DETECTED in {item.nodeid}")
-                allure.attach(
-                    crash_log, 
-                    name="Crash Logs", 
-                    attachment_type=allure.attachment_type.TEXT
+    driver = item.funcargs.get("driver")
+
+    if not driver:
+        return
+
+    time.sleep(2)
+
+    # -------------------------------------------------------
+    # 1️⃣ Detect App Crash
+    # -------------------------------------------------------
+
+    crash_log = check_for_crashes(driver)
+
+    if crash_log:
+
+        print(f"CRASH DETECTED in {item.nodeid}")
+
+        allure.attach(
+            crash_log,
+            name="Crash Logs",
+            attachment_type=allure.attachment_type.TEXT
+        )
+
+        if report.outcome != "failed":
+            report.outcome = "failed"
+            report.longrepr = "Application crash detected in logcat"
+
+
+    # -------------------------------------------------------
+    # 2️⃣ If Test Failed → Capture Screenshot
+    # -------------------------------------------------------
+
+    if report.outcome == "failed":
+
+        screenshot_path = None
+
+        try:
+
+            os.makedirs("screenshots", exist_ok=True)
+
+            screenshot_path = f"screenshots/{item.name}.png"
+
+            driver.save_screenshot(screenshot_path)
+
+            allure.attach.file(
+                screenshot_path,
+                name="Failure Screenshot",
+                attachment_type=allure.attachment_type.PNG
+            )
+
+        except Exception as e:
+            print("Screenshot capture failed:", e)
+
+
+        # ---------------------------------------------------
+        # 3️⃣ Create Jira Bug
+        # ---------------------------------------------------
+
+        if config.enabled:
+
+            try:
+
+                issue_key = create_jira_issue(
+                    summary=f"Automation Failure: {item.name}",
+                    description=f"""
+Automation Test Failure
+
+Test Case:
+{item.nodeid}
+
+Error:
+{report.longrepr}
+
+Environment:
+Krishivaas Farmer APK
+"""
                 )
-                # If test was passing, mark it failed now
-                if report.outcome != "failed":
-                     report.outcome = "failed"
-                     # Set a failure reason so Pytest console shows it clearly
-                     report.longrepr = "FAILURE: Application Crash Detected in Logcat"
-            
-            # 3. Take screenshot if the test is failed (either originally or due to crash)
-            if report.outcome == "failed":
-                try:
-                    screenshot = driver.get_screenshot_as_png()
-                    # Attach to Allure
-                    allure.attach(
-                        screenshot,
-                        name="Failure Screenshot",
-                        attachment_type=allure.attachment_type.PNG
-                    )
-                    
-                    # Save locally so the Jira API can upload it as an attachment
-                    os.makedirs("screenshots", exist_ok=True)
-                    local_screenshot_path = f"screenshots/{item.name}_failure.png"
-                    with open(local_screenshot_path, "wb") as f:
-                        f.write(screenshot)
-                        
-                except Exception as e:
-                    print(f"Failed to capture screenshot: {str(e)}")
 
-        # 4. Trigger Jira Automation on Failure
-        if report.outcome == "failed" and create_jira_bug:
-            print(f"\n--- TEST FAILED: Triggering Jira Creation for {item.name} ---")
-            
-            # Format the error message for Jira
-            if call.excinfo:
-                error_message = str(call.excinfo.getrepr(style="short"))
-            else:
-                error_message = str(getattr(report, "longrepr", "Unknown Application Crash/Failure"))
-            
-            # Append logcat crash details to the Jira description if they exist
-            if crash_log:
-                error_message += f"\n\n*Logcat Crash Details:*\n{crash_log}"
-                
-            # Create the ticket
-            create_jira_bug(item.name, error_message, local_screenshot_path)
+                if issue_key:
+
+                    print(f"JIRA ISSUE CREATED: {issue_key}")
+
+                    created_jira_tickets.append(issue_key)
+
+                    # attach jira link to allure
+                    allure.attach(
+                        f"{config.url}/browse/{issue_key}",
+                        name="Jira Ticket",
+                        attachment_type=allure.attachment_type.URI_LIST
+                    )
+
+                    if screenshot_path:
+                        attach_screenshot(issue_key, screenshot_path)
+
+            except Exception as e:
+                print("Jira integration error:", e)
+
+
+# -----------------------------------------------------------
+# Print Jira Links After Test Execution
+# -----------------------------------------------------------
+
+def pytest_sessionfinish(session, exitstatus):
+
+    if created_jira_tickets:
+
+        print("\n====================================")
+        print("JIRA TICKETS CREATED DURING TEST RUN")
+        print("====================================")
+
+        for key in created_jira_tickets:
+            print(f"{key} → {config.url}/browse/{key}")
+
+        print("\nView all automation bugs:")
+        print(f"{config.url}/issues/?jql=project={config.project_key}+AND+labels=automation")
+
+        print("====================================")
+
+
+# -----------------------------------------------------------
+# Helper
+# -----------------------------------------------------------
 
 def notReportFailed(report):
     return report.outcome != "failed"
