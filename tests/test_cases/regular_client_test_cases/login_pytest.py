@@ -10,7 +10,7 @@ from selenium.webdriver.common.actions import interaction
 # --- IMPORT CUSTOM UTILITIES ---
 # Ensure these files exist in tests/utils/ as created previously
 from tests.utils.touch_utils import tap_at_coordinates, perform_scroll
-from tests.utils.ui_actions import smart_click, smart_send_keys, smart_select_dropdown
+from tests.utils.ui_actions import smart_click, smart_send_keys
 
 @allure.epic("Login Flow")
 @allure.feature("Authentication")
@@ -74,10 +74,10 @@ class TestLogin:
                     smart_click(driver, login_xpaths.get("tab_email_login"), login_coords.get("tab_email_login"), "Email Tab")
                 
                 with allure.step("3b. Enter Email"):
-                    smart_send_keys(driver, login_xpaths.get("email_input"), "fa1@yopmail.com", "Email Input")
+                    smart_send_keys(driver, login_xpaths.get("email_input"), "devqa@yopmail.com", "Email Input")
                 
                 with allure.step("3c. Enter Password"):
-                    smart_send_keys(driver, login_xpaths.get("password_input"), "Fa1@2025", "Password Input")
+                    smart_send_keys(driver, login_xpaths.get("password_input"), "Devqa@2025", "Password Input")
                 
                 with allure.step("3d. Click Submit"):
                     key = "submit_login_button"
