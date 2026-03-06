@@ -5,7 +5,8 @@ import time
 import sys
 from appium import webdriver
 from appium.options.android import UiAutomator2Options
-
+import json
+from pathlib import Path
 from jira_integration.jira_service import create_jira_issue
 from jira_integration.jira_attachment import attach_screenshot
 from jira_integration.jira_config import config
@@ -25,13 +26,10 @@ created_jira_tickets = []
 # -----------------------------------------------------------
 
 def pytest_addoption(parser):
-    parser.addoption(
-        "--apk",
-        action="store",
-        default=None,
-        help="Path to the APK file under test",
-    )
-
+    parser.addoption("--apk", action="store", default=None, help="Path to the APK file under test")
+    parser.addoption("--app-name", action="store", default="Unknown App", help="App name for Jira context")
+    parser.addoption("--app-version", action="store", default="Unknown Version", help="App version for Jira context")
+    parser.addoption("--developer-name", action="store", default="Unknown Developer", help="Developer name for Jira context")
 
 # -----------------------------------------------------------
 # Driver Fixture
@@ -71,6 +69,58 @@ def driver(request):
 # -----------------------------------------------------------
 # Crash Detection
 # -----------------------------------------------------------
+def _extract_feature(item) -> str:
+    # Allure decorators become pytest markers like allure_label
+    for marker in item.iter_markers(name="allure_label"):
+        if marker.kwargs.get("label_type") == "feature":
+            if marker.kwargs.get("value"):
+                return str(marker.kwargs["value"])
+            if marker.args:
+                return str(marker.args[0])
+    return "Unknown Feature"
+
+
+def _extract_module(item) -> str:
+    name = item.name.lower()
+    nodeid = item.nodeid.lower()
+    if "login" in name or "login" in nodeid:
+        return "Login"
+    if "onboarding" in name or "onboarding" in nodeid or "addfarm" in name:
+        return "Onboarding"
+    if item.cls is not None:
+        return item.cls.__name__
+    return "Unknown Module"
+
+
+def _steps_file_for_test(item) -> Path | None:
+    test_name = item.name.lower()
+    if "login" in test_name:
+        return Path("test-flows/login_flow_success.json")
+    if "onboarding" in test_name or "addfarm" in test_name:
+        return Path("test-flows/onboarding_flow_success.json")
+    return None
+
+
+def _read_steps(item) -> list[str]:
+    flow_file = _steps_file_for_test(item)
+    if not flow_file or not flow_file.exists():
+        return []
+
+    try:
+        with flow_file.open("r", encoding="utf-8") as f:
+            data = json.load(f)
+        if not isinstance(data, list):
+            return []
+        steps = []
+        for entry in data:
+            if isinstance(entry, dict) and entry.get("step"):
+                steps.append(str(entry["step"]))
+            elif isinstance(entry, str):
+                steps.append(entry)
+        return steps
+    except Exception as e:
+        print(f"Failed to parse flow steps from {flow_file}: {e}")
+        return []
 
 def check_for_crashes(driver):
 
