@@ -70,17 +70,29 @@ def extract_app_icon(apk_path: str) -> str:
     
 def get_apk_info(apk_path: str) -> dict | None:
     """
-    Returns basic metadata from the APK:
-    { "app_name": str, "package_name": str }
+    Returns APK metadata used by API + Jira context.
     """
     try:
         app = APK(apk_path)
+        package_name = app.get_package() or ""
+        app_name = app.get_app_name() or "Unknown App"
+        app_version = app.get_androidversion_name() or str(app.get_androidversion_code() or "Unknown Version")
+
+        # APK usually does not contain a clean "developer name" field.
+        # Prefer explicit env override; fallback to package prefix inference.
+        developer_name = os.getenv("APP_DEVELOPER_NAME", "").strip()
+        if not developer_name:
+            parts = [p for p in package_name.split(".") if p and p not in {"com", "in", "org", "net", "io"}]
+            developer_name = parts[0].replace("_", " ").title() if parts else "Unknown Developer"
+
         return {
-            "app_name": app.get_app_name(),
-            "package_name": app.get_package(),
+            "app_name": app_name,
+            "package_name": package_name,
+            "app_version": app_version,
+            "developer_name": developer_name,
         }
     except Exception as e:
-        print(f"❌ Failed to read APK info: {e}")
+        print(f"Failed to read APK info: {e}")
         return None
     
 def download_apk(gdrive_url: str, progress_callback=None) -> str:

@@ -309,10 +309,13 @@ def run_pytest_streaming(pytest_args: list[str], module_mapping: Dict[str, str],
 #     return resolved_tests
 
 def run_tests_and_get_suggestions(
-    apk_path: str, 
+    apk_path: str,
     tests_to_run: Optional[List[Dict[str, str]]] = None,
     app_type: Optional[str] = None,
-    module_names: Optional[List[str]] = None
+    module_names: Optional[List[str]] = None,
+    app_name: Optional[str] = None,
+    app_version: Optional[str] = None,
+    developer_name: Optional[str] = None,
 ) -> None:
     """
     Runs all tests in a single session to keep the app open, 
@@ -364,6 +367,13 @@ def run_tests_and_get_suggestions(
     
     # We pass the path_to_name_map to the streaming function so it can update the UI
     pytest_args = valid_paths + [f"--apk={apk_path}", "-v"]
+
+    if app_name:
+        pytest_args.append(f"--app-name={app_name}")
+    if app_version:
+        pytest_args.append(f"--app-version={app_version}")
+    if developer_name:
+        pytest_args.append(f"--developer-name={developer_name}")
     
     overall_ok = run_pytest_streaming_with_tracking(
         pytest_args, 
