@@ -48,10 +48,10 @@
     "medium_duration_button": "//android.view.ViewGroup[@content-desc=\"Long (150 Days)\"]",
     "direct_sowing_button": "//android.widget.TextView[@text=\"Direct Sowing\"]",
     "transplanted_button": "//android.view.ViewGroup[@content-desc=\"Transplanted\"]",
-    "submit_crop_button": "//android.widget.TextView[@text=\"Submit\"]",
-    "sowing_date": "//android.view.ViewGroup[@content-desc=\"Sowing Date *, --/--/----, \"]",
+    "submit_crop_button": "//android.view.ViewGroup[@content-desc=\"Submit\"]",
+    "sowing_date":"(//android.widget.TextView[@text=\"\"])[2]",
     "calendar_ok_button": "//android.widget.Button[@resource-id=\"android:id/button1\"]",
-    "transplanted_date": "//android.view.View[@content-desc=\"30 July 2025\"]"
+    "transplanted_date": "(//android.widget.TextView[@text=\"\"])[1]"
     
     
     

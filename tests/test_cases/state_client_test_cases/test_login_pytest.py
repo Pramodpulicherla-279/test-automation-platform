@@ -4,12 +4,12 @@ import pytest
 from appium.webdriver.common.appiumby import AppiumBy
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from utils.wait_utils import smart_find_element, smart_click
-from utils.ocr_utils import extract_text_with_coordinates
+from utils.wait_utils import smart_click
+# from utils.ocr_utils import extract_text_with_coordinates
 import json
 import os
-from selenium.common.exceptions import WebDriverException
-from utils.wait_utils import find_and_click
+# from selenium.common.exceptions import WebDriverException
+# from utils.wait_utils import find_and_click
 
 
 @allure.epic("Login Flow")
@@ -74,8 +74,8 @@ class TestLogin:
                     EC.presence_of_element_located((AppiumBy.XPATH, phone_number_input_xpath))
                 )
                 phone_input.clear()
-                phone_input.send_keys("9603824348")
-                test_flow_steps.append({"step": "Enter valid phone number", "status": "Success", "value": "9603824348"})
+                phone_input.send_keys("7660852538")
+                test_flow_steps.append({"step": "Enter valid phone number", "status": "Success", "value": "7660852538"})
             
             with allure.step("7. Tap next button"):
                 if not smart_click(driver, "Next (login)", next_button_login_xpath, "Next"):
@@ -84,6 +84,7 @@ class TestLogin:
             
             with allure.step("8. Wait for OTP and verify"):
                 time.sleep(20)
+                
                 if not smart_click(driver, "Verify (login)", verify_button_login_xpath, "Verify"):
                     pytest.fail("Could not find or click the 'Verify' button.")
                 test_flow_steps.append({"step": "Click Verify OTP", "status": "Success"})

@@ -8,7 +8,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from appium.webdriver.common.appiumby import AppiumBy
 
-from utils.wait_utils import enter_text_field, scroll_and_click_by_text_robust, smart_click
+from utils.wait_utils import smart_click
 
 
 @allure.epic("Onboarding Flow")
@@ -53,9 +53,10 @@ class TestOnboarding:
         request.cls.short_duration_button_xpath = add_crop_xpaths.get("short_duration_button")
         request.cls.medium_duration_button_xpath = add_crop_xpaths.get("medium_duration_button")
         request.cls.long_duration_button_xpath = add_crop_xpaths.get("long_duration_button")
+        request.cls.transplanted_date_xpath = add_crop_xpaths.get("transplanted_date")
         request.cls.sowing_date_xpath = add_crop_xpaths.get("sowing_date")
         request.cls.calendar_ok_button_xpath = add_crop_xpaths.get("calendar_ok_button")
-        request.cls.submit_button_crop_xpath = add_crop_xpaths.get("submit_button_crop")
+        request.cls.submit_button_crop_xpath = add_crop_xpaths.get("submit_crop_button")
 
     def _android_back(self, driver):
         try:
@@ -71,10 +72,10 @@ class TestOnboarding:
 
         try:
 
-            # Wait for Dashboard
-            WebDriverWait(driver, 20).until(
-                EC.presence_of_element_located((AppiumBy.XPATH, self.add_button_dashboard_xpath))
-            )
+            # # Wait for Dashboard
+            # WebDriverWait(driver, 20).until(
+            #     EC.visibility_of_element_located((AppiumBy.XPATH, self.add_button_dashboard_xpath))
+            # )
 
             # 1 Click Add Button
             with allure.step("1. Click Add button"):
@@ -98,11 +99,11 @@ class TestOnboarding:
                 if not smart_click(driver, "Farm Village Dropdown", self.farm_village_dropdown_xpath, "Farm Village"):
                     pytest.fail("Could not open Farm Village dropdown")
                         
-                    test_flow_steps.append({"step": "Open Farm Village Dropdown", "status": "Success"})
-
+                test_flow_steps.append({"step": "Open Farm Village Dropdown", "status": "Success"})
+                time.sleep(3)  # Wait for dropdown to open before selecting item
 
             with allure.step("4. Select specific Farm Village"):
-                #  time.sleep(10)  
+                 time.sleep(3)  
                  if not smart_click(driver, "Select Farm Village", self.farm_village_item_xpath, "Ankampalem"):
                     pytest.fail("Could not select farm village")
                         
@@ -212,12 +213,12 @@ class TestOnboarding:
                     EC.presence_of_element_located((AppiumBy.XPATH, self.add_farmer_phone_xpath))
                 )
                 farmer_phone_input.clear()
-                farmer_phone_input.send_keys("5432165142")
+                farmer_phone_input.send_keys("5681234567")
 
                 test_flow_steps.append({
                     "step": "Enter Farmer Phone",
                     "status": "Success",
-                    "value": "5432165142"
+                    "value": "5681234567"
                 })
 
             # 10 Submit Farmer
@@ -243,22 +244,40 @@ class TestOnboarding:
                     driver,
                     "select crop from dropdown (OCR)",
                     self.crop_name_xpath,   # still tried first (safe), then OCR
-                    "Bengal Gram",
+                    "Arecanut",
                     screenshot_path="screenshots/crop_dropdown.png",
                     force_ocr=True,              # <- key: skip scrolling/DOM, go to OCR
                     ocr_attempts=3,
                 ):
                     pytest.fail("Could not select the crop name via OCR.")
                 test_flow_steps.append({"step": "Click Crop Name item", "status": "Success"})
-            #17 select duration
-            with allure.step("17. Select Duration"):
+            # #17 select duration
+            # with allure.step("17. Select Duration"):
 
-                if not smart_click(driver, "Select Duration", self.short_duration_button_xpath, "Short"):
-                    pytest.fail("Could not select duration")
+            #     if not smart_click(driver, "Select Duration", self.short_duration_button_xpath, "Short"):
+            #         pytest.fail("Could not select duration")
 
-                test_flow_steps.append({"step": "Select Duration", "status": "Success"})
+            #     test_flow_steps.append({"step": "Select Duration", "status": "Success"})
+
+
+            #18 select transplanted date
+            with allure.step("17. Select Transplanted Date"):
+
+                if not smart_click(driver, "Transplanted Date", self.transplanted_date_xpath, "Transplanted"):
+                    pytest.fail("Could not open transplanted date calendar")
+
+                test_flow_steps.append({"step": "Select Transplanted Date", "status": "Success"})
+                     # select today's date
+
+            with allure.step("19. Calendar OK Button"):
+
+                if not smart_click(driver, "Calendar OK", self.calendar_ok_button_xpath, "OK"):
+                    pytest.fail("Could not click calendar OK button")
+
+                    test_flow_steps.append({"step": "Calendar OK Button", "status": "Success"})
 
             #18 select sowing date
+            
             with allure.step("18. Select Sowing Date"):
 
                 if not smart_click(driver, "Sowing Date", self.sowing_date_xpath, "Sowing Date"):

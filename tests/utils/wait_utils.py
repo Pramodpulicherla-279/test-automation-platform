@@ -1,3 +1,7 @@
+
+import os
+import time
+import allure
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -5,9 +9,12 @@ from appium.webdriver.common.appiumby import AppiumBy
 from utils.ocr_utils import click_element_by_ocr_text
 from selenium.common.exceptions import NoSuchElementException
 from appium.webdriver.common.appiumby import AppiumBy
-import allure
-# --- NEW IMPORTS for the modern W3C Actions API ---
 from selenium.webdriver.common.actions.action_builder import ActionBuilder
+
+
+def _console_log(msg: str) -> None:
+    # flush=True is important when output is piped (subprocess -> backend -> UI)
+    print(msg, flush=True)
 
 def find_and_click(driver, by, value, fallback_text=None, timeout=20):
     """
@@ -83,69 +90,198 @@ def find_and_click(driver, by, value, fallback_text=None, timeout=20):
 #                 print(f"OCR failed to find '{fallback_text}' on screen.")
 
 #         return None, False
-    
-def smart_find_element(driver, name, xpath, fallback_text=None, screenshot_path="screenshots/ocr_fallback.png"):
+
+def _xpath_literal(s: str) -> str:
+    """Return an XPath string literal that safely handles quotes."""
+    if s is None:
+        return "''"
+    if "'" not in s:
+        return f"'{s}'"
+    # concat('foo', "'", 'bar')
+    parts = s.split("'")
+    return "concat(" + ", \"'\", ".join([f"'{p}'" for p in parts]) + ")"
+
+def _swipe_vertical_w3c(driver, start_y_ratio=0.8, end_y_ratio=0.2, x_ratio=0.5, pause_s=0.05):
+    """Reliable vertical swipe using W3C actions (works in parallel / modern Appium)."""
+    size = driver.get_window_size()
+    start_x = int(size["width"] * x_ratio)
+    start_y = int(size["height"] * start_y_ratio)
+    end_y = int(size["height"] * end_y_ratio)
+
+    actions = ActionBuilder(driver)
+    finger = actions.pointer_action
+    finger.move_to_location(start_x, start_y)
+    finger.pointer_down()
+    finger.pause(pause_s)
+    finger.move_to_location(start_x, end_y)
+    finger.pointer_up()
+    actions.perform()
+
+def _escape_uiautomator_text(s: str) -> str:
+    """Escape for embedding inside UiAutomator Java string literals."""
+    return (s or "").replace("\\", "\\\\").replace('"', '\\"')
+
+def _android_scroll_into_view(driver, text: str):
     """
-    Find element with DOM text fallback before expensive OCR.
-    Strategy:
-    1. Precise XPath
-    2. DOM Text Search (Fast)
-    3. OCR (Slow Visual Fallback)
+    Uses Android UiScrollable to scroll a scrollable container until an item
+    with matching text/description is in view. Returns WebElement or None.
     """
-    # 1. Primary XPath Strategy
+    t = _escape_uiautomator_text(text)
+
+    # Try textContains first
+    ua_text = (
+        'new UiScrollable(new UiSelector().scrollable(true))'
+        f'.scrollIntoView(new UiSelector().textContains("{t}"));'
+    )
+    try:
+        el = driver.find_element(AppiumBy.ANDROID_UIAUTOMATOR, ua_text)
+        if el:
+            return el
+    except Exception:
+        pass
+
+    # Then descriptionContains (content-desc)
+    ua_desc = (
+        'new UiScrollable(new UiSelector().scrollable(true))'
+        f'.scrollIntoView(new UiSelector().descriptionContains("{t}"));'
+    )
+    try:
+        el = driver.find_element(AppiumBy.ANDROID_UIAUTOMATOR, ua_desc)
+        if el:
+            return el
+    except Exception:
+        pass
+
+    return None
+
+def smart_find_element(
+    driver,
+    name,
+    xpath,
+    fallback_text=None,
+    screenshot_path="screenshots/ocr_fallback.png",
+    max_swipes=6,
+    per_try_wait_s=1.5,
+    stop_if_no_change=True,
+    *,
+    force_ocr: bool = False,
+    enable_scroll: bool = True,
+    enable_dom_fallback: bool = True,
+    ocr_attempts: int = 2,
+    ocr_wait_s: float = 0.7,
+):
+    """
+    Find element with optional OCR-first mode.
+
+    If force_ocr=True:
+      - try primary xpath once
+      - then do OCR click attempts (no UiScrollable, no DOM/scroll loop)
+    """
+    # 1) Primary XPath Strategy (always try)
     try:
         element = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((AppiumBy.XPATH, xpath))
         )
+        _console_log(f"[FOUND] name='{name}' via XPATH")
         return element, False
-    except:
+    except TimeoutException:
         print(f"[{name}] Not found via Primary XPath.")
 
-    # 2. Secondary Strategy: DOM Text Search (Much faster than OCR)
+    # If user explicitly wants OCR, skip scroll/DOM strategies.
+    if force_ocr:
+        enable_scroll = False
+        enable_dom_fallback = False
+
+    # 2) Secondary Strategy (Android): UiScrollable (only if enabled)
+    if fallback_text and enable_scroll:
+        print(f"   -> Attempting Android UiScrollable scrollIntoView for {fallback_text!r}...")
+        el = _android_scroll_into_view(driver, fallback_text)
+        if el:
+            print(f"   -> Found {fallback_text!r} via UiScrollable! Skipping OCR.")
+            return el, False
+
+    # 3) Secondary Strategy: DOM Text Search (only if enabled)
+    if fallback_text and enable_dom_fallback:
+        literal = _xpath_literal(fallback_text)
+        text_xpath = f"//*[contains(@text, {literal}) or contains(@content-desc, {literal})]"
+        print(f"   -> Attempting DOM fallback for text {fallback_text!r}...")
+
+        last_source = None
+        for i in range(max_swipes + 1):
+            try:
+                element = WebDriverWait(driver, per_try_wait_s).until(
+                    EC.presence_of_element_located((AppiumBy.XPATH, text_xpath))
+                )
+                print(f"   -> Found {fallback_text!r} via DOM search! Skipping OCR.")
+                return element, False
+            except TimeoutException:
+                if not enable_scroll or i >= max_swipes:
+                    break
+
+                if stop_if_no_change:
+                    try:
+                        source = driver.page_source
+                        if last_source is not None and source == last_source:
+                            print("   -> Page source did not change after swipe; stopping DOM scroll search.")
+                            break
+                        last_source = source
+                    except Exception:
+                        pass
+
+                print(f"   -> Not visible yet (attempt {i+1}/{max_swipes}). Scrolling down...")
+                _swipe_vertical_w3c(driver)
+
+    # 4) OCR Strategy (Last Resort or Forced)
     if fallback_text:
+        print("   -> Initiating OCR fallback (this may take time)...")
         try:
-            print(f"   -> Attempting DOM fallback for text '{fallback_text}'...")
-            # Search for any element containing the text
-            text_xpath = f"//*[contains(@text, '{fallback_text}') or contains(@content-desc, '{fallback_text}')]"
-            
-            # Simple scroll attempts to find the text in DOM
-            for i in range(3): 
-                try:
-                    element = WebDriverWait(driver, 1).until(
-                        EC.presence_of_element_located((AppiumBy.XPATH, text_xpath))
-                    )
-                    print(f"   -> Found '{fallback_text}' via DOM search! Skipping OCR.")
-                    return element, False
-                except:
-                    # Scroll down a bit and retry
-                    if i < 2:
-                        print("   -> Text not visible, scrolling down...")
-                        size = driver.get_window_size()
-                        driver.swipe(size['width']//2, int(size['height']*0.8), size['width']//2, int(size['height']*0.2), 400)
-        except Exception as e:
-            print(f"   -> DOM text search failed: {e}")
+            os.makedirs(os.path.dirname(screenshot_path) or ".", exist_ok=True)
+        except Exception:
+            pass
 
-    # 3. OCR Strategy (Last Resort - Slow)
-    print("   -> Initiating OCR fallback (this may take time)...")
-    driver.save_screenshot(screenshot_path)
+        for attempt in range(1, max(1, int(ocr_attempts)) + 1):
+            try:
+                driver.save_screenshot(screenshot_path)
+            except Exception:
+                pass
 
-    if fallback_text:
-        found = click_element_by_ocr_text(driver, fallback_text, screenshot_path)
-        if found:
-            print(f"OCR clicked on '{fallback_text}' successfully.")
-            return None, True 
-        else:
-            print(f"OCR failed to find '{fallback_text}' on screen.")
+            found = click_element_by_ocr_text(driver, fallback_text, screenshot_path)
+            if found:
+                print(f"OCR clicked on '{fallback_text}' successfully.")
+                return None, True
+
+            print(f"OCR did not find '{fallback_text}' (attempt {attempt}/{ocr_attempts}).")
+            time.sleep(ocr_wait_s)
 
     return None, False
 
-def smart_click(driver, name, xpath, fallback_text=None, screenshot_path="screenshots/ocr_fallback.png"):
+def smart_click(
+    driver,
+    name,
+    xpath,
+    fallback_text=None,
+    screenshot_path="screenshots/ocr_fallback.png",
+    *,
+    force_ocr: bool = False,
+    enable_scroll: bool = True,
+    enable_dom_fallback: bool = True,
+    ocr_attempts: int = 2,
+):
     """
     Wrapper around smart_find_element to perform a click.
-    Handles the case where smart_find_element returns an element (which needs clicking)
-    or where it already clicked via OCR.
+    If OCR was used, returns True.
     """
-    element, used_ocr = smart_find_element(driver, name, xpath, fallback_text, screenshot_path)
+    element, used_ocr = smart_find_element(
+        driver,
+        name,
+        xpath,
+        fallback_text=fallback_text,
+        screenshot_path=screenshot_path,
+        force_ocr=force_ocr,
+        enable_scroll=enable_scroll,
+        enable_dom_fallback=enable_dom_fallback,
+        ocr_attempts=ocr_attempts,
+    )
     if element:
         try:
             element.click()

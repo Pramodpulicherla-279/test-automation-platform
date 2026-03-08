@@ -8,6 +8,10 @@
         "status": "Success"
     },
     {
+        "step": "Open Farm Village Dropdown",
+        "status": "Success"
+    },
+    {
         "step": "Select specific Farm Village",
         "status": "Success"
     },
@@ -48,7 +52,7 @@
     {
         "step": "Enter Farmer Phone",
         "status": "Success",
-        "value": "5432165142"
+        "value": "5681234567"
     },
     {
         "step": "Submit Farmer",
@@ -56,6 +60,22 @@
     },
     {
         "step": "Add Crop",
+        "status": "Success"
+    },
+    {
+        "step": "Click Crop Name item",
+        "status": "Success"
+    },
+    {
+        "step": "Select Transplanted Date",
+        "status": "Success"
+    },
+    {
+        "step": "Select Sowing Date",
+        "status": "Success"
+    },
+    {
+        "step": "Android Back",
         "status": "Success"
     }
 ]
