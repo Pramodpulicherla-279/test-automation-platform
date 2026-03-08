@@ -9,21 +9,25 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 import uvicorn
 from pydantic import BaseModel
+from pathlib import Path
 import subprocess
+import json
 import socket
 import asyncio
 from gdrive_loader import download_apk, extract_app_icon, get_apk_info
 from typing import List, Optional, Dict
 from starlette.websockets import WebSocketDisconnect
 
+
 # Add project root to sys.path so we can import tests.*
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))  # root: f:\projects\test-automation-platform
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # root: f:\projects\test-automation-platform
 if BASE_DIR not in sys.path:
     sys.path.append(BASE_DIR)
 
 from tests.test_runner import run_tests_and_get_suggestions, stop_current_tests, generate_report
 # from gdrive_loader import download_apk, 
 
+print("server is running...")
 # --- NEW: Cleanup Handler (Lifespan) ---
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -74,11 +78,11 @@ app.add_middleware(
 )
 
 # Use absolute path and auto-create the dir
-STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
+STATIC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
 os.makedirs(STATIC_DIR, exist_ok=True)
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
-APKS_DIR = os.path.join(os.path.dirname(__file__), "temp_apks")
+APKS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "temp_apks")
 os.makedirs(APKS_DIR, exist_ok=True)
 
 # Serve generated Allure report (will be created by test_runner)
@@ -94,6 +98,57 @@ _appium_proc: subprocess.Popen | None = None
 APPIUM_PORT = 4723
 
 ALLURE_CMD = r"C:\Users\Pramo\scoop\shims\allure"
+
+# Base screenshots directory created by pytest conftest.py
+UI_SCREENSHOTS_BASE = Path(__file__).resolve().parents[1] / "artifacts" / "ui_screenshots"
+UI_SCREENSHOTS_BASE.mkdir(parents=True, exist_ok=True)
+
+# Serve images so React can load them via URL:
+# GET http://localhost:8000/ui-screenshots/<run_id>/<...>/<file>.png
+app.mount("/ui-screenshots", StaticFiles(directory=str(UI_SCREENSHOTS_BASE)), name="ui-screenshots")
+
+
+class AnalyzeReq(BaseModel):
+    run_id: str | None = None  # optional; if not sent we auto-pick latest
+
+
+def _latest_run_id() -> str:
+    runs = [p for p in UI_SCREENSHOTS_BASE.iterdir() if p.is_dir()]
+    if not runs:
+        raise HTTPException(404, detail="No UI screenshots found. Run tests and capture screenshots first.")
+    runs.sort(key=lambda p: p.stat().st_mtime, reverse=True)
+    return runs[0].name
+
+
+@app.post("/api/ui-screenshots/analyze")
+def analyze_ui_screenshots(req: AnalyzeReq):
+    print("UI parser api called")
+    run_id = req.run_id or _latest_run_id()
+    print(run_id)
+    run_dir = UI_SCREENSHOTS_BASE / run_id
+    if not run_dir.exists():
+        raise HTTPException(404, detail=f"Run screenshots folder not found: {run_id}")
+
+    validator = Path(__file__).resolve().parents[1] / "ui-parser" / "ui_screenshot_validator.py"
+    if not validator.exists():
+        raise HTTPException(500, detail=f"Validator script not found: {validator}")
+
+    # Call validator as subprocess to avoid import issues (folder name ui-parser has a hyphen)
+    cmd = [sys.executable, str(validator), "--root-dir", str(run_dir)]
+    proc = subprocess.run(cmd, capture_output=True, text=True)
+
+    if proc.returncode != 0:
+        raise HTTPException(500, detail=f"UI validator failed: {proc.stderr.strip() or proc.stdout.strip()}")
+
+    payload = json.loads(proc.stdout or "{}")
+    results = payload.get("results", [])
+
+    # Add screenshot_url expected by your React component
+    for r in results:
+        rel = r.get("relative_path")
+        r["screenshot_url"] = f"/ui-screenshots/{run_id}/{rel}" if rel else None
+
+    return {"run_id": run_id, "results": results}
 
 def _start_allure_server() -> str:
     """
@@ -291,66 +346,30 @@ async def start_test(request: TestRequest, background_tasks: BackgroundTasks):
     global DOWNLOAD_PROCESS_OBJ
     
     try:
-        # Tell frontend: starting download
         await manager.broadcast({
             "type": "LOG",
             "payload": {"message": "Starting APK download...", "status": "INFO"}
         })
 
-        script_path = os.path.join(os.path.dirname(__file__), "gdrive_loader.py")
-        apk_path = None
+        # Run download directly in a thread pool — NO subprocess.
+        # Subprocess was failing because sys.executable inside uvicorn pointed to a
+        # different Python env where packages weren't installed.
+        # Since download_apk is already imported at the top of this file,
+        # calling it directly always uses the correct Python environment.
+        loop = asyncio.get_event_loop()
 
-        # --- FIX: Force UTF-8 encoding for the subprocess ---
-        # This prevents 'charmap' codec errors when printing emojis on Windows
-        env = os.environ.copy()
-        env["PYTHONIOENCODING"] = "utf-8"
+        def progress_callback(msg):
+            clean = msg.replace('\r', '').strip()
+            if clean:
+                asyncio.run_coroutine_threadsafe(
+                    manager.broadcast({"type": "LOG", "payload": {"message": clean, "status": "PROGRESS"}}),
+                    loop
+                )
 
-        # 1. Spawn the download subprocess
-        # Using -u for unbuffered output to get real-time progress
-        DOWNLOAD_PROCESS_OBJ = await asyncio.create_subprocess_exec(
-            sys.executable, "-u", script_path, request.url,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-            env=env, 
+        apk_path = await loop.run_in_executor(
+            None, lambda: download_apk(request.url, progress_callback)
         )
 
-        # 2. Read the output stream
-        async for line in DOWNLOAD_PROCESS_OBJ.stdout:
-            decoded_line = line.decode('utf-8').strip()
-            
-            if decoded_line.startswith("PROGRESS:"):
-                # Broadcast progress to UI
-                raw_msg = decoded_line.replace("PROGRESS:", "")
-                await manager.broadcast({
-                    "type": "LOG",
-                    "payload": {"message": raw_msg, "status": "PROGRESS"}
-                })
-            elif decoded_line.startswith("RESULT:"):
-                # Capture the final file path
-                apk_path = decoded_line.replace("RESULT:", "").strip()
-            else:
-                # Forward other logs
-                if decoded_line:
-                    await manager.broadcast({
-                        "type": "LOG",
-                        "payload": {"message": decoded_line, "status": "INFO"}
-                    })
-
-        # Wait for finish
-        await DOWNLOAD_PROCESS_OBJ.wait()
-        
-         # 3. Check for failures
-        if DOWNLOAD_PROCESS_OBJ.returncode != 0:
-             # Read stderr to see why it crashed
-            stderr_data = await DOWNLOAD_PROCESS_OBJ.stderr.read()
-            error_message = stderr_data.decode('utf-8').strip() or "Unknown error (process killed?)"
-            print(f"Subprocess Error: {error_message}")
-            raise Exception(f"Script Error: {error_message}")
-
-        if not apk_path:
-            raise Exception("Download script finished but returned no path.")
-            
-        # Reset global ref
         DOWNLOAD_PROCESS_OBJ = None
 
         # 3. Extract Icon immediately after download
