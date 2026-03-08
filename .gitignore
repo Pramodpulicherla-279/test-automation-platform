@@ -39,3 +39,7 @@ venv/
 .venv/
 env/
 .pytest_cache/
+screenshots/
+reports/
+artifacts/
+*.png

@@ -292,7 +292,7 @@ class TestOnboarding:
                     driver,
                     "select crop from dropdown (OCR)",
                     self.crop_name_item_xpath,   # still tried first (safe), then OCR
-                    "Areca",
+                    "Apple",
                     screenshot_path="screenshots/crop_dropdown.png",
                     force_ocr=True,              # <- key: skip scrolling/DOM, go to OCR
                     ocr_attempts=3,
