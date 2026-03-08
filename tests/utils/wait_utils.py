@@ -17,6 +17,22 @@ def _console_log(msg: str) -> None:
     # flush=True is important when output is piped (subprocess -> backend -> UI)
     print(msg, flush=True)
 
+def _auto_ui_shot(driver, label: str) -> None:
+    """
+    Optional automatic screenshot capture.
+    Enable with: AUTO_UI_SHOTS=1
+    Uses driver.ui_shot(label) if present (bound in conftest.py).
+    """
+    if os.getenv("AUTO_UI_SHOTS") != "1":
+        return
+    fn = getattr(driver, "ui_shot", None)
+    if callable(fn):
+        try:
+            fn(label)
+        except Exception:
+            # Never break test flow because screenshots failed
+            pass
+
 def find_and_click(driver, by, value, fallback_text=None, timeout=20):
     """
     Tries to find and click an element by its primary locator.
@@ -155,6 +171,16 @@ def _android_scroll_into_view(driver, text: str):
 
     return None
 
+def _ocr_screenshot_path(driver, name: str, attempt: int) -> str:
+    """
+    Prefer saving OCR screenshots into the same per-test ui_screenshots folder.
+    Falls back to local screenshots/ if driver.ui_shot_path is not available.
+    """
+    fn = getattr(driver, "ui_shot_path", None)
+    if callable(fn):
+        return fn(f"ocr__{name}__attempt_{attempt}")
+    return "screenshots/ocr_fallback.png"
+
 def smart_find_element(
     driver,
     name,
@@ -235,18 +261,26 @@ def smart_find_element(
     # 4) OCR Strategy (Last Resort or Forced)
     if fallback_text:
         print("   -> Initiating OCR fallback (this may take time)...")
-        try:
-            os.makedirs(os.path.dirname(screenshot_path) or ".", exist_ok=True)
-        except Exception:
-            pass
 
         for attempt in range(1, max(1, int(ocr_attempts)) + 1):
+            # IMPORTANT: put OCR screenshot into the same per-test folder (when available)
+            shot_path = _ocr_screenshot_path(driver, name, attempt)
+
             try:
-                driver.save_screenshot(screenshot_path)
+                os.makedirs(os.path.dirname(shot_path) or ".", exist_ok=True)
             except Exception:
                 pass
 
-            found = click_element_by_ocr_text(driver, fallback_text, screenshot_path)
+            try:
+                # Use Appium-native screenshot to file
+                driver.get_screenshot_as_file(shot_path)
+            except Exception:
+                try:
+                    driver.save_screenshot(shot_path)
+                except Exception:
+                    pass
+
+            found = click_element_by_ocr_text(driver, fallback_text, shot_path)
             if found:
                 print(f"OCR clicked on '{fallback_text}' successfully.")
                 return None, True
@@ -270,8 +304,13 @@ def smart_click(
 ):
     """
     Wrapper around smart_find_element to perform a click.
-    If OCR was used, returns True.
+    AUTO screenshots:
+      - before click attempt
+      - after success
+      - after failure
     """
+    _auto_ui_shot(driver, f"before__click__{name}")
+
     element, used_ocr = smart_find_element(
         driver,
         name,
@@ -283,14 +322,24 @@ def smart_click(
         enable_dom_fallback=enable_dom_fallback,
         ocr_attempts=ocr_attempts,
     )
+
     if element:
         try:
             element.click()
+            _auto_ui_shot(driver, f"after__click__{name}__ok")
             return True
         except Exception as e:
             print(f"Failed to click element '{name}': {e}")
+            _auto_ui_shot(driver, f"after__click__{name}__exc")
             return False
-    return used_ocr
+
+    # If OCR clicked successfully, treat as success and still capture an "after"
+    if used_ocr:
+        _auto_ui_shot(driver, f"after__click__{name}__ocr_ok")
+        return True
+
+    _auto_ui_shot(driver, f"after__click__{name}__not_found")
+    return False
 
 def scroll_and_click_by_text_robust(driver, text_to_find, max_swipes=5):
     """

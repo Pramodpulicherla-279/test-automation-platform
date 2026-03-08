@@ -22,33 +22,5 @@
     {
         "step": "Click Inter Crop Name input",
         "status": "Success"
-    },
-    {
-        "step": "Click Crop Name item in intercrop",
-        "status": "Success"
-    },
-    {
-        "step": "Click Intercrop Sowing Date input",
-        "status": "Success"
-    },
-    {
-        "step": "Click OK button on calendar",
-        "status": "Success"
-    },
-    {
-        "step": "Click Sowing Date input",
-        "status": "Success"
-    },
-    {
-        "step": "Click OK button on calendar",
-        "status": "Success"
-    },
-    {
-        "step": "Click Submit Crop button",
-        "status": "Success"
-    },
-    {
-        "step": "Android back",
-        "status": "Success"
     }
 ]
