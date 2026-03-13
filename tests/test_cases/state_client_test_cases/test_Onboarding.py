@@ -213,12 +213,12 @@ class TestOnboarding:
                     EC.presence_of_element_located((AppiumBy.XPATH, self.add_farmer_phone_xpath))
                 )
                 farmer_phone_input.clear()
-                farmer_phone_input.send_keys("5681234567")
+                farmer_phone_input.send_keys("3412342145")
 
                 test_flow_steps.append({
                     "step": "Enter Farmer Phone",
                     "status": "Success",
-                    "value": "5681234567"
+                    "value": "3412342145"
                 })
 
             # 10 Submit Farmer

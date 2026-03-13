@@ -511,6 +511,18 @@ function App() {
       if (data.app_icon) setAppIcon(data.app_icon);
       if (data.app_name) setAppTitle(data.app_name);
 
+      if(data.app_variant) {
+        const key = Object.keys(APP_VARIANTS).find(k => APP_VARIANTS[k].id === data.app_variant);
+        if (key && key !== selectedAppKey) {
+          setSelectedAppKey(key);
+          handleIncomingData({
+            type: 'LOG',
+            payload: { message: `Auto-Detected app variant: ${APP_VARIANTS[key].label}`, status: 'INFO' }
+          
+          })
+        }
+      }
+
       if (!response.ok) throw new Error(data.detail || 'Failed to start test');
 
       handleIncomingData({

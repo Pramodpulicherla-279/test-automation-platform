@@ -57,25 +57,5 @@
     {
         "step": "Submit Farmer",
         "status": "Success"
-    },
-    {
-        "step": "Add Crop",
-        "status": "Success"
-    },
-    {
-        "step": "Click Crop Name item",
-        "status": "Success"
-    },
-    {
-        "step": "Select Transplanted Date",
-        "status": "Success"
-    },
-    {
-        "step": "Select Sowing Date",
-        "status": "Success"
-    },
-    {
-        "step": "Android Back",
-        "status": "Success"
     }
 ]

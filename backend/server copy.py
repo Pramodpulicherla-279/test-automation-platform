@@ -1,6 +1,7 @@
 # server.py
 import os
 import sys
+sys.dont_write_bytecode = True
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, WebSocket, BackgroundTasks, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -8,14 +9,27 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 import uvicorn
 from pydantic import BaseModel
+from pathlib import Path
 import subprocess
+import json
 import socket
 import asyncio
+from fastapi import Request
 import os
 import sys
 import requests
 import re
 from dotenv import load_dotenv
+
+# ✅ NEW: Added csv and glob imports for CSV report generation
+import csv
+import glob
+
+from gdrive_loader import download_apk, extract_app_icon, get_apk_info
+from typing import List, Optional, Dict
+from starlette.websockets import WebSocketDisconnect
+
+LAST_SLACK_EVENT_TS = None
 
 # Load environment variables from .env
 load_dotenv()
@@ -23,17 +37,16 @@ load_dotenv()
 SLACK_BOT_TOKEN = os.getenv("SLACK_BOT_TOKEN")
 
 print("Slack Token Loaded:", SLACK_BOT_TOKEN)
-from gdrive_loader import download_apk, extract_app_icon, get_apk_info
-from typing import List, Optional, Dict
-from starlette.websockets import WebSocketDisconnect
+
 
 # Add project root to sys.path so we can import tests.*
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))  # root: f:\projects\test-automation-platform
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if BASE_DIR not in sys.path:
     sys.path.append(BASE_DIR)
 
 from tests.test_runner import run_tests_and_get_suggestions, stop_current_tests, generate_report
-# from gdrive_loader import download_apk, 
+
+print("server is running...")
 # ---------------- APP VARIANT CONFIG ----------------
 
 PACKAGE_VARIANT_MAP = {
@@ -63,16 +76,113 @@ APP_VARIANTS = {
         {"name": "Onboarding", "path": "tests/test_cases/state_client_test_cases/test_Onboarding.py"},
     ],
 }
-# --- NEW: Cleanup Handler (Lifespan) ---
+
+
+# ✅ NEW: Helper — fetch Slack user's real name from their user ID
+def get_slack_user_name(user_id: str) -> str:
+    """Fetch a Slack user's real name using their user ID."""
+    try:
+        resp = requests.get(
+            "https://slack.com/api/users.info",
+            headers={"Authorization": f"Bearer {SLACK_BOT_TOKEN}"},
+            params={"user": user_id},
+        )
+        data = resp.json()
+        if data.get("ok"):
+            return data["user"]["real_name"]
+    except Exception as e:
+        print(f"[Slack] Could not fetch user name: {e}")
+    return "Unknown Developer"
+
+
+# ✅ NEW: Generate CSV from allure-results JSON files
+def generate_csv_report(output_path: str) -> str:
+    """Parse Allure result JSONs and write a CSV summary."""
+    results_dir = os.path.join(BASE_DIR, "allure-results")
+    rows = []
+
+    for json_file in glob.glob(os.path.join(results_dir, "*-result.json")):
+        try:
+            with open(json_file, "r", encoding="utf-8") as f:
+                data = json.load(f)
+
+            rows.append({
+                "Test Name": data.get("name", "Unknown"),
+                "Status": data.get("status", "Unknown").upper(),
+                "Duration (s)": round((data.get("stop", 0) - data.get("start", 0)) / 1000, 2),
+                "Suite": data.get("suiteName", "N/A"),
+                "Message": data.get("statusDetails", {}).get("message", "").replace("\n", " ")[:200],
+            })
+        except Exception as e:
+            print(f"[CSV] Skipping {json_file}: {e}")
+
+    # Write CSV
+    with open(output_path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=["Test Name", "Status", "Duration (s)", "Suite", "Message"])
+        writer.writeheader()
+        writer.writerows(rows)
+
+    print(f"[CSV] Report written: {output_path} ({len(rows)} tests)")
+    return output_path
+
+
+# ✅ NEW: Send CSV file to Slack with a summary message
+def send_slack_report(channel_id: str, developer_name: str, app_name: str, apk_version: str, csv_path: str):
+    """Upload CSV report to Slack with a summary message."""
+    if not SLACK_BOT_TOKEN:
+        print("[Slack] No bot token — cannot send report.")
+        return
+
+    # Count pass/fail from CSV
+    passed = failed = 0
+    try:
+        with open(csv_path, "r", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                if row["Status"] == "PASSED":
+                    passed += 1
+                else:
+                    failed += 1
+    except Exception as e:
+        print(f"[Slack] Could not read CSV for summary: {e}")
+
+    summary = (
+        f"✅ *Automation Report Ready!*\n"
+        f"👤 *Developer:* {developer_name}\n"
+        f"📱 *App:* {app_name}\n"
+        f"🔖 *Version:* {apk_version}\n"
+        f"🟢 Passed: {passed}  |  🔴 Failed: {failed}"
+    )
+
+    try:
+        with open(csv_path, "rb") as f:
+            resp = requests.post(
+                "https://slack.com/api/files.upload",
+                headers={"Authorization": f"Bearer {SLACK_BOT_TOKEN}"},
+                data={
+                    "channels": channel_id,
+                    "initial_comment": summary,
+                    "filename": f"{app_name}_v{apk_version}_report.csv",
+                    "title": f"Allure Report — {app_name} v{apk_version}",
+                },
+                files={"file": f},
+            )
+        data = resp.json()
+        if not data.get("ok"):
+            print(f"[Slack] File upload failed: {data.get('error')}")
+        else:
+            print("[Slack] CSV report sent to Slack successfully!")
+    except Exception as e:
+        print(f"[Slack] Exception uploading file: {e}")
+
+
+# --- Cleanup Handler (Lifespan) ---
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Run on startup
     yield
-    # Run on shutdown (Ctrl+C)
     print("Shutting down: Cleaning up child processes...")
     global _appium_proc, _allure_proc
     
-    # Kill Appium
     if _appium_proc is not None:
         try:
             print("Killing Appium...")
@@ -84,7 +194,6 @@ async def lifespan(app: FastAPI):
         except Exception as e:
             print(f"Error killing Appium: {e}")
 
-    # Kill Allure
     if _allure_proc is not None:
         try:
             print("Killing Allure...")
@@ -98,29 +207,24 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-# app = FastAPI()
-
-# CORS: allow your React dev server to call this API
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
         "http://127.0.0.1:5173",
-    ],  # adjust if your frontend runs on a different port
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Use absolute path and auto-create the dir
-STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
+STATIC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
 os.makedirs(STATIC_DIR, exist_ok=True)
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
-APKS_DIR = os.path.join(os.path.dirname(__file__), "temp_apks")
+APKS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "temp_apks")
 os.makedirs(APKS_DIR, exist_ok=True)
 
-# Serve generated Allure report (will be created by test_runner)
 ALLURE_REPORT_DIR = os.path.join(BASE_DIR, "allure-report")
 os.makedirs(ALLURE_REPORT_DIR, exist_ok=True)
 app.mount("/allure-report", StaticFiles(directory=ALLURE_REPORT_DIR, html=True), name="allure-report")
@@ -128,24 +232,63 @@ app.mount("/allure-report", StaticFiles(directory=ALLURE_REPORT_DIR, html=True),
 _allure_proc: subprocess.Popen | None = None
 _allure_port: int | None = None
 
-# --- NEW: Appium Globals ---
 _appium_proc: subprocess.Popen | None = None
 APPIUM_PORT = 4723
 
 ALLURE_CMD = r"C:\Users\Pramo\scoop\shims\allure"
 
+UI_SCREENSHOTS_BASE = Path(__file__).resolve().parents[1] / "artifacts" / "ui_screenshots"
+UI_SCREENSHOTS_BASE.mkdir(parents=True, exist_ok=True)
+
+app.mount("/ui-screenshots", StaticFiles(directory=str(UI_SCREENSHOTS_BASE)), name="ui-screenshots")
+
+
+class AnalyzeReq(BaseModel):
+    run_id: str | None = None
+
+
+def _latest_run_id() -> str:
+    runs = [p for p in UI_SCREENSHOTS_BASE.iterdir() if p.is_dir()]
+    if not runs:
+        raise HTTPException(404, detail="No UI screenshots found. Run tests and capture screenshots first.")
+    runs.sort(key=lambda p: p.stat().st_mtime, reverse=True)
+    return runs[0].name
+
+
+@app.post("/api/ui-screenshots/analyze")
+def analyze_ui_screenshots(req: AnalyzeReq):
+    print("UI parser api called")
+    run_id = req.run_id or _latest_run_id()
+    print(run_id)
+    run_dir = UI_SCREENSHOTS_BASE / run_id
+    if not run_dir.exists():
+        raise HTTPException(404, detail=f"Run screenshots folder not found: {run_id}")
+
+    validator = Path(__file__).resolve().parents[1] / "ui-parser" / "ui_screenshot_validator.py"
+    if not validator.exists():
+        raise HTTPException(500, detail=f"Validator script not found: {validator}")
+
+    cmd = [sys.executable, str(validator), "--root-dir", str(run_dir)]
+    proc = subprocess.run(cmd, capture_output=True, text=True)
+
+    if proc.returncode != 0:
+        raise HTTPException(500, detail=f"UI validator failed: {proc.stderr.strip() or proc.stdout.strip()}")
+
+    payload = json.loads(proc.stdout or "{}")
+    results = payload.get("results", [])
+
+    for r in results:
+        rel = r.get("relative_path")
+        r["screenshot_url"] = f"/ui-screenshots/{run_id}/{rel}" if rel else None
+
+    return {"run_id": run_id, "results": results}
+
 def _start_allure_server() -> str:
-    """
-    Starts (or restarts) `allure open` server for the generated allure-report folder.
-    Returns the URL the frontend should open.
-    Requires: Allure CLI installed and in PATH.
-    """
     global _allure_proc, _allure_port
 
     if not os.path.isdir(ALLURE_REPORT_DIR):
         raise HTTPException(status_code=404, detail=f"Allure report dir not found: {ALLURE_REPORT_DIR}")
 
-    # Kill previous server if running
     if _allure_proc is not None and _allure_proc.poll() is None:
         try:
             _allure_proc.terminate()
@@ -155,8 +298,6 @@ def _start_allure_server() -> str:
 
     _allure_port = _pick_free_port()
 
-    # Start Allure server
-    # (Allure CLI: `allure open -h <host> -p <port> <report_dir>`)
     _allure_proc = subprocess.Popen(
         ["allure", "open", "-h", "127.0.0.1", "-p", str(_allure_port), ALLURE_REPORT_DIR],
         cwd=BASE_DIR,
@@ -173,16 +314,15 @@ class RunCompleteEvent(BaseModel):
 
 class ExistingTestRequest(BaseModel):
     apk_name: str
-    tests_to_run: Optional[List[Dict[str, str]]] = None  # Added field
+    tests_to_run: Optional[List[Dict[str, str]]] = None
 
 class LogMessage(BaseModel):
     message: str
     status: str = "INFO"
 
-# --- Globals to manage child processes ---
-DOWNLOAD_PROCESS_OBJ = None  # Holds the asyncio Process object
+DOWNLOAD_PROCESS_OBJ = None
 
-# 1. Connection Manager for WebSockets
+
 class ConnectionManager:
     def __init__(self):
         self.active_connections: list[WebSocket] = []
@@ -201,7 +341,6 @@ class ConnectionManager:
                 pass
 
     async def broadcast(self, message: dict):
-        # Send concurrently + drop dead sockets (prevents one bad client from killing logs)
         async with self._lock:
             connections = list(self.active_connections)
 
@@ -217,20 +356,18 @@ class ConnectionManager:
 
         results = await asyncio.gather(*(_safe_send(ws) for ws in connections), return_exceptions=True)
 
-        # Remove failed connections
         for ws, ok in zip(connections, results):
             if ok is not True:
                 await self.disconnect(ws)
 
 class TestRequest(BaseModel):
     url: str
-    tests_to_run: Optional[List[Dict[str, str]]] = None # Added field
+    tests_to_run: Optional[List[Dict[str, str]]] = None
 
 manager = ConnectionManager()
 
 @app.post("/api/run-complete")
 async def run_complete(event: RunCompleteEvent):
-    # Push an explicit event so frontend can react
     await manager.broadcast({
         "type": "RUN_COMPLETE",
         "payload": {"report_url": event.report_url}
@@ -244,9 +381,6 @@ def _pick_free_port() -> int:
 
 @app.post("/api/allure/start")
 async def allure_start():
-    """
-    Start Allure server (allure open) and return the URL.
-    """
     port = _pick_free_port()
     subprocess.Popen(
         [ALLURE_CMD, "open", "-h", "127.0.0.1", "-p", str(port), ALLURE_REPORT_DIR],
@@ -260,9 +394,6 @@ async def allure_start():
 
 @app.get("/device-status")
 async def device_status():
-    """
-    Returns whether at least one physical Android device is connected via ADB.
-    """
     try:
         result = subprocess.run(
             ["adb", "devices"],
@@ -270,20 +401,17 @@ async def device_status():
             text=True,
             timeout=5,
         )
-        lines = result.stdout.strip().splitlines()[1:]  # skip header
+        lines = result.stdout.strip().splitlines()[1:]
         connected = any("\tdevice" in line for line in lines)
         return {"connected": connected}
     except Exception:
-        # If adb is not installed or any error occurs, treat as no device
         return {"connected": False}
 
-# 2. WebSocket Endpoint (Frontend connects here)
 @app.websocket("/ws/test-status")
 async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
     try:
         while True:
-            # Most frontends never send messages; this just keeps the socket open
             await websocket.receive_text()
     except WebSocketDisconnect:
         await manager.disconnect(websocket)
@@ -291,14 +419,11 @@ async def websocket_endpoint(websocket: WebSocket):
         await manager.disconnect(websocket)
 
 def _broadcast_async(message: dict) -> None:
-    # Fire-and-forget broadcast so HTTP endpoints return immediately
     try:
         asyncio.create_task(manager.broadcast(message))
     except RuntimeError:
-        # If no running loop (rare), just skip
         pass
 
-# 3. The "Loopback" Endpoint (Pytest calls this)
 @app.post("/api/log-step")
 async def log_step(msg: LogMessage):
     _broadcast_async({
@@ -307,7 +432,6 @@ async def log_step(msg: LogMessage):
     })
     return {"status": "ok"}
 
-# 4. The "Profiler" Endpoint (Sidecar calls this)
 @app.post("/api/metric")
 async def log_metric(data: dict):
     _broadcast_async({"type": "METRIC", "payload": data})
@@ -326,11 +450,11 @@ async def module_status(data: dict):
     return {"status": "ok"}
 
 @app.post("/start-test")
-# @app.post("/start-test")
 async def start_test(request: TestRequest, background_tasks: BackgroundTasks):
-    global DOWNLOAD_PROCESS_OBJ
 
-    # 🔴 PREVENT MULTIPLE DOWNLOADS
+    global DOWNLOAD_PROCESS_OBJ
+    global _appium_proc
+
     if DOWNLOAD_PROCESS_OBJ is not None:
         await manager.broadcast({
             "type": "LOG",
@@ -339,163 +463,104 @@ async def start_test(request: TestRequest, background_tasks: BackgroundTasks):
                 "status": "INFO"
             }
         })
-        return {"status": "ignored", "message": "Download already in progress"}
+        return {
+            "status": "ignored",
+            "message": "A download/test is already running."
+        }
+
+    if _appium_proc is None or _appium_proc.poll() is not None:
+        await manager.broadcast({
+            "type": "LOG",
+            "payload": {"message": "Starting Appium server...", "status": "INFO"}
+        })
+
+        _appium_proc = subprocess.Popen(
+            ["appium", "-p", str(APPIUM_PORT)],
+            shell=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        )
+
+        await asyncio.sleep(5)
 
     try:
-        # Start Appium automatically if not running
-        global _appium_proc
-
-        if _appium_proc is None or _appium_proc.poll() is not None:
-            print("Starting Appium Server...")
-
-            await manager.broadcast({
-                "type": "LOG",
-                "payload": {
-                    "message": "Starting Appium Server...",
-                    "status": "INFO"
-                }
-            })
-
-            _appium_proc = subprocess.Popen(
-                ["appium", "-p", str(APPIUM_PORT)],
-                shell=True,
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL
-            )
-        # Tell frontend: starting download
         await manager.broadcast({
             "type": "LOG",
             "payload": {"message": "Starting APK download...", "status": "INFO"}
         })
-        script_path = os.path.join(os.path.dirname(__file__), "gdrive_loader.py")
-        apk_path = None
 
-        # --- FIX: Force UTF-8 encoding for the subprocess ---
-        # This prevents 'charmap' codec errors when printing emojis on Windows
-        env = os.environ.copy()
-        env["PYTHONIOENCODING"] = "utf-8"
+        loop = asyncio.get_event_loop()
 
-        # 1. Spawn the download subprocess
-        # Using -u for unbuffered output to get real-time progress
-        DOWNLOAD_PROCESS_OBJ = await asyncio.create_subprocess_exec(
-            sys.executable, "-u", script_path, request.url,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-            env=env, 
+        def progress_callback(msg):
+            clean = msg.replace('\r', '').strip()
+            if clean:
+                asyncio.run_coroutine_threadsafe(
+                    manager.broadcast({
+                        "type": "LOG",
+                        "payload": {"message": clean, "status": "PROGRESS"}
+                    }),
+                    loop
+                )
+
+        apk_path = await loop.run_in_executor(
+            None,
+            lambda: download_apk(request.url, progress_callback)
         )
 
-        # 2. Read the output stream
-        async for line in DOWNLOAD_PROCESS_OBJ.stdout:
-            decoded_line = line.decode('utf-8').strip()
-            
-            if decoded_line.startswith("PROGRESS:"):
-                # Broadcast progress to UI
-                raw_msg = decoded_line.replace("PROGRESS:", "")
-                await manager.broadcast({
-                    "type": "LOG",
-                    "payload": {"message": raw_msg, "status": "PROGRESS"}
-                })
-            elif decoded_line.startswith("RESULT:"):
-                # Capture the final file path
-                apk_path = decoded_line.replace("RESULT:", "").strip()
-            else:
-                # Forward other logs
-                if decoded_line:
-                    await manager.broadcast({
-                        "type": "LOG",
-                        "payload": {"message": decoded_line, "status": "INFO"}
-                    })
-
-        # Wait for finish
-        if DOWNLOAD_PROCESS_OBJ:
-            await DOWNLOAD_PROCESS_OBJ.wait()
-        
-         # 3. Check for failures
-        if DOWNLOAD_PROCESS_OBJ and DOWNLOAD_PROCESS_OBJ.returncode != 0:
-             # Read stderr to see why it crashed
-            stderr_data = await DOWNLOAD_PROCESS_OBJ.stderr.read()
-            error_message = stderr_data.decode('utf-8').strip() or "Unknown error (process killed?)"
-            print(f"Subprocess Error: {error_message}")
-            raise Exception(f"Script Error: {error_message}")
-
-        if not apk_path:
-            raise Exception("Download script finished but returned no path.")
-            
-        # Reset global ref
         DOWNLOAD_PROCESS_OBJ = None
 
-        # 3. Extract Icon immediately after download
         icon_url = extract_app_icon(apk_path)
-
-        # Construct full URL for Frontend
         full_icon_url = f"http://localhost:8000{icon_url}" if icon_url else None
 
         info = get_apk_info(apk_path) or {}
         app_name = info.get("app_name")
         package_name = info.get("package_name")
-         
-        app_variant = PACKAGE_VARIANT_MAP.get(package_name)
-        tests_to_run = APP_VARIANTS.get(app_variant, [])
 
-        print("Detected package:", package_name)
-        print("Detected variant:", app_variant)
-        print("Modules to run:", tests_to_run)
+        app_variant = PACKAGE_VARIANT_MAP.get(package_name)
+        tests_to_run = request.tests_to_run or APP_VARIANTS.get(app_variant, [])
 
         await manager.broadcast({
             "type": "LOG",
             "payload": {
                 "message": f"Detected app variant: {app_variant}",
-                "status":"INFO"
+                "status": "INFO"
             }
         })
 
+        background_tasks.add_task(
+            run_tests_and_get_suggestions,
+            apk_path,
+            tests_to_run=tests_to_run
+        )
 
-        
-        # 4. Trigger the actual Automation Test
-        # 4. Trigger the actual Automation Test
-        await manager.broadcast({
-          "type": "LOG",
-          "payload": {
-          "message": "Starting automation tests...",
-          "status": "INFO"
-            }
-         })
-
-        asyncio.create_task(
-          run_tests_and_get_suggestions(
-          apk_path,
-           tests_to_run=tests_to_run
-           )
-           
-          )
-        print('tests to run:', request.tests_to_run)
-        print('package name:', package_name)
         return {
-            "status": "success", 
+            "status": "success",
             "message": "APK Downloaded. Test Starting...",
             "app_icon": full_icon_url,
             "app_name": app_name,
             "package_name": package_name,
-            "apk_path": apk_path
+            "apk_path": apk_path,
+            "app_variant": app_variant
         }
-    
-    except Exception as e:
-       DOWNLOAD_PROCESS_OBJ = None
 
-       import traceback
-       traceback.print_exc()
-       error_msg = str(e) if str(e) else "Unknown error"
-       await manager.broadcast({
+    except Exception as e:
+        DOWNLOAD_PROCESS_OBJ = None
+
+        await manager.broadcast({
             "type": "LOG",
-            "payload": {"message": f"Download interrupted: {error_msg}", "status": "FAILED"}
+            "payload": {
+                "message": f"Download interrupted: {str(e)}",
+                "status": "FAILED"
+            }
         })
-       raise HTTPException(status_code=400, detail=f"Download Failed: {str(e)}")
-    
+
+        raise HTTPException(
+            status_code=400,
+            detail=f"Download Failed: {str(e)}"
+        )
+
 @app.post("/start-test-existing")
 async def start_test_existing(request: ExistingTestRequest, background_tasks: BackgroundTasks):
-    """
-    Start tests using an already-downloaded APK in backend/temp_apks.
-    """
     try:
         apk_path = os.path.join(APKS_DIR, request.apk_name)
 
@@ -510,20 +575,13 @@ async def start_test_existing(request: ExistingTestRequest, background_tasks: Ba
             }
         })
 
-        # Extract icon / app info
         icon_url = extract_app_icon(apk_path)
         full_icon_url = f"http://localhost:8000{icon_url}" if icon_url else None
 
         info = get_apk_info(apk_path) or {}
         app_name = info.get("app_name")
         package_name = info.get("package_name")
-        # tests_to_run = [
-        #      {"name": "Login", "path": "tests/login/test_login.py"},
-        #       {"name": "Dashboard", "path": "tests/dashboard/test_dashboard.py"},
-        #       {"name": "Add Updates", "path": "tests/updates/test_add_updates.py"}
-        #            ]
 
-        # Run tests in background
         background_tasks.add_task(
             run_tests_and_get_suggestions, 
             apk_path, 
@@ -549,9 +607,6 @@ async def start_test_existing(request: ExistingTestRequest, background_tasks: Ba
     
 @app.get("/api/apk-list")
 async def list_apks():
-    """
-    Return list of already-downloaded APK files from backend/temp_apks.
-    """
     try:
         files = []
         for name in os.listdir(APKS_DIR):
@@ -563,14 +618,10 @@ async def list_apks():
     
 @app.post("/stop-test")
 async def stop_test():
-    """
-    Stop the currently running pytest process OR the downloading process.
-    """
     print("DEBUG: /stop-test called")
     
     stopped_something = False
     
-    # 1. Check/Stop Download Process
     global DOWNLOAD_PROCESS_OBJ
     if DOWNLOAD_PROCESS_OBJ is not None:
         try:
@@ -579,9 +630,7 @@ async def stop_test():
             stopped_something = True
         except Exception as e:
             print(f"Error stopping download: {e}")
-        # Note: We rely on the start_test loop to clean up DOWNLOAD_PROCESS_OBJ = None
 
-    # 2. Check/Stop Pytest Process
     test_stopped = stop_current_tests()
     if test_stopped:
         stopped_something = True
@@ -599,11 +648,8 @@ async def stop_test():
     else:
         return {"status": "no-process"}
     
-# --- NEW: Appium Endpoints ---
-
 @app.get("/api/appium/status")
 async def appium_status():
-    """Check if Appium process is running."""
     global _appium_proc
     if _appium_proc is not None and _appium_proc.poll() is None:
         return {"status": "running", "port": APPIUM_PORT}
@@ -611,25 +657,20 @@ async def appium_status():
 
 @app.post("/api/appium/start")
 async def appium_start():
-    """Start the Appium Server."""
     global _appium_proc
     
-    # 1. Check if already running via Python
     if _appium_proc is not None and _appium_proc.poll() is None:
         return {"status": "running", "message": "Appium is already running via backend."}
 
-    # 2. Check if port is locked (e.g. running from external terminal)
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         if s.connect_ex(('127.0.0.1', APPIUM_PORT)) == 0:
              return {"status": "running", "message": f"Appium (or something) already active on port {APPIUM_PORT}"}
 
     try:
-        # Start Appium. Assumes 'appium' is in your System PATH.
-        # On Windows, shell=True is often needed for npm binaries.
         _appium_proc = subprocess.Popen(
             ["appium", "-p", str(APPIUM_PORT)],
             shell=True,
-            stdout=subprocess.DEVNULL, # Or redirect to a log file
+            stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL
         )
         return {"status": "started", "message": f"Appium started on port {APPIUM_PORT}"}
@@ -638,11 +679,8 @@ async def appium_start():
 
 @app.post("/api/appium/stop")
 async def appium_stop():
-    """Stop the Appium Server."""
     global _appium_proc
     if _appium_proc is not None:
-        # On Windows with shell=True, terminate/kill only kills the shell (cmd.exe), not Appium (node.exe).
-        # We need to strictly kill the process tree.
         if os.name == 'nt':
             try:
                 subprocess.run(
@@ -652,7 +690,6 @@ async def appium_stop():
                 )
             except Exception as e:
                 print(f"Error executing taskkill: {e}")
-                # Fallback if taskkill fails for some reason
                 _appium_proc.kill()
         
         _appium_proc = None
@@ -662,20 +699,56 @@ async def appium_stop():
 
 @app.post("/api/generate-report")
 async def api_generate_report():
-    """Manually trigger report generation."""
     try:
-        # Run in thread pool to avoid blocking
         import threading
         t = threading.Thread(target=generate_report)
         t.start()
         return {"status": "ok", "message": "Report generation started"}
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
-from fastapi import Request
-import asyncio
+
+
+# ✅ NEW: Background task — runs tests, generates CSV, sends to Slack
+async def _run_tests_and_notify_slack(
+    apk_path: str,
+    tests_to_run: list,
+    channel_id: str,
+    developer_name: str,
+    app_name: str,
+    apk_version: str,
+):
+    """Run automation tests, generate CSV report, then post it to Slack."""
+    loop = asyncio.get_event_loop()
+
+    # Step 1: Run tests (blocking, so run in thread pool)
+    await loop.run_in_executor(
+        None,
+        lambda: run_tests_and_get_suggestions(apk_path, tests_to_run=tests_to_run)
+    )
+
+    # Step 2: Generate Allure report so allure-results JSONs are fresh
+    await loop.run_in_executor(None, generate_report)
+
+    # Step 3: Generate CSV from allure-results
+    safe_app_name = app_name.replace(" ", "_") if app_name else "App"
+    safe_version = apk_version.replace(" ", "_") if apk_version else "unknown"
+    csv_path = os.path.join(BASE_DIR, f"report_{safe_app_name}_v{safe_version}.csv")
+    await loop.run_in_executor(None, lambda: generate_csv_report(csv_path))
+
+    # Step 4: Send CSV file to Slack
+    send_slack_report(
+        channel_id=channel_id,
+        developer_name=developer_name,
+        app_name=app_name or "Unknown App",
+        apk_version=apk_version or "Unknown",
+        csv_path=csv_path,
+    )
+
 
 @app.post("/slack/events")
-async def slack_events(request: Request):
+async def slack_events(request: Request, background_tasks: BackgroundTasks):
+
+    global LAST_SLACK_EVENT_TS
 
     body = await request.json()
 
@@ -685,37 +758,88 @@ async def slack_events(request: Request):
     event = body.get("event", {})
     print("Slack Event Received:", event)
 
-    # Ignore bot messages and edited messages
     if event.get("subtype") is not None:
         return {"status": "ignored"}
 
-    if event.get("type") == "message":
+    event_ts = event.get("ts")
+    if event_ts == LAST_SLACK_EVENT_TS:
+        print("Duplicate Slack event ignored")
+        return {"status": "duplicate"}
 
+    LAST_SLACK_EVENT_TS = event_ts
+
+    if event.get("type") == "message":
         text = event.get("text", "")
         print("Message text:", text)
 
         if "drive.google.com" in text:
-
             file_id = extract_drive_file_id(text)
 
             if file_id:
-
                 download_url = f"https://drive.google.com/uc?export=download&id={file_id}"
+
+                # ✅ NEW: Capture channel and sender info for Slack reply
+                channel_id = event.get("channel")
+                sender_user_id = event.get("user")
+                developer_name = get_slack_user_name(sender_user_id)
 
                 print("Google Drive APK detected")
                 print("Download URL:", download_url)
+                print(f"[Slack] Developer: {developer_name}")
 
-                background_tasks = BackgroundTasks()
+                try:
+                    print("APK downloading from slack event started")
+                    from gdrive_loader import download_apk, get_apk_info
+                    loop = asyncio.get_event_loop()
+                    apk_path = await loop.run_in_executor(None, lambda: download_apk(download_url))
+                    info = get_apk_info(apk_path) or {}
+                    package_name = info.get("package_name")
 
-                await start_test(
-                    TestRequest(url=download_url),
-                    background_tasks
-                )
+                    # ✅ NEW: Extract app_name and apk_version for the Slack report
+                    app_name = info.get("app_name", "Unknown App")
+                    apk_version = info.get("version_name") or info.get("version_code") or "Unknown"
+
+                    app_variant = PACKAGE_VARIANT_MAP.get(package_name)
+                    tests_to_run = APP_VARIANTS.get(app_variant, [])
+
+                    print(f"[Slack] app_variant: {app_variant}")
+                    print(f"[Slack] tests_to_run: {tests_to_run}")
+                    print(f"[Slack] app_name: {app_name} | version: {apk_version}")
+
+                    await manager.broadcast({
+                        "type": "LOG",
+                        "payload": {
+                            "message": f"[Slack] {developer_name} triggered: {app_name} v{apk_version} | Variant: {app_variant}",
+                            "status": "INFO"
+                        }
+                    })
+
+                    # ✅ NEW: Use _run_tests_and_notify_slack instead of run_tests_and_get_suggestions
+                    # This runs tests → generates CSV → sends report back to Slack automatically
+                    background_tasks.add_task(
+                        _run_tests_and_notify_slack,
+                        apk_path=apk_path,
+                        tests_to_run=tests_to_run,
+                        channel_id=channel_id,
+                        developer_name=developer_name,
+                        app_name=app_name,
+                        apk_version=apk_version,
+                    )
+
+                except Exception as e:
+                    print(f"[Slack] Error resolving APK info: {e}")
+                    # Fallback: run tests without Slack notification
+                    background_tasks.add_task(
+                        run_tests_and_get_suggestions,
+                        apk_path,
+                    )
 
     return {"status": "ok"}
+
 def extract_drive_file_id(text):
     text = text.replace("<", "").replace(">", "")
     match = re.search(r'/d/([a-zA-Z0-9_-]+)', text)
     return match.group(1) if match else None
+
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

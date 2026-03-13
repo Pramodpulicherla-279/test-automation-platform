@@ -1,6 +1,7 @@
 # server.py
 import os
 import sys
+sys.dont_write_bytecode = True
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, WebSocket, BackgroundTasks, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -8,14 +9,23 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 import uvicorn
 from pydantic import BaseModel
+from pathlib import Path
 import subprocess
+import json
 import socket
 import asyncio
+from fastapi import Request
 import os
 import sys
 import requests
 import re
 from dotenv import load_dotenv
+
+from gdrive_loader import download_apk, extract_app_icon, get_apk_info
+from typing import List, Optional, Dict
+from starlette.websockets import WebSocketDisconnect
+
+LAST_SLACK_EVENT_TS = None
 
 # Load environment variables from .env
 load_dotenv()
@@ -23,17 +33,17 @@ load_dotenv()
 SLACK_BOT_TOKEN = os.getenv("SLACK_BOT_TOKEN")
 
 print("Slack Token Loaded:", SLACK_BOT_TOKEN)
-from gdrive_loader import download_apk, extract_app_icon, get_apk_info
-from typing import List, Optional, Dict
-from starlette.websockets import WebSocketDisconnect
+
 
 # Add project root to sys.path so we can import tests.*
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))  # root: f:\projects\test-automation-platform
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # root: f:\projects\test-automation-platform
 if BASE_DIR not in sys.path:
     sys.path.append(BASE_DIR)
 
 from tests.test_runner import run_tests_and_get_suggestions, stop_current_tests, generate_report
 # from gdrive_loader import download_apk, 
+
+print("server is running...")
 # ---------------- APP VARIANT CONFIG ----------------
 
 PACKAGE_VARIANT_MAP = {
@@ -113,11 +123,11 @@ app.add_middleware(
 )
 
 # Use absolute path and auto-create the dir
-STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
+STATIC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
 os.makedirs(STATIC_DIR, exist_ok=True)
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
-APKS_DIR = os.path.join(os.path.dirname(__file__), "temp_apks")
+APKS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "temp_apks")
 os.makedirs(APKS_DIR, exist_ok=True)
 
 # Serve generated Allure report (will be created by test_runner)
@@ -133,6 +143,57 @@ _appium_proc: subprocess.Popen | None = None
 APPIUM_PORT = 4723
 
 ALLURE_CMD = r"C:\Users\Pramo\scoop\shims\allure"
+
+# Base screenshots directory created by pytest conftest.py
+UI_SCREENSHOTS_BASE = Path(__file__).resolve().parents[1] / "artifacts" / "ui_screenshots"
+UI_SCREENSHOTS_BASE.mkdir(parents=True, exist_ok=True)
+
+# Serve images so React can load them via URL:
+# GET http://localhost:8000/ui-screenshots/<run_id>/<...>/<file>.png
+app.mount("/ui-screenshots", StaticFiles(directory=str(UI_SCREENSHOTS_BASE)), name="ui-screenshots")
+
+
+class AnalyzeReq(BaseModel):
+    run_id: str | None = None  # optional; if not sent we auto-pick latest
+
+
+def _latest_run_id() -> str:
+    runs = [p for p in UI_SCREENSHOTS_BASE.iterdir() if p.is_dir()]
+    if not runs:
+        raise HTTPException(404, detail="No UI screenshots found. Run tests and capture screenshots first.")
+    runs.sort(key=lambda p: p.stat().st_mtime, reverse=True)
+    return runs[0].name
+
+
+@app.post("/api/ui-screenshots/analyze")
+def analyze_ui_screenshots(req: AnalyzeReq):
+    print("UI parser api called")
+    run_id = req.run_id or _latest_run_id()
+    print(run_id)
+    run_dir = UI_SCREENSHOTS_BASE / run_id
+    if not run_dir.exists():
+        raise HTTPException(404, detail=f"Run screenshots folder not found: {run_id}")
+
+    validator = Path(__file__).resolve().parents[1] / "ui-parser" / "ui_screenshot_validator.py"
+    if not validator.exists():
+        raise HTTPException(500, detail=f"Validator script not found: {validator}")
+
+    # Call validator as subprocess to avoid import issues (folder name ui-parser has a hyphen)
+    cmd = [sys.executable, str(validator), "--root-dir", str(run_dir)]
+    proc = subprocess.run(cmd, capture_output=True, text=True)
+
+    if proc.returncode != 0:
+        raise HTTPException(500, detail=f"UI validator failed: {proc.stderr.strip() or proc.stdout.strip()}")
+
+    payload = json.loads(proc.stdout or "{}")
+    results = payload.get("results", [])
+
+    # Add screenshot_url expected by your React component
+    for r in results:
+        rel = r.get("relative_path")
+        r["screenshot_url"] = f"/ui-screenshots/{run_id}/{rel}" if rel else None
+
+    return {"run_id": run_id, "results": results}
 
 def _start_allure_server() -> str:
     """
@@ -326,11 +387,12 @@ async def module_status(data: dict):
     return {"status": "ok"}
 
 @app.post("/start-test")
-# @app.post("/start-test")
 async def start_test(request: TestRequest, background_tasks: BackgroundTasks):
-    global DOWNLOAD_PROCESS_OBJ
 
-    # 🔴 PREVENT MULTIPLE DOWNLOADS
+    global DOWNLOAD_PROCESS_OBJ
+    global _appium_proc
+
+    # Prevent duplicate downloads/tests
     if DOWNLOAD_PROCESS_OBJ is not None:
         await manager.broadcast({
             "type": "LOG",
@@ -339,158 +401,105 @@ async def start_test(request: TestRequest, background_tasks: BackgroundTasks):
                 "status": "INFO"
             }
         })
-        return {"status": "ignored", "message": "Download already in progress"}
+        return {
+            "status": "ignored",
+            "message": "A download/test is already running."
+        }
+
+    # Start Appium if not running
+    if _appium_proc is None or _appium_proc.poll() is not None:
+        await manager.broadcast({
+            "type": "LOG",
+            "payload": {"message": "Starting Appium server...", "status": "INFO"}
+        })
+
+        _appium_proc = subprocess.Popen(
+            ["appium", "-p", str(APPIUM_PORT)],
+            shell=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        )
+
+        await asyncio.sleep(5)
 
     try:
-        # Start Appium automatically if not running
-        global _appium_proc
-
-        if _appium_proc is None or _appium_proc.poll() is not None:
-            print("Starting Appium Server...")
-
-            await manager.broadcast({
-                "type": "LOG",
-                "payload": {
-                    "message": "Starting Appium Server...",
-                    "status": "INFO"
-                }
-            })
-
-            _appium_proc = subprocess.Popen(
-                ["appium", "-p", str(APPIUM_PORT)],
-                shell=True,
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL
-            )
-        # Tell frontend: starting download
         await manager.broadcast({
             "type": "LOG",
             "payload": {"message": "Starting APK download...", "status": "INFO"}
         })
-        script_path = os.path.join(os.path.dirname(__file__), "gdrive_loader.py")
-        apk_path = None
 
-        # --- FIX: Force UTF-8 encoding for the subprocess ---
-        # This prevents 'charmap' codec errors when printing emojis on Windows
-        env = os.environ.copy()
-        env["PYTHONIOENCODING"] = "utf-8"
+        loop = asyncio.get_event_loop()
 
-        # 1. Spawn the download subprocess
-        # Using -u for unbuffered output to get real-time progress
-        DOWNLOAD_PROCESS_OBJ = await asyncio.create_subprocess_exec(
-            sys.executable, "-u", script_path, request.url,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-            env=env, 
+        def progress_callback(msg):
+            clean = msg.replace('\r', '').strip()
+            if clean:
+                asyncio.run_coroutine_threadsafe(
+                    manager.broadcast({
+                        "type": "LOG",
+                        "payload": {"message": clean, "status": "PROGRESS"}
+                    }),
+                    loop
+                )
+
+        apk_path = await loop.run_in_executor(
+            None,
+            lambda: download_apk(request.url, progress_callback)
         )
 
-        # 2. Read the output stream
-        async for line in DOWNLOAD_PROCESS_OBJ.stdout:
-            decoded_line = line.decode('utf-8').strip()
-            
-            if decoded_line.startswith("PROGRESS:"):
-                # Broadcast progress to UI
-                raw_msg = decoded_line.replace("PROGRESS:", "")
-                await manager.broadcast({
-                    "type": "LOG",
-                    "payload": {"message": raw_msg, "status": "PROGRESS"}
-                })
-            elif decoded_line.startswith("RESULT:"):
-                # Capture the final file path
-                apk_path = decoded_line.replace("RESULT:", "").strip()
-            else:
-                # Forward other logs
-                if decoded_line:
-                    await manager.broadcast({
-                        "type": "LOG",
-                        "payload": {"message": decoded_line, "status": "INFO"}
-                    })
-
-        # Wait for finish
-        if DOWNLOAD_PROCESS_OBJ:
-            await DOWNLOAD_PROCESS_OBJ.wait()
-        
-         # 3. Check for failures
-        if DOWNLOAD_PROCESS_OBJ and DOWNLOAD_PROCESS_OBJ.returncode != 0:
-             # Read stderr to see why it crashed
-            stderr_data = await DOWNLOAD_PROCESS_OBJ.stderr.read()
-            error_message = stderr_data.decode('utf-8').strip() or "Unknown error (process killed?)"
-            print(f"Subprocess Error: {error_message}")
-            raise Exception(f"Script Error: {error_message}")
-
-        if not apk_path:
-            raise Exception("Download script finished but returned no path.")
-            
-        # Reset global ref
         DOWNLOAD_PROCESS_OBJ = None
 
-        # 3. Extract Icon immediately after download
+        # Extract icon
         icon_url = extract_app_icon(apk_path)
-
-        # Construct full URL for Frontend
         full_icon_url = f"http://localhost:8000{icon_url}" if icon_url else None
 
         info = get_apk_info(apk_path) or {}
         app_name = info.get("app_name")
         package_name = info.get("package_name")
-         
-        app_variant = PACKAGE_VARIANT_MAP.get(package_name)
-        tests_to_run = APP_VARIANTS.get(app_variant, [])
 
-        print("Detected package:", package_name)
-        print("Detected variant:", app_variant)
-        print("Modules to run:", tests_to_run)
+        app_variant = PACKAGE_VARIANT_MAP.get(package_name)
+        # tests_to_run = APP_VARIANTS.get(app_variant, [])
+        tests_to_run = request.tests_to_run or APP_VARIANTS.get(app_variant, [])
 
         await manager.broadcast({
             "type": "LOG",
             "payload": {
                 "message": f"Detected app variant: {app_variant}",
-                "status":"INFO"
+                "status": "INFO"
             }
         })
 
+        # Run automation tests
+        background_tasks.add_task(
+            run_tests_and_get_suggestions,
+            apk_path,
+            tests_to_run=tests_to_run
+        )
 
-        
-        # 4. Trigger the actual Automation Test
-        # 4. Trigger the actual Automation Test
-        await manager.broadcast({
-          "type": "LOG",
-          "payload": {
-          "message": "Starting automation tests...",
-          "status": "INFO"
-            }
-         })
-
-        asyncio.create_task(
-          run_tests_and_get_suggestions(
-          apk_path,
-           tests_to_run=tests_to_run
-           )
-           
-          )
-        print('tests to run:', request.tests_to_run)
-        print('package name:', package_name)
         return {
-            "status": "success", 
+            "status": "success",
             "message": "APK Downloaded. Test Starting...",
             "app_icon": full_icon_url,
             "app_name": app_name,
             "package_name": package_name,
-            "apk_path": apk_path
+            "apk_path": apk_path,
+            "app_variant": app_variant
         }
-    
-    except Exception as e:
-       DOWNLOAD_PROCESS_OBJ = None
 
-       import traceback
-       traceback.print_exc()
-       error_msg = str(e) if str(e) else "Unknown error"
-       await manager.broadcast({
+    except Exception as e:
+        DOWNLOAD_PROCESS_OBJ = None
+
+        await manager.broadcast({
             "type": "LOG",
-            "payload": {"message": f"Download interrupted: {error_msg}", "status": "FAILED"}
+            "payload": {
+                "message": f"Download interrupted: {str(e)}",
+                "status": "FAILED"
+            }
         })
-       raise HTTPException(status_code=400, detail=f"Download Failed: {str(e)}")
-    
+
+        raise HTTPException(
+            status_code=400,
+            detail=f"Download Failed: {str(e)}"
+        )
 @app.post("/start-test-existing")
 async def start_test_existing(request: ExistingTestRequest, background_tasks: BackgroundTasks):
     """
@@ -517,11 +526,6 @@ async def start_test_existing(request: ExistingTestRequest, background_tasks: Ba
         info = get_apk_info(apk_path) or {}
         app_name = info.get("app_name")
         package_name = info.get("package_name")
-        # tests_to_run = [
-        #      {"name": "Login", "path": "tests/login/test_login.py"},
-        #       {"name": "Dashboard", "path": "tests/dashboard/test_dashboard.py"},
-        #       {"name": "Add Updates", "path": "tests/updates/test_add_updates.py"}
-        #            ]
 
         # Run tests in background
         background_tasks.add_task(
@@ -671,11 +675,13 @@ async def api_generate_report():
         return {"status": "ok", "message": "Report generation started"}
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
-from fastapi import Request
-import asyncio
+    
+
 
 @app.post("/slack/events")
-async def slack_events(request: Request):
+async def slack_events(request: Request, background_tasks: BackgroundTasks):  # ✅ inject BackgroundTasks
+
+    global LAST_SLACK_EVENT_TS
 
     body = await request.json()
 
@@ -685,37 +691,71 @@ async def slack_events(request: Request):
     event = body.get("event", {})
     print("Slack Event Received:", event)
 
-    # Ignore bot messages and edited messages
     if event.get("subtype") is not None:
         return {"status": "ignored"}
 
-    if event.get("type") == "message":
+    event_ts = event.get("ts")
+    if event_ts == LAST_SLACK_EVENT_TS:
+        print("Duplicate Slack event ignored")
+        return {"status": "duplicate"}
 
+    LAST_SLACK_EVENT_TS = event_ts
+
+    if event.get("type") == "message":
         text = event.get("text", "")
         print("Message text:", text)
 
         if "drive.google.com" in text:
-
             file_id = extract_drive_file_id(text)
 
             if file_id:
-
                 download_url = f"https://drive.google.com/uc?export=download&id={file_id}"
-
                 print("Google Drive APK detected")
                 print("Download URL:", download_url)
 
-                background_tasks = BackgroundTasks()
+                # ✅ Resolve APK info BEFORE calling start_test so we can log tests_to_run
+                try:
+                    print("apk downloading from slack event started")
+                    from gdrive_loader import download_apk, get_apk_info
+                    loop = asyncio.get_event_loop()
+                    apk_path = await loop.run_in_executor(None, lambda: download_apk(download_url))
+                    info = get_apk_info(apk_path) or {}
+                    package_name = info.get("package_name")
+                    app_variant = PACKAGE_VARIANT_MAP.get(package_name)
+                    tests_to_run = APP_VARIANTS.get(app_variant, [])
 
-                await start_test(
-                    TestRequest(url=download_url),
-                    background_tasks
-                )
+                    # ✅ Debug log — visible in your console
+                    print(f"[Slack] app_variant: {app_variant}")
+                    print(f"[Slack] tests_to_run: {tests_to_run}")
+
+                    await manager.broadcast({
+                        "type": "LOG",
+                        "payload": {
+                            "message": f"[Slack] Detected variant: {app_variant} | Tests: {[t['name'] for t in tests_to_run]}",
+                            "status": "INFO"
+                        }
+                    })
+
+                    # ✅ Pass background_tasks from FastAPI DI + resolved tests_to_run
+                    await start_test(
+                        TestRequest(url=download_url, tests_to_run=tests_to_run),
+                        background_tasks  # ✅ use the injected one, not a manually created one
+                    )
+
+                except Exception as e:
+                    print(f"[Slack] Error resolving APK info: {e}")
+                    # Fallback: call start_test without tests_to_run (it will auto-resolve)
+                    await start_test(
+                        TestRequest(url=download_url),
+                        background_tasks
+                    )
 
     return {"status": "ok"}
+
 def extract_drive_file_id(text):
     text = text.replace("<", "").replace(">", "")
     match = re.search(r'/d/([a-zA-Z0-9_-]+)', text)
     return match.group(1) if match else None
+
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
