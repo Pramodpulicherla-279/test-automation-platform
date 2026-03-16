@@ -1,10 +1,10 @@
 # tests/conftest.py
 """
-Original conftest.py with one change:
-  - Removed direct create_jira_issue() call on test failure
-  - Instead: builds full payload and POSTs to /api/jira/payload
-  - Also prints JIRA_PAYLOAD_JSON: for console visibility
-  - User clicks "Create" in IssuePanel to create the Jira ticket
+Changes:
+  1. test_id removed — replaced by sequential issue_id (ISS-001, ISS-002…)
+  2. developer_name fetched from Jira API using JIRA_ASSIGNEE_ACCOUNT_ID
+  3. description shows only the error text (not full metadata block)
+  4. start_date, end_date, sprint, fix_version, affects_version included
 """
 
 import os
@@ -20,7 +20,6 @@ import allure
 from appium import webdriver
 from appium.options.android import UiAutomator2Options
 
-# sys.path fix — must come before local imports
 _THIS_DIR     = os.path.dirname(os.path.abspath(__file__))
 _PROJECT_ROOT = os.path.dirname(_THIS_DIR)
 if _PROJECT_ROOT not in sys.path:
@@ -31,13 +30,12 @@ from jira_integration.jira_config import config
 
 sys.dont_write_bytecode = True
 
-# Backend URL — where /api/jira/payload lives
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
 
-# Session-level IDs
-_ticket_id:      str = ""
-_issue_counter:  int = 0
-_session_issues: list[dict] = []
+_ticket_id:      str  = ""
+_issue_counter:  int  = 0
+_session_issues: list = []
+_developer_name: str  = ""   # fetched from Jira API once per session
 
 
 def _make_ticket_id() -> str:
@@ -45,44 +43,70 @@ def _make_ticket_id() -> str:
 
 
 def _make_issue_id() -> str:
+    """Returns ISS-001, ISS-002, ISS-003 …"""
     global _issue_counter
     _issue_counter += 1
     return f"ISS-{_issue_counter:03d}"
 
 
-# ─── CLI options (unchanged) ──────────────────────────────────────────────────
+def _fetch_developer_name_from_jira() -> str:
+    """
+    Calls GET /rest/api/3/user?accountId=<JIRA_ASSIGNEE_ACCOUNT_ID>
+    Returns the displayName if successful, else empty string.
+    """
+    if not config.assignee_id:
+        return ""
+    if not config.url or not config.email or not config.api_token:
+        return ""
+    try:
+        from requests.auth import HTTPBasicAuth
+        resp = http_requests.get(
+            f"{config.url}/rest/api/3/user",
+            params={"accountId": config.assignee_id},
+            auth=HTTPBasicAuth(config.email, config.api_token),
+            headers={"Accept": "application/json"},
+            timeout=8,
+        )
+        if resp.status_code == 200:
+            name = (resp.json() or {}).get("displayName", "")
+            if name:
+                print(f"[JIRA] Developer name resolved: {name}")
+                return name
+    except Exception as e:
+        print(f"[WARN] Could not fetch Jira user displayName: {e}")
+    return ""
+
+
+# ─── CLI options ──────────────────────────────────────────────────────────────
 def pytest_addoption(parser):
-    parser.addoption("--apk",            action="store", default=None,
-                     help="Path to the APK file under test")
-    parser.addoption("--app-name",       action="store", default="Unknown App",
-                     help="App name for Jira context")
-    parser.addoption("--app-version",    action="store", default="Unknown Version",
-                     help="App version for Jira context")
-    parser.addoption("--developer-name", action="store", default="Unknown Developer",
-                     help="Developer name for Jira context")
+    parser.addoption("--apk",            action="store", default=None)
+    parser.addoption("--app-name",       action="store", default="Unknown App")
+    parser.addoption("--app-version",    action="store", default="Unknown Version")
+    parser.addoption("--developer-name", action="store", default="")
 
 
-# ─── Session start ────────────────────────────────────────────────────────────
 def pytest_sessionstart(session):
-    global _ticket_id, _issue_counter
+    global _ticket_id, _issue_counter, _developer_name
     _ticket_id     = _make_ticket_id()
     _issue_counter = 0
     print(f"\n[TICKET] Session ticket_id: {_ticket_id}")
 
+    # Fetch developer name from Jira API once per session
+    _developer_name = _fetch_developer_name_from_jira()
+    if _developer_name:
+        print(f"[TICKET] Developer: {_developer_name}")
 
-# ─── Driver fixture (unchanged) ───────────────────────────────────────────────
+
+# ─── Driver fixture ───────────────────────────────────────────────────────────
 @pytest.fixture(scope="session")
 def driver(request):
     apk_path = request.config.getoption("--apk")
-
     if not apk_path:
-        pytest.fail("No APK path provided! Backend must call pytest with --apk=/path/to/app.apk")
-
+        pytest.fail("No APK path provided!")
     if not os.path.exists(apk_path):
         pytest.fail(f"APK file not found at: {apk_path}")
 
     print(f"Initializing Appium with APK: {apk_path}")
-
     options = UiAutomator2Options()
     options.platform_name = "Android"
     options.device_name   = "AndroidDevice"
@@ -94,12 +118,11 @@ def driver(request):
         drv.get_log("logcat")
     except Exception:
         pass
-
     yield drv
     drv.quit()
 
 
-# ─── Metadata helpers (unchanged) ─────────────────────────────────────────────
+# ─── Metadata helpers ─────────────────────────────────────────────────────────
 def _cfg(item, option: str, fallback: str) -> str:
     try:
         val = item.config.getoption(option)
@@ -111,10 +134,7 @@ def _cfg(item, option: str, fallback: str) -> str:
 def _extract_feature(item) -> str:
     for marker in item.iter_markers(name="allure_label"):
         if marker.kwargs.get("label_type") == "feature":
-            if marker.kwargs.get("value"):
-                return str(marker.kwargs["value"])
-            if marker.args:
-                return str(marker.args[0])
+            return str(marker.kwargs.get("value") or (marker.args[0] if marker.args else ""))
     return "Unknown Feature"
 
 
@@ -132,10 +152,10 @@ def _extract_module(item) -> str:
 
 
 def _steps_file_for_test(item) -> Path | None:
-    test_name = item.name.lower()
-    if "login"      in test_name: return Path("test-flows/login_flow_success.json")
-    if "onboarding" in test_name: return Path("test-flows/onboarding_flow_success.json")
-    if "addfarm"    in test_name: return Path("test-flows/onboarding_flow_success.json")
+    n = item.name.lower()
+    if "login"      in n: return Path("test-flows/login_flow_success.json")
+    if "onboarding" in n: return Path("test-flows/onboarding_flow_success.json")
+    if "addfarm"    in n: return Path("test-flows/onboarding_flow_success.json")
     return None
 
 
@@ -160,7 +180,35 @@ def _read_steps(item) -> list[str]:
         return []
 
 
-# ─── Crash detection (unchanged) ──────────────────────────────────────────────
+def _extract_error_only(longrepr) -> str:
+    """
+    Extract only the meaningful error lines from pytest longrepr.
+    Removes traceback frames — keeps only the 'E ...' lines and last assertion.
+    """
+    if not longrepr:
+        return "No error details"
+    text = str(longrepr)
+    lines = text.splitlines()
+    error_lines = []
+    for line in lines:
+        stripped = line.strip()
+        # Keep lines starting with 'E ' (pytest error lines)
+        if stripped.startswith("E "):
+            error_lines.append(stripped[2:].strip())
+        # Keep the last 'pytest.fail(...)' or assertion line
+        elif "pytest.fail" in stripped or "assert" in stripped.lower():
+            error_lines.append(stripped)
+    # Deduplicate while preserving order
+    seen = set()
+    unique = []
+    for l in error_lines:
+        if l not in seen:
+            seen.add(l)
+            unique.append(l)
+    return "\n".join(unique) if unique else text.split("\n")[-1].strip() or "Test failed"
+
+
+# ─── Crash detection ──────────────────────────────────────────────────────────
 def check_for_crashes(driver):
     try:
         logs = driver.get_log("logcat")
@@ -189,23 +237,14 @@ def check_for_crashes(driver):
 
 # ─── Send payload to backend ──────────────────────────────────────────────────
 def _send_payload_to_backend(payload: dict) -> None:
-    """
-    POST to /api/jira/payload — server stores it and broadcasts JIRA_PAYLOAD
-    via WebSocket so IssuePanel auto-populates.
-    Also print JIRA_PAYLOAD_JSON: so test_runner.send_log() picks it up too.
-    """
-    # Print for console + test_runner log pipeline fallback
     print("JIRA_PAYLOAD_JSON:" + json.dumps(payload, ensure_ascii=False))
-
-    # Direct HTTP POST — primary path
     try:
         resp = http_requests.post(
             f"{BACKEND_URL}/api/jira/payload",
-            json=payload,
-            timeout=5,
+            json=payload, timeout=5,
         )
         if resp.status_code == 200:
-            print(f"[PAYLOAD SENT] {payload.get('issue_id')} → {payload.get('module')}")
+            print(f"[PAYLOAD SENT] #{payload.get('issue_id')} → {payload.get('module')}")
         else:
             print(f"[WARN] Payload POST returned {resp.status_code}: {resp.text[:100]}")
     except Exception as e:
@@ -227,9 +266,8 @@ def pytest_runtest_makereport(item, call):
 
     time.sleep(2)
 
-    # 1. Detect App Crash
+    # 1. Crash detection
     crash_log = check_for_crashes(driver)
-
     if crash_log:
         print(f"CRASH DETECTED in {item.nodeid}")
         allure.attach(crash_log, name="Crash Logs",
@@ -238,11 +276,10 @@ def pytest_runtest_makereport(item, call):
             report.outcome  = "failed"
             report.longrepr = "Application crash detected in logcat"
 
-    # Only proceed for failed tests
     if report.outcome != "failed":
         return
 
-    # 2. Capture Screenshot
+    # 2. Screenshot
     screenshot_path = None
     try:
         os.makedirs("screenshots", exist_ok=True)
@@ -253,23 +290,34 @@ def pytest_runtest_makereport(item, call):
     except Exception as e:
         print("Screenshot capture failed:", e)
 
-    # 3. Collect metadata
-    app_name       = _cfg(item, "--app-name",       "Unknown App")
-    app_version    = _cfg(item, "--app-version",    "Unknown Version")
-    developer_name = _cfg(item, "--developer-name", "Unknown Developer")
-    module         = _extract_module(item)
-    feature        = _extract_feature(item)
-    test_name      = item.name
-    test_id        = item.nodeid
+    # 3. Metadata
+    app_name    = _cfg(item, "--app-name",    "Unknown App")
+    app_version = _cfg(item, "--app-version", "Unknown Version")
+    module      = _extract_module(item)
+    feature     = _extract_feature(item)
+    test_name   = item.name
+    issue_id    = _make_issue_id()   # ← sequential number: "1", "2", "3"
+
+    # Developer name: Jira API > CLI arg > fallback
+    developer_name = (
+        _developer_name                              # fetched from Jira API at session start
+        or _cfg(item, "--developer-name", "")        # CLI arg
+        or "Unknown Developer"
+    )
+
     issue_summary  = f"Automation Failure: {test_name}"
     steps_executed = _read_steps(item)
-    error_text     = str(report.longrepr or "No error details")
-    issue_id       = _make_issue_id()
+    # FIX 5: description = only the error, not the full metadata block
+    error_text     = _extract_error_only(report.longrepr)
 
-    # 4. Build payload
+    today      = datetime.date.today()
+    start_date = today.isoformat()
+    end_date   = (today + datetime.timedelta(days=1)).isoformat()
+
+    # 4. Payload — no test_id field (FIX 1), error-only description (FIX 5)
     payload = {
         "ticket_id":       _ticket_id,
-        "issue_id":        issue_id,
+        "issue_id":        issue_id,          # "1", "2", "3" — sequential number
         "app_name":        app_name,
         "app_version":     app_version,
         "module":          module,
@@ -277,55 +325,38 @@ def pytest_runtest_makereport(item, call):
         "issue_summary":   issue_summary,
         "title":           issue_summary,
         "test_name":       test_name,
-        "test_id":         test_id,
+        # test_id removed — FIX 1
         "steps_executed":  steps_executed,
         "developer_name":  developer_name,
-        "description": (
-            f"Automation Test Failure\n\n"
-            f"Run ID: {_ticket_id}\n"
-            f"Issue ID: {issue_id}\n\n"
-            f"App: {app_name}\n"
-            f"App Version: {app_version}\n"
-            f"Module: {module}\n"
-            f"Feature: {feature}\n"
-            f"Developer: {developer_name}\n"
-            f"Test: {test_name}\n"
-            f"Test ID: {test_id}\n\n"
-            f"Error:\n{error_text}\n\n"
-            f"Environment:\n{app_name} APK"
-        ),
+        "start_date":      start_date,
+        "end_date":        end_date,
+        "sprint":          "Automation",
+        "fix_version":     ["Production"],
+        "affects_version": [app_name] if app_name and app_name != "Unknown App" else [],
+        "description":     error_text,        # FIX 5: only the error
     }
 
-    # 5. Attach to Allure
     allure.attach(
         json.dumps(payload, ensure_ascii=False, indent=2),
-        name=f"Automation Payload [{issue_id}]",
+        name=f"Automation Payload [#{issue_id}]",
         attachment_type=allure.attachment_type.JSON,
     )
 
-    # 6. Send to backend → IssuePanel auto-populates
-    #    NO automatic Jira ticket creation — user clicks "Create" in IssuePanel
     _send_payload_to_backend(payload)
-
-    _session_issues.append({
-        "issue_id":  issue_id,
-        "test_name": test_name,
-        "module":    module,
-    })
+    _session_issues.append({"issue_id": issue_id, "test_name": test_name, "module": module})
 
 
-# ─── Session finish summary (unchanged) ───────────────────────────────────────
+# ─── Session finish ───────────────────────────────────────────────────────────
 def pytest_sessionfinish(session, exitstatus):
     print(f"\n{'='*50}")
     print(f"TEST SESSION FINISHED  |  Run ID: {_ticket_id}")
     if _session_issues:
         print(f"Failures ({len(_session_issues)}):")
         for iss in _session_issues:
-            print(f"  [{iss['issue_id']}] {iss['module']} — {iss['test_name']}")
+            print(f"  [#{iss['issue_id']}] {iss['module']} — {iss['test_name']}")
     print("Review failures in IssuePanel and click 'Create' to file Jira tickets.")
     print(f"{'='*50}\n")
 
 
-# ─── Utility (unchanged) ──────────────────────────────────────────────────────
 def notReportFailed(report):
     return report.outcome != "failed"

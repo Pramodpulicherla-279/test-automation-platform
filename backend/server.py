@@ -29,7 +29,8 @@ from tests.test_runner import run_tests_and_get_suggestions, stop_current_tests,
 
 # ─── In-memory stores (new) ───────────────────────────────────────────────────
 _jira_history:     list[dict] = []   # tickets created via Create button
-_pending_payloads: list[dict] = []   # all AUTOMATION_PAYLOAD_JSON received this session
+_pending_payloads: list[dict] = []   # all payloads received this session
+_dismissed_keys:   set[str]   = set()  # test_name keys dismissed (removed or created)
 
 # ─── Payload prefixes to intercept from log lines ────────────────────────────
 _PAYLOAD_PREFIXES = ("AUTOMATION_PAYLOAD_JSON:", "JIRA_PAYLOAD_JSON:")
@@ -158,23 +159,27 @@ class JiraPayloadRequest(BaseModel):
 
 # NEW: create request from IssuePanel "Create" button
 class JiraCreateRequest(BaseModel):
-    app_name:       Optional[str]       = None
-    app_version:    Optional[str]       = None
-    module:         Optional[str]       = None
-    feature:        Optional[str]       = None
-    issue_summary:  Optional[str]       = None
-    test_name:      Optional[str]       = None
-    test_id:        Optional[str]       = None
-    steps_executed: Optional[List[Any]] = None
-    developer_name: Optional[str]       = None
-    title:          Optional[str]       = None
-    description:    Optional[str]       = None
-    parent:         Optional[str]       = None
-    fix_version:    Optional[List[str]] = None
-    priority:       Optional[str]       = None
-    issue_id:       Optional[str]       = None
-    issue_url:      Optional[str]       = None
-    ticket_id:      Optional[str]       = None
+    app_name:        Optional[str]       = None
+    app_version:     Optional[str]       = None
+    module:          Optional[str]       = None
+    feature:         Optional[str]       = None
+    issue_summary:   Optional[str]       = None
+    test_name:       Optional[str]       = None
+    test_id:         Optional[str]       = None
+    steps_executed:  Optional[List[Any]] = None
+    developer_name:  Optional[str]       = None
+    title:           Optional[str]       = None
+    description:     Optional[str]       = None
+    parent:          Optional[str]       = None
+    fix_version:     Optional[List[str]] = None
+    affects_version: Optional[List[str]] = None
+    priority:        Optional[str]       = None
+    issue_id:        Optional[str]       = None
+    issue_url:       Optional[str]       = None
+    ticket_id:       Optional[str]       = None
+    start_date:      Optional[str]       = None
+    end_date:        Optional[str]       = None
+    sprint:          Optional[str]       = None
 
 
 # ─── WebSocket Connection Manager (unchanged) ─────────────────────────────────
@@ -354,9 +359,30 @@ async def log_step(msg: LogMessage):
                 _broadcast_async({"type": "JIRA_PAYLOAD", "payload": payload})
                 logger.info("[JIRA_PAYLOAD intercepted] module=%s test=%s",
                             payload.get("module"), payload.get("test_name"))
+
+                # ── Send a CLEAN summary line to the console (not the raw JSON blob) ──
+                # Build clean readable console line
+                app_n  = payload.get('app_name', '?')
+                app_v  = payload.get('app_version', '?')
+                mod    = payload.get('module', '?')
+                tname  = payload.get('test_name', '?')
+                iid    = payload.get('issue_id', '')
+                dev    = payload.get('developer_name', '?')
+                nsteps = len(payload.get('steps_executed') or [])
+                desc   = str(payload.get('description') or '')
+                err_line = desc.split('\n')[0][:100] if desc else ''
+                clean_line = f"[AUTOMATION PAYLOAD] {iid} | {mod} | {tname} | {app_n} v{app_v} | Dev: {dev} | Steps: {nsteps}"
+                # Broadcast separator + payload line + error summary (all show in any console)
+                _broadcast_async({"type": "LOG", "payload": {"message": "=" * 60, "status": "INFO"}})
+                _broadcast_async({"type": "LOG", "payload": {"message": clean_line, "status": "PAYLOAD"}})
+                if err_line:
+                    _broadcast_async({"type": "LOG", "payload": {"message": f"  Error: {err_line}", "status": "FAILED"}})
+                _broadcast_async({"type": "LOG", "payload": {"message": "=" * 60, "status": "INFO"}})
             except Exception as exc:
                 logger.warning("Failed to parse payload from log-step: %s", exc)
-            break
+                # Still show original line if parsing fails
+                _broadcast_async({"type": "LOG", "payload": {"message": msg.message, "status": msg.status}})
+            return {"status": "ok"}  # do NOT broadcast the raw JSON line
 
     _broadcast_async({"type": "LOG", "payload": {"message": msg.message, "status": msg.status}})
     return {"status": "ok"}
@@ -390,14 +416,21 @@ async def receive_jira_payload(req: JiraPayloadRequest):
     # Broadcast to all IssuePanel WebSocket clients
     await manager.broadcast({"type": "JIRA_PAYLOAD", "payload": payload})
 
-    # Also show a clean line in the console
+    # Send a clear, highlighted line to the console
     log_line = (
-        f"[PAYLOAD RECEIVED] {req.issue_id or ''}  "
-        f"module={req.module or '?'}  "
-        f"test={req.test_name or '?'}  "
-        f"v{req.app_version or '?'}"
+        f"[AUTOMATION PAYLOAD] {req.issue_id or ''}"
+        f" | Module: {req.module or '?'}"
+        f" | Test: {req.test_name or '?'}"
+        f" | App: {req.app_name or '?'} v{req.app_version or '?'}"
+        f" | Developer: {req.developer_name or '?'}"
+        f" | Steps: {len(req.steps_executed or [])}"
     )
-    await manager.broadcast({"type": "LOG", "payload": {"message": log_line, "status": "INFO"}})
+    _desc = (req.description or "").split("\n")[0][:100]
+    await manager.broadcast({"type": "LOG", "payload": {"message": "=" * 60, "status": "INFO"}})
+    await manager.broadcast({"type": "LOG", "payload": {"message": log_line, "status": "PAYLOAD"}})
+    if _desc:
+        await manager.broadcast({"type": "LOG", "payload": {"message": f"  Error: {_desc}", "status": "FAILED"}})
+    await manager.broadcast({"type": "LOG", "payload": {"message": "=" * 60, "status": "INFO"}})
 
     logger.info("[/api/jira/payload] %s module=%s test=%s", req.issue_id, req.module, req.test_name)
     return {"status": "received", "issue_id": req.issue_id, "module": req.module}
@@ -407,7 +440,34 @@ async def receive_jira_payload(req: JiraPayloadRequest):
 # IssuePanel fetches this on mount to catch payloads received before WS connected.
 @app.get("/api/jira/payloads")
 async def get_pending_payloads():
-    return {"payloads": _pending_payloads}
+    # Only return payloads that haven't been dismissed (removed or created)
+    active = [
+        p for p in _pending_payloads
+        if _make_dismiss_key(p) not in _dismissed_keys
+    ]
+    return {"payloads": active}
+
+
+def _make_dismiss_key(payload: dict) -> str:
+    """Stable key for dedup — same logic as IssuePanel dedupKey."""
+    test_name = str(payload.get("test_name") or "").strip()
+    module    = str(payload.get("module")    or "").strip()
+    if test_name:
+        return f"tn::{module}::{test_name}"
+    title = str(payload.get("issue_summary") or payload.get("title") or "").strip()
+    return f"sum::{module}::{title}"
+
+
+@app.post("/api/jira/dismiss")
+async def dismiss_payload(data: dict):
+    """
+    Called by IssuePanel when user clicks Remove or Create.
+    Prevents the payload from reappearing on page refresh.
+    """
+    key = _make_dismiss_key(data)
+    if key:
+        _dismissed_keys.add(key)
+    return {"status": "dismissed", "key": key}
 
 
 # ─── NEW: POST /api/jira/create ───────────────────────────────────────────────
@@ -439,20 +499,27 @@ async def jira_create(req: JiraCreateRequest):
     summary     = (req.title or req.issue_summary or "Automation Failure").strip()
     description = (req.description or "Automation Test Failure").strip()
 
+    # Capture stdout from create_jira_issue so AUTOMATION_PAYLOAD_JSON lines
+    # are broadcast to the frontend console (jira_service uses print() not send_log)
+    import io as _io
+    _captured = _io.StringIO()
+
     try:
-        issue_key = create_jira_issue(
-            summary        = summary,
-            description    = description,
-            app_name       = req.app_name,
-            app_version    = req.app_version,
-            module         = req.module or req.parent,
-            feature        = req.feature,
-            issue_summary  = summary,
-            test_name      = req.test_name,
-            test_id        = req.test_id,
-            steps_executed = req.steps_executed or [],
-            developer_name = req.developer_name,
-        )
+        import contextlib as _ctx
+        with _ctx.redirect_stdout(_captured):
+            issue_key = create_jira_issue(
+                summary        = summary,
+                description    = description,
+                app_name       = req.app_name,
+                app_version    = req.app_version,
+                module         = req.module or req.parent,
+                feature        = req.feature,
+                issue_summary  = summary,
+                test_name      = req.test_name,
+                test_id        = req.test_id,
+                steps_executed = req.steps_executed or [],
+                developer_name = req.developer_name,
+            )
     except Exception as exc:
         err = str(exc)
         logger.error("Jira create exception: %s", err)
@@ -475,6 +542,24 @@ async def jira_create(req: JiraCreateRequest):
         raise HTTPException(status_code=400,
                             detail="Jira returned no issue key — check JIRA_ENABLED, JIRA_URL, JIRA_EMAIL, "
                                    "JIRA_API_TOKEN and JIRA_PROJECT_KEY in backend/.env")
+
+    # Broadcast captured jira_service print() lines to frontend console
+    for _line in _captured.getvalue().splitlines():
+        _line = _line.strip()
+        if not _line:
+            continue
+        _status = "PAYLOAD" if any(_line.startswith(p) for p in _PAYLOAD_PREFIXES) else "INFO"
+        _broadcast_async({"type": "LOG", "payload": {"message": _line, "status": _status}})
+        # If it's AUTOMATION_PAYLOAD_JSON, also parse and store it
+        for _pfx in _PAYLOAD_PREFIXES:
+            if _line.startswith(_pfx):
+                try:
+                    _parsed = json.loads(_line[len(_pfx):].strip())
+                    # Don't re-add to _pending_payloads (already added via /api/jira/payload)
+                    logger.info("[jira_service stdout] %s", _pfx)
+                except Exception:
+                    pass
+                break
 
     issue_url = f"{jira_config.url}/browse/{issue_key}"
 
@@ -550,6 +635,11 @@ async def health():
 
 @app.post("/start-test")
 async def start_test(request: TestRequest, background_tasks: BackgroundTasks):
+    global _pending_payloads, _dismissed_keys
+    # Clear stale payloads from previous run so IssuePanel starts fresh
+    _pending_payloads = []
+    _dismissed_keys   = set()
+
     global DOWNLOAD_PROCESS_OBJ
 
     try:
@@ -611,11 +701,18 @@ async def start_test(request: TestRequest, background_tasks: BackgroundTasks):
 
 @app.post("/start-test-existing")
 async def start_test_existing(request: ExistingTestRequest, background_tasks: BackgroundTasks):
+    global _pending_payloads, _dismissed_keys
+    # Clear stale payloads from previous run so IssuePanel starts fresh
+    _pending_payloads = []
+    _dismissed_keys   = set()
+
     try:
         apk_path = os.path.join(APKS_DIR, request.apk_name)
         if not os.path.isfile(apk_path):
             raise HTTPException(status_code=404, detail="APK not found on server")
 
+        # Signal IssuePanel to clear stale issues from previous run
+        await manager.broadcast({"type": "RUN_START", "payload": {}})
         await manager.broadcast(
             {"type": "LOG", "payload": {"message": f"Using existing APK: {request.apk_name}", "status": "INFO"}}
         )

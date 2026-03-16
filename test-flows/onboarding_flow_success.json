@@ -1,1 +1,18 @@
-[]
+[
+    {
+        "step": "Click Verify OTP",
+        "status": "Success"
+    },
+    {
+        "step": "Click Verify OTP",
+        "status": "Success"
+    },
+    {
+        "step": "Click Verify OTP",
+        "status": "Success"
+    },
+    {
+        "step": "Android back",
+        "status": "Success"
+    }
+]
