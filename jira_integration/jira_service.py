@@ -514,12 +514,28 @@ def create_jira_issue(
 
     if response.status_code == 201:
         issue_key = response.json()["key"]
-        extended = build_extended_jira_payload(issue_key, business_payload)
-        print("JIRA_PAYLOAD_JSON:" + json.dumps(extended, ensure_ascii=False))
+        # build_extended_jira_payload does a GET /rest/api/3/issue/{key}
+        # which can fail on restricted projects — wrap it so it never blocks ticket creation
+        try:
+            extended = build_extended_jira_payload(issue_key, business_payload)
+            print("JIRA_PAYLOAD_JSON:" + json.dumps(extended, ensure_ascii=False))
+        except Exception as e:
+            print(f"[WARN] Could not build extended payload for {issue_key}: {e}")
         return issue_key
 
-    print(f"Jira creation failed ({response.status_code}): {response.text}")
-    return None
+    # ── Surface the exact Jira error so the caller can show it to the user ──
+    status  = response.status_code
+    try:
+        body    = response.json()
+        messages = body.get("errorMessages", [])
+        errors   = body.get("errors", {})
+        detail   = "; ".join(messages) if messages else str(errors) if errors else response.text
+    except Exception:
+        detail = response.text or f"HTTP {status}"
+
+    error_msg = f"Jira API {status}: {detail}"
+    print(f"Jira creation failed ({status}): {response.text}")
+    raise RuntimeError(error_msg)
 
 
 def add_comment(issue_key, comment):
