@@ -1,6 +1,8 @@
 # server.py
 import os
 import sys
+import json
+import datetime
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, WebSocket, BackgroundTasks, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -13,53 +15,53 @@ import socket
 import asyncio
 import logging
 from gdrive_loader import download_apk, extract_app_icon, get_apk_info
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Any
 from starlette.websockets import WebSocketDisconnect
 
 logger = logging.getLogger("uvicorn.error")
 
 # Add project root to sys.path so we can import tests.*
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))  # root: f:\projects\test-automation-platform
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 if BASE_DIR not in sys.path:
     sys.path.append(BASE_DIR)
 
 from tests.test_runner import run_tests_and_get_suggestions, stop_current_tests, generate_report
-# from gdrive_loader import download_apk,
+
+# ─── In-memory stores (new) ───────────────────────────────────────────────────
+_jira_history:     list[dict] = []   # tickets created via Create button
+_pending_payloads: list[dict] = []   # all AUTOMATION_PAYLOAD_JSON received this session
+
+# ─── Payload prefixes to intercept from log lines ────────────────────────────
+_PAYLOAD_PREFIXES = ("AUTOMATION_PAYLOAD_JSON:", "JIRA_PAYLOAD_JSON:")
 
 
-# --- NEW: Cleanup Handler (Lifespan) ---
+# ─── Lifespan ─────────────────────────────────────────────────────────────────
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Run on startup
     yield
-    # Run on shutdown (Ctrl+C)
     print("Shutting down: Cleaning up child processes...")
     global _appium_proc, _allure_proc
 
-    # Kill Appium
     if _appium_proc is not None:
         try:
             print("Killing Appium...")
             if os.name == "nt":
                 subprocess.run(
                     ["taskkill", "/F", "/T", "/PID", str(_appium_proc.pid)],
-                    stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL,
+                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
                 )
             else:
                 _appium_proc.kill()
         except Exception as e:
             print(f"Error killing Appium: {e}")
 
-    # Kill Allure
     if _allure_proc is not None:
         try:
             print("Killing Allure...")
             if os.name == "nt":
                 subprocess.run(
                     ["taskkill", "/F", "/T", "/PID", str(_allure_proc.pid)],
-                    stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL,
+                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
                 )
             else:
                 _allure_proc.kill()
@@ -69,9 +71,6 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-# app = FastAPI()
-
-# CORS: allow your React dev server to call this API
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -83,7 +82,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Use absolute path and auto-create the dir
 STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
 os.makedirs(STATIC_DIR, exist_ok=True)
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
@@ -91,33 +89,23 @@ app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 APKS_DIR = os.path.join(os.path.dirname(__file__), "temp_apks")
 os.makedirs(APKS_DIR, exist_ok=True)
 
-# Serve generated Allure report (will be created by test_runner)
 ALLURE_REPORT_DIR = os.path.join(BASE_DIR, "allure-report")
 os.makedirs(ALLURE_REPORT_DIR, exist_ok=True)
 app.mount("/allure-report", StaticFiles(directory=ALLURE_REPORT_DIR, html=True), name="allure-report")
 
 _allure_proc: subprocess.Popen | None = None
 _allure_port: int | None = None
-
-# --- NEW: Appium Globals ---
 _appium_proc: subprocess.Popen | None = None
 APPIUM_PORT = 4723
-
-ALLURE_CMD = r"C:\Users\ram\scoop\shims\allure"
+ALLURE_CMD  = r"C:\Users\ram\scoop\shims\allure"
 
 
 def _start_allure_server() -> str:
-    """
-    Starts (or restarts) `allure open` server for the generated allure-report folder.
-    Returns the URL the frontend should open.
-    Requires: Allure CLI installed and in PATH.
-    """
     global _allure_proc, _allure_port
 
     if not os.path.isdir(ALLURE_REPORT_DIR):
         raise HTTPException(status_code=404, detail=f"Allure report dir not found: {ALLURE_REPORT_DIR}")
 
-    # Kill previous server if running
     if _allure_proc is not None and _allure_proc.poll() is None:
         try:
             _allure_proc.terminate()
@@ -127,42 +115,72 @@ def _start_allure_server() -> str:
 
     _allure_port = _pick_free_port()
 
-    # Start Allure server
     _allure_proc = subprocess.Popen(
         ["allure", "open", "-h", "127.0.0.1", "-p", str(_allure_port), ALLURE_REPORT_DIR],
         cwd=BASE_DIR,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
+        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
         creationflags=subprocess.CREATE_NO_WINDOW if hasattr(subprocess, "CREATE_NO_WINDOW") else 0,
     )
-
     return f"http://127.0.0.1:{_allure_port}"
 
 
+# ─── Models ───────────────────────────────────────────────────────────────────
 class RunCompleteEvent(BaseModel):
     report_url: str
-
 
 class ExistingTestRequest(BaseModel):
     apk_name: str
     tests_to_run: Optional[List[Dict[str, str]]] = None
 
-
 class LogMessage(BaseModel):
     message: str
     status: str = "INFO"
-
 
 class TestRequest(BaseModel):
     url: str
     tests_to_run: Optional[List[Dict[str, str]]] = None
 
+# NEW: payload from conftest HTTP POST
+class JiraPayloadRequest(BaseModel):
+    ticket_id:      Optional[str]       = None
+    issue_id:       Optional[str]       = None
+    app_name:       Optional[str]       = None
+    app_version:    Optional[str]       = None
+    module:         Optional[str]       = None
+    feature:        Optional[str]       = None
+    issue_summary:  Optional[str]       = None
+    title:          Optional[str]       = None
+    test_name:      Optional[str]       = None
+    test_id:        Optional[str]       = None
+    steps_executed: Optional[List[Any]] = None
+    developer_name: Optional[str]       = None
+    description:    Optional[str]       = None
 
-# --- Globals to manage child processes ---
+# NEW: create request from IssuePanel "Create" button
+class JiraCreateRequest(BaseModel):
+    app_name:       Optional[str]       = None
+    app_version:    Optional[str]       = None
+    module:         Optional[str]       = None
+    feature:        Optional[str]       = None
+    issue_summary:  Optional[str]       = None
+    test_name:      Optional[str]       = None
+    test_id:        Optional[str]       = None
+    steps_executed: Optional[List[Any]] = None
+    developer_name: Optional[str]       = None
+    title:          Optional[str]       = None
+    description:    Optional[str]       = None
+    parent:         Optional[str]       = None
+    fix_version:    Optional[List[str]] = None
+    priority:       Optional[str]       = None
+    issue_id:       Optional[str]       = None
+    issue_url:      Optional[str]       = None
+    ticket_id:      Optional[str]       = None
+
+
+# ─── WebSocket Connection Manager (unchanged) ─────────────────────────────────
 DOWNLOAD_PROCESS_OBJ = None
 
 
-# 1. Connection Manager for WebSockets
 class ConnectionManager:
     def __init__(self):
         self.active_connections: list[WebSocket] = []
@@ -209,6 +227,68 @@ async def run_complete(event: RunCompleteEvent):
     await manager.broadcast({"type": "RUN_COMPLETE", "payload": {"report_url": event.report_url}})
     return {"ok": True}
 
+# ─── Jira connection test ─────────────────────────────────────────────────────
+@app.get("/api/jira/test-connection")
+async def jira_test_connection():
+    import requests as req_lib
+    from jira_integration.jira_config import config as jira_config
+    from requests.auth import HTTPBasicAuth
+
+    base = {
+        "jira_url":         jira_config.url         or "(not set)",
+        "jira_email":       jira_config.email        or "(not set)",
+        "jira_project_key": jira_config.project_key  or "(not set)",
+        "jira_token_set":   bool(jira_config.api_token),
+        "jira_enabled":     jira_config.enabled,
+    }
+
+    if not all([jira_config.url, jira_config.email, jira_config.api_token]):
+        return {**base, "status": "MISSING_CONFIG",
+                "message": "One or more required .env variables not set"}
+
+    try:
+        me = req_lib.get(
+            f"{jira_config.url}/rest/api/3/myself",
+            auth=HTTPBasicAuth(jira_config.email, jira_config.api_token),
+            headers={"Accept": "application/json"}, timeout=10,
+        )
+        if me.status_code == 401:
+            return {**base, "status": "AUTH_FAILED",
+                    "message": (
+                        "401 Unauthorized - JIRA_EMAIL or JIRA_API_TOKEN is wrong. "
+                        "Generate a new token at: https://id.atlassian.com/manage-profile/security/api-tokens "
+                        f"| Current email: {jira_config.email}"
+                    )}
+        if me.status_code != 200:
+            return {**base, "status": f"AUTH_ERROR_{me.status_code}", "message": me.text[:200]}
+
+        user = me.json()
+        base["jira_account"] = user.get("displayName")
+        base["jira_account_id"] = user.get("accountId")
+    except Exception as e:
+        return {**base, "status": "CONNECTION_ERROR", "message": str(e)}
+
+    try:
+        proj = req_lib.get(
+            f"{jira_config.url}/rest/api/3/project/{jira_config.project_key}",
+            auth=HTTPBasicAuth(jira_config.email, jira_config.api_token),
+            headers={"Accept": "application/json"}, timeout=10,
+        )
+        if proj.status_code == 404:
+            return {**base, "status": "PROJECT_NOT_FOUND",
+                    "message": f"Project '{jira_config.project_key}' not found - check JIRA_PROJECT_KEY in .env"}
+        if proj.status_code == 403:
+            return {**base, "status": "PROJECT_NO_PERMISSION",
+                    "message": f"No access to project '{jira_config.project_key}' - ask your Jira admin to add you"}
+        if proj.status_code == 200:
+            base["project_name"] = proj.json().get("name")
+    except Exception as e:
+        base["project_check"] = str(e)
+
+    return {**base, "status": "ALL_OK",
+            "message": f"Credentials OK. Connected as '{base.get('jira_account')}'. Project '{jira_config.project_key}' accessible."}
+
+
 
 def _pick_free_port() -> int:
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -221,10 +301,7 @@ async def allure_start():
     port = _pick_free_port()
     subprocess.Popen(
         [ALLURE_CMD, "open", "-h", "127.0.0.1", "-p", str(port), ALLURE_REPORT_DIR],
-        cwd=BASE_DIR,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-        shell=True,
+        cwd=BASE_DIR, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True,
     )
     return JSONResponse({"url": f"http://127.0.0.1:{port}"})
 
@@ -233,10 +310,7 @@ async def allure_start():
 async def device_status():
     try:
         result = subprocess.run(
-            ["adb", "devices"],
-            capture_output=True,
-            text=True,
-            timeout=5,
+            ["adb", "devices"], capture_output=True, text=True, timeout=5,
         )
         lines = result.stdout.strip().splitlines()[1:]
         connected = any("\tdevice" in line for line in lines)
@@ -264,9 +338,26 @@ def _broadcast_async(message: dict) -> None:
         pass
 
 
+# ─── /api/log-step — intercept payload lines arriving via test_runner ─────────
 @app.post("/api/log-step")
 async def log_step(msg: LogMessage):
     logger.info("[PYTEST][%s] %s", msg.status, msg.message)
+
+    # Intercept AUTOMATION_PAYLOAD_JSON / JIRA_PAYLOAD_JSON lines
+    # These arrive because test_runner.send_log() streams every pytest stdout line here
+    for prefix in _PAYLOAD_PREFIXES:
+        if msg.message.startswith(prefix):
+            raw = msg.message[len(prefix):].strip()
+            try:
+                payload = json.loads(raw)
+                _pending_payloads.append(payload)
+                _broadcast_async({"type": "JIRA_PAYLOAD", "payload": payload})
+                logger.info("[JIRA_PAYLOAD intercepted] module=%s test=%s",
+                            payload.get("module"), payload.get("test_name"))
+            except Exception as exc:
+                logger.warning("Failed to parse payload from log-step: %s", exc)
+            break
+
     _broadcast_async({"type": "LOG", "payload": {"message": msg.message, "status": msg.status}})
     return {"status": "ok"}
 
@@ -279,12 +370,183 @@ async def log_metric(data: dict):
 
 @app.post("/api/module-status")
 async def module_status(data: dict):
-    module = data.get("module")
-    status = data.get("status")
+    module  = data.get("module")
+    status  = data.get("status")
     message = data.get("message", "")
     _broadcast_async({"type": "MODULE", "payload": {"module": module, "status": status, "message": message}})
     return {"status": "ok"}
 
+
+# ─── NEW: POST /api/jira/payload ──────────────────────────────────────────────
+# conftest._post_payload_to_backend() calls this directly via HTTP POST.
+# This is the fastest path — bypasses stdout capture entirely.
+@app.post("/api/jira/payload")
+async def receive_jira_payload(req: JiraPayloadRequest):
+    payload = req.model_dump(exclude_none=False)
+
+    # Store for late-joining clients
+    _pending_payloads.append(payload)
+
+    # Broadcast to all IssuePanel WebSocket clients
+    await manager.broadcast({"type": "JIRA_PAYLOAD", "payload": payload})
+
+    # Also show a clean line in the console
+    log_line = (
+        f"[PAYLOAD RECEIVED] {req.issue_id or ''}  "
+        f"module={req.module or '?'}  "
+        f"test={req.test_name or '?'}  "
+        f"v{req.app_version or '?'}"
+    )
+    await manager.broadcast({"type": "LOG", "payload": {"message": log_line, "status": "INFO"}})
+
+    logger.info("[/api/jira/payload] %s module=%s test=%s", req.issue_id, req.module, req.test_name)
+    return {"status": "received", "issue_id": req.issue_id, "module": req.module}
+
+
+# ─── NEW: GET /api/jira/payloads ─────────────────────────────────────────────
+# IssuePanel fetches this on mount to catch payloads received before WS connected.
+@app.get("/api/jira/payloads")
+async def get_pending_payloads():
+    return {"payloads": _pending_payloads}
+
+
+# ─── NEW: POST /api/jira/create ───────────────────────────────────────────────
+# Called by IssuePanel "Create" button.
+# ONLY calls create_jira_issue(). Does NOT call build_extended_jira_payload()
+# (that does a GET /rest/api/3/issue/{key} which fails with 401 on restricted projects).
+@app.post("/api/jira/create")
+async def jira_create(req: JiraCreateRequest):
+    from jira_integration.jira_service import create_jira_issue
+    from jira_integration.jira_config import config as jira_config
+
+    # Validate config before hitting Jira API
+    if not jira_config.enabled:
+        raise HTTPException(status_code=400,
+                            detail="Jira is disabled. Set JIRA_ENABLED=true in backend/.env")
+
+    missing = [n for n, v in {
+        "JIRA_URL":         jira_config.url,
+        "JIRA_EMAIL":       jira_config.email,
+        "JIRA_API_TOKEN":   jira_config.api_token,
+        "JIRA_PROJECT_KEY": jira_config.project_key,
+    }.items() if not v]
+
+    if missing:
+        raise HTTPException(status_code=400,
+                            detail=f"Missing .env variables: {', '.join(missing)}. "
+                                   f"Edit backend/.env and restart the server.")
+
+    summary     = (req.title or req.issue_summary or "Automation Failure").strip()
+    description = (req.description or "Automation Test Failure").strip()
+
+    try:
+        issue_key = create_jira_issue(
+            summary        = summary,
+            description    = description,
+            app_name       = req.app_name,
+            app_version    = req.app_version,
+            module         = req.module or req.parent,
+            feature        = req.feature,
+            issue_summary  = summary,
+            test_name      = req.test_name,
+            test_id        = req.test_id,
+            steps_executed = req.steps_executed or [],
+            developer_name = req.developer_name,
+        )
+    except Exception as exc:
+        err = str(exc)
+        logger.error("Jira create exception: %s", err)
+
+        # jira_service now raises RuntimeError("Jira API 401: You do not have permission...")
+        # Surface the exact message directly to the frontend
+        if "401" in err:
+            raise HTTPException(status_code=400,
+                                detail=f"Jira 401 Unauthorized — wrong JIRA_EMAIL or JIRA_API_TOKEN.\n"
+                                       f"Fix: Open backend/.env, correct JIRA_EMAIL and JIRA_API_TOKEN, restart server.\n"
+                                       f"Jira said: {err}")
+        if "403" in err or "permission" in err.lower():
+            raise HTTPException(status_code=400,
+                                detail=f"Jira 403 Forbidden — your account cannot create issues in project '{jira_config.project_key}'.\n"
+                                       f"Fix: Ask your Jira admin to grant 'Create Issues' permission, or check JIRA_PROJECT_KEY in .env.\n"
+                                       f"Jira said: {err}")
+        raise HTTPException(status_code=400, detail=f"Jira error: {err}")
+
+    if not issue_key:
+        raise HTTPException(status_code=400,
+                            detail="Jira returned no issue key — check JIRA_ENABLED, JIRA_URL, JIRA_EMAIL, "
+                                   "JIRA_API_TOKEN and JIRA_PROJECT_KEY in backend/.env")
+
+    issue_url = f"{jira_config.url}/browse/{issue_key}"
+
+    entry = {
+        "issue_id":       issue_key,
+        "issue_url":      issue_url,
+        "title":          summary,
+        "description":    description,
+        "developer_name": req.developer_name or "",
+        "module":         req.module or req.parent or "",
+        "app_name":       req.app_name or "",
+        "app_version":    req.app_version or "",
+        "test_name":      req.test_name or "",
+        "test_id":        req.test_id or "",
+        "ticket_id":      req.ticket_id or "",
+        "fix_version":    req.fix_version or [],
+        "priority":       req.priority or "High",
+        "status":         "Assigned",
+        "created_at":     datetime.datetime.now().isoformat(),
+    }
+
+    _jira_history.append(entry)
+    _broadcast_async({"type": "JIRA_CREATED", "payload": entry})
+
+    return {"issue_id": issue_key, "issue_key": issue_key, "issue_url": issue_url, **entry}
+
+
+# ─── NEW: GET /api/jira/history ──────────────────────────────────────────────
+@app.get("/api/jira/history")
+async def jira_history_api():
+    return {"issues": _jira_history}
+
+
+# Keep the legacy route JiraHistory.jsx uses
+@app.get("/jira/history")
+async def jira_history_legacy():
+    return {"issues": [
+        {
+            "key":      e.get("issue_id", ""),
+            "summary":  e.get("title", ""),
+            "status":   e.get("status", "Assigned"),
+            "url":      e.get("issue_url", ""),
+            "priority": e.get("priority", ""),
+            "assignee": e.get("developer_name", ""),
+            "updated":  e.get("created_at", ""),
+        }
+        for e in _jira_history
+    ]}
+
+
+# ─── NEW: Health check ────────────────────────────────────────────────────────
+@app.get("/api/health")
+async def health():
+    from jira_integration.jira_config import config as jira_config
+    return {
+        "status":           "ok",
+        "jira_enabled":     jira_config.enabled,
+        "jira_url":         jira_config.url         or "(not set — add JIRA_URL to .env)",
+        "jira_project_key": jira_config.project_key or "(not set — add JIRA_PROJECT_KEY to .env)",
+        "jira_email":       jira_config.email        or "(not set — add JIRA_EMAIL to .env)",
+        "jira_token_set":   bool(jira_config.api_token),
+        "new_routes": [
+            "POST /api/jira/payload  — conftest sends failure payloads here",
+            "GET  /api/jira/payloads — IssuePanel fetches on mount",
+            "POST /api/jira/create   — IssuePanel 'Create' button",
+            "GET  /api/jira/history  — created tickets this session",
+            "GET  /api/health        — this endpoint",
+        ],
+    }
+
+
+# ─── All original routes below (unchanged) ────────────────────────────────────
 
 @app.post("/start-test")
 async def start_test(request: TestRequest, background_tasks: BackgroundTasks):
@@ -295,23 +557,16 @@ async def start_test(request: TestRequest, background_tasks: BackgroundTasks):
 
         script_path = os.path.join(os.path.dirname(__file__), "gdrive_loader.py")
         apk_path = None
-
         env = os.environ.copy()
         env["PYTHONIOENCODING"] = "utf-8"
 
         DOWNLOAD_PROCESS_OBJ = await asyncio.create_subprocess_exec(
-            sys.executable,
-            "-u",
-            script_path,
-            request.url,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-            env=env,
+            sys.executable, "-u", script_path, request.url,
+            stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE, env=env,
         )
 
         async for line in DOWNLOAD_PROCESS_OBJ.stdout:
             decoded_line = line.decode("utf-8").strip()
-
             if decoded_line.startswith("PROGRESS:"):
                 raw_msg = decoded_line.replace("PROGRESS:", "")
                 await manager.broadcast({"type": "LOG", "payload": {"message": raw_msg, "status": "PROGRESS"}})
@@ -325,41 +580,27 @@ async def start_test(request: TestRequest, background_tasks: BackgroundTasks):
         if DOWNLOAD_PROCESS_OBJ.returncode != 0:
             stderr_data = await DOWNLOAD_PROCESS_OBJ.stderr.read()
             error_message = stderr_data.decode("utf-8").strip() or "Unknown error (process killed?)"
-            print(f"Subprocess Error: {error_message}")
             raise Exception(f"Script Error: {error_message}")
 
         if not apk_path:
             raise Exception("Download script finished but returned no path.")
 
         DOWNLOAD_PROCESS_OBJ = None
-
-        icon_url = extract_app_icon(apk_path)
+        icon_url      = extract_app_icon(apk_path)
         full_icon_url = f"http://localhost:8000{icon_url}" if icon_url else None
-
         info = get_apk_info(apk_path) or {}
-        app_name = info.get("app_name")
-        package_name = info.get("package_name")
-        app_version = info.get("app_version")
-        developer_name = info.get("developer_name")
 
         background_tasks.add_task(
-            run_tests_and_get_suggestions,
-            apk_path,
-            tests_to_run=request.tests_to_run,
-            app_name=app_name,
-            app_version=app_version,
-            developer_name=developer_name,
+            run_tests_and_get_suggestions, apk_path,
+            tests_to_run   = request.tests_to_run,
+            app_name       = info.get("app_name"),
+            app_version    = info.get("app_version"),
+            developer_name = info.get("developer_name"),
         )
 
         return {
-            "status": "success",
-            "message": "APK Downloaded. Test Starting...",
-            "app_icon": full_icon_url,
-            "app_name": app_name,
-            "package_name": package_name,
-            "app_version": app_version,
-            "developer_name": developer_name,
-            "apk_path": apk_path,
+            "status": "success", "message": "APK Downloaded. Test Starting...",
+            "app_icon": full_icon_url, "apk_path": apk_path, **info,
         }
 
     except Exception as e:
@@ -370,12 +611,8 @@ async def start_test(request: TestRequest, background_tasks: BackgroundTasks):
 
 @app.post("/start-test-existing")
 async def start_test_existing(request: ExistingTestRequest, background_tasks: BackgroundTasks):
-    """
-    Start tests using an already-downloaded APK in backend/temp_apks.
-    """
     try:
         apk_path = os.path.join(APKS_DIR, request.apk_name)
-
         if not os.path.isfile(apk_path):
             raise HTTPException(status_code=404, detail="APK not found on server")
 
@@ -383,33 +620,21 @@ async def start_test_existing(request: ExistingTestRequest, background_tasks: Ba
             {"type": "LOG", "payload": {"message": f"Using existing APK: {request.apk_name}", "status": "INFO"}}
         )
 
-        icon_url = extract_app_icon(apk_path)
+        icon_url      = extract_app_icon(apk_path)
         full_icon_url = f"http://localhost:8000{icon_url}" if icon_url else None
-
         info = get_apk_info(apk_path) or {}
-        app_name = info.get("app_name")
-        package_name = info.get("package_name")
-        app_version = info.get("app_version")
-        developer_name = info.get("developer_name")
 
         background_tasks.add_task(
-            run_tests_and_get_suggestions,
-            apk_path,
-            tests_to_run=request.tests_to_run,
-            app_name=app_name,
-            app_version=app_version,
-            developer_name=developer_name,
+            run_tests_and_get_suggestions, apk_path,
+            tests_to_run   = request.tests_to_run,
+            app_name       = info.get("app_name"),
+            app_version    = info.get("app_version"),
+            developer_name = info.get("developer_name"),
         )
 
         return {
-            "status": "success",
-            "message": "Using existing APK. Test Starting...",
-            "app_icon": full_icon_url,
-            "app_name": app_name,
-            "package_name": package_name,
-            "app_version": app_version,
-            "developer_name": developer_name,
-            "apk_path": apk_path,
+            "status": "success", "message": "Using existing APK. Test Starting...",
+            "app_icon": full_icon_url, "apk_path": apk_path, **info,
         }
 
     except HTTPException:
@@ -422,10 +647,7 @@ async def start_test_existing(request: ExistingTestRequest, background_tasks: Ba
 @app.get("/api/apk-list")
 async def list_apks():
     try:
-        files = []
-        for name in os.listdir(APKS_DIR):
-            if name.lower().endswith((".apk", ".apks")):
-                files.append(name)
+        files = [name for name in os.listdir(APKS_DIR) if name.lower().endswith((".apk", ".apks"))]
         return {"apks": files}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -434,10 +656,9 @@ async def list_apks():
 @app.post("/stop-test")
 async def stop_test():
     print("DEBUG: /stop-test called")
-
     stopped_something = False
-
     global DOWNLOAD_PROCESS_OBJ
+
     if DOWNLOAD_PROCESS_OBJ is not None:
         try:
             print("DEBUG: Terminating download process...")
@@ -449,14 +670,10 @@ async def stop_test():
     test_stopped = stop_current_tests()
     if test_stopped:
         stopped_something = True
-    print(f"DEBUG: stop_current_tests() -> {test_stopped}")
 
     if stopped_something:
         await manager.broadcast(
-            {
-                "type": "LOG",
-                "payload": {"message": "Backend: Process (Download/Test) stopped on user request.", "status": "FAILED"},
-            }
+            {"type": "LOG", "payload": {"message": "Backend: Process stopped on user request.", "status": "FAILED"}}
         )
         return {"status": "stopped"}
     return {"status": "no-process"}
@@ -479,14 +696,12 @@ async def appium_start():
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         if s.connect_ex(("127.0.0.1", APPIUM_PORT)) == 0:
-            return {"status": "running", "message": f"Appium (or something) already active on port {APPIUM_PORT}"}
+            return {"status": "running", "message": f"Appium already active on port {APPIUM_PORT}"}
 
     try:
         _appium_proc = subprocess.Popen(
             ["appium", "-p", str(APPIUM_PORT)],
-            shell=True,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
+            shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
         )
         return {"status": "started", "message": f"Appium started on port {APPIUM_PORT}"}
     except Exception as e:
@@ -501,16 +716,13 @@ async def appium_stop():
             try:
                 subprocess.run(
                     ["taskkill", "/F", "/T", "/PID", str(_appium_proc.pid)],
-                    stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL,
+                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
                 )
             except Exception as e:
                 print(f"Error executing taskkill: {e}")
                 _appium_proc.kill()
-
         _appium_proc = None
         return {"status": "stopped"}
-
     return {"status": "not_running"}
 
 
@@ -518,7 +730,6 @@ async def appium_stop():
 async def api_generate_report():
     try:
         import threading
-
         t = threading.Thread(target=generate_report)
         t.start()
         return {"status": "ok", "message": "Report generation started"}

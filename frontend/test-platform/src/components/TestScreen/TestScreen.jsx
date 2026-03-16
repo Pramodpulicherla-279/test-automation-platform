@@ -418,33 +418,43 @@ function TestScreen() {
     };
 
     const handleIncomingData = (data) => {
+        const ingestJiraPayload = (payloadObj) => {
+            const getIssueKey = (obj) =>
+                obj?.issue_key ||
+                obj?.issueKey ||
+                obj?.issue_id ||
+                obj?.issueId ||
+                obj?.key ||
+                obj?.id ||
+                '';
+
+            setJiraIssues(prev => {
+                const next = Array.isArray(prev) ? prev : [];
+                const newKey = getIssueKey(payloadObj);
+                if (newKey && next.some(p => getIssueKey(p) === newKey)) return next;
+                return [...next, payloadObj];
+            });
+        };
+
+        if (data.type === 'JIRA_PAYLOAD') {
+            const payloadObj = data.payload?.payload || data.payload;
+            if (payloadObj && typeof payloadObj === 'object') {
+                ingestJiraPayload(payloadObj);
+            }
+            return;
+        }
+
         if (data.type === 'LOG') {
             const { message, status } = data.payload || {};
 
-            // Parse Jira payload JSON if present
-            if (typeof message === 'string' && message.startsWith('JIRA_PAYLOAD_JSON:')) {
-                const jsonPart = message.slice('JIRA_PAYLOAD_JSON:'.length).trim();
-
-                const getIssueKey = (obj) =>
-                    obj?.issue_key ||
-                    obj?.issueKey ||
-                    obj?.issue_id ||
-                    obj?.issueId ||
-                    obj?.key ||
-                    obj?.id ||
-                    '';
+            // Parse Jira payload JSON if present (supports both prefixes)
+            if (typeof message === 'string' && (message.startsWith('JIRA_PAYLOAD_JSON:') || message.startsWith('AUTOMATION_PAYLOAD_JSON:'))) {
+                const prefix = message.startsWith('JIRA_PAYLOAD_JSON:') ? 'JIRA_PAYLOAD_JSON:' : 'AUTOMATION_PAYLOAD_JSON:';
+                const jsonPart = message.slice(prefix.length).trim();
 
                 try {
                     const parsed = JSON.parse(jsonPart);
-                    setJiraIssues(prev => {
-                        const next = Array.isArray(prev) ? prev : [];
-                        const newKey = getIssueKey(parsed);
-
-                        // Dedup if we can identify the key
-                        if (newKey && next.some(p => getIssueKey(p) === newKey)) return next;
-
-                        return [...next, parsed];
-                    });
+                    ingestJiraPayload(parsed);
                 } catch (e) {
                     setLogs(prev => [
                         ...prev,
