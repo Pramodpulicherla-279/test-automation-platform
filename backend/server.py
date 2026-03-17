@@ -588,9 +588,32 @@ async def jira_create(req: JiraCreateRequest):
 
 
 # ─── NEW: GET /api/jira/history ──────────────────────────────────────────────
+_jira_comments: dict = {}   # issue_key -> list of {author, text, created_at}
+
 @app.get("/api/jira/history")
 async def jira_history_api():
     return {"issues": _jira_history}
+
+@app.get("/api/jira/comments/{issue_key}")
+async def get_comments(issue_key: str):
+    return {"comments": _jira_comments.get(issue_key, [])}
+
+@app.post("/api/jira/comments/{issue_key}")
+async def add_comment(issue_key: str, data: dict):
+    text = (data.get("text") or "").strip()
+    if not text:
+        raise HTTPException(status_code=400, detail="Comment text required")
+    author = data.get("author") or "QA Automation"
+    comment = {
+        "author":     author,
+        "text":       text,
+        "created_at": datetime.datetime.now().isoformat(),
+    }
+    if issue_key not in _jira_comments:
+        _jira_comments[issue_key] = []
+    _jira_comments[issue_key].append(comment)
+    _broadcast_async({"type": "JIRA_COMMENT", "payload": {"issue_key": issue_key, "comment": comment}})
+    return {"status": "ok", "comment": comment}
 
 
 # Keep the legacy route JiraHistory.jsx uses
