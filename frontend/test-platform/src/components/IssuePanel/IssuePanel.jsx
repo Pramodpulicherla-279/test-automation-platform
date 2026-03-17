@@ -513,7 +513,7 @@ export default function IssuePanel({
                   {/* Error text */}
                   <div>
                     <label style={S.label}>Error <span style={{ color:"#ef4444" }}>*</span></label>
-                    <textarea style={{ ...S.input(locked), resize:"vertical", minHeight:"70px", fontFamily:"inherit", fontSize:"0.72rem", lineHeight:"1.5" }}
+                    <textarea style={{ ...S.input(locked), resize:"vertical", minHeight:"300px", fontFamily:"inherit", fontSize:"0.72rem", lineHeight:"1.5" }}
                       value={iss.description} readOnly={locked}
                       onChange={e => !locked && setField(idx, "description", e.target.value)} />
                   </div>
