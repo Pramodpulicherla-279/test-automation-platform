@@ -52,10 +52,14 @@
     {
         "step": "Enter Farmer Phone",
         "status": "Success",
-        "value": "5681234567"
+        "value": "4545467328"
     },
     {
         "step": "Submit Farmer",
+        "status": "Success"
+    },
+    {
+        "step": "Add Crop",
         "status": "Success"
     }
 ]
