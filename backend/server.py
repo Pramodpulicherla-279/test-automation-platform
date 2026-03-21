@@ -355,29 +355,24 @@ async def log_step(msg: LogMessage):
             raw = msg.message[len(prefix):].strip()
             try:
                 payload = json.loads(raw)
-                _pending_payloads.append(payload)
-                _broadcast_async({"type": "JIRA_PAYLOAD", "payload": payload})
+                # NOTE: do NOT add to _pending_payloads here — /api/jira/payload HTTP POST
+                # is the primary path and handles storage + JIRA_PAYLOAD broadcast.
+                # log_step just shows a clean readable console line for visibility.
                 logger.info("[JIRA_PAYLOAD intercepted] module=%s test=%s",
                             payload.get("module"), payload.get("test_name"))
 
-                # ── Send a CLEAN summary line to the console (not the raw JSON blob) ──
-                # Build clean readable console line
-                app_n  = payload.get('app_name', '?')
-                app_v  = payload.get('app_version', '?')
+                # Build clean readable console summary line
                 mod    = payload.get('module', '?')
                 tname  = payload.get('test_name', '?')
                 iid    = payload.get('issue_id', '')
-                dev    = payload.get('developer_name', '?')
-                nsteps = len(payload.get('steps_executed') or [])
+                steps  = payload.get('steps_executed') or []
                 desc   = str(payload.get('description') or '')
-                err_line = desc.split('\n')[0][:100] if desc else ''
-                clean_line = f"[AUTOMATION PAYLOAD] {iid} | {mod} | {tname} | {app_n} v{app_v} | Dev: {dev} | Steps: {nsteps}"
-                # Broadcast separator + payload line + error summary (all show in any console)
-                _broadcast_async({"type": "LOG", "payload": {"message": "=" * 60, "status": "INFO"}})
+                err_line = desc.split('\n')[0][:120] if desc else ''
+                steps_preview = ", ".join(steps[:3]) + ("…" if len(steps) > 3 else "") if steps else "none"
+                clean_line = f"[PAYLOAD] {iid} | {mod} | {tname} | Steps ({len(steps)}): {steps_preview}"
                 _broadcast_async({"type": "LOG", "payload": {"message": clean_line, "status": "PAYLOAD"}})
                 if err_line:
                     _broadcast_async({"type": "LOG", "payload": {"message": f"  Error: {err_line}", "status": "FAILED"}})
-                _broadcast_async({"type": "LOG", "payload": {"message": "=" * 60, "status": "INFO"}})
             except Exception as exc:
                 logger.warning("Failed to parse payload from log-step: %s", exc)
                 # Still show original line if parsing fails
@@ -416,22 +411,8 @@ async def receive_jira_payload(req: JiraPayloadRequest):
     # Broadcast to all IssuePanel WebSocket clients
     await manager.broadcast({"type": "JIRA_PAYLOAD", "payload": payload})
 
-    # Send a clear, highlighted line to the console
-    log_line = (
-        f"[AUTOMATION PAYLOAD] {req.issue_id or ''}"
-        f" | Module: {req.module or '?'}"
-        f" | Test: {req.test_name or '?'}"
-        f" | App: {req.app_name or '?'} v{req.app_version or '?'}"
-        f" | Developer: {req.developer_name or '?'}"
-        f" | Steps: {len(req.steps_executed or [])}"
-    )
-    _desc = (req.description or "").split("\n")[0][:100]
-    await manager.broadcast({"type": "LOG", "payload": {"message": "=" * 60, "status": "INFO"}})
-    await manager.broadcast({"type": "LOG", "payload": {"message": log_line, "status": "PAYLOAD"}})
-    if _desc:
-        await manager.broadcast({"type": "LOG", "payload": {"message": f"  Error: {_desc}", "status": "FAILED"}})
-    await manager.broadcast({"type": "LOG", "payload": {"message": "=" * 60, "status": "INFO"}})
-
+    # Console summary is already sent by log_step when it intercepts JIRA_PAYLOAD_JSON:
+    # Do NOT duplicate it here. Just log to server.
     logger.info("[/api/jira/payload] %s module=%s test=%s", req.issue_id, req.module, req.test_name)
     return {"status": "received", "issue_id": req.issue_id, "module": req.module}
 
@@ -564,21 +545,25 @@ async def jira_create(req: JiraCreateRequest):
     issue_url = f"{jira_config.url}/browse/{issue_key}"
 
     entry = {
-        "issue_id":       issue_key,
-        "issue_url":      issue_url,
-        "title":          summary,
-        "description":    description,
-        "developer_name": req.developer_name or "",
-        "module":         req.module or req.parent or "",
-        "app_name":       req.app_name or "",
-        "app_version":    req.app_version or "",
-        "test_name":      req.test_name or "",
-        "test_id":        req.test_id or "",
-        "ticket_id":      req.ticket_id or "",
-        "fix_version":    req.fix_version or [],
-        "priority":       req.priority or "High",
-        "status":         "Assigned",
-        "created_at":     datetime.datetime.now().isoformat(),
+        "issue_id":        issue_key,
+        "issue_url":       issue_url,
+        "title":           summary,
+        "description":     description,
+        "developer_name":  req.developer_name or "",
+        "module":          req.module or req.parent or "",
+        "app_name":        req.app_name or "",
+        "app_version":     req.app_version or "",
+        "test_name":       req.test_name or "",
+        "ticket_id":       req.ticket_id or "",
+        "fix_version":     req.fix_version or [],
+        "affects_version": req.affects_version or [],
+        "priority":        req.priority or "High",
+        "sprint":          req.sprint or "",
+        "start_date":      req.start_date or "",
+        "end_date":        req.end_date or "",
+        "steps_executed":  req.steps_executed or [],
+        "status":          "Assigned",
+        "created_at":      datetime.datetime.now().isoformat(),
     }
 
     _jira_history.append(entry)
