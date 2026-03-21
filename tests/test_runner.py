@@ -11,6 +11,10 @@ from dotenv import load_dotenv
 from typing import Optional, List, Dict
 import threading
 import queue
+<<<<<<< HEAD
+=======
+sys.dont_write_bytecode = True
+>>>>>>> 70f383605087ad6b424caa5b697a86d4ba48cf55
 
 load_dotenv()
 

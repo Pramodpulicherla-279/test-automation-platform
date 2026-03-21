@@ -1,59 +1,14 @@
-/**
- * App.jsx
- *
- * Shared state flow:
- *   JiraHistoryContext holds the history array.
- *   IssuePanel (inside TestScreen) calls addToJiraHistory() when:
- *     - user clicks Create  → type: "created"  → shows in Assigned tab
- *     - user clicks Remove  → type: "removed"  → shows in Unassigned tab
- *   JiraHistory screen reads the history from context.
- */
-
-import React, { createContext, useContext, useState, useCallback } from "react";
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
+import TestScreen  from "./components/TestScreen/TestScreen";
+import MainScreen from "./components/MainScreen/MainScreen";
+import JiraHistory from "./components/JiraHistory/JiraHistory";
+import Sidebar from "./components/Sidebar/Sidebar";
+import './App.css'; // Import the new CSS file
 
-import TestScreen   from "./components/TestScreen/TestScreen";
-import JiraHistory  from "./components/JiraHistory/JiraHistory";
-import Sidebar      from "./components/Sidebar/Sidebar";
-import "./App.css";
 
-/* ─── Shared Jira History Context ─────────────────────────────────────────── */
-export const JiraHistoryContext = createContext({
-  history:           [],
-  addToJiraHistory:  () => {},
-});
+const WS_URL = 'ws://localhost:8000/ws/test-status';
+const API_URL = 'http://localhost:8000';
 
-export function useJiraHistory() {
-  return useContext(JiraHistoryContext);
-}
-
-function JiraHistoryProvider({ children }) {
-  const [history, setHistory] = useState([]);
-
-  const addToJiraHistory = useCallback((entry) => {
-    // entry shape: { type: "created"|"removed", issueId, title,
-    //               jiraUrl, module, priority, developer,
-    //               savedAt, ... }
-    setHistory((prev) => {
-      // Deduplicate by issueId for "created" entries
-      if (entry.type === "created" && entry.issueId) {
-        const exists = prev.some(
-          (h) => h.type === "created" && h.issueId === entry.issueId
-        );
-        if (exists) return prev;
-      }
-      return [entry, ...prev];
-    });
-  }, []);
-
-  return (
-    <JiraHistoryContext.Provider value={{ history, addToJiraHistory }}>
-      {children}
-    </JiraHistoryContext.Provider>
-  );
-}
-
-/* ─── Layout ──────────────────────────────────────────────────────────────── */
 function Layout() {
   return (
     <div className="app-layout">
@@ -62,6 +17,20 @@ function Layout() {
         <Outlet />
       </div>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<TestScreen />} />
+          <Route path="/jira-history" element={<JiraHistory />} />
+        </Route>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

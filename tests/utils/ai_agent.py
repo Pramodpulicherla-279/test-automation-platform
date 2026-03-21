@@ -1,6 +1,8 @@
 import os
 from openai import OpenAI
 import json
+import sys
+sys.dont_write_bytecode = True
 
 class AIAgent:
     def __init__(self, key):

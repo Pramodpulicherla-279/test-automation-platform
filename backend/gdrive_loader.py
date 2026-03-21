@@ -4,6 +4,7 @@ import uuid
 import shutil
 import sys
 from androguard.core.apk import APK
+sys.dont_write_bytecode = True
 
 # Base directory of the backend package (this file)
 BASE_DIR = os.path.dirname(__file__)

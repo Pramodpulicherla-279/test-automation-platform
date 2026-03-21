@@ -8,96 +8,144 @@ Changes:
 """
 
 import os
-import sys
-import json
-import time
-import datetime
-import requests as http_requests
-from pathlib import Path
-
+import re
 import pytest
 import allure
+import time
+from pathlib import Path
 from appium import webdriver
 from appium.options.android import UiAutomator2Options
-
-_THIS_DIR     = os.path.dirname(os.path.abspath(__file__))
-_PROJECT_ROOT = os.path.dirname(_THIS_DIR)
-if _PROJECT_ROOT not in sys.path:
-    sys.path.insert(0, _PROJECT_ROOT)
-
-from jira_integration.jira_attachment import attach_screenshot
-from jira_integration.jira_config import config
-
+import sys
 sys.dont_write_bytecode = True
 
-BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
+RUN_ID_CACHE = None
 
-_ticket_id:      str  = ""
-_issue_counter:  int  = 0
-_session_issues: list = []
-_developer_name: str  = ""   # fetched from Jira API once per session
-
-
-def _make_ticket_id() -> str:
-    return "RUN-" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-
-
-def _make_issue_id() -> str:
-    """Returns ISS-001, ISS-002, ISS-003 …"""
-    global _issue_counter
-    _issue_counter += 1
-    return f"ISS-{_issue_counter:03d}"
-
-
-def _fetch_developer_name_from_jira() -> str:
-    """
-    Calls GET /rest/api/3/user?accountId=<JIRA_ASSIGNEE_ACCOUNT_ID>
-    Returns the displayName if successful, else empty string.
-    """
-    if not config.assignee_id:
-        return ""
-    if not config.url or not config.email or not config.api_token:
-        return ""
-    try:
-        from requests.auth import HTTPBasicAuth
-        resp = http_requests.get(
-            f"{config.url}/rest/api/3/user",
-            params={"accountId": config.assignee_id},
-            auth=HTTPBasicAuth(config.email, config.api_token),
-            headers={"Accept": "application/json"},
-            timeout=8,
-        )
-        if resp.status_code == 200:
-            name = (resp.json() or {}).get("displayName", "")
-            if name:
-                print(f"[JIRA] Developer name resolved: {name}")
-                return name
-    except Exception as e:
-        print(f"[WARN] Could not fetch Jira user displayName: {e}")
-    return ""
-
-
-# ─── CLI options ──────────────────────────────────────────────────────────────
+# 1. Register the custom command-line option
 def pytest_addoption(parser):
-    parser.addoption("--apk",            action="store", default=None)
-    parser.addoption("--app-name",       action="store", default="Unknown App")
-    parser.addoption("--app-version",    action="store", default="Unknown Version")
-    parser.addoption("--developer-name", action="store", default="")
+    """
+    Define a single CLI option: --apk
+    """
+    parser.addoption(
+        "--apk",
+        action="store",
+        default=None,
+        help="Path to the APK file under test",
+    )
+
+    # NEW: where to store screenshots for UI parser (LLM)
+    parser.addoption(
+        "--ui-screenshots-dir",
+        action="store",
+        default=None,
+        help="Directory to store UI screenshots for analysis (not Allure).",
+    )
+
+    # NEW: group screenshots by run id (backend should pass a unique id per run)
+    parser.addoption(
+        "--run-id",
+        action="store",
+        default=None,
+        help="Run identifier used to group artifacts (screenshots/logs).",
+    )
 
 
-def pytest_sessionstart(session):
-    global _ticket_id, _issue_counter, _developer_name
-    _ticket_id     = _make_ticket_id()
-    _issue_counter = 0
-    print(f"\n[TICKET] Session ticket_id: {_ticket_id}")
+def _safe_name(s: str) -> str:
+    s = (s or "").strip().lower()
+    s = re.sub(r"[^a-z0-9._-]+", "_", s)
+    return s[:160] if len(s) > 160 else s
 
-    # Fetch developer name from Jira API once per session
-    _developer_name = _fetch_developer_name_from_jira()
-    if _developer_name:
-        print(f"[TICKET] Developer: {_developer_name}")
+def _get_test_id(nodeid: str) -> str:
+    """
+    Stable folder name for a test.
+    Example nodeid: tests/test_cases/.../test_login_pytest.py::TestLogin::test_login_success
+    """
+    return _safe_name(nodeid)
+
+def _get_run_ui_dir(config) -> Path:
+    """
+    Single folder for ALL screenshots of this run.
+    artifacts/ui_screenshots/<run_id>/
+    """
+    run_id = _get_run_id(config)
+    base = _get_ui_screenshots_root(config) / run_id
+    base.mkdir(parents=True, exist_ok=True)
+    return base
+
+def _build_ui_screenshot_path(config, nodeid: str, name: str) -> Path:
+    base_dir = _get_run_ui_dir(config)
+
+    ts = time.strftime("%H%M%S")
+    test_id = _get_test_id(nodeid)
+
+    filename = f"{ts}__{test_id}__{_safe_name(name)}.png"
+
+    return base_dir / filename
+
+def _get_run_id(config) -> str:
+    global RUN_ID_CACHE
+
+    if RUN_ID_CACHE:
+        return RUN_ID_CACHE
+
+    rid = config.getoption("--run-id") or os.getenv("RUN_ID")
+
+    if rid:
+        RUN_ID_CACHE = _safe_name(rid)
+    else:
+        RUN_ID_CACHE = time.strftime("%Y%m%d-%H%M%S")
+
+    return RUN_ID_CACHE
+
+def _get_ui_screenshots_root(config) -> Path:
+    # precedence: CLI > env > default under repo root
+    custom = config.getoption("--ui-screenshots-dir") or os.getenv("UI_SCREENSHOTS_DIR")
+    if custom:
+        return Path(custom)
+
+    # pytest root (repo root) + artifacts folder
+    root = Path(getattr(config, "rootpath", Path.cwd()))
+    return root / "artifacts" / "ui_screenshots"
 
 
-# ─── Driver fixture ───────────────────────────────────────────────────────────
+def _save_ui_screenshot(driver, config, nodeid: str, name: str) -> str | None:
+    """
+    Save screenshot to disk (for UI parser), return absolute path (string) or None on failure.
+    This does NOT attach to Allure.
+    """
+    try:
+        path = _build_ui_screenshot_path(config, nodeid, name)
+        ok = driver.get_screenshot_as_file(str(path))
+        return str(path.resolve()) if ok else None
+    except Exception as e:
+        print(f"[ui_screenshots] Failed to save screenshot: {e}")
+        return None
+    
+@pytest.fixture(autouse=True)
+def _bind_ui_shot_to_driver(request):
+    """
+    Binds:
+      - driver.ui_shot(name): takes screenshot into <run_id>/<test_id>/
+      - driver.ui_shot_path(name): returns a file path inside <run_id>/<test_id>/ (no capture)
+    """
+    if "driver" not in request.fixturenames:
+        yield
+        return
+
+    driver = request.getfixturevalue("driver")
+    nodeid = request.node.nodeid
+    config = request.config
+
+    def _shot(name: str = "screen"):
+        return _save_ui_screenshot(driver, config, nodeid, name)
+
+    def _shot_path(name: str = "screen") -> str:
+        return str(_build_ui_screenshot_path(config, nodeid, name))
+
+    setattr(driver, "ui_shot", _shot)
+    setattr(driver, "ui_shot_path", _shot_path)
+
+    yield
+
 @pytest.fixture(scope="session")
 def driver(request):
     apk_path = request.config.getoption("--apk")
@@ -118,72 +166,30 @@ def driver(request):
         drv.get_log("logcat")
     except Exception:
         pass
-    yield drv
-    drv.quit()
 
+    yield driver
 
-# ─── Metadata helpers ─────────────────────────────────────────────────────────
-def _cfg(item, option: str, fallback: str) -> str:
-    try:
-        val = item.config.getoption(option)
-        return val if val else fallback
-    except Exception:
-        return fallback
+    driver.quit()
 
-
-def _extract_feature(item) -> str:
-    for marker in item.iter_markers(name="allure_label"):
-        if marker.kwargs.get("label_type") == "feature":
-            return str(marker.kwargs.get("value") or (marker.args[0] if marker.args else ""))
-    return "Unknown Feature"
-
-
-def _extract_module(item) -> str:
-    name   = item.name.lower()
-    nodeid = item.nodeid.lower()
-    if "login"       in name or "login"       in nodeid: return "Login"
-    if "onboarding"  in name or "onboarding"  in nodeid: return "Onboarding"
-    if "addfarm"     in name or "addfarm"     in nodeid: return "Onboarding"
-    if "marketplace" in name or "marketplace" in nodeid: return "Marketplace"
-    if "cart"        in name or "cart"        in nodeid: return "Cart"
-    if item.cls is not None:
-        return item.cls.__name__
-    return "Unknown Module"
-
-
-def _steps_file_for_test(item) -> Path | None:
-    n = item.name.lower()
-    if "login"      in n: return Path("test-flows/login_flow_success.json")
-    if "onboarding" in n: return Path("test-flows/onboarding_flow_success.json")
-    if "addfarm"    in n: return Path("test-flows/onboarding_flow_success.json")
-    return None
-
-
-def _read_steps(item) -> list[str]:
-    flow_file = _steps_file_for_test(item)
-    if not flow_file or not flow_file.exists():
-        return []
-    try:
-        with flow_file.open("r", encoding="utf-8") as f:
-            data = json.load(f)
-        if not isinstance(data, list):
-            return []
-        steps = []
-        for entry in data:
-            if isinstance(entry, dict) and entry.get("step"):
-                steps.append(str(entry["step"]))
-            elif isinstance(entry, str):
-                steps.append(entry)
-        return steps
-    except Exception as e:
-        print(f"Failed to parse flow steps: {e}")
-        return []
-
-
-def _extract_error_only(longrepr) -> str:
+# NEW: fixture for tests to capture screenshots at every screen/step
+@pytest.fixture
+def ui_shot(request, driver):
     """
-    Extract only the meaningful error lines from pytest longrepr.
-    Removes traceback frames — keeps only the 'E ...' lines and last assertion.
+    Usage in tests:
+        def test_flow(driver, ui_shot):
+            ui_shot("login_screen")
+            ... navigate ...
+            ui_shot("home_screen")
+    """
+    def _take(name: str = "screen"):
+        return _save_ui_screenshot(driver, request.config, request.node.nodeid, name)
+    return _take
+
+def check_for_crashes(driver):
+    """
+    Retrieves logcat logs and looks for crash signatures.
+    If a crash is detected, it captures the surrounding log lines (stack trace) 
+    to provide meaningful context.
     """
     if not longrepr:
         return "No error details"
@@ -254,109 +260,51 @@ def _send_payload_to_backend(payload: dict) -> None:
 # ─── Failure hook ─────────────────────────────────────────────────────────────
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item, call):
+    """Add Allure attachments on test failure + always save UI screenshots to disk."""
     outcome = yield
     report  = outcome.get_result()
 
-    if report.when != "call":
-        return
+    if report.when == "call":
+        driver = item.funcargs.get("driver")
+        if not driver:
+            return
 
-    driver = item.funcargs.get("driver")
-    if not driver:
-        return
+        # Give logcat a moment (helps with end-of-test RN crashes)
+        time.sleep(2)
 
-    time.sleep(2)
+        # 1) Check for crashes (even if test was passing)
+        crash_log = check_for_crashes(driver)
 
-    # 1. Crash detection
-    crash_log = check_for_crashes(driver)
-    if crash_log:
-        print(f"CRASH DETECTED in {item.nodeid}")
-        allure.attach(crash_log, name="Crash Logs",
-                      attachment_type=allure.attachment_type.TEXT)
-        if report.outcome != "failed":
-            report.outcome  = "failed"
-            report.longrepr = "Application crash detected in logcat"
+        if crash_log:
+            print(f"CRASH DETECTED in {item.nodeid}")
+            allure.attach(
+                crash_log,
+                name="Crash Logs",
+                attachment_type=allure.attachment_type.TEXT,
+            )
+            if report.outcome != "failed":
+                report.outcome = "failed"
+                report.longrepr = "FAILURE: Application Crash Detected in Logcat"
 
-    if report.outcome != "failed":
-        return
+        # 2) ALWAYS save an end-of-test screenshot to disk (for UI parser)
+        _save_ui_screenshot(
+            driver=driver,
+            config=item.config,
+            nodeid=item.nodeid,
+            name=f"end__{report.outcome}",
+        )
 
-    # 2. Screenshot
-    screenshot_path = None
-    try:
-        os.makedirs("screenshots", exist_ok=True)
-        screenshot_path = f"screenshots/{item.name}.png"
-        driver.save_screenshot(screenshot_path)
-        allure.attach.file(screenshot_path, name="Failure Screenshot",
-                           attachment_type=allure.attachment_type.PNG)
-    except Exception as e:
-        print("Screenshot capture failed:", e)
-
-    # 3. Metadata
-    app_name    = _cfg(item, "--app-name",    "Unknown App")
-    app_version = _cfg(item, "--app-version", "Unknown Version")
-    module      = _extract_module(item)
-    feature     = _extract_feature(item)
-    test_name   = item.name
-    issue_id    = _make_issue_id()   # ← sequential number: "1", "2", "3"
-
-    # Developer name: Jira API > CLI arg > fallback
-    developer_name = (
-        _developer_name                              # fetched from Jira API at session start
-        or _cfg(item, "--developer-name", "")        # CLI arg
-        or "Unknown Developer"
-    )
-
-    issue_summary  = f"Automation Failure: {test_name}"
-    steps_executed = _read_steps(item)
-    # FIX 5: description = only the error, not the full metadata block
-    error_text     = _extract_error_only(report.longrepr)
-
-    today      = datetime.date.today()
-    start_date = today.isoformat()
-    end_date   = (today + datetime.timedelta(days=1)).isoformat()
-
-    # 4. Payload — no test_id field (FIX 1), error-only description (FIX 5)
-    payload = {
-        "ticket_id":       _ticket_id,
-        "issue_id":        issue_id,          # "1", "2", "3" — sequential number
-        "app_name":        app_name,
-        "app_version":     app_version,
-        "module":          module,
-        "feature":         feature,
-        "issue_summary":   issue_summary,
-        "title":           issue_summary,
-        "test_name":       test_name,
-        # test_id removed — FIX 1
-        "steps_executed":  steps_executed,
-        "developer_name":  developer_name,
-        "start_date":      start_date,
-        "end_date":        end_date,
-        "sprint":          "Automation",
-        "fix_version":     ["Production"],
-        "affects_version": [app_name] if app_name and app_name != "Unknown App" else [],
-        "description":     error_text,        # FIX 5: only the error
-    }
-
-    allure.attach(
-        json.dumps(payload, ensure_ascii=False, indent=2),
-        name=f"Automation Payload [#{issue_id}]",
-        attachment_type=allure.attachment_type.JSON,
-    )
-
-    _send_payload_to_backend(payload)
-    _session_issues.append({"issue_id": issue_id, "test_name": test_name, "module": module})
-
-
-# ─── Session finish ───────────────────────────────────────────────────────────
-def pytest_sessionfinish(session, exitstatus):
-    print(f"\n{'='*50}")
-    print(f"TEST SESSION FINISHED  |  Run ID: {_ticket_id}")
-    if _session_issues:
-        print(f"Failures ({len(_session_issues)}):")
-        for iss in _session_issues:
-            print(f"  [#{iss['issue_id']}] {iss['module']} — {iss['test_name']}")
-    print("Review failures in IssuePanel and click 'Create' to file Jira tickets.")
-    print(f"{'='*50}\n")
-
+        # 3) If failed, also attach screenshot to Allure
+        if report.outcome == "failed":
+            try:
+                screenshot = driver.get_screenshot_as_png()
+                allure.attach(
+                    screenshot,
+                    name="Failure Screenshot",
+                    attachment_type=allure.attachment_type.PNG,
+                )
+            except Exception as e:
+                print(f"Failed to capture screenshot: {str(e)}")
 
 def notReportFailed(report):
     return report.outcome != "failed"

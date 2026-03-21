@@ -1,6 +1,11 @@
 from selenium.webdriver.common.actions.action_builder import ActionBuilder
+<<<<<<< HEAD
 from selenium.webdriver.common.actions.pointer_input import PointerInput
 from selenium.webdriver.common.actions import interaction
+=======
+import sys
+sys.dont_write_bytecode = True
+>>>>>>> 70f383605087ad6b424caa5b697a86d4ba48cf55
 
 def tap_at_coordinates(driver, x, y):
     """

@@ -4,6 +4,8 @@ import cv2
 import numpy as np
 import time
 import os
+import sys
+sys.dont_write_bytecode = True
 
 def extract_text_with_coordinates(image_path):
     img = cv2.imread(image_path)

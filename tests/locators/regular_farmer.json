@@ -47,7 +47,9 @@
     "transplanted_date": "//android.view.View[@content-desc=\"30 July 2025\"]",
     "ok_button": "//android.widget.Button[@resource-id=\"android:id/button1\"]",
     "direct_sowing": {
-      "sowing_date_input": "(//android.widget.TextView[@text=\"\"])[1]",
+      "intercrop_name": "//android.widget.TextView[@text=\"Inter-Crop Name\"]",
+      "intercrop_sowingdate": "//android.widget.TextView[@text=\"--/--/----\"]",
+      "sowing_date_input": "(//android.widget.TextView[@text=\"--/--/----\"])[1]",
       "harvest_date_input": "(//android.widget.TextView[@text=\"\"])[2]"
     },
     "transplanted": {

@@ -1,1 +1,30 @@
+<<<<<<< HEAD
 []
+=======
+[
+    {
+        "step": "Click Verify OTP",
+        "status": "Success"
+    },
+    {
+        "step": "Click Verify OTP",
+        "status": "Success"
+    },
+    {
+        "step": "Click Verify OTP",
+        "status": "Success"
+    },
+    {
+        "step": "Click Crop Name input",
+        "status": "Success"
+    },
+    {
+        "step": "Click Crop Name item",
+        "status": "Success"
+    },
+    {
+        "step": "Click Inter Crop Name input",
+        "status": "Success"
+    }
+]
+>>>>>>> 70f383605087ad6b424caa5b697a86d4ba48cf55

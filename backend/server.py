@@ -1,8 +1,7 @@
 # server.py
 import os
 import sys
-import json
-import datetime
+sys.dont_write_bytecode = True
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, WebSocket, BackgroundTasks, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,33 +9,27 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 import uvicorn
 from pydantic import BaseModel
+from pathlib import Path
 import subprocess
+import json
 import socket
 import asyncio
 import logging
 from gdrive_loader import download_apk, extract_app_icon, get_apk_info
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict
 from starlette.websockets import WebSocketDisconnect
 
-logger = logging.getLogger("uvicorn.error")
 
 # Add project root to sys.path so we can import tests.*
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # root: f:\projects\test-automation-platform
 if BASE_DIR not in sys.path:
     sys.path.append(BASE_DIR)
 
 from tests.test_runner import run_tests_and_get_suggestions, stop_current_tests, generate_report
+# from gdrive_loader import download_apk, 
 
-# ─── In-memory stores (new) ───────────────────────────────────────────────────
-_jira_history:     list[dict] = []   # tickets created via Create button
-_pending_payloads: list[dict] = []   # all payloads received this session
-_dismissed_keys:   set[str]   = set()  # test_name keys dismissed (removed or created)
-
-# ─── Payload prefixes to intercept from log lines ────────────────────────────
-_PAYLOAD_PREFIXES = ("AUTOMATION_PAYLOAD_JSON:", "JIRA_PAYLOAD_JSON:")
-
-
-# ─── Lifespan ─────────────────────────────────────────────────────────────────
+print("server is running...")
+# --- NEW: Cleanup Handler (Lifespan) ---
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     yield
@@ -83,11 +76,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
+# Use absolute path and auto-create the dir
+STATIC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
 os.makedirs(STATIC_DIR, exist_ok=True)
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
-APKS_DIR = os.path.join(os.path.dirname(__file__), "temp_apks")
+APKS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "temp_apks")
 os.makedirs(APKS_DIR, exist_ok=True)
 
 ALLURE_REPORT_DIR = os.path.join(BASE_DIR, "allure-report")
@@ -98,8 +92,59 @@ _allure_proc: subprocess.Popen | None = None
 _allure_port: int | None = None
 _appium_proc: subprocess.Popen | None = None
 APPIUM_PORT = 4723
-ALLURE_CMD  = r"C:\Users\ram\scoop\shims\allure"
 
+ALLURE_CMD = r"C:\Users\Pramo\scoop\shims\allure"
+
+# Base screenshots directory created by pytest conftest.py
+UI_SCREENSHOTS_BASE = Path(__file__).resolve().parents[1] / "artifacts" / "ui_screenshots"
+UI_SCREENSHOTS_BASE.mkdir(parents=True, exist_ok=True)
+
+# Serve images so React can load them via URL:
+# GET http://localhost:8000/ui-screenshots/<run_id>/<...>/<file>.png
+app.mount("/ui-screenshots", StaticFiles(directory=str(UI_SCREENSHOTS_BASE)), name="ui-screenshots")
+
+
+class AnalyzeReq(BaseModel):
+    run_id: str | None = None  # optional; if not sent we auto-pick latest
+
+
+def _latest_run_id() -> str:
+    runs = [p for p in UI_SCREENSHOTS_BASE.iterdir() if p.is_dir()]
+    if not runs:
+        raise HTTPException(404, detail="No UI screenshots found. Run tests and capture screenshots first.")
+    runs.sort(key=lambda p: p.stat().st_mtime, reverse=True)
+    return runs[0].name
+
+
+@app.post("/api/ui-screenshots/analyze")
+def analyze_ui_screenshots(req: AnalyzeReq):
+    print("UI parser api called")
+    run_id = req.run_id or _latest_run_id()
+    print(run_id)
+    run_dir = UI_SCREENSHOTS_BASE / run_id
+    if not run_dir.exists():
+        raise HTTPException(404, detail=f"Run screenshots folder not found: {run_id}")
+
+    validator = Path(__file__).resolve().parents[1] / "ui-parser" / "ui_screenshot_validator.py"
+    if not validator.exists():
+        raise HTTPException(500, detail=f"Validator script not found: {validator}")
+
+    # Call validator as subprocess to avoid import issues (folder name ui-parser has a hyphen)
+    cmd = [sys.executable, str(validator), "--root-dir", str(run_dir)]
+    proc = subprocess.run(cmd, capture_output=True, text=True)
+
+    if proc.returncode != 0:
+        raise HTTPException(500, detail=f"UI validator failed: {proc.stderr.strip() or proc.stdout.strip()}")
+
+    payload = json.loads(proc.stdout or "{}")
+    results = payload.get("results", [])
+
+    # Add screenshot_url expected by your React component
+    for r in results:
+        rel = r.get("relative_path")
+        r["screenshot_url"] = f"/ui-screenshots/{run_id}/{rel}" if rel else None
+
+    return {"run_id": run_id, "results": results}
 
 def _start_allure_server() -> str:
     global _allure_proc, _allure_port
@@ -195,6 +240,13 @@ class ConnectionManager:
         await websocket.accept()
         async with self._lock:
             self.active_connections.append(websocket)
+    
+    async def disconnect(self, websocket: WebSocket):
+        async with self._lock:
+            try:
+                self.active_connections.remove(websocket)
+            except ValueError:
+                pass
 
     async def disconnect(self, websocket: WebSocket):
         async with self._lock:
@@ -204,6 +256,7 @@ class ConnectionManager:
                 pass
 
     async def broadcast(self, message: dict):
+        # Send concurrently + drop dead sockets (prevents one bad client from killing logs)
         async with self._lock:
             connections = list(self.active_connections)
 
@@ -219,10 +272,14 @@ class ConnectionManager:
 
         results = await asyncio.gather(*(_safe_send(ws) for ws in connections), return_exceptions=True)
 
+        # Remove failed connections
         for ws, ok in zip(connections, results):
             if ok is not True:
                 await self.disconnect(ws)
 
+class TestRequest(BaseModel):
+    url: str
+    tests_to_run: Optional[List[Dict[str, str]]] = None # Added field
 
 manager = ConnectionManager()
 
@@ -329,62 +386,28 @@ async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
     try:
         while True:
+            # Most frontends never send messages; this just keeps the socket open
             await websocket.receive_text()
     except WebSocketDisconnect:
         await manager.disconnect(websocket)
     except Exception:
         await manager.disconnect(websocket)
 
-
 def _broadcast_async(message: dict) -> None:
+    # Fire-and-forget broadcast so HTTP endpoints return immediately
     try:
         asyncio.create_task(manager.broadcast(message))
     except RuntimeError:
+        # If no running loop (rare), just skip
         pass
 
-
-# ─── /api/log-step — intercept payload lines arriving via test_runner ─────────
+# 3. The "Loopback" Endpoint (Pytest calls this)
 @app.post("/api/log-step")
 async def log_step(msg: LogMessage):
-    logger.info("[PYTEST][%s] %s", msg.status, msg.message)
-
-    # Intercept AUTOMATION_PAYLOAD_JSON / JIRA_PAYLOAD_JSON lines
-    # These arrive because test_runner.send_log() streams every pytest stdout line here
-    for prefix in _PAYLOAD_PREFIXES:
-        if msg.message.startswith(prefix):
-            raw = msg.message[len(prefix):].strip()
-            try:
-                payload = json.loads(raw)
-                _pending_payloads.append(payload)
-                _broadcast_async({"type": "JIRA_PAYLOAD", "payload": payload})
-                logger.info("[JIRA_PAYLOAD intercepted] module=%s test=%s",
-                            payload.get("module"), payload.get("test_name"))
-
-                # ── Send a CLEAN summary line to the console (not the raw JSON blob) ──
-                # Build clean readable console line
-                app_n  = payload.get('app_name', '?')
-                app_v  = payload.get('app_version', '?')
-                mod    = payload.get('module', '?')
-                tname  = payload.get('test_name', '?')
-                iid    = payload.get('issue_id', '')
-                dev    = payload.get('developer_name', '?')
-                nsteps = len(payload.get('steps_executed') or [])
-                desc   = str(payload.get('description') or '')
-                err_line = desc.split('\n')[0][:100] if desc else ''
-                clean_line = f"[AUTOMATION PAYLOAD] {iid} | {mod} | {tname} | {app_n} v{app_v} | Dev: {dev} | Steps: {nsteps}"
-                # Broadcast separator + payload line + error summary (all show in any console)
-                _broadcast_async({"type": "LOG", "payload": {"message": "=" * 60, "status": "INFO"}})
-                _broadcast_async({"type": "LOG", "payload": {"message": clean_line, "status": "PAYLOAD"}})
-                if err_line:
-                    _broadcast_async({"type": "LOG", "payload": {"message": f"  Error: {err_line}", "status": "FAILED"}})
-                _broadcast_async({"type": "LOG", "payload": {"message": "=" * 60, "status": "INFO"}})
-            except Exception as exc:
-                logger.warning("Failed to parse payload from log-step: %s", exc)
-                # Still show original line if parsing fails
-                _broadcast_async({"type": "LOG", "payload": {"message": msg.message, "status": msg.status}})
-            return {"status": "ok"}  # do NOT broadcast the raw JSON line
-
-    _broadcast_async({"type": "LOG", "payload": {"message": msg.message, "status": msg.status}})
+    _broadcast_async({
+        "type": "LOG",
+        "payload": {"message": msg.message, "status": msg.status},
+    })
     return {"status": "ok"}
 
 
@@ -396,10 +419,14 @@ async def log_metric(data: dict):
 
 @app.post("/api/module-status")
 async def module_status(data: dict):
-    module  = data.get("module")
-    status  = data.get("status")
+    module = data.get("module")
+    status = data.get("status")
     message = data.get("message", "")
-    _broadcast_async({"type": "MODULE", "payload": {"module": module, "status": status, "message": message}})
+
+    _broadcast_async({
+        "type": "MODULE",
+        "payload": {"module": module, "status": status, "message": message},
+    })
     return {"status": "ok"}
 
 
@@ -666,37 +693,29 @@ async def start_test(request: TestRequest, background_tasks: BackgroundTasks):
     global DOWNLOAD_PROCESS_OBJ
 
     try:
-        await manager.broadcast({"type": "LOG", "payload": {"message": "Starting APK download...", "status": "INFO"}})
+        await manager.broadcast({
+            "type": "LOG",
+            "payload": {"message": "Starting APK download...", "status": "INFO"}
+        })
 
-        script_path = os.path.join(os.path.dirname(__file__), "gdrive_loader.py")
-        apk_path = None
-        env = os.environ.copy()
-        env["PYTHONIOENCODING"] = "utf-8"
+        # Run download directly in a thread pool — NO subprocess.
+        # Subprocess was failing because sys.executable inside uvicorn pointed to a
+        # different Python env where packages weren't installed.
+        # Since download_apk is already imported at the top of this file,
+        # calling it directly always uses the correct Python environment.
+        loop = asyncio.get_event_loop()
 
-        DOWNLOAD_PROCESS_OBJ = await asyncio.create_subprocess_exec(
-            sys.executable, "-u", script_path, request.url,
-            stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE, env=env,
+        def progress_callback(msg):
+            clean = msg.replace('\r', '').strip()
+            if clean:
+                asyncio.run_coroutine_threadsafe(
+                    manager.broadcast({"type": "LOG", "payload": {"message": clean, "status": "PROGRESS"}}),
+                    loop
+                )
+
+        apk_path = await loop.run_in_executor(
+            None, lambda: download_apk(request.url, progress_callback)
         )
-
-        async for line in DOWNLOAD_PROCESS_OBJ.stdout:
-            decoded_line = line.decode("utf-8").strip()
-            if decoded_line.startswith("PROGRESS:"):
-                raw_msg = decoded_line.replace("PROGRESS:", "")
-                await manager.broadcast({"type": "LOG", "payload": {"message": raw_msg, "status": "PROGRESS"}})
-            elif decoded_line.startswith("RESULT:"):
-                apk_path = decoded_line.replace("RESULT:", "").strip()
-            elif decoded_line:
-                await manager.broadcast({"type": "LOG", "payload": {"message": decoded_line, "status": "INFO"}})
-
-        await DOWNLOAD_PROCESS_OBJ.wait()
-
-        if DOWNLOAD_PROCESS_OBJ.returncode != 0:
-            stderr_data = await DOWNLOAD_PROCESS_OBJ.stderr.read()
-            error_message = stderr_data.decode("utf-8").strip() or "Unknown error (process killed?)"
-            raise Exception(f"Script Error: {error_message}")
-
-        if not apk_path:
-            raise Exception("Download script finished but returned no path.")
 
         DOWNLOAD_PROCESS_OBJ = None
         icon_url      = extract_app_icon(apk_path)
