@@ -1,19 +1,25 @@
 # tests/conftest.py
 """
-Changes:
-  1. test_id removed — replaced by sequential issue_id (ISS-001, ISS-002…)
-  2. developer_name fetched from Jira API using JIRA_ASSIGNEE_ACCOUNT_ID
-  3. description shows only the error text (not full metadata block)
-  4. start_date, end_date, sprint, fix_version, affects_version included
+Step capture strategy:
+  - Use report.capstdout (pytest's own stdout capture of the test)
+  - Parse every line that matches [FOUND] name='...' via ...
+  - Deduplicate consecutive identical steps
+  - No static JSON flow files needed
+  - Falls back gracefully to empty list if nothing captured
+
+Other features:
+  - issue_id = ISS-001 format
+  - developer_name from Jira API
+  - description = error text + numbered steps (always)
 """
 
 import os
 import sys
+import re
 import json
 import time
 import datetime
 import requests as http_requests
-from pathlib import Path
 
 import pytest
 import allure
@@ -35,25 +41,75 @@ BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
 _ticket_id:      str  = ""
 _issue_counter:  int  = 0
 _session_issues: list = []
-_developer_name: str  = ""   # fetched from Jira API once per session
+_developer_name: str  = ""
 
 
+# ─── Regex patterns for step extraction from stdout ──────────────────────────
+# Matches:  [FOUND] name='Next Button (Language)' via XPATH
+# Matches:  [FOUND] name="Submit (button in add farm)" via XPATH
+_FOUND_RE = re.compile(
+    r"\[FOUND\]\s+name=['\"](.+?)['\"]",
+    re.IGNORECASE
+)
+# Matches:  [CLICK] Some element name
+_CLICK_RE = re.compile(
+    r"\[(?:CLICK|TAP|PRESSED|TAPPED)\]\s+(.+)",
+    re.IGNORECASE
+)
+
+
+def _extract_steps_from_stdout(capstdout: str) -> list[str]:
+    """
+    Parse pytest-captured stdout for [FOUND] and [CLICK] lines.
+    Returns a clean, deduplicated list of step descriptions.
+
+    Example input lines:
+      [FOUND] name='Next Button (Language)' via XPATH
+      [FOUND] name='While using the app (allow picture)' via XPATH
+      [FOUND] name='Click Verify OTP' via XPATH   ← may repeat if retried
+
+    Strategy:
+      1. Extract label from every matching line
+      2. Deduplicate CONSECUTIVE identical steps (retry loops)
+      3. Keep non-consecutive repeats (same button clicked multiple screens)
+    """
+    if not capstdout:
+        return []
+
+    raw_steps = []
+    for line in capstdout.splitlines():
+        line = line.strip()
+        m = _FOUND_RE.search(line)
+        if m:
+            raw_steps.append(m.group(1).strip())
+            continue
+        m = _CLICK_RE.search(line)
+        if m:
+            raw_steps.append(m.group(1).strip())
+
+    # Deduplicate CONSECUTIVE identical steps only
+    # e.g. ["Click Verify OTP", "Click Verify OTP", "Click Verify OTP", "Android back"]
+    #   →  ["Click Verify OTP", "Android back"]
+    deduped = []
+    for step in raw_steps:
+        if not deduped or step != deduped[-1]:
+            deduped.append(step)
+
+    return deduped
+
+
+# ─── Helpers ──────────────────────────────────────────────────────────────────
 def _make_ticket_id() -> str:
     return "RUN-" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
 
 def _make_issue_id() -> str:
-    """Returns ISS-001, ISS-002, ISS-003 …"""
     global _issue_counter
     _issue_counter += 1
     return f"ISS-{_issue_counter:03d}"
 
 
 def _fetch_developer_name_from_jira() -> str:
-    """
-    Calls GET /rest/api/3/user?accountId=<JIRA_ASSIGNEE_ACCOUNT_ID>
-    Returns the displayName if successful, else empty string.
-    """
     if not config.assignee_id:
         return ""
     if not config.url or not config.email or not config.api_token:
@@ -87,11 +143,9 @@ def pytest_addoption(parser):
 
 def pytest_sessionstart(session):
     global _ticket_id, _issue_counter, _developer_name
-    _ticket_id     = _make_ticket_id()
-    _issue_counter = 0
+    _ticket_id      = _make_ticket_id()
+    _issue_counter  = 0
     print(f"\n[TICKET] Session ticket_id: {_ticket_id}")
-
-    # Fetch developer name from Jira API once per session
     _developer_name = _fetch_developer_name_from_jira()
     if _developer_name:
         print(f"[TICKET] Developer: {_developer_name}")
@@ -151,39 +205,10 @@ def _extract_module(item) -> str:
     return "Unknown Module"
 
 
-def _steps_file_for_test(item) -> Path | None:
-    n = item.name.lower()
-    if "login"      in n: return Path("test-flows/login_flow_success.json")
-    if "onboarding" in n: return Path("test-flows/onboarding_flow_success.json")
-    if "addfarm"    in n: return Path("test-flows/onboarding_flow_success.json")
-    return None
-
-
-def _read_steps(item) -> list[str]:
-    flow_file = _steps_file_for_test(item)
-    if not flow_file or not flow_file.exists():
-        return []
-    try:
-        with flow_file.open("r", encoding="utf-8") as f:
-            data = json.load(f)
-        if not isinstance(data, list):
-            return []
-        steps = []
-        for entry in data:
-            if isinstance(entry, dict) and entry.get("step"):
-                steps.append(str(entry["step"]))
-            elif isinstance(entry, str):
-                steps.append(entry)
-        return steps
-    except Exception as e:
-        print(f"Failed to parse flow steps: {e}")
-        return []
-
-
 def _extract_error_only(longrepr) -> str:
     """
-    Extract only the meaningful error lines from pytest longrepr.
-    Removes traceback frames — keeps only the 'E ...' lines and last assertion.
+    Keeps only the meaningful error lines from pytest longrepr.
+    Strips traceback frames — keeps 'E ...' lines and pytest.fail() assertions.
     """
     if not longrepr:
         return "No error details"
@@ -192,20 +217,37 @@ def _extract_error_only(longrepr) -> str:
     error_lines = []
     for line in lines:
         stripped = line.strip()
-        # Keep lines starting with 'E ' (pytest error lines)
         if stripped.startswith("E "):
             error_lines.append(stripped[2:].strip())
-        # Keep the last 'pytest.fail(...)' or assertion line
-        elif "pytest.fail" in stripped or "assert" in stripped.lower():
+        elif "pytest.fail" in stripped or (
+            "assert" in stripped.lower()
+            and not stripped.startswith("#")
+            and not stripped.startswith("import")
+        ):
             error_lines.append(stripped)
     # Deduplicate while preserving order
-    seen = set()
-    unique = []
+    seen, unique = set(), []
     for l in error_lines:
         if l not in seen:
             seen.add(l)
             unique.append(l)
     return "\n".join(unique) if unique else text.split("\n")[-1].strip() or "Test failed"
+
+
+def _build_description(error_text: str, steps: list) -> str:
+    """
+    Final description = error text + numbered steps list.
+    Both sections always present when data exists.
+    """
+    parts = []
+    if error_text and error_text.strip() and error_text != "No error details":
+        parts.append(error_text.strip())
+    if steps:
+        steps_block = "\nSteps Executed:\n" + "\n".join(
+            f"{i + 1}. {s}" for i, s in enumerate(steps)
+        )
+        parts.append(steps_block)
+    return "\n".join(parts) if parts else "Test failed"
 
 
 # ─── Crash detection ──────────────────────────────────────────────────────────
@@ -217,8 +259,7 @@ def check_for_crashes(driver):
             "beginning of crash", "system.err", "am_crash", "anr in",
             "vm aborting", "com.facebook.react.bridge", "jsapplicationillegalargumentexception",
         ]
-        crash_lines = []
-        capture = False
+        crash_lines, capture = [], False
         for entry in logs:
             message = entry.get("message", "")
             lower   = message.lower()
@@ -280,7 +321,6 @@ def pytest_runtest_makereport(item, call):
         return
 
     # 2. Screenshot
-    screenshot_path = None
     try:
         os.makedirs("screenshots", exist_ok=True)
         screenshot_path = f"screenshots/{item.name}.png"
@@ -296,28 +336,36 @@ def pytest_runtest_makereport(item, call):
     module      = _extract_module(item)
     feature     = _extract_feature(item)
     test_name   = item.name
-    issue_id    = _make_issue_id()   # ← sequential number: "1", "2", "3"
+    issue_id    = _make_issue_id()
 
-    # Developer name: Jira API > CLI arg > fallback
     developer_name = (
-        _developer_name                              # fetched from Jira API at session start
-        or _cfg(item, "--developer-name", "")        # CLI arg
+        _developer_name
+        or _cfg(item, "--developer-name", "")
         or "Unknown Developer"
     )
 
-    issue_summary  = f"Automation Failure: {test_name}"
-    steps_executed = _read_steps(item)
-    # FIX 5: description = only the error, not the full metadata block
-    error_text     = _extract_error_only(report.longrepr)
+    issue_summary = f"Automation Failure: {test_name}"
+
+    # 4. ── STEP EXTRACTION ────────────────────────────────────────────────────
+    # Use report.capstdout — pytest captures ALL stdout from the test automatically.
+    # This is the most reliable source: no static files, no fixture injection needed.
+    # It contains every [FOUND] name='...' line printed by smart_find_element().
+    #
+    # report.capstdout is set during the "call" phase (the actual test body).
+    # If empty (e.g. pytest -s disables capture), fall back gracefully to [].
+    steps_executed = _extract_steps_from_stdout(getattr(report, "capstdout", "") or "")
+
+    # 5. Error text
+    error_text = _extract_error_only(report.longrepr)
 
     today      = datetime.date.today()
     start_date = today.isoformat()
     end_date   = (today + datetime.timedelta(days=1)).isoformat()
 
-    # 4. Payload — no test_id field (FIX 1), error-only description (FIX 5)
+    # 6. Payload
     payload = {
         "ticket_id":       _ticket_id,
-        "issue_id":        issue_id,          # "1", "2", "3" — sequential number
+        "issue_id":        issue_id,
         "app_name":        app_name,
         "app_version":     app_version,
         "module":          module,
@@ -325,7 +373,6 @@ def pytest_runtest_makereport(item, call):
         "issue_summary":   issue_summary,
         "title":           issue_summary,
         "test_name":       test_name,
-        # test_id removed — FIX 1
         "steps_executed":  steps_executed,
         "developer_name":  developer_name,
         "start_date":      start_date,
@@ -333,7 +380,7 @@ def pytest_runtest_makereport(item, call):
         "sprint":          "Automation",
         "fix_version":     ["Production"],
         "affects_version": [app_name] if app_name and app_name != "Unknown App" else [],
-        "description":     error_text,        # FIX 5: only the error
+        "description":     _build_description(error_text, steps_executed),
     }
 
     allure.attach(
