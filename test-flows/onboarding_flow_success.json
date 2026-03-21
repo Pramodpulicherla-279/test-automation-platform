@@ -12,6 +12,7 @@
         "status": "Success"
     },
     {
+<<<<<<< HEAD
         "step": "Click Crop Name input",
         "status": "Success"
     },
@@ -21,6 +22,9 @@
     },
     {
         "step": "Click Inter Crop Name input",
+=======
+        "step": "Android back",
+>>>>>>> 28b75802054336ec7b7eccf1294dd1f7d04847ba
         "status": "Success"
     }
 ]

@@ -33,6 +33,11 @@ def _auto_ui_shot(driver, label: str) -> None:
             # Never break test flow because screenshots failed
             pass
 
+
+def _console_log(msg: str) -> None:
+    # flush=True is important when output is piped (subprocess -> backend -> UI)
+    print(msg, flush=True)
+
 def find_and_click(driver, by, value, fallback_text=None, timeout=20):
     """
     Tries to find and click an element by its primary locator.
@@ -171,6 +176,7 @@ def _android_scroll_into_view(driver, text: str):
 
     return None
 
+<<<<<<< HEAD
 def _ocr_screenshot_path(driver, name: str, attempt: int) -> str:
     """
     Prefer saving OCR screenshots into the same per-test ui_screenshots folder.
@@ -181,6 +187,8 @@ def _ocr_screenshot_path(driver, name: str, attempt: int) -> str:
         return fn(f"ocr__{name}__attempt_{attempt}")
     return "screenshots/ocr_fallback.png"
 
+=======
+>>>>>>> 28b75802054336ec7b7eccf1294dd1f7d04847ba
 def smart_find_element(
     driver,
     name,
@@ -261,6 +269,7 @@ def smart_find_element(
     # 4) OCR Strategy (Last Resort or Forced)
     if fallback_text:
         print("   -> Initiating OCR fallback (this may take time)...")
+<<<<<<< HEAD
 
         for attempt in range(1, max(1, int(ocr_attempts)) + 1):
             # IMPORTANT: put OCR screenshot into the same per-test folder (when available)
@@ -285,6 +294,24 @@ def smart_find_element(
                 print(f"OCR clicked on '{fallback_text}' successfully.")
                 return None, True
 
+=======
+        try:
+            os.makedirs(os.path.dirname(screenshot_path) or ".", exist_ok=True)
+        except Exception:
+            pass
+
+        for attempt in range(1, max(1, int(ocr_attempts)) + 1):
+            try:
+                driver.save_screenshot(screenshot_path)
+            except Exception:
+                pass
+
+            found = click_element_by_ocr_text(driver, fallback_text, screenshot_path)
+            if found:
+                print(f"OCR clicked on '{fallback_text}' successfully.")
+                return None, True
+
+>>>>>>> 28b75802054336ec7b7eccf1294dd1f7d04847ba
             print(f"OCR did not find '{fallback_text}' (attempt {attempt}/{ocr_attempts}).")
             time.sleep(ocr_wait_s)
 
@@ -304,6 +331,7 @@ def smart_click(
 ):
     """
     Wrapper around smart_find_element to perform a click.
+<<<<<<< HEAD
     AUTO screenshots:
       - before click attempt
       - after success
@@ -311,6 +339,10 @@ def smart_click(
     """
     _auto_ui_shot(driver, f"before__click__{name}")
 
+=======
+    If OCR was used, returns True.
+    """
+>>>>>>> 28b75802054336ec7b7eccf1294dd1f7d04847ba
     element, used_ocr = smart_find_element(
         driver,
         name,
@@ -322,7 +354,10 @@ def smart_click(
         enable_dom_fallback=enable_dom_fallback,
         ocr_attempts=ocr_attempts,
     )
+<<<<<<< HEAD
 
+=======
+>>>>>>> 28b75802054336ec7b7eccf1294dd1f7d04847ba
     if element:
         try:
             element.click()
