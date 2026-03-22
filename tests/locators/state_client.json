@@ -1,0 +1,73 @@
+{
+  "login_screen": {
+    "allow_picture_button": "//android.widget.Button[@resource-id=\"com.android.permissioncontroller:id/permission_allow_foreground_only_button\"]",
+    "allow_location_button": "//android.widget.Button[@resource-id=\"com.android.permissioncontroller:id/permission_allow_foreground_only_button\"]",
+    "allow_audio_button": "//android.widget.Button[@resource-id=\"com.android.permissioncontroller:id/permission_allow_foreground_only_button\"]",
+    "next_button_language_login": "//android.view.ViewGroup[@content-desc=\"Next\"]",
+    "allow_notifications_button": "//android.widget.Button[@resource-id=\"com.android.permissioncontroller:id/permission_allow_button\"]",
+    "phone_number_input": "//android.widget.EditText[@content-desc=\"phone number input field, mandatory\"]",
+    "next_button_login": "//android.view.ViewGroup[@content-desc=\"Next\"]",
+    "verify_button_login": "//android.view.ViewGroup[@content-desc=\"Verify OTP\"]",
+    "change_mobile_number": "//android.widget.TextView[@text=\"Change Mobile Number\"]",
+    "resend_otp_button": "//android.view.ViewGroup[@content-desc=\"Resend OTP\"]"
+  },
+
+
+  "dashboard_screen": {
+  "add_button_dashboard": "//android.view.ViewGroup[@content-desc=\"Add\"]",
+  "add_new_farmer_option": "//android.view.ViewGroup[@content-desc=\"Add New Farmer\"]/android.view.ViewGroup",
+  "farm_village_dropdown_button": "//android.widget.TextView[@text=\"\"]",
+  "farm_village_item": "//android.view.ViewGroup[contains(@content-desc,'Ankampalem')]",
+  "download_boundary_button": "//android.view.View[contains(@content-desc,'Download Boundary')]",
+  "search_by_bunds_results":"//android.widget.TextView[contains(@text,'20')]",
+  "only_add_farmer_button": "//android.view.ViewGroup[@content-desc='Only add farmer']",
+  "submit_button_farm_villages": "//android.view.ViewGroup[@content-desc='Submit']",
+  "search_by_bunds_lat_long_option": "//android.widget.EditText[contains(@text,'Search by bund')]",
+  "map_marker_xpath": "//android.view.View[@content-desc='Map Marker']",
+  
+  "confirm_bunds_selection_button": "//android.view.ViewGroup[@content-desc=\"Confirm Boundary\"]",
+   "select_survey_button":"//android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[1]/android.view.ViewGroup[1]",
+  "search_by_survey_number_option": "//android.widget.EditText[@text=\"Search by survey, lat-long\"]"
+},
+
+"add_farmer_screen": {
+  "add_farmer_name": "//android.widget.EditText[@content-desc=\"Farmer Name input field, mandatory\"]",
+  "add_farmer_phone": "//android.widget.EditText[@content-desc=\"Phone Number input field, mandatory\"]",
+  "business_unit_dropdown":"(//android.widget.TextView[@text=\"\"])[1]",
+  "search_business_unit":"//android.widget.Button[@content-desc=\"Please select a business unit\"]",
+  "field_agent_dropdown":"(//android.widget.TextView[@text=\"\"])[2]",
+  "submit_button_add_farmer":"//android.view.ViewGroup[@content-desc=\"Submit\"]",
+  "cancel_button_add_farmer":"//android.view.ViewGroup[@content-desc=\"Cancel\"]"
+},
+
+"add_crop_screen": {
+    "crop_name_dropdown": "//android.widget.TextView[@text=\"Crop Name *\"]",
+    "crop_name": "//android.view.ViewGroup[contains(@content-desc,'Bengal Gram')]",
+    "short_duration_button": "//android.view.ViewGroup[@content-desc=\"Short (90 Days)\"]",
+    "long_duration_button": "//android.view.ViewGroup[@content-desc=\"Medium (120 Days)\"]",
+    "medium_duration_button": "//android.view.ViewGroup[@content-desc=\"Long (150 Days)\"]",
+    "direct_sowing_button": "//android.widget.TextView[@text=\"Direct Sowing\"]",
+    "transplanted_button": "//android.view.ViewGroup[@content-desc=\"Transplanted\"]",
+    "submit_crop_button": "//android.view.ViewGroup[@content-desc=\"Submit\"]",
+    "sowing_date":"(//android.widget.TextView[@text=\"\"])[2]",
+    "calendar_ok_button": "//android.widget.Button[@resource-id=\"android:id/button1\"]",
+    "transplanted_date": "(//android.widget.TextView[@text=\"\"])[1]"
+    
+    
+    
+  },
+  "add_farm_screen": {
+    "farm_name_input": "//android.widget.EditText[@content-desc=\"Farm Name input field, mandatory\"]",
+    "acreage_input": "//android.widget.EditText[@content-desc=\"Acreage input field\"]",
+    "land_unit_input": "//android.widget.TextView[@text=\"Acre\"]",
+    "cancel_button": "//android.widget.TextView[@text=\"Cancel\"]",
+    "submit_button": "//android.widget.TextView[@text=\"Submit\"]"
+  },
+  
+  "draw_on_map_screen": {
+    "save_approve_button": "//android.widget.Button[@text=\"Save & Approve\"]",
+    "back_arrow_icon": "//com.horcrux.svg.PathView"
+  }
+}
+
+

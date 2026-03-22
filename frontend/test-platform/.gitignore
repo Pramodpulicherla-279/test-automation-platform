@@ -76,3 +76,10 @@ screenshots/
 reports/
 artifacts/
 *.png
+# .gitignore
+__pycache__/
+*.pyc
+venv/
+.venv/
+env/
+.pytest_cache/
