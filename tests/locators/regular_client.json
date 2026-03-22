@@ -1,63 +1,60 @@
 {
   "login_screen": {
     "next_button_language_login": "//android.view.ViewGroup[@content-desc=\"Next\"]",
-    "allow_picture_button": "//android.widget.Button[@resource-id=\"com.android.permissioncontroller:id/permission_allow_one_time_button\"]",
-
-
-    "tab_phone_login": "//android.view.ViewGroup[@content-desc=\"Mobile Number\"]",
+    "allow_notifications_button": "//android.widget.Button[@resource-id=\"com.android.permissioncontroller:id/permission_allow_button\"]",
     "tab_email_login": "//android.view.ViewGroup[@content-desc=\"Email\"]",
-
-    "phone_number_input": "//android.widget.EditText[@content-desc=\"phone number input field, mandatory\"]",
     "next_button_login": "//android.view.ViewGroup[@content-desc=\"Next\"]",
     "verify_button_login": "//android.view.ViewGroup[@content-desc=\"Verify OTP\"]",
-
     "email_input": "//android.widget.EditText[@content-desc=\"email input field, mandatory\"]",
     "password_input": "//android.widget.EditText[@content-desc=\"password input field, mandatory\"]",
     "submit_login_button": "//android.view.ViewGroup[@content-desc=\"Login\"]",
-
-
     "allow_location_button": "//android.widget.Button[@resource-id=\"com.android.permissioncontroller:id/permission_allow_foreground_only_button\"]",
-    "allow_audio_button": "//android.widget.Button[@resource-id=\"com.android.permissioncontroller:id/permission_allow_one_time_button\"]",
-    "allow_notifications_button": "//android.widget.Button[@resource-id=\"com.android.permissioncontroller:id/permission_allow_button\"]"
-
-
+    "allow_audio_button": "//android.widget.Button[@resource-id=\"com.android.permissioncontroller:id/permission_allow_foreground_only_button\"]",
+    "allow_picture_button": "//android.widget.Button[@resource-id=\"com.android.permissioncontroller:id/permission_allow_foreground_only_button\"]"
   },
-  
-    "dashboard_screen": {
-        "add_button_dashboard": "//android.view.ViewGroup[@content-desc=\"Add\"]",
-        "add_new_farmer_option": "//android.view.ViewGroup[@content-desc=\"Add New Farmer\"]/android.view.ViewGroup"
-    },
-
-    "farmer_screen": {
-        "farmer_name_input": "//android.widget.EditText[@content-desc=\"Farmer Name input field, mandatory\"]",
-        "farmer_mobile_input": "//android.widget.EditText[@content-desc=\"Phone Number input field, mandatory\"]",
-        "business_unit_dropdown": "//android.widget.Button[@content-desc=\"Business Unit dropdown\"]",
-        "business_unit_option_1": "//android.widget.TextView[contains(@text, 'Testteam')]",
-        "field_agent_dropdown": "//android.widget.Button[@content-desc=\"Field Agent dropdown\"]",
-        "field_agent_option_1": "//android.widget.TextView[contains(@text, 'bu1 fa1')]",
-        "submit_farmer_button": "//android.view.ViewGroup[@content-desc=\"Submit\"]"
+  "dashboard_screen": {
+    "add_button_dashboard": "//android.widget.Button[@content-desc=\"Add\"]",
+    "add_new_farmer_option": "//android.view.ViewGroup[@content-desc=\"Add New Farmer\"]/android.view.ViewGroup"
   },
-  "determine_boundary_modal": {
-    "take_selfie_button": "//android.widget.TextView[@text=\"Take Selfie\"]",
-    "draw_on_map_button": "//android.widget.TextView[@text=\"Draw on map\"]",
-    "walk_&_select_button": "//android.widget.TextView[@text=\"Walk & Select\"]",
-    "offline_boundary_capture_button": "//android.widget.TextView[@text=\"Offline Boundary Capture\"]"
-  },
-  "add_farm_screen": {
+  "farmer_screen": {
+    "farmer_name_input": "//android.widget.EditText[@content-desc=\"Farmer Name input field, mandatory\"]",
+    "farmer_mobile_input": "//android.widget.EditText[@content-desc=\"Phone Number input field, mandatory\"]",
+    "business_unit_dropdown": "//android.widget.Button[@content-desc=\"Business Unit dropdown\"]",
+    "business_unit_option_1": "//android.widget.TextView[contains(@text, 'Testteam')]",
+    "field_agent_dropdown": "//android.widget.Button[@content-desc=\"Field Agent dropdown\"]",
+    "field_agent_option_1": "//android.widget.TextView[contains(@text, 'bu1 fa1')]",
+    "submit_farmer_button": "//android.view.ViewGroup[@content-desc=\"Submit\"]",
+    
+    "_COMMENT_1": "--- FARM KEYS ---",
+    "draw_on_map_button": "//*[contains(@text, 'Draw on map') or contains(@content-desc, 'Draw on map')]",
     "farm_name_input": "//android.widget.EditText[@content-desc=\"Farm Name input field, mandatory\"]",
     "acreage_input": "//android.widget.EditText[@content-desc=\"Acreage input field\"]",
     "land_unit_input": "//android.widget.TextView[@text=\"Acre\"]",
     "cancel_button": "//android.widget.TextView[@text=\"Cancel\"]",
-    "submit_button": "//android.widget.TextView[@text=\"Submit\"]"
-  },
-  "add_crop_screen": {
-    "crop_name_input": "//android.widget.TextView[@text=\"Select Crop Name\"]",
-    "short_duration_button": "//android.view.ViewGroup[@content-desc=\"Short, 90 Days\"]",
+    "submit_button": "//android.widget.TextView[@text=\"Submit\"]",
+    "save_approve_button": "//android.widget.Button[@text=\"Save & Approve\"]",
+
+    "_COMMENT_2": "--- CROP KEYS (UPDATED) ---",
+    "crop_name_input": "//android.widget.TextView[@text=\"Search Crop Name\"]",
+    "areca_nut_item": "//*[contains(@text, 'Areca Nut')]",
+    
+    "_COMMENT_3": "--- INTER-CROP KEYS (ADDED) ---",
+    "inter_crop_input": "//android.widget.TextView[@text=\"Search Inter Crop Name\"]",
+    "bananas_item": "//*[contains(@text, 'Bananas')]",
+    "inter_sowing_date_input": "//android.widget.TextView[@text=\"Inter-Crop Sowing Date\"]",
+    
+    "_COMMENT_4": "--- CROP DETAILS (ADDED) ---",
+    "short_duration_button": "//android.view.ViewGroup[@content-desc=\"Short, 140 Days\"]",
     "medium_duration_button": "//android.view.ViewGroup[@content-desc=\"Medium, 120 Days\"]",
     "long_duration_button": "//android.view.ViewGroup[@content-desc=\"Long, 150 Days\"]",
-    "direct_sowing_button": "//android.widget.TextView[@text=\"Direct Sowing\"]",
+    "direct_sowing_btn": "//android.view.ViewGroup[@content-desc=\"Direct Sowing\"]",
     "transplanted_button": "//android.view.ViewGroup[@content-desc=\"Transplanted\"]",
-    "sowing_date_input": "//android.widget.EditText[@content-desc=\"Sowing Date input field, mandatory\"]"
+    
+    "sowing_date_input": "//android.view.ViewGroup[@content-desc=\"Sowing Date *, --/--/----, \"]",
+    "transplanted_date_input": "//android.view.ViewGroup[@content-desc=\"Transplanted Date *, --/--/----, \"]",
+    "harvest_date_input": "//*[contains(@text, 'Harvest Date')]",
+    "calendar_ok_btn": "//android.widget.Button[@resource-id=\"android:id/button1\"]",
+    "submit_crop_btn": "//android.widget.TextView[@text=\"Submit\"]"
   },
   "coordinates": {
     "login_screen": {
@@ -68,6 +65,9 @@
       "allow_notifications_button": [540, 1500],
       "next_button_login": [540, 2100],
       "verify_button_login": [540, 2100]
+    },
+    "add_farm_screen": {
+       "draw_on_map_button": [540, 1200]
     }
   }
 }
