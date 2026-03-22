@@ -79,17 +79,17 @@ class TestLogin:
                 
                 if phone_input:
                     phone_input.clear()
-                    phone_input.send_keys("7660852538")
+                    phone_input.send_keys("9618574550")
                 elif used_ocr:
                     # If OCR clicked it, it should be focused. Try general keyboard input.
                     actions = ActionBuilder(driver)
                     actions.pointer_action.click() # Ensure touch
-                    actions.key_action.send_keys("7660852538")
+                    actions.key_action.send_keys("9618574550")
                     actions.perform()
                 else:
                     pytest.fail("Could not access Phone Number input")
 
-                test_flow_steps.append({"step": "Enter valid phone number", "status": "Success", "value": "7660852538"})
+                test_flow_steps.append({"step": "Enter valid phone number", "status": "Success", "value": "9618574550"})
             
             with allure.step("7. Tap next button"):
                 el, used_ocr = smart_find_element(driver, "next_button", next_button_login_xpath, fallback_text="Next")

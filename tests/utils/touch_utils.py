@@ -1,46 +1,58 @@
-import allure
-# --- NEW IMPORTS for the modern W3C Actions API ---
 from selenium.webdriver.common.actions.action_builder import ActionBuilder
 import sys
 sys.dont_write_bytecode = True
+from selenium.webdriver.common.actions.pointer_input import PointerInput
+from selenium.webdriver.common.actions import interaction
 
 def tap_at_coordinates(driver, x, y):
     """
-    Performs a tap action at the specified x and y coordinates on the screen.
-    This function uses the W3C Actions API, which is compatible with the latest
-    Appium Python Client (v3+).
+    Taps at (x, y) using W3C Pointer Actions (Touch).
+    Compatible with latest Appium/Selenium versions.
+    """
+    # Create a touch input device
+    touch_input = PointerInput(interaction.POINTER_TOUCH, "touch")
+    
+    # --- FIX: Do NOT pass mouse_button to ActionBuilder ---
+    actions = ActionBuilder(driver)
+    actions.devices = [touch_input] # Force it to use our touch device
+    
+    pointer = actions.pointer_action
+    pointer.move_to_location(x, y)
+    pointer.pointer_down()
+    pointer.pause(0.1)
+    pointer.pointer_up()
+    
+    actions.perform()
+    return True
 
-    Args:
-        driver: The Appium driver instance.
-        x (int): The x-coordinate for the tap.
-        y (int): The y-coordinate for the tap.
+def tap_at_coordinates(driver, x, y):
+    """
+    Taps at the specified X and Y coordinates using Appium's native click gesture.
+    This replaces the unstable ActionBuilder to prevent session crashes.
     """
     try:
-        print(f"Attempting to tap at coordinates: (x={x}, y={y})")
-        
-        # 1. Create an ActionBuilder object, which is the entry point for all actions.
-        actions = ActionBuilder(driver)
-        
-        # 2. Get a reference to the 'pointer' (i.e., your finger on the screen).
-        finger = actions.pointer_action
-        
-        # 3. Define the sequence of actions for a tap:
-        #    - Move the pointer to the target coordinates.
-        #    - Press the pointer down (touch the screen).
-        #    - Pause briefly to ensure the tap registers reliably.
-        #    - Lift the pointer up (release the touch).
-        finger.move_to_location(x, y)
-        finger.pointer_down()
-        finger.pause(0.1)
-        finger.pointer_up()
-        
-        # 4. Execute the entire sequence of actions.
-        actions.perform()
-        
-        print(f"Successfully tapped at (x={x}, y={y}).")
-        allure.attach(f"Tapped at coordinates (x={x}, y={y})", name="Coordinate Tap", attachment_type=allure.attachment_type.TEXT)
-        return True
+        driver.execute_script("mobile: clickGesture", {"x": int(x), "y": int(y)})
     except Exception as e:
-        print(f"Failed to tap at coordinates: {e}")
-        allure.attach(f"Failed to tap at (x={x}, y={y}): {e}", name="Coordinate Tap Error", attachment_type=allure.attachment_type.TEXT)
-        return False
+        print(f"Failed to tap at coordinates ({x}, {y}): {e}")
+        raise e
+    
+
+def perform_scroll(driver, start_x=500, start_y=1500, end_x=500, end_y=500, duration=600):
+    """
+    Scrolls using W3C Pointer Actions.
+    """
+    touch_input = PointerInput(interaction.POINTER_TOUCH, "touch")
+    
+    # --- FIX: Do NOT pass mouse_button here either ---
+    actions = ActionBuilder(driver)
+    actions.devices = [touch_input]
+    
+    pointer = actions.pointer_action
+    pointer.move_to_location(start_x, start_y)
+    pointer.pointer_down()
+    pointer.pause(duration / 1000)
+    pointer.move_to_location(end_x, end_y)
+    pointer.release()
+    
+    actions.perform()
+    return True
