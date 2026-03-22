@@ -1,9 +1,6 @@
 import os
 import time
 import allure
-import os
-import time
-import allure
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -35,11 +32,6 @@ def _auto_ui_shot(driver, label: str) -> None:
         except Exception:
             # Never break test flow because screenshots failed
             pass
-
-
-def _console_log(msg: str) -> None:
-    # flush=True is important when output is piped (subprocess -> backend -> UI)
-    print(msg, flush=True)
 
 def find_and_click(driver, by, value, fallback_text=None, timeout=20):
     """
@@ -147,38 +139,6 @@ def _escape_uiautomator_text(s: str) -> str:
     return (s or "").replace("\\", "\\\\").replace('"', '\\"')
 
 def _android_scroll_into_view(driver, text: str):
-
-def _xpath_literal(s: str) -> str:
-    """Return an XPath string literal that safely handles quotes."""
-    if s is None:
-        return "''"
-    if "'" not in s:
-        return f"'{s}'"
-    # concat('foo', "'", 'bar')
-    parts = s.split("'")
-    return "concat(" + ", \"'\", ".join([f"'{p}'" for p in parts]) + ")"
-
-def _swipe_vertical_w3c(driver, start_y_ratio=0.8, end_y_ratio=0.2, x_ratio=0.5, pause_s=0.05):
-    """Reliable vertical swipe using W3C actions (works in parallel / modern Appium)."""
-    size = driver.get_window_size()
-    start_x = int(size["width"] * x_ratio)
-    start_y = int(size["height"] * start_y_ratio)
-    end_y = int(size["height"] * end_y_ratio)
-
-    actions = ActionBuilder(driver)
-    finger = actions.pointer_action
-    finger.move_to_location(start_x, start_y)
-    finger.pointer_down()
-    finger.pause(pause_s)
-    finger.move_to_location(start_x, end_y)
-    finger.pointer_up()
-    actions.perform()
-
-def _escape_uiautomator_text(s: str) -> str:
-    """Escape for embedding inside UiAutomator Java string literals."""
-    return (s or "").replace("\\", "\\\\").replace('"', '\\"')
-
-def _android_scroll_into_view(driver, text: str):
     """
     Uses Android UiScrollable to scroll a scrollable container until an item
     with matching text/description is in view. Returns WebElement or None.
@@ -245,15 +205,12 @@ def smart_find_element(
       - then do OCR click attempts (no UiScrollable, no DOM/scroll loop)
     """
     # 1) Primary XPath Strategy (always try)
-    # 1) Primary XPath Strategy (always try)
     try:
         element = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((AppiumBy.XPATH, xpath))
         )
         _console_log(f"[FOUND] name='{name}' via XPATH")
-        _console_log(f"[FOUND] name='{name}' via XPATH")
         return element, False
-    except TimeoutException:
     except TimeoutException:
         print(f"[{name}] Not found via Primary XPath.")
 
@@ -333,18 +290,6 @@ def smart_find_element(
 
     return None, False
 
-def smart_click(
-    driver,
-    name,
-    xpath,
-    fallback_text=None,
-    screenshot_path="screenshots/ocr_fallback.png",
-    *,
-    force_ocr: bool = False,
-    enable_scroll: bool = True,
-    enable_dom_fallback: bool = True,
-    ocr_attempts: int = 2,
-):
 def smart_click(
     driver,
     name,

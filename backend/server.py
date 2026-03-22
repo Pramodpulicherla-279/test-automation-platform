@@ -292,24 +292,6 @@ class ConnectionManager:
 class TestRequest(BaseModel):
     url: str
     tests_to_run: Optional[List[Dict[str, str]]] = None # Added field
-        async with self._lock:
-            connections = list(self.active_connections)
-
-        if not connections:
-            return
-
-        async def _safe_send(ws: WebSocket):
-            try:
-                await ws.send_json(message)
-                return True
-            except Exception:
-                return False
-
-        results = await asyncio.gather(*(_safe_send(ws) for ws in connections), return_exceptions=True)
-
-        for ws, ok in zip(connections, results):
-            if ok is not True:
-                await self.disconnect(ws)
 
 
 manager = ConnectionManager()
@@ -424,20 +406,6 @@ async def websocket_endpoint(websocket: WebSocket):
     except Exception:
         await manager.disconnect(websocket)
 
-def _broadcast_async(message: dict) -> None:
-    # Fire-and-forget broadcast so HTTP endpoints return immediately
-    try:
-        asyncio.create_task(manager.broadcast(message))
-    except RuntimeError:
-        # If no running loop (rare), just skip
-        pass
-
-# 3. The "Loopback" Endpoint (Pytest calls this)
-           await websocket.receive_text()
-    except WebSocketDisconnect:
-        await manager.disconnect(websocket)
-    except Exception:
-        await manager.disconnect(websocket)
 
 
 def _broadcast_async(message: dict) -> None:
@@ -450,7 +418,7 @@ def _broadcast_async(message: dict) -> None:
 # ─── /api/log-step — intercept payload lines arriving via test_runner ─────────
 @app.post("/api/log-step")
 async def log_step(msg: LogMessage):
-    logger.info("[PYTEST][%s] %s", msg.status, msg.message)
+    # logger.info("[PYTEST][%s] %s", msg.status, msg.message)
 
     # Intercept AUTOMATION_PAYLOAD_JSON / JIRA_PAYLOAD_JSON lines
     # These arrive because test_runner.send_log() streams every pytest stdout line here
