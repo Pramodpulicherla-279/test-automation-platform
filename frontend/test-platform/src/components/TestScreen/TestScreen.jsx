@@ -7,7 +7,7 @@ import UIScreenshotIssues from '../UIScreenshotIssues';
 import IssuePanel from '../IssuePanel/IssuePanel';
 import '../../App.css';
 
-const WS_URL  = 'ws://localhost:8000/ws/test-status';
+const WS_URL = 'ws://localhost:8000/ws/test-status';
 const API_URL = 'http://localhost:8000';
 
 const APP_VARIANTS = {
@@ -15,25 +15,25 @@ const APP_VARIANTS = {
         id: "regular_farmer",
         label: "Krishivaas Farmer (Regular)",
         modules: [
-            { name: 'Login',       path: 'tests/test_cases/regular_farmer_test_cases/test_login_pytest.py' },
+            { name: 'Login', path: 'tests/test_cases/regular_farmer_test_cases/test_login_pytest.py' },
             { name: 'Onboarding', path: 'tests/test_cases/regular_farmer_test_cases/TestOnboarding.py' },
-            { name: 'Add Updates',path: 'tests/farmer/test_updates.py' },
+            { name: 'Add Updates', path: 'tests/farmer/test_updates.py' },
         ]
     },
     CLIENT: {
         id: "regular_client",
         label: "Krishivaas Client (Regular)",
         modules: [
-            { name: 'Login',       path: 'tests/test_cases/regular_client_test_cases/login_pytest.py' },
+            { name: 'Login', path: 'tests/test_cases/regular_client_test_cases/login_pytest.py' },
             { name: 'Marketplace', path: 'tests/client/test_marketplace.py' },
-            { name: 'Cart',        path: 'tests/client/test_cart.py' },
+            { name: 'Cart', path: 'tests/client/test_cart.py' },
         ]
     },
     STATE_FARMER: {
         id: "state_farmer",
         label: "State Farmer App",
         modules: [
-            { name: 'Login',   path: 'tests/state_farmer/test_login.py' },
+            { name: 'Login', path: 'tests/state_farmer/test_login.py' },
             { name: 'Schemes', path: 'tests/state_farmer/test_schemes.py' },
         ]
     },
@@ -41,7 +41,7 @@ const APP_VARIANTS = {
         id: "state_client",
         label: "State Client App",
         modules: [
-            { name: 'Login',   path: 'tests/state_client/test_login.py' },
+            { name: 'Login', path: 'tests/state_client/test_login.py' },
             { name: 'Tenders', path: 'tests/state_client/test_tenders.py' },
         ]
     }
@@ -58,8 +58,8 @@ const ModuleFlow = ({ modules, isRunning, onToggleModule }) => (
                 let statusClass = "status-pending";
                 let icon = <Circle size={16} />;
                 if (mod.status === 'completed') { statusClass = "status-success"; icon = <CheckCircle size={16} />; }
-                else if (mod.status === 'running')  { statusClass = "status-running"; icon = <Activity size={16} className="icon-pulse" />; }
-                else if (mod.status === 'failed')   { statusClass = "status-failed";  icon = <AlertCircle size={16} />; }
+                else if (mod.status === 'running') { statusClass = "status-running"; icon = <Activity size={16} className="icon-pulse" />; }
+                else if (mod.status === 'failed') { statusClass = "status-failed"; icon = <AlertCircle size={16} />; }
 
                 return (
                     <div key={idx}
@@ -77,9 +77,9 @@ const ModuleFlow = ({ modules, isRunning, onToggleModule }) => (
                         <span className={`module-name ${!mod.isSelected && !isRunning ? 'opacity-50' : ''}`}>
                             {mod.name}
                         </span>
-                        {mod.status === 'running'   && <span className="status-label">Testing...</span>}
+                        {mod.status === 'running' && <span className="status-label">Testing...</span>}
                         {mod.status === 'completed' && <span className="status-label" style={{ color: '#22c55e' }}>Completed</span>}
-                        {mod.status === 'failed'    && <span className="status-label" style={{ color: '#ef4444' }}>Failed</span>}
+                        {mod.status === 'failed' && <span className="status-label" style={{ color: '#ef4444' }}>Failed</span>}
                     </div>
                 );
             })}
@@ -98,10 +98,10 @@ const MetricsChart = ({ data }) => (
                 <LineChart data={data}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                     <XAxis dataKey="time" hide />
-                    <YAxis yAxisId="left"  stroke="#94a3b8" label={{ value: 'CPU %',  angle: -90, position: 'insideLeft'  }} domain={[0, 100]} />
+                    <YAxis yAxisId="left" stroke="#94a3b8" label={{ value: 'CPU %', angle: -90, position: 'insideLeft' }} domain={[0, 100]} />
                     <YAxis yAxisId="right" orientation="right" stroke="#94a3b8" label={{ value: 'MB', angle: 90, position: 'insideRight' }} />
                     <Tooltip contentStyle={{ backgroundColor: '#1e293b', borderColor: '#334155', color: '#e2e8f0' }} itemStyle={{ color: '#e2e8f0' }} />
-                    <Line yAxisId="left"  type="monotone" dataKey="cpu"    stroke="#38bdf8" strokeWidth={2} dot={false} animationDuration={300} />
+                    <Line yAxisId="left" type="monotone" dataKey="cpu" stroke="#38bdf8" strokeWidth={2} dot={false} animationDuration={300} />
                     <Line yAxisId="right" type="monotone" dataKey="memory" stroke="#c084fc" strokeWidth={2} dot={false} animationDuration={300} />
                 </LineChart>
             </ResponsiveContainer>
@@ -112,10 +112,10 @@ const MetricsChart = ({ data }) => (
 /* ─── LogConsole ─────────────────────────────────────────────────────────── */
 const LogConsole = ({ logs, statusMode = 'idle' }) => {
     const endRef = useRef(null);
-    const [searchTerm,   setSearchTerm]   = useState('');
+    const [searchTerm, setSearchTerm] = useState('');
     const [isFullScreen, setIsFullScreen] = useState(false);
 
-    const filteredLogs = logs.filter(log => {
+    const filteredLogs = logs.filter((log) => {
         if (!searchTerm) return true;
         const q = searchTerm.toLowerCase();
         return (
@@ -126,6 +126,7 @@ const LogConsole = ({ logs, statusMode = 'idle' }) => {
     });
 
     const normalizedSearch = searchTerm.toLowerCase().trim();
+
     const matchesSearch = (log) => {
         if (!normalizedSearch) return false;
         return (
@@ -135,46 +136,106 @@ const LogConsole = ({ logs, statusMode = 'idle' }) => {
         );
     };
 
+    // Styles for the status bar
     const getBarStyle = () => {
-        const base = {
-            height: '4px', flexGrow: 1, margin: '0 15px', borderRadius: '2px',
+        const baseStyle = {
+            height: '4px',
+            flexGrow: 1,
+            margin: '0 15px',
+            borderRadius: '2px',
             transition: 'all 0.3s ease',
             opacity: statusMode === 'idle' ? 0.2 : 1,
             backgroundColor: statusMode === 'idle' ? '#475569' : '#fff',
         };
-        if (statusMode === 'running') return { ...base, background: 'linear-gradient(90deg,#3b82f633 0%,#3b82f6 50%,#3b82f633 100%)', backgroundSize: '200% 100%', animation: 'gradientLoad 2s linear infinite' };
-        if (statusMode === 'failure') return { ...base, backgroundColor: '#ef4444', boxShadow: '0 0 8px #ef444466', animation: 'blinkRed 1.5s infinite' };
-        if (statusMode === 'success') return { ...base, backgroundColor: '#22c55e', boxShadow: '0 0 8px #22c55e66', animation: 'blinkGreen 1.5s infinite' };
-        return base;
+
+        if (statusMode === 'running') {
+            return {
+                ...baseStyle,
+                background: 'linear-gradient(90deg, #3b82f633 0%, #3b82f6 50%, #3b82f633 100%)',
+                backgroundSize: '200% 100%',
+                animation: 'gradientLoad 2s linear infinite',
+            };
+        } else if (statusMode === 'failure') {
+            return {
+                ...baseStyle,
+                backgroundColor: '#ef4444',
+                boxShadow: '0 0 8px #ef444466',
+                animation: 'blinkRed 1.5s infinite',
+            };
+        } else if (statusMode === 'success') {
+            return {
+                ...baseStyle,
+                backgroundColor: '#22c55e',
+                boxShadow: '0 0 8px #22c55e66',
+                animation: 'blinkGreen 1.5s infinite',
+            };
+        }
+        return baseStyle;
     };
 
     return (
         <div className={`log-console ${isFullScreen ? 'full-screen' : ''}`}>
             <style>{`
-                @keyframes gradientLoad { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
-                @keyframes blinkRed   { 0%,100%{opacity:1;box-shadow:0 0 8px #ef444466}50%{opacity:.4;box-shadow:none} }
-                @keyframes blinkGreen { 0%,100%{opacity:1;box-shadow:0 0 8px #22c55e66}50%{opacity:.4;box-shadow:none} }
-            `}</style>
+        @keyframes gradientLoad {
+          0% { background-position: 100% 0; }
+          100% { background-position: -100% 0; }
+        }
+        @keyframes blinkRed {
+          0%, 100% { opacity: 1; box-shadow: 0 0 8px #ef444466; }
+          50% { opacity: 0.4; box-shadow: none; }
+        }
+        @keyframes blinkGreen {
+          0%, 100% { opacity: 1; box-shadow: 0 0 8px #22c55e66; }
+          50% { opacity: 0.4; box-shadow: none; }
+        }
+      `}</style>
+
             <div className="console-header-row">
-                <h3 className="console-header"><Terminal size={14} /> LIVE LOGS CONSOLE</h3>
+                <h3 className="console-header">
+                    <Terminal size={14} /> LIVE LOGS CONSOLE
+                </h3>
                 <div style={getBarStyle()} />
+                {/* Search bar */}
                 <div className="log-search">
-                    <input type="text" placeholder="Search logs..." value={searchTerm}
-                        onChange={e => setSearchTerm(e.target.value)} className="text-input" />
+                    <input
+                        type="text"
+                        placeholder="Search logs..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="text-input"
+                    />
                 </div>
-                <button onClick={() => setIsFullScreen(v => !v)}
-                    style={{ background:'none',border:'none',cursor:'pointer',marginLeft:'8px',color:'#94a3b8',display:'flex',alignItems:'center',padding:'4px' }}
-                    title={isFullScreen ? "Exit Full Screen" : "Full Screen"}>
+                <button
+                    onClick={() => setIsFullScreen(!isFullScreen)}
+                    style={{
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        marginLeft: '8px',
+                        color: '#94a3b8',
+                        display: 'flex',
+                        alignItems: 'center',
+                        padding: '4px'
+                    }}
+                    title={isFullScreen ? "Exit Full Screen" : "Full Screen"}
+                >
                     {isFullScreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
                 </button>
             </div>
             <div className="console-body">
-                {(filteredLogs || []).map((log, i) => (
-                    <div key={i} className={`log-line ${log.type.toLowerCase()} ${matchesSearch(log) ? 'log-line-highlight' : ''}`}>
-                        <span className="timestamp">[{log.time}]</span>
-                        <span className="message">{log.message}</span>
-                    </div>
-                ))}
+                {logs.map((log, i) => {
+                    const isMatch = matchesSearch(log);
+                    return (
+                        <div
+                            key={i}
+                            className={`log-line ${log.type.toLowerCase()} ${isMatch ? 'log-line-highlight' : ''
+                                }`}
+                        >
+                            <span className="timestamp">[{log.time}]</span>
+                            <span className="message">{log.message}</span>
+                        </div>
+                    );
+                })}
                 <div ref={endRef} />
             </div>
         </div>
@@ -196,24 +257,24 @@ function TestScreen({ onHistoryUpdate }) {
         catch { return fallback; }
     };
 
-    const [apkUrl,            setApkUrl]            = useState(() => loadState('apkUrl', ''));
-    const [isRunning,         setIsRunning]          = useState(() => loadState('isRunning', false));
-    const [isDownloading,     setIsDownloading]      = useState(false);
-    const [showUiIssuesScreen,setShowUiIssuesScreen] = useState(false);
-    const [uiAnalysisStatus,  setUiAnalysisStatus]   = useState('idle');
-    const [uiAnalysisError,   setUiAnalysisError]    = useState('');
-    const [uiAnalysisResults, setUiAnalysisResults]  = useState([]);
-    const [logs,              setLogs]               = useState(() => loadState('logs', []));
-    const [metrics,           setMetrics]            = useState([]);
-    const [appIcon,           setAppIcon]            = useState(null);
-    const [appTitle,          setAppTitle]           = useState('');
-    const [isDeviceConnected, setIsDeviceConnected]  = useState(false);
-    const [appiumStatus,      setAppiumStatus]       = useState('stopped');
-    const [showStopPopup,     setShowStopPopup]      = useState(false);
-    const [selectedAppKey,    setSelectedAppKey]     = useState(() => loadState('selectedAppKey', 'FARMER'));
-    const [existingApks,      setExistingApks]       = useState([]);
-    const [selectedApk,       setSelectedApk]        = useState(() => loadState('selectedApk', ''));
-    const [hasOpenedReport,   setHasOpenedReport]    = useState(false);
+    const [apkUrl, setApkUrl] = useState(() => loadState('apkUrl', ''));
+    const [isRunning, setIsRunning] = useState(() => loadState('isRunning', false));
+    const [isDownloading, setIsDownloading] = useState(false);
+    const [showUiIssuesScreen, setShowUiIssuesScreen] = useState(false);
+    const [uiAnalysisStatus, setUiAnalysisStatus] = useState('idle');
+    const [uiAnalysisError, setUiAnalysisError] = useState('');
+    const [uiAnalysisResults, setUiAnalysisResults] = useState([]);
+    const [logs, setLogs] = useState(() => loadState('logs', []));
+    const [metrics, setMetrics] = useState([]);
+    const [appIcon, setAppIcon] = useState(null);
+    const [appTitle, setAppTitle] = useState('');
+    const [isDeviceConnected, setIsDeviceConnected] = useState(false);
+    const [appiumStatus, setAppiumStatus] = useState('stopped');
+    const [showStopPopup, setShowStopPopup] = useState(false);
+    const [selectedAppKey, setSelectedAppKey] = useState(() => loadState('selectedAppKey', 'FARMER'));
+    const [existingApks, setExistingApks] = useState([]);
+    const [selectedApk, setSelectedApk] = useState(() => loadState('selectedApk', ''));
+    const [hasOpenedReport, setHasOpenedReport] = useState(false);
 
     const prevAppKeyRef = useRef(selectedAppKey);
 
@@ -226,12 +287,12 @@ function TestScreen({ onHistoryUpdate }) {
 
     // Persist state
     useEffect(() => {
-        sessionStorage.setItem('apkUrl',         JSON.stringify(apkUrl));
-        sessionStorage.setItem('isRunning',      JSON.stringify(isRunning));
+        sessionStorage.setItem('apkUrl', JSON.stringify(apkUrl));
+        sessionStorage.setItem('isRunning', JSON.stringify(isRunning));
         sessionStorage.setItem('selectedAppKey', JSON.stringify(selectedAppKey));
-        sessionStorage.setItem('modules',        JSON.stringify(modules));
-        sessionStorage.setItem('selectedApk',    JSON.stringify(selectedApk));
-        sessionStorage.setItem('logs',           JSON.stringify(logs.slice(-200)));
+        sessionStorage.setItem('modules', JSON.stringify(modules));
+        sessionStorage.setItem('selectedApk', JSON.stringify(selectedApk));
+        sessionStorage.setItem('logs', JSON.stringify(logs.slice(-200)));
     }, [apkUrl, isRunning, selectedAppKey, modules, selectedApk, logs]);
 
     const getConsoleStatus = () => {
@@ -240,7 +301,7 @@ function TestScreen({ onHistoryUpdate }) {
         if (!active.length) return 'idle';
         if (active.some(m => m.status === 'failed')) return 'failure';
         const hasCompleted = active.some(m => m.status === 'completed' || m.status === 'passed');
-        const hasRunning   = active.some(m => m.status === 'running');
+        const hasRunning = active.some(m => m.status === 'running');
         if (hasCompleted && !hasRunning) return 'success';
         return 'idle';
     };
@@ -260,7 +321,7 @@ function TestScreen({ onHistoryUpdate }) {
     const { lastJsonMessage, sendMessage, readyState } = useWebSocket(WS_URL, {
         shouldReconnect: () => true,
         onMessage: (event) => {
-            try { handleIncomingData(JSON.parse(event.data)); } catch {}
+            try { handleIncomingData(JSON.parse(event.data)); } catch { }
         }
     });
 
@@ -287,8 +348,8 @@ function TestScreen({ onHistoryUpdate }) {
 
             if (message && (
                 message.includes("Allure HTML report generated") ||
-                message.includes("Skipping report generation")   ||
-                message.includes("Test execution interrupted")   ||
+                message.includes("Skipping report generation") ||
+                message.includes("Test execution interrupted") ||
                 message.includes("Test process terminated")
             )) setIsRunning(false);
 
@@ -313,9 +374,9 @@ function TestScreen({ onHistoryUpdate }) {
 
     const handleRunTest = async () => {
         if (appiumStatus !== 'running') { alert("Appium Server is not running. Start it first."); return; }
-        if (!apkUrl && !selectedApk)    { alert("Please enter a Google Drive URL or select an existing APK!"); return; }
+        if (!apkUrl && !selectedApk) { alert("Please enter a Google Drive URL or select an existing APK!"); return; }
         const testsToRun = modules.filter(m => m.isSelected).map(m => ({ name: m.name, path: m.path }));
-        if (!testsToRun.length)         { alert("Please select at least one module to run."); return; }
+        if (!testsToRun.length) { alert("Please select at least one module to run."); return; }
 
         setHasOpenedReport(false);
         setModules(prev => prev.map(m => ({ ...m, status: 'pending' })));
@@ -326,9 +387,9 @@ function TestScreen({ onHistoryUpdate }) {
         handleIncomingData({ type: 'LOG', payload: { message: `Initializing ${APP_VARIANTS[selectedAppKey].label} test with ${testsToRun.length} modules...`, status: 'INFO' } });
 
         try {
-            const payload  = { tests_to_run: testsToRun, app_type: APP_VARIANTS[selectedAppKey].id };
+            const payload = { tests_to_run: testsToRun, app_type: APP_VARIANTS[selectedAppKey].id };
             const endpoint = selectedApk ? '/start-test-existing' : '/start-test';
-            const body     = selectedApk ? { ...payload, apk_name: selectedApk } : { ...payload, url: apkUrl };
+            const body = selectedApk ? { ...payload, apk_name: selectedApk } : { ...payload, url: apkUrl };
 
             const response = await fetch(`${API_URL}${endpoint}`, {
                 method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
@@ -355,7 +416,7 @@ function TestScreen({ onHistoryUpdate }) {
     };
 
     const handleStopTest = async () => {
-        try { await fetch(`${API_URL}/stop-test`, { method: 'POST' }); } catch {}
+        try { await fetch(`${API_URL}/stop-test`, { method: 'POST' }); } catch { }
         setIsRunning(false); setIsDownloading(false);
         handleIncomingData({ type: 'LOG', payload: { message: 'Test stopped by user.', status: 'FAILED' } });
         setShowStopPopup(true);
@@ -363,20 +424,20 @@ function TestScreen({ onHistoryUpdate }) {
 
     const handleGenerateReport = async () => {
         setShowStopPopup(false);
-        try { await fetch(`${API_URL}/api/generate-report`, { method: 'POST' }); } catch {}
+        try { await fetch(`${API_URL}/api/generate-report`, { method: 'POST' }); } catch { }
         handleIncomingData({ type: 'LOG', payload: { message: 'Generating partial report...', status: 'INFO' } });
     };
 
     const handleReset = () => {
         setIsRunning(false); setApkUrl(''); setSelectedApk(''); setLogs([]);
         setModules(prev => prev.map(m => ({ ...m, status: 'pending' })));
-        ['apkUrl','selectedApk','logs','modules','isRunning','jiraIssues'].forEach(k => sessionStorage.removeItem(k));
+        ['apkUrl', 'selectedApk', 'logs', 'modules', 'isRunning', 'jiraIssues'].forEach(k => sessionStorage.removeItem(k));
     };
 
     const analyzeUiScreenshots = async () => {
         setUiAnalysisStatus('loading'); setUiAnalysisError('');
         try {
-            const res  = await fetch(`${API_URL}/api/ui-screenshots/analyze`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+            const res = await fetch(`${API_URL}/api/ui-screenshots/analyze`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
             const data = await res.json().catch(() => ({}));
             if (!res.ok) throw new Error(data?.detail || 'UI analysis failed');
             setUiAnalysisResults(data.results || []); setUiAnalysisStatus('ready');
@@ -393,7 +454,7 @@ function TestScreen({ onHistoryUpdate }) {
             await fetch(`${API_URL}/api/appium/${appiumStatus === 'running' ? 'stop' : 'start'}`, { method: 'POST' });
             handleIncomingData({ type: 'LOG', payload: { message: `${appiumStatus === 'running' ? 'Stopping' : 'Starting'} Appium Server...`, status: 'INFO' } });
             setTimeout(checkAppiumStatus, 1000);
-        } catch {}
+        } catch { }
     };
 
     useEffect(() => {
@@ -402,7 +463,7 @@ function TestScreen({ onHistoryUpdate }) {
             catch { setIsDeviceConnected(false); }
         };
         const loadApks = async () => {
-            try { const r = await fetch(`${API_URL}/api/apk-list`); setExistingApks((await r.json()).apks || []); } catch {}
+            try { const r = await fetch(`${API_URL}/api/apk-list`); setExistingApks((await r.json()).apks || []); } catch { }
         };
         loadApks(); checkDevice(); checkAppiumStatus();
         // Clear stale jiraIssues from old version (IssuePanel now manages its own)
@@ -434,21 +495,21 @@ function TestScreen({ onHistoryUpdate }) {
             )}
 
             {showStopPopup && (
-                <div style={{ position:'fixed',top:'30%',left:0,right:0,display:'flex',alignItems:'center',justifyContent:'center',zIndex:1000 }}>
-                    <div className="dashboard-card" style={{ width:'400px',padding:'24px',border:'1px solid #ebebeb' }}>
-                        <h3 style={{ marginTop:0,color:'#333',display:'flex',alignItems:'center',gap:'8px' }}>
+                <div style={{ position: 'fixed', top: '30%', left: 0, right: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+                    <div className="dashboard-card" style={{ width: '400px', padding: '24px', border: '1px solid #ebebeb' }}>
+                        <h3 style={{ marginTop: 0, color: '#333', display: 'flex', alignItems: 'center', gap: '8px' }}>
                             <AlertCircle color="#f59e0b" /> Test Stopped
                         </h3>
-                        <p style={{ color:'#94a3b8',margin:'16px 0 24px 0' }}>
+                        <p style={{ color: '#94a3b8', margin: '16px 0 24px 0' }}>
                             Tests were stopped manually. Generate the partial report?
                         </p>
-                        <div style={{ display:'flex',justifyContent:'flex-end',gap:'12px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
                             <button onClick={() => setShowStopPopup(false)}
-                                style={{ padding:'8px 16px',borderRadius:'6px',cursor:'pointer',backgroundColor:'transparent',border:'1px solid #475569',color:'#333' }}>
+                                style={{ padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', backgroundColor: 'transparent', border: '1px solid #475569', color: '#333' }}>
                                 No, Close
                             </button>
                             <button onClick={handleGenerateReport}
-                                style={{ padding:'8px 16px',borderRadius:'6px',cursor:'pointer',backgroundColor:'#3b82f6',border:'none',color:'white',fontWeight:'500' }}>
+                                style={{ padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', backgroundColor: '#3b82f6', border: 'none', color: 'white', fontWeight: '500' }}>
                                 Yes, Generate Report
                             </button>
                         </div>
@@ -460,13 +521,13 @@ function TestScreen({ onHistoryUpdate }) {
 
                 {/* Controls */}
                 <div className="dashboard-card control-panel">
-                    <div style={{ display:'flex',justifyContent:'space-between',alignItems:'center',paddingBottom:'15px',marginBottom:'15px',borderBottom:'1px solid #334155' }}>
-                        <div style={{ display:'flex',alignItems:'center',gap:'8px' }}>
-                            <div style={{ width:'10px',height:'10px',borderRadius:'50%',backgroundColor:appiumStatus==='running'?'#4ade80':'#ef4444',boxShadow:appiumStatus==='running'?'0 0 8px #4ade80':'none' }} />
-                            <span className="input-label" style={{ marginBottom:0 }}>Appium Server</span>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '15px', marginBottom: '15px', borderBottom: '1px solid #334155' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: appiumStatus === 'running' ? '#4ade80' : '#ef4444', boxShadow: appiumStatus === 'running' ? '0 0 8px #4ade80' : 'none' }} />
+                            <span className="input-label" style={{ marginBottom: 0 }}>Appium Server</span>
                         </div>
                         <button onClick={toggleAppium}
-                            style={{ padding:'6px 12px',borderRadius:'6px',border:'1px solid #CBD5E1',backgroundColor:appiumStatus==='running'?'#1e293b':'#0f172a',color:appiumStatus==='running'?'#ef4444':'#4ade80',cursor:'pointer',fontSize:'0.85rem',fontWeight:'600',transition:'all 0.2s' }}>
+                            style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid #CBD5E1', backgroundColor: appiumStatus === 'running' ? '#1e293b' : '#0f172a', color: appiumStatus === 'running' ? '#ef4444' : '#4ade80', cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600', transition: 'all 0.2s' }}>
                             {appiumStatus === 'running' ? 'Stop Server' : 'Start Server'}
                         </button>
                     </div>
@@ -509,7 +570,7 @@ function TestScreen({ onHistoryUpdate }) {
                         )}
                         {!isRunning && logs.length > 0 && (
                             <button onClick={handleReset} className="run-button ml-2"
-                                style={{ backgroundColor:'#334155',color:'#e2e8f0',border:'1px solid #475569' }}>
+                                style={{ backgroundColor: '#334155', color: '#e2e8f0', border: '1px solid #475569' }}>
                                 Start New Test
                             </button>
                         )}
@@ -522,11 +583,11 @@ function TestScreen({ onHistoryUpdate }) {
                 </div>
 
                 {/* Logs + IssuePanel */}
-                <div className="grid-item-logs" style={{ display:'flex',gap:'1rem',alignItems:'stretch' }}>
-                    <div style={{ flex:'0 0 60%',minWidth:0 }}>
+                <div className="grid-item-logs" style={{ display: 'flex', gap: '1rem', alignItems: 'stretch' }}>
+                    <div style={{ flex: '0 0 60%', minWidth: 0 }}>
                         <LogConsole logs={logs} statusMode={getConsoleStatus()} />
                     </div>
-                    <div style={{ flex:'0 0 calc(40% - 1rem)',minWidth:0 }}>
+                    <div style={{ flex: '0 0 calc(40% - 1rem)', minWidth: 0 }}>
                         {/*
                          * onHistoryUpdate comes from App.jsx via JiraHistoryContext.
                          * IssuePanel calls it when:
