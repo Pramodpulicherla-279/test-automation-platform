@@ -39,19 +39,14 @@ REPORT_DIR = "allure-report"
 #         "subsidy": "tests/state_farmer/test_subsidy.py",
 #     },
 #     "state_client": {
-#         "login": "tests/state_client/test_login.py",
+#         "login": "tests/test_cases/state_client_test_cases/test_login_pytest.py",
 #         "reports": "tests/state_client/test_reports.py",
 #         "audit": "tests/state_client/test_audit.py",
 #     }
 # }
 
 def _ensure_clean_allure_dirs(project_root: str) -> None:
-    # Clean results dir to ensure a fresh set of results for this entire run sequence
-    results_path = os.path.join(project_root, RESULTS_DIR)
-    if os.path.isdir(results_path):
-        shutil.rmtree(results_path, ignore_errors=True)
-    os.makedirs(results_path, exist_ok=True)
-    
+    os.makedirs(os.path.join(project_root, RESULTS_DIR), exist_ok=True)
     # Clean report dir (html) so you don’t open an old report
     report_path = os.path.join(project_root, REPORT_DIR)
     if os.path.isdir(report_path):
@@ -68,7 +63,7 @@ def generate_report(project_root: Optional[str] = None) -> None:
     # improved command resolution
     allure_cmd = "allure"
     # specific check for user's scoop path if regular allure isn't found
-    scoop_path = r"C:\Users\Pramo\scoop\shims\allure.cmd" 
+    scoop_path = r"C:\Users\ABDUL SAMAD\scoop\shims\allure.cmd" 
     if os.path.exists(scoop_path):
         allure_cmd = scoop_path
     elif shutil.which("allure.cmd"):
@@ -221,86 +216,60 @@ def stop_current_tests() -> bool:
 
     return True
 
-def run_pytest_streaming(pytest_args: list[str], module_name: str, clean_allure: bool = False) -> bool:
+def run_pytest_streaming(pytest_args: list[str], module_mapping: Dict[str, str], clean_allure: bool = False) -> bool:
     """
-    Run pytest in a subprocess and stream ALL stdout lines to the frontend log console.
-    Also writes allure results to allure-results.
+    Run pytest and parse logs in real-time to update individual module statuses.
+    module_mapping: { "path/to/test.py": "Module Name" }
     """
     global CURRENT_PROC, STOP_FLAG
-
-    if STOP_FLAG:
-        return False
+    if STOP_FLAG: return False
 
     project_root = os.path.dirname(os.path.dirname(__file__))
-
-    send_module_status(module_name, "running", f"Starting {module_name} tests")
-    send_log(f"==== Running {module_name} tests ====", "INFO")
+    send_log("==== Starting Sequential Test Suite ====", "INFO")
 
     cmd = [
-        sys.executable,
-        "-m",
-        "pytest",
-        "-p", "allure_pytest", 
-        "-s",
-        "-vv",
-        f"--alluredir={RESULTS_DIR}",
+        sys.executable, "-m", "pytest", "-p", "allure_pytest", 
+        "-s", "-v", "--tb=short", f"--alluredir={RESULTS_DIR}",
     ]
-    if clean_allure:
-        cmd.append("--clean-alluredir")
-
+    if clean_allure: cmd.append("--clean-alluredir")
     cmd += pytest_args
 
     env = os.environ.copy()
-    env["PYTHONIOENCODING"] = "utf-8"
-    env["PYTHONUTF8"] = "1"
-    env["PYTHONUNBUFFERED"] = "1" # Force unbuffered output for real-time logs
+    env.update({"PYTHONIOENCODING": "utf-8", "PYTHONUTF8": "1", "PYTHONUNBUFFERED": "1"})
 
     CURRENT_PROC = subprocess.Popen(
-        cmd,
-        cwd=project_root,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        text=True,
-        bufsize=1,
-        env=env,
+        cmd, cwd=project_root, stdout=subprocess.PIPE, 
+        stderr=subprocess.STDOUT, text=True, bufsize=1, env=env
     )
 
     proc = CURRENT_PROC
     assert proc.stdout is not None
-    for line in proc.stdout:
-        if STOP_FLAG:
-            break # Stop reading logs immediately
-        send_log(line.rstrip("\n"), "INFO")
+    
+    current_active_module = None
 
-    # If stopped, ensure we don't hang on wait()
+    for line in proc.stdout:
+        if STOP_FLAG: break
+        clean_line = line.strip()
+        send_log(clean_line, "INFO")
+
+        # --- Dynamic Status Logic ---
+        # Detect which file pytest is currently running
+        for path, name in module_mapping.items():
+            if path in clean_line and ("collecting" in clean_line.lower() or "::" in clean_line):
+                if current_active_module != name:
+                    current_active_module = name
+                    send_module_status(name, "running", f"Executing {name}")
+
+        # Detect individual test failures to mark module as failed early
+        if " FAILED " in line and current_active_module:
+            send_module_status(current_active_module, "failed", "Test failed")
+
     if STOP_FLAG:
-        if proc.poll() is None:
-             try:
-                 proc.kill()
-             except:
-                 pass
-             
-        # FIX: Notify frontend that this specific module failed/stopped
-        send_module_status(module_name, "failed", "Stopped by user")
+        if proc.poll() is None: proc.kill()
         return False
     
     proc.wait()
-    ok = proc.returncode == 0
-    CURRENT_PROC = None
-
-    if STOP_FLAG: # Double check in case flag was set during wait
-        send_log("Test execution interrupted.", "FAILED")
-        return False
-
-    if ok:
-        send_module_status(module_name, "completed", f"{module_name} tests passed")
-        send_log(f"{module_name} tests passed", "SUCCESS")
-    else:
-        send_module_status(module_name, "failed", f"{module_name} tests failed")
-        send_log(f"{module_name} tests failed", "FAILED")
-
-    return ok
-
+    return proc.returncode == 0
 # def resolve_test_modules(app_type: str, module_names: Optional[List[str]] = None) -> List[Dict[str, str]]:
 #     """
 #     Helper to resolve a list of runnable test configs based on the app type and selected modules.
@@ -335,17 +304,11 @@ def run_tests_and_get_suggestions(
     module_names: Optional[List[str]] = None
 ) -> None:
     """
-    Entry point called from FastAPI or CLI.
-    Runs tests -> generates Allure report -> asks backend to open Allure server.
-    
-    :param apk_path: Path to the APK file.
-    :param tests_to_run: Direct list of modules (overrides app_type logic if provided).
-    :param app_type: If provided, resolves tests from TEST_REGISTRY.
-    :param module_names: Specific modules to run for the app_type.
+    Runs all tests in a single session to keep the app open, 
+    while tracking individual module statuses in real-time.
     """
-
     global STOP_FLAG
-    STOP_FLAG = False  # Reset flag at start of new run
+    STOP_FLAG = False 
 
     project_root = os.path.dirname(os.path.dirname(__file__))
 
@@ -355,77 +318,125 @@ def run_tests_and_get_suggestions(
 
     _ensure_clean_allure_dirs(project_root)
 
-    send_log(f"Running tests for APK: {apk_path}", "INFO")
-
-    # 1. Determine which tests to run
+    # 1. Resolve and Validate Tests
     final_test_list = []
-
     if tests_to_run:
-        # Caller provided explicit paths
         final_test_list = tests_to_run
-    elif app_type:
-        # Resolve using registry
-        send_log(f"Resolving modules for App: {app_type}", "INFO")
-        # final_test_list = resolve_test_modules(app_type, module_names)
-    else:
-        # Fallback default
-        send_log("No specific modules or app_type provided. Running default login test.", "WARNING")
-        final_test_list = [{"name": "Login", "path": "tests/test_cases/test_onboarding_pytest.py"}]
-
+    # elif app_type: ... (your resolve_test_modules logic)
+    
     if not final_test_list:
-        send_log("No valid test modules found to run. Aborting.", "FAILED")
+        send_log("No valid test modules found. Aborting.", "FAILED")
         return
 
-    # 2. Run the tests
-    # Collect all valid script paths to run them in a SINGLE pytest session.
-    # This prevents the app/driver from shutting down between test files.
-    valid_script_paths = []
-    collected_module_names = []
-
-    for index, test_config in enumerate(final_test_list):
-        module_name = test_config.get("name", f"Module {index + 1}")
-        script_path = test_config.get("path")
-        
-        full_script_path = os.path.join(project_root, script_path) if script_path else ""
-        if script_path and os.path.exists(full_script_path):
-            valid_script_paths.append(script_path)
-            collected_module_names.append(module_name)
+    # 2. Prepare Path-to-Name Mapping for Status Tracking
+    valid_paths = []
+    # This map helps us know which 'path' corresponds to which 'UI name'
+    path_to_name_map = {}
+    
+    for t in final_test_list:
+        path = t.get("path")
+        name = t.get("name", path)
+        if path and os.path.exists(os.path.join(project_root, path)):
+            valid_paths.append(path)
+            path_to_name_map[path] = name
+            # Set initial status to pending in UI
+            send_module_status(name, "pending", "Waiting in queue...")
         else:
-            send_log(f"Skipping {module_name}: Script not found at {script_path}", "WARNING")
+            send_log(f"Script not found: {path}", "WARNING")
 
-    if not valid_script_paths:
-        send_log("No tests were executed (all skipped or missing). Skipping report generation.", "WARNING")
+    if not valid_paths:
+        send_log("No valid scripts to execute.", "FAILED")
         return
+
+    # 3. Run the Suite and Track Statuses
+    send_log(f"Starting sequential suite for: {list(path_to_name_map.values())}", "INFO")
     
-    if STOP_FLAG:
-        send_log("Sequence stopped by user.", "WARNING")
-        return
-
-    # Execute all collected tests in one go
-    # Using a generic name for the batch execution or joining names
-    batch_name = "Selected Modules"
-
-    # clean_allure=False because we cleaned at start in _ensure_clean_allure_dirs
-    # We pass all script paths to runs_pytest_streaming at once
-    overall_ok = run_pytest_streaming(
-        valid_script_paths + [f"--apk={apk_path}", "-v"],
-        module_name=batch_name,
-        clean_allure=False,
+    # We pass the path_to_name_map to the streaming function so it can update the UI
+    pytest_args = valid_paths + [f"--apk={apk_path}", "-v"]
+    
+    overall_ok = run_pytest_streaming_with_tracking(
+        pytest_args, 
+        path_to_name_map, 
+        clean_allure=True
     )
+
+    # 4. Final Cleanup
+    if not STOP_FLAG:
+        if overall_ok:
+            send_log("Full test suite execution completed successfully.", "SUCCESS")
+        else:
+            send_log("Suite execution finished with errors.", "FAILED")
+        
+        generate_report(project_root)
+
+def run_pytest_streaming_with_tracking(pytest_args: list[str], path_mapping: dict, clean_allure: bool) -> bool:
+    """
+    Sub-function to execute pytest and parse lines for UI status updates.
+    Ensures that if any test in a module fails, the module status is 'failed'.
+    """
+    global CURRENT_PROC, STOP_FLAG
+    project_root = os.path.dirname(os.path.dirname(__file__))
     
-    # Don't generate report if stopped mid-way by user
-    if STOP_FLAG:
-        send_log("Tests stopped by user. Partial report available on request.", "WARNING")
-        return
+    cmd = [sys.executable, "-m", "pytest", "-p", "allure_pytest", "-s", "-v", "--tb=short", f"--alluredir={RESULTS_DIR}"]
+    if clean_allure: cmd.append("--clean-alluredir")
+    cmd += pytest_args
 
-    if overall_ok:
-        send_log("All selected modules passed", "SUCCESS")
-    else:
-        send_log("Some modules failed", "FAILED")
+    env = os.environ.copy()
+    env.update({"PYTHONIOENCODING": "utf-8", "PYTHONUTF8": "1", "PYTHONUNBUFFERED": "1"})
 
-    # 3. Generate and Open Report
-    generate_report(project_root)
-    # notify_allure_open()
+    CURRENT_PROC = subprocess.Popen(
+        cmd, cwd=project_root, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+        text=True, bufsize=1, env=env
+    )
+
+    active_module_name = None
+    # We use this to track which modules specifically encountered a failure
+    failed_modules = set()
+
+    assert CURRENT_PROC.stdout is not None
+    for line in CURRENT_PROC.stdout:
+        if STOP_FLAG: break
+        
+        raw_line = line.rstrip("\n")
+        send_log(raw_line, "INFO")
+        
+        # Normalize line for path matching (Windows uses backslashes)
+        normalized_line = raw_line.replace("\\", "/")
+
+        # LOGIC: Identify which module is currently executing
+        for path, name in path_mapping.items():
+            # Normalize config path as well
+            normalized_path = path.replace("\\", "/")
+            
+            if normalized_path in normalized_line and "::" in normalized_line:
+                if active_module_name != name:
+                    # Before switching, if the previous module wasn't marked failed, mark it completed/passed
+                    if active_module_name and active_module_name not in failed_modules:
+                        send_module_status(active_module_name, "completed", "Module passed")
+                    
+                    active_module_name = name
+                    send_module_status(name, "running", "Executing tests...")
+
+        # CRITICAL FIX: Detect app crashes or assertion failures
+        # 1. "FAILED" appearing as a standalone word (e.g. at end of line)
+        # 2. " ERROR " for errors outside of test functions
+        # 3. Crash detection
+        parts = raw_line.split()
+        if "FAILED" in parts or " ERROR " in raw_line or "Application Crash Detected" in raw_line:
+            if active_module_name:
+                failed_modules.add(active_module_name)
+                # Immediately notify frontend of the failure
+                send_module_status(active_module_name, "failed", "Failure detected in module")
+
+    # Final wrap-up for the last module in the sequence
+    if active_module_name:
+        if active_module_name in failed_modules:
+            send_module_status(active_module_name, "failed", "Module execution failed")
+        else:
+            send_module_status(active_module_name, "completed", "Module execution finished")
+
+    CURRENT_PROC.wait()
+    return CURRENT_PROC.returncode == 0
 
 if __name__ == "__main__":
     # CLI Usage: 

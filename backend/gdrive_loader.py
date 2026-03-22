@@ -71,6 +71,8 @@ def extract_app_icon(apk_path: str) -> str:
     
 def get_apk_info(apk_path: str) -> dict | None:
     """
+    Returns basic metadata from the APK:
+    { "app_name": str, "package_name": str, "version_name": str, "version_code": str }
     Returns APK metadata used by API + Jira context.
     """
     try:
@@ -86,11 +88,30 @@ def get_apk_info(apk_path: str) -> dict | None:
             parts = [p for p in package_name.split(".") if p and p not in {"com", "in", "org", "net", "io"}]
             developer_name = parts[0].replace("_", " ").title() if parts else "Unknown Developer"
 
+
+        version_name = None
+        version_code = None
+
+        for method in ["get_androidversion_name", "get_version_name", "androidversion_name"]:
+            if hasattr(app, method):
+                version_name = getattr(app, method)()
+                if version_name:
+                    break
+
+        for method in ["get_androidversion_code", "get_version_code", "androidversion_code"]:
+            if hasattr(app, method):
+                version_code = getattr(app, method)()
+                if version_code:
+                    break
+        print(f"📱 APK Info - Name: {app.get_app_name()}, Package: {app.get_package()}, Version Name: {version_name}, Version Code: {version_code}")
+
         return {
             "app_name": app_name,
             "package_name": package_name,
             "app_version": app_version,
             "developer_name": developer_name,
+            "version_name": version_name,
+            "version_code": version_code,
         }
     except Exception as e:
         print(f"Failed to read APK info: {e}")

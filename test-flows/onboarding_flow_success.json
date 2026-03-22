@@ -1,14 +1,65 @@
 [
     {
-        "step": "Click Verify OTP",
+        "step": "Click Add Button",
         "status": "Success"
     },
     {
-        "step": "Click Verify OTP",
+        "step": "Click Add New Farmer",
         "status": "Success"
     },
     {
-        "step": "Click Verify OTP",
+        "step": "Open Farm Village Dropdown",
+        "status": "Success"
+    },
+    {
+        "step": "Select specific Farm Village",
+        "status": "Success"
+    },
+    {
+        "step": "Download Boundary",
+        "status": "Success"
+    },
+    {
+        "step": "Submit Village",
+        "status": "Success"
+    },
+    {
+        "step": "Search Bund",
+        "status": "Success"
+    },
+    {
+        "step": "Enter Bund Number",
+        "status": "Success",
+        "value": "20"
+    },
+    {
+        "step": "Select Bund 20",
+        "status": "Success"
+    },
+    {
+        "step": "Click Map Marker to confirm bund selection",
+        "status": "Success"
+    },
+    {
+        "step": "Confirm Bund",
+        "status": "Success"
+    },
+    {
+        "step": "Enter Farmer Name",
+        "status": "Success",
+        "value": "Tester33"
+    },
+    {
+        "step": "Enter Farmer Phone",
+        "status": "Success",
+        "value": "4545467328"
+    },
+    {
+        "step": "Submit Farmer",
+        "status": "Success"
+    },
+    {
+        "step": "Add Crop",
         "status": "Success"
     },
     {

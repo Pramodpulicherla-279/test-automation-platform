@@ -1,3 +1,4 @@
+
 import os
 import shutil
 # Disable auto-loading of 3rd-party pytest plugins (like browserstack)
@@ -14,6 +15,8 @@ import queue
 sys.dont_write_bytecode = True
 import threading
 import queue
+import threading
+import queue
 
 load_dotenv()
 
@@ -24,6 +27,33 @@ STOP_FLAG = False  # New global flag to control execution flow
 RESULTS_DIR = "allure-results"
 REPORT_DIR = "allure-report"
 
+# --- NEW: log queue + worker ---
+_LOG_Q: "queue.Queue[tuple[str, str]]" = queue.Queue(maxsize=5000)
+_LOG_WORKER_STARTED = False
+
+def _start_log_worker() -> None:
+    global _LOG_WORKER_STARTED
+    if _LOG_WORKER_STARTED:
+        return
+    _LOG_WORKER_STARTED = True
+
+    def _worker() -> None:
+        session = requests.Session()
+        while True:
+            message, status = _LOG_Q.get()
+            try:
+                session.post(
+                    f"{BACKEND_URL}/api/log-step",
+                    json={"message": message, "status": status},
+                    timeout=1,  # keep small; don't stall the worker either
+                )
+            except Exception:
+                pass
+            finally:
+                _LOG_Q.task_done()
+
+    t = threading.Thread(target=_worker, name="log-step-worker", daemon=True)
+    t.start()
 # --- NEW: log queue + worker ---
 _LOG_Q: "queue.Queue[tuple[str, str]]" = queue.Queue(maxsize=5000)
 _LOG_WORKER_STARTED = False

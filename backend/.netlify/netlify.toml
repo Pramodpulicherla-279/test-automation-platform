@@ -1,0 +1,26 @@
+plugins = []
+headers = []
+redirects = []
+
+[functions]
+
+[functions."*"]
+
+[build]
+publish = "C:\\Users\\ABDUL SAMAD\\Projects\\test-automation-platform\\backend"
+publishOrigin = "default"
+base = "C:\\Users\\ABDUL SAMAD\\Projects\\test-automation-platform\\backend"
+
+[build.environment]
+
+[build.processing]
+
+[build.processing.css]
+
+[build.processing.html]
+
+[build.processing.images]
+
+[build.processing.js]
+
+[build.services]
