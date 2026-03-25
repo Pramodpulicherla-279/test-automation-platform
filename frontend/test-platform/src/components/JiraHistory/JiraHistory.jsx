@@ -234,29 +234,6 @@ function DetailPanel({ issue, comments, onAddComment }) {
           </tbody>
         </table>
 
-        {/* Steps Executed */}
-        {steps.length > 0 && (
-          <div style={{ marginTop:"20px" }}>
-            <div style={{ display:"flex", alignItems:"center", gap:7, marginBottom:"10px" }}>
-              <div style={{ width:20, height:20, display:"inline-flex", alignItems:"center", justifyContent:"center", background:"var(--border-color)", borderRadius:4, flexShrink:0 }}>
-                <span style={{ fontSize:"0.68rem", fontWeight:800 }}>▶</span>
-              </div>
-              <span style={{ fontWeight:700, fontSize:"0.9rem", color:"var(--text-primary)" }}>
-                Steps Executed
-              </span>
-              <span style={{ background:"var(--accent-blue)", color:"#fff", borderRadius:4, padding:"1px 7px", fontSize:"0.72rem", fontWeight:700 }}>{steps.length}</span>
-            </div>
-            <div style={{ background:"var(--bg-console)", borderRadius:8, border:"1px solid var(--border-color)", padding:"10px 14px" }}>
-              {steps.map((step, i) => (
-                <div key={i} style={{ display:"flex", gap:10, padding:"4px 0", borderBottom: i < steps.length-1 ? "1px solid var(--border-color)" : "none" }}>
-                  <span style={{ color:"var(--accent-blue)", fontWeight:700, fontSize:"0.8rem", flexShrink:0, minWidth:22 }}>{i+1}.</span>
-                  <span style={{ fontSize:"0.82rem", color:"var(--text-primary)", lineHeight:"1.5" }}>{step}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
         {/* Description */}
         {issue.description && (
           <div style={{ marginTop:"20px" }}>

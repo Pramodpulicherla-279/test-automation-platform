@@ -362,8 +362,17 @@ def run_tests_and_get_suggestions(
         send_log("No valid scripts to execute.", "FAILED")
         return
 
-    # 3. Run the Suite and Track Statuses
-    send_log(f"Starting sequential suite for: {list(path_to_name_map.values())}", "INFO")
+    # ADD these lines BEFORE it:
+    # Tell frontend a new run is starting — clears IssuePanel state
+    try:
+        import requests as _req
+        _req.post(
+            f"{BACKEND_URL}/api/module-status",
+            json={"module": "__RUN_START__", "status": "start", "message": ""},
+            timeout=2,
+        )
+    except Exception:
+        pass
     
     # We pass the path_to_name_map to the streaming function so it can update the UI
     pytest_args = valid_paths + [f"--apk={apk_path}", "-v"]
@@ -389,6 +398,17 @@ def run_tests_and_get_suggestions(
             send_log("Suite execution finished with errors.", "FAILED")
         
         generate_report(project_root)
+        
+        # Notify frontend that run is fully complete — stops polling state
+        try:
+            import requests as _req
+            _req.post(
+                f"{BACKEND_URL}/api/run-complete",
+                json={"report_url": "http://localhost:8000/allure-report/index.html"},
+                timeout=3,
+            )
+        except Exception:
+            pass
 
 def run_pytest_streaming_with_tracking(pytest_args: list[str], path_mapping: dict, clean_allure: bool) -> bool:
     """

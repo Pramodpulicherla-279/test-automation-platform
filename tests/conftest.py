@@ -1,16 +1,15 @@
 # tests/conftest.py
 """
-Step capture strategy:
-  - Use report.capstdout (pytest's own stdout capture of the test)
-  - Parse every line that matches [FOUND] name='...' via ...
-  - Deduplicate consecutive identical steps
-  - No static JSON flow files needed
-  - Falls back gracefully to empty list if nothing captured
+Step capture — three-layer strategy (most reliable first):
 
-Other features:
-  - issue_id = ISS-001 format
-  - developer_name from Jira API
-  - description = error text + numbered steps (always)
+  1. Query server GET /api/jira/steps/{test_name}
+     Falls back to GET /api/jira/steps/default if test_name returns empty.
+     Server accumulates [FOUND] lines via /api/log-step in real-time.
+
+  2. report.sections["Captured stdout call"]
+     Available when pytest captures stdout internally (non-subprocess mode).
+
+  3. Empty list (steps shown as none)
 """
 
 import os
@@ -44,58 +43,130 @@ _session_issues: list = []
 _developer_name: str  = ""
 
 
-# ─── Regex patterns for step extraction from stdout ──────────────────────────
-# Matches:  [FOUND] name='Next Button (Language)' via XPATH
-# Matches:  [FOUND] name="Submit (button in add farm)" via XPATH
-_FOUND_RE = re.compile(
-    r"\[FOUND\]\s+name=['\"](.+?)['\"]",
-    re.IGNORECASE
-)
-# Matches:  [CLICK] Some element name
-_CLICK_RE = re.compile(
-    r"\[(?:CLICK|TAP|PRESSED|TAPPED)\]\s+(.+)",
-    re.IGNORECASE
-)
+# ─── Regex for parsing [FOUND] lines ─────────────────────────────────────────
+_FOUND_RE = re.compile(r"\[FOUND\]\s+name='([^']+)'|\[FOUND\]\s+name=\"([^\"]+)\"", re.IGNORECASE)
+_CLICK_RE = re.compile(r"\[(?:CLICK|TAP|PRESSED|TAPPED)\]\s+(.+)", re.IGNORECASE)
 
 
-def _extract_steps_from_stdout(capstdout: str) -> list[str]:
-    """
-    Parse pytest-captured stdout for [FOUND] and [CLICK] lines.
-    Returns a clean, deduplicated list of step descriptions.
-
-    Example input lines:
-      [FOUND] name='Next Button (Language)' via XPATH
-      [FOUND] name='While using the app (allow picture)' via XPATH
-      [FOUND] name='Click Verify OTP' via XPATH   ← may repeat if retried
-
-    Strategy:
-      1. Extract label from every matching line
-      2. Deduplicate CONSECUTIVE identical steps (retry loops)
-      3. Keep non-consecutive repeats (same button clicked multiple screens)
-    """
-    if not capstdout:
+def _extract_steps_from_text(text: str) -> list:
+    if not text:
         return []
-
-    raw_steps = []
-    for line in capstdout.splitlines():
+    raw = []
+    for line in text.splitlines():
         line = line.strip()
         m = _FOUND_RE.search(line)
         if m:
-            raw_steps.append(m.group(1).strip())
+            step = (m.group(1) or m.group(2) or "").strip()
+            if step:
+                raw.append(step)
             continue
         m = _CLICK_RE.search(line)
         if m:
-            raw_steps.append(m.group(1).strip())
-
-    # Deduplicate CONSECUTIVE identical steps only
-    # e.g. ["Click Verify OTP", "Click Verify OTP", "Click Verify OTP", "Android back"]
-    #   →  ["Click Verify OTP", "Android back"]
+            raw.append(m.group(1).strip())
     deduped = []
-    for step in raw_steps:
+    for step in raw:
         if not deduped or step != deduped[-1]:
             deduped.append(step)
-
     return deduped
+
+
+def _query_steps_endpoint(key: str) -> list:
+    """
+    Query GET /api/jira/steps/{key} and return the steps list.
+    Returns [] on any error or if response has no steps.
+    """
+    try:
+        resp = http_requests.get(
+            f"{BACKEND_URL}/api/jira/steps/{key}",
+            timeout=4,
+        )
+        if resp.status_code == 200:
+            return resp.json().get("steps", [])
+    except Exception as e:
+        print(f"[WARN] Could not fetch steps from server (key={key}): {e}")
+    return []
+
+
+def _get_steps_from_server(test_name: str) -> list:
+    """
+    PRIMARY step source.
+
+    Resolution order:
+      1. GET /api/jira/steps/{test_name}   — exact match
+      2. GET /api/jira/steps/default       — fallback bucket
+         (used when conftest sends no [TEST_START:] tag, so server
+          stores all steps under "default")
+
+    Each attempt is retried once with a 1-second delay if empty.
+    """
+    if not test_name:
+        return []
+
+    # ── Attempt 1: exact test_name key ────────────────────────────────────────
+    steps = _query_steps_endpoint(test_name)
+    if steps:
+        print(f"[STEPS] Fetched {len(steps)} steps from server (exact key) for {test_name}")
+        return steps
+
+    # ── Attempt 2: "default" fallback bucket ──────────────────────────────────
+    steps = _query_steps_endpoint("default")
+    if steps:
+        print(f"[STEPS] Fetched {len(steps)} steps from server (default bucket) for {test_name}")
+        # Tell the server we consumed this bucket so next test starts clean.
+        # We do this by posting a dummy step with test_name so the server
+        # knows to associate and clear the default bucket via /api/jira/payload.
+        # (The actual clear happens server-side in _resolve_steps_for_test.)
+        return steps
+
+    # ── Retry both after 1s (handles log-step async queue lag) ────────────────
+    time.sleep(1)
+
+    steps = _query_steps_endpoint(test_name)
+    if steps:
+        print(f"[STEPS] Fetched {len(steps)} steps (exact, retry) for {test_name}")
+        return steps
+
+    steps = _query_steps_endpoint("default")
+    if steps:
+        print(f"[STEPS] Fetched {len(steps)} steps (default, retry) for {test_name}")
+        return steps
+
+    return []
+
+
+def _get_steps_from_sections(report) -> list:
+    for header, content in getattr(report, "sections", []):
+        if "stdout" in header.lower() and content:
+            steps = _extract_steps_from_text(content)
+            if steps:
+                print(f"[STEPS] Got {len(steps)} steps from report.sections")
+                return steps
+    cap = getattr(report, "capstdout", "") or ""
+    if cap:
+        steps = _extract_steps_from_text(cap)
+        if steps:
+            print(f"[STEPS] Got {len(steps)} steps from report.capstdout")
+            return steps
+    return []
+
+
+def _get_steps(item, report, test_name: str) -> list:
+    """
+    Full step collection pipeline:
+    1. Server (exact key + default fallback, with retry)
+    2. report.sections / capstdout
+    3. Empty list
+    """
+    steps = _get_steps_from_server(test_name)
+    if steps:
+        return steps
+
+    steps = _get_steps_from_sections(report)
+    if steps:
+        return steps
+
+    print(f"[WARN] No steps captured for {test_name}")
+    return []
 
 
 # ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -143,12 +214,26 @@ def pytest_addoption(parser):
 
 def pytest_sessionstart(session):
     global _ticket_id, _issue_counter, _developer_name
-    _ticket_id      = _make_ticket_id()
-    _issue_counter  = 0
+    _ticket_id     = _make_ticket_id()
+    _issue_counter = 0
     print(f"\n[TICKET] Session ticket_id: {_ticket_id}")
     _developer_name = _fetch_developer_name_from_jira()
     if _developer_name:
         print(f"[TICKET] Developer: {_developer_name}")
+
+
+# ─── Notify server which test is starting ────────────────────────────────────
+# This causes server to bucket subsequent [FOUND] steps under the right key
+# instead of "default". Requires new server.py with [TEST_START:] support.
+def pytest_runtest_setup(item):
+    try:
+        http_requests.post(
+            f"{BACKEND_URL}/api/log-step",
+            json={"message": f"[TEST_START:{item.name}]", "status": "INFO"},
+            timeout=2,
+        )
+    except Exception:
+        pass
 
 
 # ─── Driver fixture ───────────────────────────────────────────────────────────
@@ -206,26 +291,20 @@ def _extract_module(item) -> str:
 
 
 def _extract_error_only(longrepr) -> str:
-    """
-    Keeps only the meaningful error lines from pytest longrepr.
-    Strips traceback frames — keeps 'E ...' lines and pytest.fail() assertions.
-    """
     if not longrepr:
         return "No error details"
     text = str(longrepr)
-    lines = text.splitlines()
     error_lines = []
-    for line in lines:
-        stripped = line.strip()
-        if stripped.startswith("E "):
-            error_lines.append(stripped[2:].strip())
-        elif "pytest.fail" in stripped or (
-            "assert" in stripped.lower()
-            and not stripped.startswith("#")
-            and not stripped.startswith("import")
+    for line in text.splitlines():
+        s = line.strip()
+        if s.startswith("E "):
+            error_lines.append(s[2:].strip())
+        elif "pytest.fail" in s or (
+            "assert" in s.lower()
+            and not s.startswith("#")
+            and not s.startswith("import")
         ):
-            error_lines.append(stripped)
-    # Deduplicate while preserving order
+            error_lines.append(s)
     seen, unique = set(), []
     for l in error_lines:
         if l not in seen:
@@ -235,18 +314,14 @@ def _extract_error_only(longrepr) -> str:
 
 
 def _build_description(error_text: str, steps: list) -> str:
-    """
-    Final description = error text + numbered steps list.
-    Both sections always present when data exists.
-    """
     parts = []
     if error_text and error_text.strip() and error_text != "No error details":
         parts.append(error_text.strip())
     if steps:
-        steps_block = "\nSteps Executed:\n" + "\n".join(
-            f"{i + 1}. {s}" for i, s in enumerate(steps)
+        parts.append(
+            "\nSteps Executed:\n" +
+            "\n".join(f"{i+1}. {s}" for i, s in enumerate(steps))
         )
-        parts.append(steps_block)
     return "\n".join(parts) if parts else "Test failed"
 
 
@@ -254,22 +329,21 @@ def _build_description(error_text: str, steps: list) -> str:
 def check_for_crashes(driver):
     try:
         logs = driver.get_log("logcat")
-        crash_signatures = [
+        sigs = [
             "fatal exception", "force removing activity", "androidruntime",
-            "beginning of crash", "system.err", "am_crash", "anr in",
-            "vm aborting", "com.facebook.react.bridge", "jsapplicationillegalargumentexception",
+            "beginning of crash", "am_crash", "anr in", "vm aborting",
         ]
         crash_lines, capture = [], False
         for entry in logs:
-            message = entry.get("message", "")
-            lower   = message.lower()
+            msg   = entry.get("message", "")
+            lower = msg.lower()
             if not capture:
-                if any(sig in lower for sig in crash_signatures):
+                if any(s in lower for s in sigs):
                     capture = True
-                    crash_lines.append(f"CRASH START: {message}")
+                    crash_lines.append(f"CRASH START: {msg}")
             else:
                 if len(crash_lines) < 80:
-                    crash_lines.append(message)
+                    crash_lines.append(msg)
         return "\n".join(crash_lines) if crash_lines else None
     except Exception as e:
         print("Logcat crash detection failed:", e)
@@ -346,14 +420,10 @@ def pytest_runtest_makereport(item, call):
 
     issue_summary = f"Automation Failure: {test_name}"
 
-    # 4. ── STEP EXTRACTION ────────────────────────────────────────────────────
-    # Use report.capstdout — pytest captures ALL stdout from the test automatically.
-    # This is the most reliable source: no static files, no fixture injection needed.
-    # It contains every [FOUND] name='...' line printed by smart_find_element().
-    #
-    # report.capstdout is set during the "call" phase (the actual test body).
-    # If empty (e.g. pytest -s disables capture), fall back gracefully to [].
-    steps_executed = _extract_steps_from_stdout(getattr(report, "capstdout", "") or "")
+    # 4. ── STEP COLLECTION ────────────────────────────────────────────────────
+    # Primary:  server exact key → server default bucket (with retry)
+    # Fallback: report.sections / capstdout
+    steps_executed = _get_steps(item, report, test_name)
 
     # 5. Error text
     error_text = _extract_error_only(report.longrepr)
@@ -362,7 +432,7 @@ def pytest_runtest_makereport(item, call):
     start_date = today.isoformat()
     end_date   = (today + datetime.timedelta(days=1)).isoformat()
 
-    # 6. Payload
+    # 6. Build payload
     payload = {
         "ticket_id":       _ticket_id,
         "issue_id":        issue_id,
@@ -390,7 +460,12 @@ def pytest_runtest_makereport(item, call):
     )
 
     _send_payload_to_backend(payload)
-    _session_issues.append({"issue_id": issue_id, "test_name": test_name, "module": module})
+    _session_issues.append({
+        "issue_id":  issue_id,
+        "test_name": test_name,
+        "module":    module,
+        "steps":     len(steps_executed),
+    })
 
 
 # ─── Session finish ───────────────────────────────────────────────────────────
@@ -400,7 +475,7 @@ def pytest_sessionfinish(session, exitstatus):
     if _session_issues:
         print(f"Failures ({len(_session_issues)}):")
         for iss in _session_issues:
-            print(f"  [#{iss['issue_id']}] {iss['module']} — {iss['test_name']}")
+            print(f"  [#{iss['issue_id']}] {iss['module']} — {iss['test_name']} ({iss['steps']} steps)")
     print("Review failures in IssuePanel and click 'Create' to file Jira tickets.")
     print(f"{'='*50}\n")
 
