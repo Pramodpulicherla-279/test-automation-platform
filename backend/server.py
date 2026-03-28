@@ -850,7 +850,6 @@ async def allure_start():
     subprocess.Popen(
         [ALLURE_CMD, "open", "-h", "127.0.0.1", "-p", str(port), ALLURE_REPORT_DIR],
         cwd=BASE_DIR, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True,
-        cwd=BASE_DIR, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True,
     )
     return JSONResponse({"url": f"http://127.0.0.1:{port}"})
 
@@ -1397,7 +1396,6 @@ async def appium_start():
         _appium_proc = subprocess.Popen(
             ["appium", "-p", str(APPIUM_PORT)],
             shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-            shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
         )
         return {"status": "started", "message": f"Appium started on port {APPIUM_PORT}"}
     except Exception as e:
@@ -1410,11 +1408,9 @@ async def appium_stop():
     global _appium_proc
     if _appium_proc is not None:
         if os.name == "nt":
-        if os.name == "nt":
             try:
                 subprocess.run(
                     ["taskkill", "/F", "/T", "/PID", str(_appium_proc.pid)],
-                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
                 )
             except Exception as e:
