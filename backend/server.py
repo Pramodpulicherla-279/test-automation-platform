@@ -1285,7 +1285,6 @@ async def log_step(msg: LogMessage):
             return {"status": "ok"}
 
 
-    _broadcast_async({"type": "METRIC", "payload": data})
     _broadcast_async({"type": "LOG", "payload": {"message": message, "status": msg.status}})
     return {"status": "ok"}
 
@@ -1337,11 +1336,7 @@ async def module_status(data: dict):
         _broadcast_async({"type": "RUN_START", "payload": {}})
     else:
     
-    _broadcast_async({
-        "type": "MODULE",
-        "payload": {"module":  data.get("module"), "status":  data.get("status"), "message": data.get("message", "")},
-    }),
-    _broadcast_async({"type": "MODULE", "payload": {
+        _broadcast_async({"type": "MODULE", "payload": {
             "module": module, "status": status, "message": data.get("message", "")
         }})
     return {"status": "ok"}
