@@ -481,7 +481,7 @@ export default function IssuePanel({ modules = [], jiraIssues = [], onHistoryUpd
     setIssues(prev => prev.filter(i => dedupKey(i) !== dedupKey(iss)));
     if (typeof onHistoryUpdate === "function") {
       onHistoryUpdate({
-        type: "removed", savedAt: new Date().toLocaleString(),
+        type: "removed", savedAt: new Date().toISOString(),
         ticketId,
         title:             iss.title             || iss.issue_summary || "Untitled",
         module:            iss.module            || iss.parent        || "",
@@ -505,7 +505,7 @@ export default function IssuePanel({ modules = [], jiraIssues = [], onHistoryUpd
     setIssues(prev => prev.filter(i => dedupKey(i) !== dedupKey(oldIss)));
     if (typeof onHistoryUpdate === "function") {
       onHistoryUpdate({
-        type: "created", savedAt: new Date().toLocaleString(),
+        type: "created", savedAt: new Date().toISOString(),
         ticketId,
         issueId:           updatedIss.issueId,
         jiraUrl:           updatedIss.jiraUrl,
