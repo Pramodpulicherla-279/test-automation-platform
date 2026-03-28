@@ -138,17 +138,17 @@ def _escape_uiautomator_text(s: str) -> str:
     """Escape for embedding inside UiAutomator Java string literals."""
     return (s or "").replace("\\", "\\\\").replace('"', '\\"')
 
-def _android_scroll_into_view(driver, text: str):
+# def _android_scroll_into_view(driver, text: str):
 
-def _xpath_literal(s: str) -> str:
-    """Return an XPath string literal that safely handles quotes."""
-    if s is None:
-        return "''"
-    if "'" not in s:
-        return f"'{s}'"
-    # concat('foo', "'", 'bar')
-    parts = s.split("'")
-    return "concat(" + ", \"'\", ".join([f"'{p}'" for p in parts]) + ")"
+# def _xpath_literal(s: str) -> str:
+#     """Return an XPath string literal that safely handles quotes."""
+#     if s is None:
+#         return "''"
+#     if "'" not in s:
+#         return f"'{s}'"
+#     # concat('foo', "'", 'bar')
+#     parts = s.split("'")
+#     return "concat(" + ", \"'\", ".join([f"'{p}'" for p in parts]) + ")"
 
 def _swipe_vertical_w3c(driver, start_y_ratio=0.8, end_y_ratio=0.2, x_ratio=0.5, pause_s=0.05):
     """Reliable vertical swipe using W3C actions (works in parallel / modern Appium)."""
@@ -246,7 +246,6 @@ def smart_find_element(
         _console_log(f"[FOUND] name='{name}' via XPATH")
         return element, False
     except TimeoutException:
-    except TimeoutException:
         print(f"[{name}] Not found via Primary XPath.")
 
     # If user explicitly wants OCR, skip scroll/DOM strategies.
@@ -337,18 +336,18 @@ def smart_click(
     enable_dom_fallback: bool = True,
     ocr_attempts: int = 2,
 ):
-def smart_click(
-    driver,
-    name,
-    xpath,
-    fallback_text=None,
-    screenshot_path="screenshots/ocr_fallback.png",
-    *,
-    force_ocr: bool = False,
-    enable_scroll: bool = True,
-    enable_dom_fallback: bool = True,
-    ocr_attempts: int = 2,
-):
+# def smart_click(
+#     driver,
+#     name,
+#     xpath,
+#     fallback_text=None,
+#     screenshot_path="screenshots/ocr_fallback.png",
+#     *,
+#     force_ocr: bool = False,
+#     enable_scroll: bool = True,
+#     enable_dom_fallback: bool = True,
+#     ocr_attempts: int = 2,
+# ):
     """
     Wrapper around smart_find_element to perform a click.
     AUTO screenshots:
