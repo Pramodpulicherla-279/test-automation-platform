@@ -1,4 +1,4 @@
-# tests/conftest.py
+# tests/conftest.py - UPDATED VERSION
 """
 Step capture — four-layer strategy (most reliable first):
 
@@ -17,6 +17,10 @@ Step capture — four-layer strategy (most reliable first):
     2. PYTHONDONTWRITEBYTECODE env var  — covers subprocesses
     3. _clean_pycache() in pytest_configure — wipes existing stale files
        before collection/import starts.
+
+─── JIRA DATES FIX ────────────────────────────────────────────────────────────
+  Root cause:  Dates and sprint captured locally but not sent to JIRA API.
+  Fix:  Include start_date, end_date, sprint in payload to backend.
 ────────────────────────────────────────────────────────────────────────────────
 """
 
@@ -36,14 +40,10 @@ import datetime
 import requests as http_requests
 from pathlib import Path
 
-import re
 import pytest
 import allure
-from pathlib import Path
 from appium import webdriver
 from appium.options.android import UiAutomator2Options
-import sys
-sys.dont_write_bytecode = True
 
 RUN_ID_CACHE = None
 
@@ -61,9 +61,9 @@ _ticket_id:      str  = ""
 _issue_counter:  int  = 0
 _session_issues: list = []
 _developer_name: str  = ""
+_test_start_time: datetime.datetime = None  # ← NEW: Track test start time globally
 
 # Per-test local step buffer — populated by _StepCapturingPlugin
-# This is the safety net when the server returns empty steps
 _local_step_buffer: dict = {}   # { test_name: [step, ...] }
 _current_test_name: str  = ""
 
@@ -112,16 +112,11 @@ class _StepCapturingPlugin:
     Registered as a pytest plugin in pytest_configure.
     After each test call phase it reads capstdout and feeds any
     [FOUND] / [CLICK] lines into _local_step_buffer[test_name].
-
-    This is the safety net: even if the backend server query returns []
-    (e.g. the test died before sending log-step POSTs), the steps that
-    pytest captured in its own stdout buffer are still available here.
     """
 
     def pytest_runtest_logreport(self, report):
         if report.when != "call":
             return
-        # nodeid example: tests/.../TestOnboarding.py::TestOnboarding::test_onboarding_success
         test_name = report.nodeid.split("::")[-1]
         cap = getattr(report, "capstdout", "") or ""
         if not cap:
@@ -220,8 +215,6 @@ def _get_steps_from_local_buffer(test_name: str) -> list:
 def _get_steps_from_logcat(driver_obj) -> list:
     """
     Layer 3: scrape device logcat for [FOUND]/[CLICK] lines at failure time.
-    Catches steps that were printed to logcat but whose log-step POST
-    hadn't arrived at the server yet when the test crashed.
     """
     if not driver_obj:
         return []
@@ -257,11 +250,6 @@ def _get_steps_from_sections(report) -> list:
 def _get_steps(item, report, test_name: str) -> list:
     """
     Full pipeline — tries all layers in order, returns first non-empty result.
-
-    Layer 1: server (exact key → default bucket, with 1s retry)
-    Layer 2: local in-process buffer (from _StepCapturingPlugin)
-    Layer 3: live logcat scrape from device
-    Layer 4: report.sections / capstdout
     """
     steps = _get_steps_from_server(test_name)
     if steps:
@@ -360,8 +348,9 @@ def pytest_runtest_setup(item):
     under the correct key (not 'default').
     Also pre-initialise the local buffer slot for this test.
     """
-    global _current_test_name
+    global _current_test_name, _test_start_time
     _current_test_name = item.name
+    _test_start_time = datetime.datetime.now()  # ← NEW: Capture test start time
     _local_step_buffer.setdefault(item.name, [])
 
     try:
@@ -396,7 +385,7 @@ def driver(request):
 
     drv = webdriver.Remote("http://127.0.0.1:4723", options=options)
     try:
-        drv.get_log("logcat")   # flush logcat buffer at session start
+        drv.get_log("logcat")
     except Exception:
         pass
     yield drv
@@ -567,11 +556,34 @@ def pytest_runtest_makereport(item, call):
     # 5. Error text
     error_text = _extract_error_only(report.longrepr)
 
-    today      = datetime.date.today()
-    start_date = today.isoformat()
-    end_date   = (today + datetime.timedelta(days=1)).isoformat()
+    # ═══════════════════════════════════════════════════════════════════════════
+    # *** FIX: CAPTURE ACCURATE TEST EXECUTION DATES ***
+    # ═════════════════════════════════════════════════════════════════════════════
+    global _test_start_time
+    
+    test_start = _test_start_time or datetime.datetime.now()
+    test_end = datetime.datetime.now()
+    
+    # Format as ISO 8601 for API (backend will convert to custom fields)
+    start_date_iso = test_start.isoformat()
+    end_date_iso = test_end.isoformat()
+    
+    # Also format for readability (matching TAP display: 29/03/2026, 08:43)
+    start_date_readable = test_start.strftime('%d/%m/%Y, %H:%M')
+    end_date_readable = test_end.strftime('%d/%m/%Y, %H:%M')
+    
+    # Calculate duration
+    duration_seconds = (test_end - test_start).total_seconds()
+    duration_readable = f"{int(duration_seconds)} seconds"
+    
+    print(f"\n📅 Test Execution Timeline:")
+    print(f"   Start: {start_date_readable} (ISO: {start_date_iso})")
+    print(f"   End:   {end_date_readable} (ISO: {end_date_iso})")
+    print(f"   Duration: {duration_readable}")
 
-    # 6. Build and send payload
+    # ═══════════════════════════════════════════════════════════════════════════
+    # Build payload with DATES AND SPRINT
+    # ═════════════════════════════════════════════════════════════════════════════
     payload = {
         "ticket_id":       _ticket_id,
         "issue_id":        issue_id,
@@ -584,12 +596,14 @@ def pytest_runtest_makereport(item, call):
         "test_name":       test_name,
         "steps_executed":  steps_executed,
         "developer_name":  developer_name,
-        "start_date":      start_date,
-        "end_date":        end_date,
-        "sprint":          "Automation",
+        "description":     _build_description(error_text, steps_executed),
+        
+        # *** NEW: Include dates and sprint ***
+        "start_date":      start_date_iso,      # ISO format for API
+        "end_date":        end_date_iso,        # ISO format for API
+        "sprint":          "Automation",        # Default sprint name
         "fix_version":     ["Production"],
         "affects_version": [app_name] if app_name and app_name != "Unknown App" else [],
-        "description":     _build_description(error_text, steps_executed),
     }
 
     allure.attach(

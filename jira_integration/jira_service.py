@@ -1,8 +1,11 @@
-import json
 import os
-import requests
-import datetime
 from jira_integration.jira_config import config
+from typing import Optional, List, Dict, Any
+from requests.auth import HTTPBasicAuth
+import requests
+import json
+from datetime import datetime
+from .jira_config import config
 
 
 def search_duplicate_issue(summary: str):
@@ -397,19 +400,211 @@ def build_extended_jira_payload(issue_key: str, business_payload: dict) -> dict:
 
 
 def create_jira_issue(
-    summary,
-    description,
-    allure_url=None,
-    app_name=None,
-    app_version=None,
-    module=None,
-    feature=None,
-    issue_summary=None,
-    test_name=None,
-    test_id=None,
-    steps_executed=None,
-    developer_name=None,
-):
+    summary: str,
+    description: str,
+    app_name: Optional[str] = None,
+    app_version: Optional[str] = None,
+    module: Optional[str] = None,
+    feature: Optional[str] = None,
+    issue_summary: Optional[str] = None,
+    test_name: Optional[str] = None,
+    test_id: Optional[str] = None,
+    steps_executed: Optional[List[str]] = None,
+    developer_name: Optional[str] = None,
+    fix_version: Optional[str] = None,
+    affects_version: Optional[str] = None,
+    start_date: Optional[str] = None,     # ISO format: 2026-03-29T08:43:00
+    end_date: Optional[str] = None,       # ISO format: 2026-03-29T08:44:00
+    sprint: Optional[str] = None,         # Sprint name: "Automation"
+) -> Optional[str]:
+    """
+    Create a JIRA issue with all metadata including test execution dates and sprint.
+    
+    Args:
+        summary: Issue summary/title
+        description: Issue description
+        app_name: App name (e.g., "Krishivaas Farmer")
+        app_version: App version (e.g., "1.3.96")
+        module: Module being tested (Login, Onboarding, etc.)
+        feature: Feature name
+        issue_summary: Another summary field
+        test_name: Name of the test that failed
+        test_id: ID of the test
+        steps_executed: List of automation steps executed
+        developer_name: Developer responsible
+        start_date: Test start time (ISO format)
+        end_date: Test end time (ISO format)
+        sprint: Sprint name for JIRA sprint field
+    
+    Returns:
+        JIRA issue key (e.g., "AT-87") or None if creation failed
+    """
+    
+    if not all([config.url, config.email, config.api_token, config.project_key]):
+        raise Exception(
+            f"JIRA config incomplete: url={config.url}, email={config.email}, "
+            f"token_set={bool(config.api_token)}, project_key={config.project_key}"
+        )
+
+    # ═══════════════════════════════════════════════════════════════════════════
+    # Prepare issue fields
+    # ═══════════════════════════════════════════════════════════════════════════
+    
+    fields = {
+        "project": {"key": config.project_key},
+        "summary": summary,
+        "description": description,
+        "issuetype": {"name": "Bug"},
+        "priority": {"name": "High"},
+    }
+
+    # Add optional fields
+    if app_name:
+        fields["labels"] = fields.get("labels", []) + ["automation", app_name.lower()]
+    if module:
+        fields["labels"] = fields.get("labels", []) + [module.lower()]
+    
+    # ═══════════════════════════════════════════════════════════════════════════
+    # *** KEY FIX: Map dates and sprint to JIRA custom fields ***
+    # ═══════════════════════════════════════════════════════════════════════════
+    # These custom field IDs MUST match your JIRA instance
+    # Get them from: Project Settings → Issue Types → Bug → Configure Fields
+    
+    custom_fields = {
+        # Test execution dates (date type fields)
+        'customfield_10000': start_date,           # Test Start Date
+        'customfield_10001': end_date,             # Test End Date
+        
+        # Test metadata (text fields)
+        'customfield_10002': f"{_calculate_duration(start_date, end_date)}",  # Duration
+        'customfield_10003': module or "",         # Test Module
+        'customfield_10004': app_version or "",    # App Version
+        'customfield_10005': test_name or "",      # Test Name
+        
+        # Sprint (this is CRITICAL for board display)
+        # Note: Sprint field might be different in your JIRA — check actual field ID
+        'customfield_10006': sprint or "Automation",  # Sprint Name
+    }
+    
+    # Merge custom fields (remove None values to avoid API errors)
+    for field_id, value in custom_fields.items():
+        if value is not None and value != "":
+            fields[field_id] = value
+    
+    print(f"[JIRA] Fields prepared:")
+    print(f"  Summary: {summary}")
+    print(f"  Module: {module}")
+    print(f"  Start Date: {start_date}")
+    print(f"  End Date: {end_date}")
+    print(f"  Sprint: {sprint}")
+    print(f"  Custom fields: {list(custom_fields.keys())}")
+
+    # ═══════════════════════════════════════════════════════════════════════════
+    # Create issue via JIRA REST API
+    # ═══════════════════════════════════════════════════════════════════════════
+    
+    auth = HTTPBasicAuth(config.email, config.api_token)
+    headers = {"Accept": "application/json", "Content-Type": "application/json"}
+    
+    url = f"{config.url}/rest/api/3/issue"
+    
+    try:
+        print(f"\n[JIRA] POST {url}")
+        print(f"[JIRA] Auth: {config.email}")
+        print(f"[JIRA] Project: {config.project_key}")
+        
+        response = requests.post(
+            url,
+            auth=auth,
+            headers=headers,
+            json={"fields": fields},
+            timeout=15,
+        )
+        
+        print(f"[JIRA] Response status: {response.status_code}")
+        
+        if response.status_code == 201:
+            data = response.json()
+            issue_key = data.get("key")
+            issue_id = data.get("id")
+            
+            print(f"✓ JIRA Issue Created: {issue_key}")
+            print(f"  ID: {issue_id}")
+            print(f"  URL: {config.url}/browse/{issue_key}")
+            print(f"  Start Date Field: {start_date}")
+            print(f"  End Date Field: {end_date}")
+            print(f"  Sprint Field: {sprint}")
+            
+            return issue_key
+        
+        elif response.status_code == 400:
+            error = response.json()
+            print(f"✗ JIRA 400 Bad Request")
+            print(f"  Error: {error}")
+            
+            # Check if it's a custom field error
+            errors = error.get("errors", {})
+            if any("customfield" in str(k) for k in errors.keys()):
+                print(f"\n⚠️  Custom field error detected!")
+                print(f"  You may need to update the custom field IDs in jira_service.py")
+                print(f"  Current IDs: {list(custom_fields.keys())}")
+                print(f"  Check: Project Settings → Issue Types → Bug → Configure Fields")
+            
+            raise Exception(f"JIRA 400: {error}")
+        
+        elif response.status_code == 401:
+            raise Exception(f"JIRA 401 Unauthorized: Check JIRA_EMAIL and JIRA_API_TOKEN in .env")
+        
+        elif response.status_code == 403:
+            raise Exception(f"JIRA 403 Forbidden: No permission to create issues in {config.project_key}")
+        
+        else:
+            raise Exception(f"JIRA {response.status_code}: {response.text[:500]}")
+    
+    except requests.exceptions.Timeout:
+        raise Exception("JIRA request timed out (15s). Check JIRA_URL and network connectivity.")
+    except requests.exceptions.ConnectionError:
+        raise Exception(f"Cannot connect to JIRA at {config.url}. Check JIRA_URL in .env")
+    except Exception as e:
+        print(f"✗ Error creating JIRA issue: {e}")
+        raise
+
+
+def _calculate_duration(start_date: Optional[str], end_date: Optional[str]) -> str:
+    """Calculate test duration from ISO format dates."""
+    if not start_date or not end_date:
+        return "Unknown"
+    
+    try:
+        start = datetime.fromisoformat(start_date.replace('Z', '+00:00'))
+        end = datetime.fromisoformat(end_date.replace('Z', '+00:00'))
+        duration = (end - start).total_seconds()
+        return f"{int(duration)} seconds"
+    except Exception as e:
+        print(f"[WARN] Could not calculate duration: {e}")
+        return "Unknown"
+
+
+def get_jira_issue(issue_key: str) -> Optional[Dict[str, Any]]:
+    """Fetch JIRA issue details."""
+    if not all([config.url, config.email, config.api_token]):
+        raise Exception("JIRA config incomplete")
+    
+    auth = HTTPBasicAuth(config.email, config.api_token)
+    headers = {"Accept": "application/json"}
+    
+    url = f"{config.url}/rest/api/3/issue/{issue_key}"
+    
+    try:
+        response = requests.get(url, auth=auth, headers=headers, timeout=10)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            print(f"Failed to fetch {issue_key}: {response.status_code}")
+            return None
+    except Exception as e:
+        print(f"Error fetching issue: {e}")
+        return None
     """
     Create Jira issue with duplicate detection + payload logs.
     """

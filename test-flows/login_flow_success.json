@@ -18,5 +18,21 @@
     {
         "step": "Allow notifications permission",
         "status": "Success"
+<<<<<<< HEAD
+=======
+    },
+    {
+        "step": "Enter valid phone number",
+        "status": "Success",
+        "value": "9618574550"
+    },
+    {
+        "step": "Click Next after entering phone number",
+        "status": "Success"
+    },
+    {
+        "step": "Click Verify OTP",
+        "status": "Success"
+>>>>>>> origin/ram_jira
     }
 ]
