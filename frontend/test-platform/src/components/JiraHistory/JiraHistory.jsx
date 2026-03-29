@@ -83,11 +83,9 @@ const IssueListCard = ({ issue, isSelected, onClick }) => {
       onMouseEnter={e => { if (!isSelected) e.currentTarget.style.background = "var(--bg-console)"; }}
       onMouseLeave={e => { if (!isSelected) e.currentTarget.style.background = "transparent"; }}>
       <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "3px" }}>
-        {/* Icon */}
         <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 20, height: 20, background: "var(--accent-blue)", borderRadius: 4, flexShrink: 0 }}>
           <LayoutList size={11} color="#fff" />
         </span>
-        {/* Issue key */}
         <span style={{ fontWeight: 700, fontSize: "0.8rem", color: isAssigned ? "var(--accent-blue)" : "var(--text-secondary)" }}>
           {issue.issueId || issue.internal_issue_id || "—"}
         </span>
@@ -111,7 +109,6 @@ const IssueListCard = ({ issue, isSelected, onClick }) => {
 const RunGroupList = ({ ticketId, issues, filter, search, selectedId, onSelect }) => {
   const [open, setOpen] = useState(true);
 
-  // Issues already pre-filtered by tab+search before reaching RunGroupList
   const filtered = issues;
   if (filtered.length === 0) return null;
 
@@ -120,7 +117,6 @@ const RunGroupList = ({ ticketId, issues, filter, search, selectedId, onSelect }
 
   return (
     <div style={{ borderBottom: "1px solid var(--border-color)" }}>
-      {/* Group header */}
       <button onClick={() => setOpen(v => !v)} style={{
         width: "100%", display: "flex", alignItems: "center", gap: "6px",
         padding: "8px 12px",
@@ -136,7 +132,6 @@ const RunGroupList = ({ ticketId, issues, filter, search, selectedId, onSelect }
         {unassignedCt > 0 && <span style={{ fontSize: "0.65rem", background: "#f1f5f9", color: "#64748b", borderRadius: 3, padding: "1px 5px", fontWeight: 700 }}>{unassignedCt}○</span>}
       </button>
 
-      {/* Issue cards */}
       {open && filtered.map((h, i) => {
         const uid = h.issueId || h.internal_issue_id || `${ticketId}-${i}`;
         return (
@@ -179,21 +174,59 @@ function DetailPanel({ issue, comments, onAddComment }) {
     textRef.current?.focus();
   };
 
+  // ── Helper to render version arrays ──────────────────────────────────────
+  const renderVersion = (v) =>
+    Array.isArray(v) ? v.join(", ") : (v || "");
+
   const fields = [
-    { label: "Module", value: <ModuleBadge module={issue.module} /> },
-    { label: "Summary", value: <span style={{ fontSize: "0.85rem", color: "var(--text-primary)" }}>{issue.title || "—"}</span> },
-    { label: "Status", value: <StatusBadge status={isAssigned ? "Assigned" : "Unassigned"} /> },
+    { label: "Module",      value: <ModuleBadge module={issue.module} /> },
+    { label: "Summary",     value: <span style={{ fontSize: "0.85rem", color: "var(--text-primary)" }}>{issue.title || "—"}</span> },
+    { label: "Status",      value: <StatusBadge status={isAssigned ? "Assigned" : "Unassigned"} /> },
     {
-      label: "Assignee", value: issue.developer && issue.developer !== "Unassigned"
-        ? <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><Avatar name={issue.developer} size={22} /><span style={{ fontSize: "0.85rem" }}>{issue.developer}</span></span>
+      label: "Assignee",
+      value: issue.developer && issue.developer !== "Unassigned"
+        ? <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+            <Avatar name={issue.developer} size={22} />
+            <span style={{ fontSize: "0.85rem" }}>{issue.developer}</span>
+          </span>
         : <span style={{ color: "var(--text-secondary)", fontSize: "0.85rem" }}>Unassigned</span>
     },
-    { label: "Creation Date", value: <span style={{ fontSize: "0.85rem", color: "var(--text-primary)" }}>{fmt(issue.created_at || issue.savedAt)}</span> },
-    { label: "Last Updated", value: <span style={{ fontSize: "0.85rem", color: "var(--text-primary)" }}>{fmt(issue.updated_at || issue.created_at || issue.savedAt)}</span> },
-    ...(issue.priority ? [{ label: "Priority", value: <span style={{ fontWeight: 700, fontSize: "0.85rem", color: issue.priority === "High" ? "#dc2626" : issue.priority === "Medium" ? "#d97706" : "#64748b" }}>{issue.priority}</span> }] : []),
-    ...(issue.app_version ? [{ label: "App Version", value: <span style={{ fontSize: "0.85rem" }}>{issue.app_version}</span> }] : []),
-    ...(issue.sprint ? [{ label: "Sprint", value: <span style={{ fontSize: "0.85rem" }}>{issue.sprint}</span> }] : []),
-    ...(issue.fix_version && issue.fix_version.length ? [{ label: "Fix Version", value: <span style={{ fontSize: "0.85rem" }}>{Array.isArray(issue.fix_version) ? issue.fix_version.join(", ") : issue.fix_version}</span> }] : []),
+    {
+      label: "Start Date",
+      value: <span style={{ fontSize: "0.85rem", color: "var(--text-primary)" }}>
+        {fmt(issue.start_date || issue.created_at || issue.savedAt)}
+      </span>
+    },
+    {
+      label: "Last Updated",
+      value: <span style={{ fontSize: "0.85rem", color: "var(--text-primary)" }}>
+        {fmt(issue.end_date || issue.updated_at || issue.created_at || issue.savedAt)}
+      </span>
+    },
+    ...(issue.priority ? [{
+      label: "Priority",
+      value: <span style={{ fontWeight: 700, fontSize: "0.85rem", color: issue.priority === "High" ? "#dc2626" : issue.priority === "Medium" ? "#d97706" : "#64748b" }}>
+        {issue.priority}
+      </span>
+    }] : []),
+    ...(issue.app_version ? [{
+      label: "App Version",
+      value: <span style={{ fontSize: "0.85rem" }}>{issue.app_version}</span>
+    }] : []),
+    ...(issue.sprint ? [{
+      label: "Sprint",
+      value: <span style={{ fontSize: "0.85rem" }}>{issue.sprint}</span>
+    }] : []),
+    // ── Fix Version ──────────────────────────────────────────────────────────
+    ...(issue.fix_version && issue.fix_version.length ? [{
+      label: "Fix Version",
+      value: <span style={{ fontSize: "0.85rem" }}>{renderVersion(issue.fix_version)}</span>
+    }] : []),
+    // ── Affects Version ─────────────────────────────────────────────────────
+    ...(issue.affects_version && issue.affects_version.length ? [{
+      label: "Affects Version",
+      value: <span style={{ fontSize: "0.85rem" }}>{renderVersion(issue.affects_version)}</span>
+    }] : []),
   ];
 
   const steps = Array.isArray(issue.steps_executed) ? issue.steps_executed : [];
@@ -225,7 +258,7 @@ function DetailPanel({ issue, comments, onAddComment }) {
           <tbody>
             {fields.map(f => (
               <tr key={f.label} style={{ borderBottom: "1px solid var(--border-color)" }}>
-                <td style={{ padding: "10px 12px 10px 0", fontSize: "0.82rem", fontWeight: 600, color: "var(--text-secondary)", whiteSpace: "nowrap", verticalAlign: "middle", width: 130 }}>
+                <td style={{ padding: "10px 12px 10px 0", fontSize: "0.82rem", fontWeight: 600, color: "var(--text-secondary)", whiteSpace: "nowrap", verticalAlign: "middle", width: 140 }}>
                   {f.label}
                 </td>
                 <td style={{ padding: "10px 0", verticalAlign: "middle" }}>
@@ -262,7 +295,6 @@ function DetailPanel({ issue, comments, onAddComment }) {
             </span>
           </div>
 
-          {/* Comment list */}
           {comments.length === 0 && (
             <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)", padding: "8px 0" }}>No comments yet.</div>
           )}
@@ -351,7 +383,6 @@ export default function JiraHistory({ issuePanelHistory = [] }) {
 
   useEffect(() => { fetchIssues(); }, []);
 
-  // Fetch comments when selected issue changes
   useEffect(() => {
     if (!selectedIssue?.issueId) { setComments([]); return; }
     fetch(`${API_URL}/api/jira/comments/${selectedIssue.issueId}`)
@@ -360,7 +391,6 @@ export default function JiraHistory({ issuePanelHistory = [] }) {
       .catch(() => setComments([]));
   }, [selectedIssue?.issueId]);
 
-  // Listen for real-time JIRA_COMMENT via WebSocket
   useEffect(() => {
     let ws;
     try {
@@ -371,9 +401,7 @@ export default function JiraHistory({ issuePanelHistory = [] }) {
           if (msg.type === "JIRA_COMMENT" && msg.payload?.issue_key === selectedIssue?.issueId) {
             setComments(prev => {
               const exists = prev.some(
-                c =>
-                  c.text === msg.payload.comment.text &&
-                  c.created_at === msg.payload.comment.created_at
+                c => c.text === msg.payload.comment.text && c.created_at === msg.payload.comment.created_at
               );
               if (exists) return prev;
               return [...prev, msg.payload.comment];
@@ -387,18 +415,12 @@ export default function JiraHistory({ issuePanelHistory = [] }) {
 
   const addComment = async (issueKey, text) => {
     if (!issueKey) return;
-
     try {
       await fetch(`${API_URL}/api/jira/comments/${issueKey}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          text,
-          author: selectedIssue?.developer || "QA Automation"
-        }),
+        body: JSON.stringify({ text, author: selectedIssue?.developer || "QA Automation" }),
       });
-
-      // ❌ DO NOT update state here (prevents duplicate)
     } catch { }
   };
 
@@ -408,28 +430,31 @@ export default function JiraHistory({ issuePanelHistory = [] }) {
     setComments([]);
   };
 
-  // Build unified history from API + real-time panel history
+  // ── Build unified history from API + real-time panel history ───────────────
   const apiEntries = apiIssues.map(i => ({
-    type: "created",
-    ticketId: i.ticket_id || "unknown",
-    issueId: i.issue_id || i.key || "",
-    jiraUrl: i.issue_url || i.url || "",
-    title: i.title || i.summary || "Untitled",
-    module: i.module || "",
-    developer: i.developer_name || i.assignee || "",
-    priority: i.priority || "High",
-    internal_issue_id: i.internal_issue_id || "",
-    description: i.description || "",
-    app_name: i.app_name || "",
-    app_version: i.app_version || "",
-    test_name: i.test_name || "",
-    sprint: i.sprint || "",
-    steps_executed: Array.isArray(i.steps_executed) ? i.steps_executed : [],
-    fix_version: Array.isArray(i.fix_version) ? i.fix_version : [],
-    start_date: i.start_date || "",
-    end_date: i.end_date || "",
-    created_at: i.created_at || "",
-    savedAt: i.created_at || "",
+    type:              "created",
+    ticketId:          i.ticket_id          || "unknown",
+    issueId:           i.issue_id           || i.key        || "",
+    jiraUrl:           i.issue_url          || i.url        || "",
+    title:             i.title              || i.summary    || "Untitled",
+    module:            i.module             || "",
+    developer:         i.developer_name     || i.assignee   || "",
+    priority:          i.priority           || "High",
+    internal_issue_id: i.internal_issue_id  || "",
+    description:       i.description        || "",
+    app_name:          i.app_name           || "",
+    app_version:       i.app_version        || "",
+    test_name:         i.test_name          || "",
+    sprint:            i.sprint             || "",
+    steps_executed:    Array.isArray(i.steps_executed)  ? i.steps_executed  : [],
+    // ── FIX: both version arrays now mapped ─────────────────────────────────
+    fix_version:       Array.isArray(i.fix_version)     ? i.fix_version     : [],
+    affects_version:   Array.isArray(i.affects_version) ? i.affects_version : [],
+    // ── Dates ────────────────────────────────────────────────────────────────
+    start_date:        i.start_date         || "",
+    end_date:          i.end_date           || "",
+    created_at:        i.created_at         || "",
+    savedAt:           i.created_at         || "",
   }));
 
   const panelCreatedIds = new Set(
@@ -438,24 +463,22 @@ export default function JiraHistory({ issuePanelHistory = [] }) {
   const mergedApi = apiEntries.filter(e => !panelCreatedIds.has(e.issueId));
   const allHistory = [...issuePanelHistory, ...mergedApi];
 
-  // Filter by tab + search BEFORE grouping so left panel matches counts exactly
   const filteredHistory = allHistory.filter(h => {
     const matchTab =
       activeTab === "all" ||
-      (activeTab === "assigned" && h.type === "created") ||
+      (activeTab === "assigned"   && h.type === "created") ||
       (activeTab === "unassigned" && h.type === "removed");
     if (!matchTab) return false;
     if (!search) return true;
     const q = search.toLowerCase();
     return (
-      (h.issueId || "").toLowerCase().includes(q) ||
-      (h.title || "").toLowerCase().includes(q) ||
-      (h.module || "").toLowerCase().includes(q) ||
-      (h.developer || "").toLowerCase().includes(q)
+      (h.issueId    || "").toLowerCase().includes(q) ||
+      (h.title      || "").toLowerCase().includes(q) ||
+      (h.module     || "").toLowerCase().includes(q) ||
+      (h.developer  || "").toLowerCase().includes(q)
     );
   });
 
-  // Group by ticketId
   const groupedMap = {};
   filteredHistory.forEach(h => {
     const tid = h.ticketId || "unknown";
@@ -464,7 +487,6 @@ export default function JiraHistory({ issuePanelHistory = [] }) {
   });
   const sortedTicketIds = Object.keys(groupedMap).sort((a, b) => b.localeCompare(a));
 
-  // ── Clear selection when active issue is no longer visible (tab/search changed) ──
   const visibleIssues = sortedTicketIds.flatMap(tid => groupedMap[tid] || []);
   const selectedStillVisible = selectedIssue && visibleIssues.some(h => {
     const uid = h.issueId || h.internal_issue_id;
@@ -480,9 +502,9 @@ export default function JiraHistory({ issuePanelHistory = [] }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, search, selectedStillVisible]);
 
-  const totalAssigned = allHistory.filter(h => h.type === "created").length;
+  const totalAssigned   = allHistory.filter(h => h.type === "created").length;
   const totalUnassigned = allHistory.filter(h => h.type === "removed").length;
-  const total = allHistory.length;
+  const total           = allHistory.length;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "calc(100vh - 80px)", gap: "1rem" }}>
@@ -502,9 +524,9 @@ export default function JiraHistory({ issuePanelHistory = [] }) {
       {/* Summary cards */}
       <div style={{ display: "flex", gap: "1rem", flexShrink: 0 }}>
         {[
-          { label: "Total Issues", value: total, color: "var(--accent-blue)" },
-          { label: "Assigned", value: totalAssigned, color: "#d97706" },
-          { label: "Unassigned", value: totalUnassigned, color: "#64748b" },
+          { label: "Total Issues", value: total,          color: "var(--accent-blue)" },
+          { label: "Assigned",     value: totalAssigned,  color: "#d97706" },
+          { label: "Unassigned",   value: totalUnassigned, color: "#64748b" },
         ].map(c => (
           <div key={c.label} className="dashboard-card" style={{ flex: 1 }}>
             <div style={{ fontSize: "2rem", fontWeight: 800, color: c.color }}>{c.value}</div>
@@ -522,10 +544,9 @@ export default function JiraHistory({ issuePanelHistory = [] }) {
             style={{ width: "100%", boxSizing: "border-box", paddingLeft: 32, paddingRight: 12, paddingTop: 9, paddingBottom: 9, borderRadius: 8, border: "1px solid var(--border-color)", background: "var(--bg-card)", color: "var(--text-primary)", fontSize: "0.875rem" }} />
         </div>
         <div style={{ display: "flex", gap: 6 }}>
-          <PillBtn active={activeTab === "all"} onClick={() => setActiveTab("all")}>All</PillBtn>
-          <PillBtn active={activeTab === "assigned"} onClick={() => setActiveTab("assigned")}>Assigned</PillBtn>
+          <PillBtn active={activeTab === "all"}        onClick={() => setActiveTab("all")}>All</PillBtn>
+          <PillBtn active={activeTab === "assigned"}   onClick={() => setActiveTab("assigned")}>Assigned</PillBtn>
           <PillBtn active={activeTab === "unassigned"} onClick={() => setActiveTab("unassigned")}>Unassigned</PillBtn>
-          {/* Dropdown arrow placeholder matching screenshot */}
           <button style={{ width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid var(--border-color)", borderRadius: 8, background: "var(--bg-card)", cursor: "pointer" }}>
             <ChevronDown size={14} color="var(--text-secondary)" />
           </button>

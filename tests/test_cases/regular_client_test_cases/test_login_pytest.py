@@ -402,8 +402,8 @@ class TestLogin:
         #         )
         #         if phone_input:
         #             phone_input.clear()
-        #             phone_input.send_keys("7660852538")
-        #             test_flow_steps.append({"step": "Enter valid phone number", "status": "Success", "value": "7660852538"})
+        #             phone_input.send_keys("9618574550")
+        #             test_flow_steps.append({"step": "Enter valid phone number", "status": "Success", "value": "9618574550"})
         #         else:
         #             raise Exception("Phone input field not found")
 
