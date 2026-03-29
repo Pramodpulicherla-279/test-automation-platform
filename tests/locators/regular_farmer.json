@@ -5,7 +5,7 @@
     "allow_location_button": "//android.widget.Button[@resource-id=\"com.android.permissioncontroller:id/permission_allow_foreground_only_button\"]",
     "allow_audio_button": "//android.widget.Button[@resource-id=\"com.android.permissioncontroller:id/permission_allow_one_time_button\"]",
     "allow_notifications_button": "//android.widget.Button[@resource-id=\"com.android.permissioncontroller:id/permission_allow_button\"]",
-    "phone_number_input": "//android.widget.EditText[@content-desc=\"Mobile Number input field, mandatory\"]",
+    "phone_number_input": "/android.widget.EditText[@content-desc=\"Mobile Number input field, mandatory\"]",
     "next_button_login": "//android.view.ViewGroup[@content-desc=\"Next\"]",
     "verify_button_login": "//android.view.ViewGroup[@content-desc=\"Verify OTP\"]",
     "change_mobile_number": "//android.view.ViewGroup[@content-desc=\"Change Mobile Number\"]",

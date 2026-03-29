@@ -1,1 +1,22 @@
-[]
+[
+    {
+        "step": "Click Next button on language selection",
+        "status": "Success"
+    },
+    {
+        "step": "Allow picture permission",
+        "status": "Success"
+    },
+    {
+        "step": "Allow location permission",
+        "status": "Success"
+    },
+    {
+        "step": "Allow audio permission",
+        "status": "Success"
+    },
+    {
+        "step": "Allow notifications permission",
+        "status": "Success"
+    }
+]
