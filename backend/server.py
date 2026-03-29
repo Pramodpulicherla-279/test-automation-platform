@@ -1409,29 +1409,48 @@ async def dismiss_payload(data: dict):
 async def jira_create(req: JiraCreateRequest):
     from jira_integration.jira_service import create_jira_issue
     from jira_integration.jira_config import config as jira_config
-
+ 
     if not jira_config.enabled:
         raise HTTPException(status_code=400, detail="Jira is disabled. Set JIRA_ENABLED=true in backend/.env")
+    
     missing = [n for n, v in {
         "JIRA_URL": jira_config.url, "JIRA_EMAIL": jira_config.email,
         "JIRA_API_TOKEN": jira_config.api_token, "JIRA_PROJECT_KEY": jira_config.project_key,
     }.items() if not v]
     if missing:
         raise HTTPException(status_code=400, detail=f"Missing .env variables: {', '.join(missing)}. Edit backend/.env and restart.")
-
+ 
     summary     = (req.title or req.issue_summary or "Automation Failure").strip()
     description = (req.description or "Automation Test Failure").strip()
-
+ 
     import io as _io, contextlib as _ctx
     _captured = _io.StringIO()
     try:
         with _ctx.redirect_stdout(_captured):
+            # ═══════════════════════════════════════════════════════════════════════════
+            # *** KEY FIX: PASS dates, sprint, and duration to create_jira_issue ***
+            # ═══════════════════════════════════════════════════════════════════════════
+            print(f"[JIRA_CREATE] Creating ticket with dates:")
+            print(f"  Start Date: {req.start_date}")
+            print(f"  End Date: {req.end_date}")
+            print(f"  Sprint: {req.sprint}")
+            
             issue_key = create_jira_issue(
-                summary=summary, description=description,
-                app_name=req.app_name, app_version=req.app_version,
-                module=req.module or req.parent, feature=req.feature,
-                issue_summary=summary, test_name=req.test_name, test_id=req.test_id,
-                steps_executed=req.steps_executed or [], developer_name=req.developer_name,
+                summary=summary,
+                description=description,
+                app_name=req.app_name,
+                app_version=req.app_version,
+                module=req.module or req.parent,
+                feature=req.feature,
+                issue_summary=summary,
+                test_name=req.test_name,
+                test_id=req.test_id,
+                steps_executed=req.steps_executed or [],
+                developer_name=req.developer_name,
+                # *** NEW: Pass dates and sprint ***
+                start_date=req.start_date,    # ISO format: 2026-03-29T08:43:00
+                end_date=req.end_date,        # ISO format: 2026-03-29T08:44:00
+                sprint=req.sprint,            # e.g., "Automation"
             )
     except Exception as exc:
         err = str(exc)
@@ -1441,31 +1460,48 @@ async def jira_create(req: JiraCreateRequest):
         if "403" in err or "permission" in err.lower():
             raise HTTPException(status_code=400, detail=f"Jira 403 Forbidden — no permission to create issues.\nJira said: {err}")
         raise HTTPException(status_code=400, detail=f"Jira error: {err}")
-
+ 
     if not issue_key:
         raise HTTPException(status_code=400, detail="Jira returned no issue key — check all JIRA_* env vars in backend/.env")
-
+ 
     for _line in _captured.getvalue().splitlines():
         _line = _line.strip()
         if not _line:
             continue
         _status = "PAYLOAD" if any(_line.startswith(p) for p in _PAYLOAD_PREFIXES) else "INFO"
         _broadcast_async({"type": "LOG", "payload": {"message": _line, "status": _status}})
-
+ 
     issue_url = f"{jira_config.url}/browse/{issue_key}"
     entry = {
-        "issue_id": issue_key, "issue_url": issue_url, "title": summary,
-        "description": description, "developer_name": req.developer_name or "",
-        "module": req.module or req.parent or "", "app_name": req.app_name or "",
-        "app_version": req.app_version or "", "test_name": req.test_name or "",
-        "ticket_id": req.ticket_id or "", "fix_version": req.fix_version or [],
-        "affects_version": req.affects_version or [], "priority": req.priority or "High",
-        "sprint": req.sprint or "", "start_date": req.start_date or "",
-        "end_date": req.end_date or "", "steps_executed": req.steps_executed or [],
-        "status": "Assigned", "created_at": datetime.datetime.now().isoformat(),
+        "issue_id": issue_key,
+        "issue_url": issue_url,
+        "title": summary,
+        "description": description,
+        "developer_name": req.developer_name or "",
+        "module": req.module or req.parent or "",
+        "app_name": req.app_name or "",
+        "app_version": req.app_version or "",
+        "test_name": req.test_name or "",
+        "ticket_id": req.ticket_id or "",
+        "fix_version": req.fix_version or [],
+        "affects_version": req.affects_version or [],
+        "priority": req.priority or "High",
+        "sprint": req.sprint or "Automation",  # *** Include sprint in response ***
+        # *** Include dates in response ***
+        "start_date": req.start_date or "",
+        "end_date": req.end_date or "",
+        "steps_executed": req.steps_executed or [],
+        "status": "Assigned",
+        "created_at": datetime.datetime.now().isoformat(),
     }
     _jira_history.append(entry)
     _broadcast_async({"type": "JIRA_CREATED", "payload": entry})
+    
+    print(f"\n✓ JIRA Ticket Created: {issue_key}")
+    print(f"  Start Date: {req.start_date}")
+    print(f"  End Date: {req.end_date}")
+    print(f"  Sprint: {req.sprint}")
+    
     return {"issue_id": issue_key, "issue_key": issue_key, "issue_url": issue_url, **entry}
 
 
