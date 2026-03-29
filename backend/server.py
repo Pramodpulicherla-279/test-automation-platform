@@ -24,7 +24,6 @@ import re
 from dotenv import load_dotenv
 import csv
 import glob
-
 import logging
 from gdrive_loader import download_apk, extract_app_icon, get_apk_info
 from typing import List, Optional, Dict, Any
@@ -44,14 +43,8 @@ SLACK_BOT_TOKEN    = os.getenv("SLACK_BOT_TOKEN")
 NETLIFY_AUTH_TOKEN = os.getenv("NETLIFY_AUTH_TOKEN")
 NETLIFY_SITE_ID    = os.getenv("NETLIFY_SITE_ID")
 
-print("Slack Token Loaded:", SLACK_BOT_TOKEN)
-print("Netlify Token Loaded:", NETLIFY_AUTH_TOKEN)
-print("Netlify Site ID Loaded:", NETLIFY_SITE_ID)
-
 # ─── Project root ────────────────────────────────────────────────────────────
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(os.path.abspath(__file__))))
-
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 if BASE_DIR not in sys.path:
     sys.path.append(BASE_DIR)
 
@@ -99,6 +92,7 @@ APP_DEVELOPER_MAP = {
 _appium_proc: subprocess.Popen | None = None
 _allure_proc: subprocess.Popen | None = None
 _allure_port: int | None = None
+
 APPIUM_PORT          = 4723
 ALLURE_CMD           = r"C:\Users\Pramo\scoop\shims\allure"
 DOWNLOAD_PROCESS_OBJ = None
@@ -421,10 +415,6 @@ async def _handle_slack_apk(
 # ════════════════════════════════════════════════════════════════════════════
 #  APP LIFESPAN
 # ════════════════════════════════════════════════════════════════════════════
-
-
-print("server is running...")
-
 # ─── App variant config ──────────────────────────────────────────────────────
 PACKAGE_VARIANT_MAP = {
     "com.agribride.krishivaas.farmer_app":       "regular_farmer",
@@ -856,7 +846,6 @@ STATIC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
 os.makedirs(STATIC_DIR, exist_ok=True)
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
-APKS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "temp_apks")
 APKS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "temp_apks")
 os.makedirs(APKS_DIR, exist_ok=True)
 
@@ -1577,7 +1566,7 @@ async def start_test(request: TestRequest, background_tasks: BackgroundTasks):
             "payload": {"message": f"Detected app variant: {app_variant}", "status": "INFO"},
         })
 
-        background_tasks.add_task(run_tests_and_get_suggestions, apk_path, tests_to_run=tests_to_run)
+        # background_tasks.add_task(run_tests_and_get_suggestions, apk_path, tests_to_run=tests_to_run)
 
         info = get_apk_info(apk_path) or {}
 
@@ -1774,7 +1763,65 @@ async def slack_events(request: Request, background_tasks: BackgroundTasks):
     # Return 200 immediately — before any download or test starts
     return {"status": "ok"}
 
+# ─── Add this Pydantic model alongside JiraPayloadRequest / JiraCreateRequest ─
+ 
+class JiraEnhanceRequest(BaseModel):
+    ticket_id:       Optional[str]       = None
+    issue_id:        Optional[str]       = None
+    title:           Optional[str]       = None
+    test_name:       Optional[str]       = None
+    test_id:         Optional[str]       = None
+    app_name:        Optional[str]       = None
+    app_version:     Optional[str]       = None
+    module:          Optional[str]       = None
+    feature:         Optional[str]       = None
+    description:     Optional[str]       = None
+    steps_executed:  Optional[List[Any]] = None
+    developer_name:  Optional[str]       = None
+    start_date:      Optional[str]       = None
+    end_date:        Optional[str]       = None
+    sprint:          Optional[str]       = None
+    affects_version: Optional[List[str]] = None
+    fix_version:     Optional[List[str]] = None
 
+@app.post("/api/jira/enhance")
+async def enhance_jira_issue(req: JiraEnhanceRequest):
+    """
+    Calls Gemini to generate a polished title + full formatted description
+    (with Steps to Reproduce, Actual Result, Expected Result) and returns
+    them so the frontend can paste directly into the issue card fields.
+    """
+    from generate_jira_desc import generate_jira_description, generate_jira_title
+ 
+    issue_data = req.model_dump(exclude_none=True)
+ 
+    try:
+        loop = asyncio.get_event_loop()
+ 
+        # Run both calls concurrently
+        enhanced_description, enhanced_title = await asyncio.gather(
+            loop.run_in_executor(None, generate_jira_description, issue_data),
+            loop.run_in_executor(None, generate_jira_title, issue_data),
+        )
+ 
+    except Exception as exc:
+        logger.error("[/api/jira/enhance] Gemini call failed: %s", exc)
+        raise HTTPException(
+            status_code=500,
+            detail=f"LLM enhancement failed: {str(exc)}",
+        )
+ 
+    logger.info(
+        "[/api/jira/enhance] Enhanced issue_id=%s title='%s'",
+        req.issue_id, enhanced_title,
+    )
+ 
+    return {
+        "status":      "enhanced",
+        "issue_id":    req.issue_id,
+        "title":       enhanced_title,
+        "description": enhanced_description,
+    }
 # ════════════════════════════════════════════════════════════════════════════
 #  ENTRYPOINT
 # ════════════════════════════════════════════════════════════════════════════
