@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 [
     {
         "step": "Click Verify OTP",
@@ -17,6 +16,4 @@
         "status": "Success"
     }
 ]
-=======
-[]
->>>>>>> origin/jira-slack
+
