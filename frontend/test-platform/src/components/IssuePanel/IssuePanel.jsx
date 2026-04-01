@@ -22,12 +22,12 @@ import {
   FolderOpen, Folder,
 } from "lucide-react";
 
-const BACKEND    = "http://localhost:8000";
+const BACKEND = "http://localhost:8000";
 const WS_BACKEND = "ws://localhost:8000/ws/test-status";
-const SS_KEY     = "issuePanelIssues";
+const SS_KEY = "issuePanelIssues";
 
-const DEVELOPERS     = ["Unassigned", "Ram", "Anuj", "Vaibhav", "Vikash", "Swaroopa", "Krishivaas"];
-const PRIORITIES     = ["High", "Medium", "Low"];
+const DEVELOPERS = ["Unassigned", "Ram", "Anuj", "Vaibhav", "Vikash", "Swaroopa", "Krishivaas"];
+const PRIORITIES = ["High", "Medium", "Low"];
 const PRIORITY_COLOR = { High: "#dc2626", Medium: "#d97706", Low: "#64748b" };
 
 /* ─── Helpers ─────────────────────────────────────────────────────────────── */
@@ -38,14 +38,14 @@ const pickFirst = (obj, keys) => {
 };
 const dedupKey = (p) => {
   const tn = safeStr(p?.test_name || "").trim();
-  const md = safeStr(p?.module    || "").trim();
+  const md = safeStr(p?.module || "").trim();
   if (tn) return `tn::${md}::${tn}`;
   return `sum::${md}::${safeStr(p?.issue_summary || p?.title || "").trim()}`;
 };
 const parsePayloadFromLogLine = (line) => {
   for (const prefix of ["JIRA_PAYLOAD_JSON:", "AUTOMATION_PAYLOAD_JSON:"]) {
     if (typeof line === "string" && line.startsWith(prefix)) {
-      try { return JSON.parse(line.slice(prefix.length).trim()); } catch (_) {}
+      try { return JSON.parse(line.slice(prefix.length).trim()); } catch (_) { }
     }
   }
   return null;
@@ -66,7 +66,7 @@ const postDismiss = (payload) => {
   fetch(`${BACKEND}/api/jira/dismiss`, {
     method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
-  }).catch(() => {});
+  }).catch(() => { });
 };
 const ssLoad  = () => { try { const r = sessionStorage.getItem(SS_KEY); return r ? JSON.parse(r) : null; } catch { return null; } };
 const ssSave  = (v) => { try { sessionStorage.setItem(SS_KEY, JSON.stringify(v)); } catch {} };
@@ -149,16 +149,56 @@ const S = {
 /* ─── IssueCard ──────────────────────────────────────────────────────────── */
 function IssueCard({ iss, idx, isOpen, onToggle, onRemove, onCreated, serverReady }) {
   const [creating, setCreating] = useState(false);
-  const [fields,   setFields]   = useState(iss);
-  const [errMsg,   setErrMsg]   = useState(null);
+  const [fields, setFields] = useState(iss);
+  const [errMsg, setErrMsg] = useState(null);
+  const [enhancing, setEnhancing] = useState(false);
 
   useEffect(() => { setFields(iss); }, [iss]);
 
   const setF = (f, v) => setFields(p => ({ ...p, [f]: v }));
   const isCreated = !!iss.created || (!!iss.issueId && !!iss.jiraUrl);
-  const locked    = isCreated;
-  const pColor    = PRIORITY_COLOR[fields.priority] ?? "#64748b";
+  const locked = isCreated;
+  const pColor = PRIORITY_COLOR[fields.priority] ?? "#64748b";
   const displayId = iss.internal_issue_id || `ISS-${String(idx + 1).padStart(3, "0")}`;
+
+  const handleEnhance = async () => {
+    setEnhancing(true); setErrMsg(null);
+    try {
+      const payload = fields.rawPayload || {};
+      const body = {
+        ticket_id: fields.ticket_id || payload.ticket_id || "",
+        issue_id: fields.internal_issue_id || payload.issue_id || "",
+        title: fields.title || "",
+        test_name: fields.test_name || "",
+        test_id: payload.test_id || null,
+        app_name: fields.app_name || "",
+        app_version: fields.app_version || "",
+        module: fields.module || fields.parent || "",
+        feature: fields.feature || "",
+        description: fields.description || "",
+        steps_executed: Array.isArray(fields.steps_executed) ? fields.steps_executed : [],
+        developer_name: fields.developer !== "Unassigned" ? fields.developer : "",
+        start_date: fields.startDate || "",
+        end_date: fields.endDate || "",
+        sprint: fields.sprint || "",
+        affects_version: fields.affectsVersion ? fields.affectsVersion.split(",").map(s => s.trim()).filter(Boolean) : [],
+        fix_version: fields.fixVersion ? fields.fixVersion.split(",").map(s => s.trim()).filter(Boolean) : [],
+      };
+      const res = await fetch(`${BACKEND}/api/jira/enhance`, {
+        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),
+      });
+      let data = {}; try { data = await res.json(); } catch (_) { }
+      if (!res.ok) { setErrMsg(data?.detail || `Enhance failed: HTTP ${res.status}`); return; }
+      // Apply directly into fields — no confirmation step
+      setFields(prev => ({
+        ...prev,
+        title: data.title || prev.title,
+        description: data.description || prev.description,
+      }));
+    } catch (e) {
+      setErrMsg(`Enhance network error: ${e?.message || e}`);
+    } finally { setEnhancing(false); }
+  };
 
   const handleCreate = async () => {
     if (serverReady === false) { setErrMsg("Old server.py running — restart backend"); return; }
@@ -189,7 +229,7 @@ function IssueCard({ iss, idx, isOpen, onToggle, onRemove, onCreated, serverRead
       if (!res.ok) { setErrMsg(data?.detail || `HTTP ${res.status}`); return; }
 
       const issueKey = data.issue_id || data.issue_key || "";
-      const jiraUrl  = data.issue_url || (issueKey ? `https://malothram70.atlassian.net/browse/${issueKey}` : "");
+      const jiraUrl = data.issue_url || (issueKey ? `https://malothram70.atlassian.net/browse/${issueKey}` : "");
       postDismiss(iss.rawPayload || { test_name: iss.test_name, module: iss.module, issue_summary: iss.issue_summary });
       onCreated({ ...iss, issueId: issueKey, jiraUrl, created: true });
     } catch (e) {
@@ -198,34 +238,34 @@ function IssueCard({ iss, idx, isOpen, onToggle, onRemove, onCreated, serverRead
   };
 
   return (
-    <div style={{ borderLeft: `3px solid ${pColor}`, borderRadius: "6px", border: "1px solid var(--border-color)", marginBottom: "4px", background: "var(--bg-card)" }}>
+    <div style={{ borderLeft:  `3px solid ${pColor}`, borderRadius:  "6px", border:  "1px solid var(--border-color)", marginBottom:  "4px", background:  "var(--bg-card)" }}>
       {/* Child row */}
-      <button onClick={onToggle} style={{ width: "100%", display: "flex", alignItems: "center", gap: "6px", padding: "6px 10px", background: isOpen ? "var(--input-bg)" : "transparent", border: "none", cursor: "pointer", textAlign: "left", borderBottom: isOpen ? "1px solid var(--border-color)" : "none", borderRadius: isOpen ? "5px 5px 0 0" : "5px" }}>
+      <button onClick={onToggle} style={{ width:  "100%", display:  "flex", alignItems:  "center", gap:  "6px", padding:  "6px 10px", background: isOpen ? "var(--input-bg)" : "transparent", border:  "none", cursor:  "pointer", textAlign:  "left", borderBottom: isOpen ? "1px solid var(--border-color)" : "none", borderRadius: isOpen ? "5px 5px 0 0" : "5px" }}>
         {isOpen ? <ChevronDown size={12} color="var(--text-secondary)" /> : <ChevronRight size={12} color="var(--text-secondary)" />}
-        <span style={S.badge("#dbeafe", "#1d4ed8")}>AUTO</span>
-        {fields.module && <span style={S.badge("#ede9fe", "#7c3aed")}>{fields.module}</span>}
-        <span style={{ color: "var(--accent-blue)", fontWeight: 700, fontSize: "0.76rem", flexShrink: 0 }}>
+        <span style={S.badge("#dbeafe",  "#1d4ed8")}>AUTO</span>
+        {fields.module && <span style={S.badge("#ede9fe",  "#7c3aed")}>{fields.module}</span>}
+        <span style={{ color:  "var(--accent-blue)", fontWeight:  700, fontSize:  "0.76rem", flexShrink:  0 }}>
           {iss.issueId || displayId}
         </span>
-        <span style={{ flex: 1, fontSize: "0.76rem", color: "var(--text-primary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-          {fields.title || <em style={{ color: "var(--text-secondary)" }}>Untitled</em>}
+        <span style={{ flex:  1, fontSize:  "0.76rem", color:  "var(--text-primary)", overflow:  "hidden", textOverflow:  "ellipsis", whiteSpace:  "nowrap" }}>
+          {fields.title || <em style={{ color:  "var(--text-secondary)" }}>Untitled</em>}
         </span>
-        {isCreated && <span style={S.badge("#dcfce7", "#16a34a")}>✓ Created</span>}
-        <span style={{ color: pColor, fontSize: "0.68rem", fontWeight: 700, flexShrink: 0 }}>{fields.priority}</span>
+        {isCreated && <span style={S.badge("#dcfce7",  "#16a34a")}>✓ Created</span>}
+        <span style={{ color:  pColor, fontSize:  "0.68rem", fontWeight:  700, flexShrink:  0 }}>{fields.priority}</span>
       </button>
 
       {/* Expanded body */}
       {isOpen && (
-        <div style={{ padding: "10px 12px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <div style={{ padding:  "10px 12px", display:  "flex", flexDirection:  "column", gap:  "8px" }}>
 
           {/* Jira Key + Title */}
-          <div style={{ display: "flex", gap: "7px" }}>
-            <div style={{ flex: "0 0 32%" }}>
+          <div style={{ display:  "flex", gap:  "7px" }}>
+            <div style={{ flex:  "0 0 32%" }}>
               <label style={S.label}>Jira Issue Key</label>
               <input style={S.input(true)} value={iss.issueId} readOnly placeholder={displayId} />
             </div>
-            <div style={{ flex: 1 }}>
-              <label style={S.label}>Title <span style={{ color: "#ef4444" }}>*</span></label>
+            <div style={{ flex:  1 }}>
+              <label style={S.label}>Title <span style={{ color:  "#ef4444" }}>*</span></label>
               <input style={S.input(locked)} value={fields.title} readOnly={locked}
                 onChange={e => !locked && setF("title", e.target.value)} />
             </div>
@@ -233,15 +273,15 @@ function IssueCard({ iss, idx, isOpen, onToggle, onRemove, onCreated, serverRead
 
           {/* Description */}
           <div>
-            <label style={S.label}>Description <span style={{ color: "#ef4444" }}>*</span></label>
-            <textarea style={{ ...S.input(locked), resize: "vertical", minHeight: "260px", fontFamily: "inherit", fontSize: "0.71rem", lineHeight: "1.5" }}
+            <label style={S.label}>Description <span style={{ color:  "#ef4444" }}>*</span></label>
+            <textarea style={{ ...S.input(locked), resize:  "vertical", minHeight:  "260px", fontFamily:  "inherit", fontSize:  "0.71rem", lineHeight:  "1.5" }}
               value={fields.description} readOnly={locked}
               onChange={e => !locked && setF("description", e.target.value)} />
           </div>
 
           {/* Developer + Priority */}
-          <div style={{ display: "flex", gap: "7px" }}>
-            <div style={{ flex: 1 }}>
+          <div style={{ display:  "flex", gap:  "7px" }}>
+            <div style={{ flex:  1 }}>
               <label style={S.label}>Developer</label>
               {locked ? <input style={S.input(true)} value={fields.developer} readOnly /> :
                 <select style={S.input(false)} value={fields.developer} onChange={e => setF("developer", e.target.value)}>
@@ -249,7 +289,7 @@ function IssueCard({ iss, idx, isOpen, onToggle, onRemove, onCreated, serverRead
                   {DEVELOPERS.map(d => <option key={d}>{d}</option>)}
                 </select>}
             </div>
-            <div style={{ flex: 1 }}>
+            <div style={{ flex:  1 }}>
               <label style={S.label}>Priority</label>
               {locked ? <input style={S.input(true)} value={fields.priority} readOnly /> :
                 <select style={S.input(false)} value={fields.priority} onChange={e => setF("priority", e.target.value)}>
@@ -259,12 +299,12 @@ function IssueCard({ iss, idx, isOpen, onToggle, onRemove, onCreated, serverRead
           </div>
 
           {/* Parent + Sprint */}
-          <div style={{ display: "flex", gap: "7px" }}>
-            <div style={{ flex: 1 }}>
+          <div style={{ display:  "flex", gap:  "7px" }}>
+            <div style={{ flex:  1 }}>
               <label style={S.label}>Parent (Module)</label>
               <input style={S.input(locked)} value={fields.parent} readOnly={locked} onChange={e => !locked && setF("parent", e.target.value)} />
             </div>
-            <div style={{ flex: 1 }}>
+            <div style={{ flex:  1 }}>
               <label style={S.label}>Sprint</label>
               <input style={S.input(locked)} value={fields.sprint} readOnly={locked} onChange={e => !locked && setF("sprint", e.target.value)} />
             </div>
@@ -325,6 +365,19 @@ function IssueCard({ iss, idx, isOpen, onToggle, onRemove, onCreated, serverRead
               <a href={iss.jiraUrl} target="_blank" rel="noreferrer" style={S.btn("#16a34a")}>
                 <ExternalLink size={12} /> Open in Jira
               </a>
+            )}
+            {!isCreated && (
+              <button
+                onClick={handleEnhance}
+                disabled={enhancing || creating}
+                style={{
+                  ...S.btn("#7c3aed"),
+                  opacity: (enhancing || creating) ? 0.5 : 1,
+                  cursor: (enhancing || creating) ? "not-allowed" : "pointer",
+                }}
+              >
+                {enhancing ? "Enhancing…" : "✨ Enhance"}
+              </button>
             )}
             {!isCreated && (
               <button onClick={handleCreate}
@@ -419,6 +472,7 @@ export default function IssuePanel({ modules = [], jiraIssues = [], onHistoryUpd
     setOpenGroups(prev => new Set([...prev, tid]));
     const iid = formatIssueId(safeStr(payload.issue_id)) || String(Date.now());
     setOpenChildren(prev => new Set([...prev, `${tid}::${iid}`]));
+    console.log(payload, issue);
   }, []);
 
   useEffect(() => {
@@ -435,7 +489,7 @@ export default function IssuePanel({ modules = [], jiraIssues = [], onHistoryUpd
     const connect = () => {
       try {
         ws = new WebSocket(WS_BACKEND);
-        ws.onopen  = () => setWsConnected(true);
+        ws.onopen = () => setWsConnected(true);
         ws.onclose = () => { setWsConnected(false); if (!dead) setTimeout(connect, 3000); };
         ws.onerror = () => setWsConnected(false);
         ws.onmessage = (evt) => {
@@ -452,12 +506,12 @@ export default function IssuePanel({ modules = [], jiraIssues = [], onHistoryUpd
               const p = parsePayloadFromLogLine(msg.payload.message);
               if (p) addPayload(p);
             }
-          } catch (_) {}
+          } catch (_) { }
         };
       } catch (_) { if (!dead) setTimeout(connect, 3000); }
     };
     connect();
-    return () => { dead = true; try { ws?.close(); } catch (_) {} };
+    return () => { dead = true; try { ws?.close(); } catch (_) { } };
   }, [addPayload]);
 
   useEffect(() => {
@@ -472,7 +526,7 @@ export default function IssuePanel({ modules = [], jiraIssues = [], onHistoryUpd
   });
   const sortedTicketIds = Object.keys(groupedMap).sort((a, b) => b.localeCompare(a));
 
-  const totalIssues  = issues.length;
+  const totalIssues = issues.length;
   const totalCreated = issues.filter(i => i.created || (i.issueId && i.jiraUrl)).length;
 
   const toggleGroup = (tid) => setOpenGroups(prev => {
@@ -493,14 +547,14 @@ export default function IssuePanel({ modules = [], jiraIssues = [], onHistoryUpd
       onHistoryUpdate({
         type: "removed", savedAt: new Date().toISOString(),
         ticketId,
-        title:             iss.title             || iss.issue_summary || "Untitled",
-        module:            iss.module            || iss.parent        || "",
-        priority:          iss.priority          || "Medium",
-        developer:         iss.developer         || "Unassigned",
-        app_name:          iss.app_name          || "",
-        app_version:       iss.app_version       || "",
-        test_name:         iss.test_name         || "",
-        issueId:           "",
+        title: iss.title || iss.issue_summary || "Untitled",
+        module: iss.module || iss.parent || "",
+        priority: iss.priority || "Medium",
+        developer: iss.developer || "Unassigned",
+        app_name: iss.app_name || "",
+        app_version: iss.app_version || "",
+        test_name: iss.test_name || "",
+        issueId: "",
         internal_issue_id: iss.internal_issue_id || "",
         jiraUrl:           "",
         steps_executed:    Array.isArray(iss.steps_executed) ? iss.steps_executed : [],
@@ -520,15 +574,15 @@ export default function IssuePanel({ modules = [], jiraIssues = [], onHistoryUpd
       onHistoryUpdate({
         type: "created", savedAt: new Date().toISOString(),
         ticketId,
-        issueId:           updatedIss.issueId,
-        jiraUrl:           updatedIss.jiraUrl,
-        title:             updatedIss.title             || "Untitled",
-        module:            updatedIss.module            || "",
-        priority:          updatedIss.priority          || "High",
-        developer:         updatedIss.developer         || "",
-        app_name:          updatedIss.app_name          || "",
-        app_version:       updatedIss.app_version       || "",
-        test_name:         updatedIss.test_name         || "",
+        issueId: updatedIss.issueId,
+        jiraUrl: updatedIss.jiraUrl,
+        title: updatedIss.title || "Untitled",
+        module: updatedIss.module || "",
+        priority: updatedIss.priority || "High",
+        developer: updatedIss.developer || "",
+        app_name: updatedIss.app_name || "",
+        app_version: updatedIss.app_version || "",
+        test_name: updatedIss.test_name || "",
         internal_issue_id: updatedIss.internal_issue_id || "",
         steps_executed:    Array.isArray(updatedIss.steps_executed) ? updatedIss.steps_executed : [],
         description:       updatedIss.description       || "",
