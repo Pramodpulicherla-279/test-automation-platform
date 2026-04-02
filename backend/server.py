@@ -183,7 +183,6 @@ def deploy_to_netlify() -> str | None:
             print(f"[Netlify] Deploy failed. stderr: {result.stderr}")
             return None
 
-        # Always return fixed production URL — no regex needed
         url = "https://krishivaas-test-reports.netlify.app"
         print(f"[Netlify] ✅ Deployed at: {url}")
         return url
@@ -258,7 +257,6 @@ async def _run_tests_and_notify_slack(
     """Run tests → Allure report → deploy to Netlify → send link to Slack."""
     loop = asyncio.get_event_loop()
 
-    # Step 1 — run tests
     print("[Slack Flow] Step 1: Running tests...")
     try:
         await loop.run_in_executor(
@@ -270,7 +268,6 @@ async def _run_tests_and_notify_slack(
         print(f"[Slack Flow] Step 1 FAILED: {e}")
         return
 
-    # Step 2 — generate Allure report
     print("[Slack Flow] Step 2: Generating Allure report...")
     try:
         await loop.run_in_executor(None, generate_report)
@@ -279,7 +276,6 @@ async def _run_tests_and_notify_slack(
         print(f"[Slack Flow] Step 2 FAILED: {e}")
         return
 
-    # Step 3 — count pass/fail from allure-results JSONs
     print("[Slack Flow] Step 3: Counting results...")
     passed = failed = 0
     try:
@@ -296,7 +292,6 @@ async def _run_tests_and_notify_slack(
     except Exception as e:
         print(f"[Slack Flow] Step 3 FAILED: {e}")
 
-    # Step 4 — deploy allure-report to Netlify
     print("[Slack Flow] Step 4: Deploying to Netlify...")
     report_url = None
     try:
@@ -310,7 +305,6 @@ async def _run_tests_and_notify_slack(
         print(f"[Slack Flow] Step 4 FAILED: {e}")
         report_url = "Report deployment failed"
 
-    # Step 5 — send report link to Slack
     print("[Slack Flow] Step 5: Sending report link to Slack...")
     try:
         await loop.run_in_executor(
@@ -335,11 +329,6 @@ async def _handle_slack_apk(
     channel_id:     str,
     sender_user_id: str,
 ) -> None:
-    """
-    Runs entirely as a background task — the /slack/events endpoint already
-    returned 200 OK before this runs, so Slack never retries.
-    Downloads APK → resolves metadata → starts Appium → runs tests → deploys to Netlify → sends link to Slack.
-    """
     download_url = f"https://drive.google.com/uc?export=download&id={file_id}"
     print(f"[Slack] Download URL: {download_url}")
 
@@ -382,10 +371,8 @@ async def _handle_slack_apk(
             },
         })
 
-        # Ensure Appium is up before tests start
         await _ensure_appium_running()
 
-        # Run tests → Netlify deploy → Slack message
         await _run_tests_and_notify_slack(
             apk_path=apk_path,
             tests_to_run=tests_to_run,
@@ -407,8 +394,6 @@ async def _handle_slack_apk(
 #  APP LIFESPAN
 # ════════════════════════════════════════════════════════════════════════════
 
-
-# ─── In-memory stores ─────────────────────────────────────────────────────────
 _jira_history:      list[dict]           = []
 _pending_payloads:  list[dict]           = []
 _dismissed_keys:    set[str]             = set()
@@ -418,7 +403,6 @@ _current_test_name: str                  = "default"
 _PAYLOAD_PREFIXES = ("AUTOMATION_PAYLOAD_JSON:", "JIRA_PAYLOAD_JSON:")
 
 
-# ─── Lifespan ─────────────────────────────────────────────────────────────────
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     yield
@@ -434,9 +418,8 @@ async def lifespan(app: FastAPI):
                 )
             else:
                 _appium_proc.kill()
-        except Exception as e:
+        except Exception:
             pass
-
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -451,7 +434,6 @@ app.add_middleware(
     allow_credentials=True, allow_methods=["*"], allow_headers=["*"],
 )
 
-# Use absolute path and auto-create the dir
 STATIC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
 os.makedirs(STATIC_DIR, exist_ok=True)
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
@@ -463,18 +445,12 @@ ALLURE_REPORT_DIR = os.path.join(BASE_DIR, "allure-report")
 os.makedirs(ALLURE_REPORT_DIR, exist_ok=True)
 app.mount("/allure-report", StaticFiles(directory=ALLURE_REPORT_DIR, html=True), name="allure-report")
 
-
-
-# Base screenshots directory created by pytest conftest.py
 UI_SCREENSHOTS_BASE = Path(__file__).resolve().parents[1] / "artifacts" / "ui_screenshots"
 UI_SCREENSHOTS_BASE.mkdir(parents=True, exist_ok=True)
 
-# Serve images so React can load them via URL:
-# GET http://localhost:8000/ui-screenshots/<run_id>/<...>/<file>.png
-
 
 class AnalyzeReq(BaseModel):
-    run_id: str | None = None  # optional; if not sent we auto-pick latest
+    run_id: str | None = None
 
 
 def _latest_run_id() -> str:
@@ -498,7 +474,6 @@ def analyze_ui_screenshots(req: AnalyzeReq):
     if not validator.exists():
         raise HTTPException(500, detail=f"Validator script not found: {validator}")
 
-    # Call validator as subprocess to avoid import issues (folder name ui-parser has a hyphen)
     cmd = [sys.executable, str(validator), "--root-dir", str(run_dir)]
     proc = subprocess.run(cmd, capture_output=True, text=True)
 
@@ -508,12 +483,12 @@ def analyze_ui_screenshots(req: AnalyzeReq):
     payload = json.loads(proc.stdout or "{}")
     results = payload.get("results", [])
 
-    # Add screenshot_url expected by your React component
     for r in results:
         rel = r.get("relative_path")
         r["screenshot_url"] = f"/ui-screenshots/{run_id}/{rel}" if rel else None
 
     return {"run_id": run_id, "results": results}
+
 
 def _start_allure_server() -> str:
     global _allure_proc, _allure_port
@@ -532,6 +507,7 @@ def _start_allure_server() -> str:
         creationflags=subprocess.CREATE_NO_WINDOW if hasattr(subprocess, "CREATE_NO_WINDOW") else 0,
     )
     return f"http://127.0.0.1:{_allure_port}"
+
 
 ALLURE_RESULTS_DIR = os.path.join(BASE_DIR, "allure-results")
 os.makedirs(ALLURE_RESULTS_DIR, exist_ok=True)
@@ -618,7 +594,6 @@ class ConnectionManager:
                 pass
 
     async def broadcast(self, message: dict):
-        # Send concurrently + drop dead sockets (prevents one bad client from killing logs)
         async with self._lock:
             connections = list(self.active_connections)
         if not connections:
@@ -630,7 +605,6 @@ class ConnectionManager:
             except Exception:
                 return False
         results = await asyncio.gather(*(_safe_send(ws) for ws in connections), return_exceptions=True)
-        # Remove failed connections
         for ws, ok in zip(connections, results):
             if ok is not True:
                 await self.disconnect(ws)
@@ -643,6 +617,185 @@ def _broadcast_async(message: dict) -> None:
         asyncio.create_task(manager.broadcast(message))
     except RuntimeError:
         pass
+
+
+# ════════════════════════════════════════════════════════════════════════════
+#  DESCRIPTION / STEPS HELPERS  (single source of truth)
+# ════════════════════════════════════════════════════════════════════════════
+
+def _is_unknown(value) -> bool:
+    """Return True if value is None, blank, or starts with 'unknown'."""
+    if value is None:
+        return True
+    if isinstance(value, str):
+        s = value.strip()
+        if not s:
+            return True
+        if s.lower().startswith("unknown"):
+            return True
+    return False
+
+
+def _calculate_duration(start_date: Optional[str], end_date: Optional[str]) -> str:
+    """Return human-readable duration between two ISO-format timestamps."""
+    if not start_date or not end_date:
+        return "Unknown"
+    try:
+        # ✅ FIXED: use datetime.datetime (not bare datetime)
+        start    = datetime.datetime.fromisoformat(start_date.replace('Z', '+00:00'))
+        end      = datetime.datetime.fromisoformat(end_date.replace('Z', '+00:00'))
+        duration = (end - start).total_seconds()
+        minutes  = int(duration / 60)
+        seconds  = int(duration % 60)
+        return f"{minutes}m {seconds}s" if minutes > 0 else f"{seconds}s"
+    except Exception as e:
+        print(f"[WARN] Could not calculate duration: {e}")
+        return "Unknown"
+
+
+def _extract_steps_from_numbered_list(text: str) -> List[str]:
+    """
+    Parse lines matching '1. Step text' from any block of text.
+    Used as a fallback when steps_executed list is empty but the
+    conftest already embedded them in the description string.
+    Returns a de-duplicated list preserving order.
+    """
+    seen:  set   = set()
+    steps: list  = []
+    for line in text.splitlines():
+        m = re.match(r'^\s*\d+\.\s+(.+)$', line)
+        if m:
+            step = m.group(1).strip()
+            if step and step not in seen:
+                seen.add(step)
+                steps.append(step)
+    return steps
+
+
+def _strip_embedded_steps_from_description(text: str) -> str:
+    """
+    Remove any 'Steps Executed:' block AND any '==...== STEPS EXECUTED ==...=='
+    block that the conftest or a previous formatting pass wrote into the
+    description string, so we never render steps twice.
+
+    Also removes the formatted METADATA block so format_description_with_steps
+    can rebuild it cleanly.
+    """
+    if not text:
+        return text
+
+    lines  = text.splitlines()
+    result = []
+    skip   = False
+
+    i = 0
+    while i < len(lines):
+        stripped = lines[i].strip()
+
+        # ── Detect start of an embedded "Steps Executed:" prose block ──
+        if re.match(r'^steps\s+executed\s*:?\s*$', stripped, re.IGNORECASE):
+            skip = True
+            i += 1
+            continue
+
+        # ── Detect start of a separator-bordered section header ──
+        # Matches lines that are all '=' characters (our separator)
+        if re.match(r'^={10,}$', stripped):
+            # Peek at next non-blank line to see if it's a known header
+            j = i + 1
+            while j < len(lines) and not lines[j].strip():
+                j += 1
+            if j < len(lines):
+                header = lines[j].strip().upper()
+                if header in ("STEPS EXECUTED", "METADATA"):
+                    # Skip the separator + header + following separator
+                    skip = (header == "STEPS EXECUTED")
+                    if header == "METADATA":
+                        # Skip entire METADATA block up to next separator or EOF
+                        i = j + 1
+                        # skip over trailing separator after header text
+                        while i < len(lines) and not re.match(r'^={10,}$', lines[i].strip()):
+                            i += 1
+                        i += 1  # skip the closing separator itself
+                        skip = False
+                        continue
+                    else:
+                        # STEPS EXECUTED — skip separator, header, next separator, and content
+                        i = j + 1
+                        # skip closing separator
+                        while i < len(lines) and not re.match(r'^={10,}$', lines[i].strip()):
+                            i += 1
+                        i += 1  # skip the closing separator
+                        skip = False
+                        continue
+
+        # ── While inside a steps block, skip numbered lines ──
+        if skip:
+            if re.match(r'^\d+\.', stripped):
+                i += 1
+                continue
+            else:
+                # Non-numbered line ends the prose steps block
+                skip = False
+
+        result.append(lines[i])
+        i += 1
+
+    return "\n".join(result).rstrip()
+
+
+def format_description_with_steps(
+    description:    str,
+    app_name:       Optional[str] = None,
+    app_version:    Optional[str] = None,
+    module:         Optional[str] = None,
+    test_name:      Optional[str] = None,
+    developer_name: Optional[str] = None,
+    start_date:     Optional[str] = None,
+    end_date:       Optional[str] = None,
+    sprint:         Optional[str] = None,
+    steps_executed: Optional[List[str]] = None,
+) -> str:
+    """
+    Build a clean plain-text description:
+      <error / base text>
+      ==================================================
+      METADATA
+      ==================================================
+      App / Version / Module / Test / Developer / Start / End / Duration / Sprint
+      ==================================================
+      STEPS EXECUTED
+      ==================================================
+      1. step …
+
+    Strips any previously embedded steps / metadata blocks first so this
+    function is safe to call repeatedly without causing duplication.
+    """
+    # 1. Remove any previously embedded steps/metadata from the raw description
+    base = _strip_embedded_steps_from_description(
+        description.strip() if description else "Test automation failure detected."
+    ).strip() or "Test automation failure detected."
+
+    lines = [base, "", "=" * 50, "METADATA", "=" * 50]
+
+    if app_name       and not _is_unknown(app_name):       lines.append(f"App: {app_name}")
+    if app_version    and not _is_unknown(app_version):    lines.append(f"Version: {app_version}")
+    if module         and not _is_unknown(module):         lines.append(f"Module: {module}")
+    if test_name      and not _is_unknown(test_name):      lines.append(f"Test: {test_name}")
+    if developer_name and not _is_unknown(developer_name): lines.append(f"Developer: {developer_name}")
+    if start_date:     lines.append(f"Start: {start_date}")
+    if end_date:       lines.append(f"End: {end_date}")
+    if start_date and end_date:
+        lines.append(f"Duration: {_calculate_duration(start_date, end_date)}")
+    if sprint:         lines.append(f"Sprint: {sprint}")
+
+    # 2. Append steps ONCE
+    if steps_executed:
+        lines += ["", "=" * 50, "STEPS EXECUTED", "=" * 50]
+        for i, step in enumerate(steps_executed, 1):
+            lines.append(f"{i}. {step}")
+
+    return "\n".join(lines)
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -697,7 +850,6 @@ async def jira_test_connection():
             "message": f"Credentials OK. Connected as '{base.get('jira_account')}'. Project '{jira_config.project_key}' accessible."}
 
 
-
 @app.post("/api/allure/start")
 async def allure_start():
     port = _pick_free_port()
@@ -716,30 +868,20 @@ async def device_status():
         return {"connected": False}
 
 
-
 @app.websocket("/ws/test-status")
 async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
     try:
         while True:
-            # Most frontends never send messages; this just keeps the socket open
             await websocket.receive_text()
     except WebSocketDisconnect:
         await manager.disconnect(websocket)
     except Exception:
         await manager.disconnect(websocket)
 
+
 # ─── Step resolution (DESTRUCTIVE — pops bucket) ─────────────────────────────
 def _resolve_steps_for_test(test_name: str) -> List[str]:
-    """
-    Called only by receive_jira_payload. Pops the matched bucket so
-    the next test starts clean.
-
-    Resolution order:
-      1. Exact key  (test_name) — set when conftest sends [TEST_START:xxx]
-      2. "default"  bucket      — set when no [TEST_START:] is used
-      3. Empty list
-    """
     if test_name and test_name in _test_steps_store:
         steps = _test_steps_store.pop(test_name)
         print(f"✅ Steps resolved (exact) → {test_name}: {steps}")
@@ -757,10 +899,8 @@ def _resolve_steps_for_test(test_name: str) -> List[str]:
 async def log_step(msg: LogMessage):
     global _test_steps_store, _current_test_name
 
-    # logger.info("[PYTEST][%s] %s", msg.status, msg.message)
     message = msg.message
 
-    # Switch active bucket when conftest sends [TEST_START:xxx]
     if "[TEST_START:" in message:
         try:
             new_test = message.split("[TEST_START:")[1].split("]")[0].strip()
@@ -771,7 +911,6 @@ async def log_step(msg: LogMessage):
         except Exception as e:
             print(f"❌ TEST_START parse warning: {e}")
 
-    # Capture [FOUND] steps into the correct bucket
     try:
         bucket = (
             message.split("[TEST:")[1].split("]")[0].strip()
@@ -781,12 +920,13 @@ async def log_step(msg: LogMessage):
             match = re.search(r"name='([^']+)'|name=\"([^\"]+)\"", message)
             step = (match.group(1) or match.group(2)) if match else None
             if step:
-                _test_steps_store.setdefault(bucket, []).append(step)
-                print(f"✅ Step captured → {bucket}: {step}")
+                _test_steps_store.setdefault(bucket, [])
+                if step not in _test_steps_store[bucket]:
+                    _test_steps_store[bucket].append(step)
+                    print(f"✅ Step captured → {bucket}: {step}")
     except Exception as e:
         print(f"❌ Step capture warning: {e}")
 
-    # Intercept payload log lines
     for prefix in _PAYLOAD_PREFIXES:
         if message.startswith(prefix):
             raw = message[len(prefix):].strip()
@@ -800,7 +940,6 @@ async def log_step(msg: LogMessage):
             except Exception as exc:
                 logger.warning("Failed to parse payload: %s", exc)
             return {"status": "ok"}
-
 
     _broadcast_async({"type": "LOG", "payload": {"message": message, "status": msg.status}})
     return {"status": "ok"}
@@ -846,11 +985,9 @@ async def reset_steps():
 async def module_status(data: dict):
     module = data.get("module")
     status = data.get("status")
-    # Special signal: new run starting — broadcast RUN_START so frontend clears
     if module == "__RUN_START__":
         _broadcast_async({"type": "RUN_START", "payload": {}})
     else:
-    
         _broadcast_async({"type": "MODULE", "payload": {
             "module": module, "status": status, "message": data.get("message", "")
         }})
@@ -862,36 +999,67 @@ async def module_status(data: dict):
 async def receive_jira_payload(req: JiraPayloadRequest):
     payload = req.model_dump(exclude_none=False)
 
-    incoming_steps = payload.get("steps_executed")
+    # ── Step 1: Clean the raw description ────────────────────────────────────
+    # The conftest may embed a "Steps Executed:" block directly in the
+    # description string. Strip it out NOW so it never appears twice.
+    raw_description = payload.get("description") or ""
+    # Extract steps from the embedded block BEFORE stripping (used as fallback)
+    steps_from_desc = _extract_steps_from_numbered_list(raw_description)
+    # Remove the embedded steps / metadata blocks from the description
+    clean_description = _strip_embedded_steps_from_description(raw_description).strip()
+    payload["description"] = clean_description or "Test automation failure detected."
+
+    # ── Step 2: Resolve steps_executed ───────────────────────────────────────
+    incoming_steps = [s for s in (payload.get("steps_executed") or []) if s]
 
     if not incoming_steps:
-        # Conftest got [] from the GET endpoint — inject from store now.
-        # _resolve_steps_for_test POPS the bucket → next test starts clean.
         test_name = req.test_name or "default"
         resolved  = _resolve_steps_for_test(test_name)
-        payload["steps_executed"] = resolved
 
-        # Also patch description to include steps if it was built without them
-        if resolved and payload.get("description") and "Steps Executed:" not in payload["description"]:
-            steps_block = "\n\nSteps Executed:\n" + "\n".join(
-                f"{i+1}. {s}" for i, s in enumerate(resolved)
+        # Fallback: use steps we parsed out of the description text
+        if not resolved and steps_from_desc:
+            resolved = steps_from_desc
+            logger.info(
+                "[/api/jira/payload] Steps recovered from description text for test=%s count=%d",
+                test_name, len(resolved),
             )
-            payload["description"] = payload["description"] + steps_block
 
-        logger.info("[/api/jira/payload] Injected %d steps for test=%s", len(resolved), test_name)
+        payload["steps_executed"] = resolved
+        logger.info(
+            "[/api/jira/payload] Injected %d steps for test=%s",
+            len(resolved), test_name,
+        )
     else:
-        # Payload has steps already (e.g. future conftest improvement).
-        # Still pop the bucket to keep the store clean for the next test.
+        # Steps already present — just clean the store for the next test
         _resolve_steps_for_test(req.test_name or "default")
-        logger.info("[/api/jira/payload] Payload already has %d steps for test=%s",
-                    len(incoming_steps), req.test_name)
+        payload["steps_executed"] = incoming_steps
+        logger.info(
+            "[/api/jira/payload] Payload already has %d steps for test=%s",
+            len(incoming_steps), req.test_name,
+        )
+
+    # ── Step 3: Rebuild description with metadata + steps ONCE ───────────────
+    payload["description"] = format_description_with_steps(
+        description    = payload["description"],
+        app_name       = payload.get("app_name"),
+        app_version    = payload.get("app_version"),
+        module         = payload.get("module"),
+        test_name      = payload.get("test_name"),
+        developer_name = payload.get("developer_name"),
+        start_date     = payload.get("start_date"),
+        end_date       = payload.get("end_date"),
+        sprint         = payload.get("sprint"),
+        steps_executed = payload.get("steps_executed"),
+    )
 
     _pending_payloads.append(payload)
     await manager.broadcast({"type": "JIRA_PAYLOAD", "payload": payload})
 
-    logger.info("[/api/jira/payload] %s module=%s test=%s steps=%d",
-                req.issue_id, req.module, req.test_name,
-                len(payload.get("steps_executed") or []))
+    logger.info(
+        "[/api/jira/payload] %s module=%s test=%s steps=%d",
+        req.issue_id, req.module, req.test_name,
+        len(payload.get("steps_executed") or []),
+    )
 
     return {"status": "received", "issue_id": req.issue_id, "module": req.module}
 
@@ -924,48 +1092,44 @@ async def dismiss_payload(data: dict):
 async def jira_create(req: JiraCreateRequest):
     from jira_integration.jira_service import create_jira_issue
     from jira_integration.jira_config import config as jira_config
- 
+
     if not jira_config.enabled:
         raise HTTPException(status_code=400, detail="Jira is disabled. Set JIRA_ENABLED=true in backend/.env")
-    
+
     missing = [n for n, v in {
         "JIRA_URL": jira_config.url, "JIRA_EMAIL": jira_config.email,
         "JIRA_API_TOKEN": jira_config.api_token, "JIRA_PROJECT_KEY": jira_config.project_key,
     }.items() if not v]
     if missing:
         raise HTTPException(status_code=400, detail=f"Missing .env variables: {', '.join(missing)}. Edit backend/.env and restart.")
- 
+
     summary     = (req.title or req.issue_summary or "Automation Failure").strip()
     description = (req.description or "Automation Test Failure").strip()
- 
+
     import io as _io, contextlib as _ctx
     _captured = _io.StringIO()
     try:
         with _ctx.redirect_stdout(_captured):
-            # ═══════════════════════════════════════════════════════════════════════════
-            # *** KEY FIX: PASS dates, sprint, and duration to create_jira_issue ***
-            # ═══════════════════════════════════════════════════════════════════════════
             print(f"[JIRA_CREATE] Creating ticket with dates:")
             print(f"  Start Date: {req.start_date}")
             print(f"  End Date: {req.end_date}")
             print(f"  Sprint: {req.sprint}")
-            
+
             issue_key = create_jira_issue(
-                summary=summary,
-                description=description,
-                app_name=req.app_name,
-                app_version=req.app_version,
-                module=req.module or req.parent,
-                feature=req.feature,
-                issue_summary=summary,
-                test_name=req.test_name,
-                test_id=req.test_id,
-                steps_executed=req.steps_executed or [],
-                developer_name=req.developer_name,
-                # *** NEW: Pass dates and sprint ***
-                start_date=req.start_date,    # ISO format: 2026-03-29T08:43:00
-                end_date=req.end_date,        # ISO format: 2026-03-29T08:44:00
-                sprint=req.sprint,            # e.g., "Automation"
+                summary        = summary,
+                description    = description,
+                app_name       = req.app_name,
+                app_version    = req.app_version,
+                module         = req.module or req.parent,
+                feature        = req.feature,
+                issue_summary  = summary,
+                test_name      = req.test_name,
+                test_id        = req.test_id,
+                steps_executed = req.steps_executed or [],
+                developer_name = req.developer_name,
+                start_date     = req.start_date,
+                end_date       = req.end_date,
+                sprint         = req.sprint,
             )
     except Exception as exc:
         err = str(exc)
@@ -975,48 +1139,47 @@ async def jira_create(req: JiraCreateRequest):
         if "403" in err or "permission" in err.lower():
             raise HTTPException(status_code=400, detail=f"Jira 403 Forbidden — no permission to create issues.\nJira said: {err}")
         raise HTTPException(status_code=400, detail=f"Jira error: {err}")
- 
+
     if not issue_key:
         raise HTTPException(status_code=400, detail="Jira returned no issue key — check all JIRA_* env vars in backend/.env")
- 
+
     for _line in _captured.getvalue().splitlines():
         _line = _line.strip()
         if not _line:
             continue
         _status = "PAYLOAD" if any(_line.startswith(p) for p in _PAYLOAD_PREFIXES) else "INFO"
         _broadcast_async({"type": "LOG", "payload": {"message": _line, "status": _status}})
- 
+
     issue_url = f"{jira_config.url}/browse/{issue_key}"
     entry = {
-        "issue_id": issue_key,
-        "issue_url": issue_url,
-        "title": summary,
-        "description": description,
+        "issue_id":       issue_key,
+        "issue_url":      issue_url,
+        "title":          summary,
+        "description":    description,
         "developer_name": req.developer_name or "",
-        "module": req.module or req.parent or "",
-        "app_name": req.app_name or "",
-        "app_version": req.app_version or "",
-        "test_name": req.test_name or "",
-        "ticket_id": req.ticket_id or "",
-        "fix_version": req.fix_version or [],
-        "affects_version": req.affects_version or [],
-        "priority": req.priority or "High",
-        "sprint": req.sprint or "Automation",  # *** Include sprint in response ***
-        # *** Include dates in response ***
-        "start_date": req.start_date or "",
-        "end_date": req.end_date or "",
+        "module":         req.module or req.parent or "",
+        "app_name":       req.app_name or "",
+        "app_version":    req.app_version or "",
+        "test_name":      req.test_name or "",
+        "ticket_id":      req.ticket_id or "",
+        "fix_version":    req.fix_version or [],
+        "affects_version":req.affects_version or [],
+        "priority":       req.priority or "High",
+        "sprint":         req.sprint or "Automation",
+        "start_date":     req.start_date or "",
+        "end_date":       req.end_date or "",
         "steps_executed": req.steps_executed or [],
-        "status": "Assigned",
-        "created_at": datetime.datetime.now().isoformat(),
+        "status":         "Assigned",
+        "created_at":     datetime.datetime.now().isoformat(),
     }
     _jira_history.append(entry)
     _broadcast_async({"type": "JIRA_CREATED", "payload": entry})
-    
+
     print(f"\n✓ JIRA Ticket Created: {issue_key}")
     print(f"  Start Date: {req.start_date}")
     print(f"  End Date: {req.end_date}")
     print(f"  Sprint: {req.sprint}")
-    
+
     return {"issue_id": issue_key, "issue_key": issue_key, "issue_url": issue_url, **entry}
 
 
@@ -1061,7 +1224,6 @@ async def health():
         "jira_project_key": jira_config.project_key or "(not set)",
         "jira_email": jira_config.email or "(not set)",
         "jira_token_set": bool(jira_config.api_token),
-        # ── Debug info — shows exactly what's in the step store ──
         "step_store_keys":   list(_test_steps_store.keys()),
         "step_store_counts": {k: len(v) for k, v in _test_steps_store.items()},
         "current_test":      _current_test_name,
@@ -1089,7 +1251,6 @@ async def start_test(request: TestRequest, background_tasks: BackgroundTasks):
             "type": "LOG",
             "payload": {"message": "Starting APK download...", "status": "INFO"}
         })
-        await manager.broadcast({"type": "LOG", "payload": {"message": "Starting APK download...", "status": "INFO"}})
         script_path = os.path.join(os.path.dirname(__file__), "gdrive_loader.py")
         apk_path = None
         env = os.environ.copy()
@@ -1120,14 +1281,11 @@ async def start_test(request: TestRequest, background_tasks: BackgroundTasks):
         app_name     = info.get("app_name")
         package_name = info.get("package_name")
         app_variant  = PACKAGE_VARIANT_MAP.get(package_name)
-        tests_to_run = request.tests_to_run or APP_VARIANTS.get(app_variant, [])
 
         await manager.broadcast({
             "type": "LOG",
             "payload": {"message": f"Detected app variant: {app_variant}", "status": "INFO"},
         })
-
-        # background_tasks.add_task(run_tests_and_get_suggestions, apk_path, tests_to_run=tests_to_run)
 
         info = get_apk_info(apk_path) or {}
 
@@ -1140,9 +1298,9 @@ async def start_test(request: TestRequest, background_tasks: BackgroundTasks):
         )
 
         return {
-            "status": "success", 
+            "status": "success",
             "message": "APK Downloaded. Test Starting...",
-            "app_icon": full_icon_url, 
+            "app_icon": full_icon_url,
             "apk_path": apk_path, **info,
             "app_name":     app_name,
             "package_name": package_name,
@@ -1151,7 +1309,7 @@ async def start_test(request: TestRequest, background_tasks: BackgroundTasks):
 
     except Exception as e:
         DOWNLOAD_PROCESS_OBJ = None
-        await manager.broadcast({"type": "LOG", "payload": {"message": f"Download interrupted: {str(e)}", "status": "FAILED"},})
+        await manager.broadcast({"type": "LOG", "payload": {"message": f"Download interrupted: {str(e)}", "status": "FAILED"}})
         raise HTTPException(status_code=400, detail=f"Download Failed: {str(e)}")
 
 
@@ -1176,7 +1334,6 @@ async def start_test_existing(request: ExistingTestRequest, background_tasks: Ba
             developer_name = info.get("developer_name"),
         )
 
-
         return {
             "status": "success", "message": "Using existing APK. Test Starting...",
             "app_icon": full_icon_url, "apk_path": apk_path, **info,
@@ -1185,7 +1342,7 @@ async def start_test_existing(request: ExistingTestRequest, background_tasks: Ba
     except HTTPException:
         raise
     except Exception as e:
-        await manager.broadcast({"type": "LOG", "payload": {"message": f"Failed to start test: {str(e)}", "status": "FAILED"},})
+        await manager.broadcast({"type": "LOG", "payload": {"message": f"Failed to start test: {str(e)}", "status": "FAILED"}})
         raise HTTPException(status_code=400, detail=f"Failed: {str(e)}")
 
 
@@ -1198,8 +1355,6 @@ async def list_apks():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-
-
 @app.post("/stop-test")
 async def stop_test():
     print("DEBUG: /stop-test called")
@@ -1208,7 +1363,6 @@ async def stop_test():
     if DOWNLOAD_PROCESS_OBJ is not None:
         try:
             DOWNLOAD_PROCESS_OBJ.terminate()
-            stopped = True
         except Exception as e:
             print(f"Error stopping download: {e}")
     if stop_current_tests():
@@ -1218,13 +1372,13 @@ async def stop_test():
         return {"status": "stopped"}
     return {"status": "no-process"}
 
+
 @app.get("/api/appium/status")
 async def appium_status():
     global _appium_proc
     if _appium_proc is not None and _appium_proc.poll() is None:
         return {"status": "running", "port": APPIUM_PORT}
     return {"status": "stopped"}
-
 
 
 @app.post("/api/appium/start")
@@ -1243,7 +1397,6 @@ async def appium_start():
         return JSONResponse(status_code=500, content={"error": str(e)})
 
 
-
 @app.post("/api/appium/stop")
 async def appium_stop():
     global _appium_proc
@@ -1259,7 +1412,6 @@ async def appium_stop():
     return {"status": "not_running"}
 
 
-
 @app.post("/api/generate-report")
 async def api_generate_report():
     try:
@@ -1270,9 +1422,8 @@ async def api_generate_report():
         return JSONResponse(status_code=500, content={"error": str(e)})
 
 
-
 # ════════════════════════════════════════════════════════════════════════════
-#  SLACK EVENTS  — returns 200 immediately, does ALL work in background
+#  SLACK EVENTS
 # ════════════════════════════════════════════════════════════════════════════
 
 @app.post("/slack/events")
@@ -1281,18 +1432,15 @@ async def slack_events(request: Request, background_tasks: BackgroundTasks):
 
     body = await request.json()
 
-    # Slack URL-verification handshake
     if body.get("type") == "url_verification":
         return {"challenge": body["challenge"]}
 
     event = body.get("event", {})
     print("[Slack] Event received:", event)
 
-    # Ignore bot messages, edited messages, etc.
     if event.get("subtype") is not None:
         return {"status": "ignored"}
 
-    # Deduplicate — Slack retries if no 200 within 3 s
     event_ts = event.get("ts")
     if event_ts and event_ts == LAST_SLACK_EVENT_TS:
         print("[Slack] Duplicate event ignored.")
@@ -1306,9 +1454,6 @@ async def slack_events(request: Request, background_tasks: BackgroundTasks):
             if file_id:
                 channel_id     = event.get("channel")
                 sender_user_id = event.get("user")
-
-                # Queue ALL heavy work AFTER returning 200
-                # so Slack never retries / double-triggers
                 background_tasks.add_task(
                     _handle_slack_apk,
                     file_id=file_id,
@@ -1316,11 +1461,11 @@ async def slack_events(request: Request, background_tasks: BackgroundTasks):
                     sender_user_id=sender_user_id,
                 )
 
-    # Return 200 immediately — before any download or test starts
     return {"status": "ok"}
 
-# ─── Add this Pydantic model alongside JiraPayloadRequest / JiraCreateRequest ─
- 
+
+# ─── Jira Enhance ─────────────────────────────────────────────────────────────
+
 class JiraEnhanceRequest(BaseModel):
     ticket_id:       Optional[str]       = None
     issue_id:        Optional[str]       = None
@@ -1342,42 +1487,30 @@ class JiraEnhanceRequest(BaseModel):
 
 @app.post("/api/jira/enhance")
 async def enhance_jira_issue(req: JiraEnhanceRequest):
-    """
-    Calls Gemini to generate a polished title + full formatted description
-    (with Steps to Reproduce, Actual Result, Expected Result) and returns
-    them so the frontend can paste directly into the issue card fields.
-    """
     from generate_jira_desc import generate_jira_description, generate_jira_title
- 
+
     issue_data = req.model_dump(exclude_none=True)
- 
+
     try:
         loop = asyncio.get_event_loop()
- 
-        # Run both calls concurrently
         enhanced_description, enhanced_title = await asyncio.gather(
             loop.run_in_executor(None, generate_jira_description, issue_data),
             loop.run_in_executor(None, generate_jira_title, issue_data),
         )
- 
     except Exception as exc:
         logger.error("[/api/jira/enhance] Gemini call failed: %s", exc)
-        raise HTTPException(
-            status_code=500,
-            detail=f"LLM enhancement failed: {str(exc)}",
-        )
- 
-    logger.info(
-        "[/api/jira/enhance] Enhanced issue_id=%s title='%s'",
-        req.issue_id, enhanced_title,
-    )
- 
+        raise HTTPException(status_code=500, detail=f"LLM enhancement failed: {str(exc)}")
+
+    logger.info("[/api/jira/enhance] Enhanced issue_id=%s title='%s'", req.issue_id, enhanced_title)
+
     return {
         "status":      "enhanced",
         "issue_id":    req.issue_id,
         "title":       enhanced_title,
         "description": enhanced_description,
     }
+
+
 # ════════════════════════════════════════════════════════════════════════════
 #  ENTRYPOINT
 # ════════════════════════════════════════════════════════════════════════════
