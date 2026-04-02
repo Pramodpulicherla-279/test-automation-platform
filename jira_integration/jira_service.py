@@ -4,8 +4,7 @@ from typing import Optional, List, Dict, Any
 from requests.auth import HTTPBasicAuth
 import requests
 import json
-from datetime import datetime
-from .jira_config import config
+from datetime import datetime, timedelta
 
 
 def search_duplicate_issue(summary: str):
@@ -76,14 +75,7 @@ def _extract_nodeid_from_description(description_text: str) -> str | None:
 
 def _parse_environment_kv_from_description(description_text: str) -> dict:
     """
-    Extracts simple key/value lines if present, e.g:
-      App: Krishivaas Farmer
-      Version: 1.4.8
-      APK Version: 1.4.8
-      App Version: 1.4.8
-      Developer: Ram
-      Module: Login
-      Feature: Login
+    Extracts simple key/value lines if present.
     """
     if not description_text:
         return {}
@@ -315,6 +307,149 @@ def _fix_env_label() -> str:
     return "Staging" if env in {"stage", "staging", "uat", "test"} else "Production"
 
 
+def _calculate_duration(start_date: Optional[str], end_date: Optional[str]) -> str:
+    """Calculate test duration from ISO format dates."""
+    if not start_date or not end_date:
+        return "Unknown"
+    
+    try:
+        start = datetime.fromisoformat(start_date.replace('Z', '+00:00'))
+        end = datetime.fromisoformat(end_date.replace('Z', '+00:00'))
+        duration = (end - start).total_seconds()
+        minutes = int(duration / 60)
+        seconds = int(duration % 60)
+        if minutes > 0:
+            return f"{minutes}m {seconds}s"
+        return f"{seconds}s"
+    except Exception as e:
+        print(f"[WARN] Could not calculate duration: {e}")
+        return "Unknown"
+
+
+def _text_to_adf(text: str) -> dict:
+    """
+    Convert plain text to Atlassian Document Format (ADF).
+    Handles multiline text by splitting into paragraphs.
+    """
+    if not text:
+        text = "Test automation failure detected."
+    
+    paragraphs = []
+    for line in text.split("\n"):
+        line = line.strip()
+        if line:
+            paragraphs.append({
+                "type": "paragraph",
+                "content": [{"type": "text", "text": line}]
+            })
+    
+    if not paragraphs:
+        paragraphs = [
+            {
+                "type": "paragraph",
+                "content": [{"type": "text", "text": "Test automation failure detected."}]
+            }
+        ]
+    
+    return {
+        "type": "doc",
+        "version": 1,
+        "content": paragraphs
+    }
+
+
+def _build_formatted_description(
+    description: str,
+    app_name: Optional[str] = None,
+    app_version: Optional[str] = None,
+    module: Optional[str] = None,
+    feature: Optional[str] = None,
+    test_name: Optional[str] = None,
+    test_id: Optional[str] = None,
+    steps_executed: Optional[List[str]] = None,
+    developer_name: Optional[str] = None,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    sprint: Optional[str] = None,
+) -> dict:
+    """
+    Build a formatted description in ADF (Atlassian Document Format).
+    Since custom fields aren't available, we embed the data in the description.
+    Returns ADF JSON structure, not plain text.
+    """
+    content = []
+    
+    # Add main description
+    main_desc = description.strip() if description else "Test automation failure detected."
+    for line in main_desc.split("\n"):
+        line = line.strip()
+        if line:
+            content.append({
+                "type": "paragraph",
+                "content": [{"type": "text", "text": line}]
+            })
+    
+    # Add metadata section
+    content.append({"type": "paragraph", "content": [{"type": "text", "text": ""}]})  # blank line
+    content.append({
+        "type": "heading",
+        "attrs": {"level": 3},
+        "content": [{"type": "text", "text": "Metadata"}]
+    })
+    
+    metadata_lines = []
+    if app_name and not _is_unknown(app_name):
+        metadata_lines.append(f"App: {app_name}")
+    if app_version and not _is_unknown(app_version):
+        metadata_lines.append(f"Version: {app_version}")
+    if module and not _is_unknown(module):
+        metadata_lines.append(f"Module: {module}")
+    if feature and not _is_unknown(feature):
+        metadata_lines.append(f"Feature: {feature}")
+    if test_name and not _is_unknown(test_name):
+        metadata_lines.append(f"Test: {test_name}")
+    if test_id and not _is_unknown(test_id):
+        metadata_lines.append(f"Test ID: {test_id}")
+    if developer_name and not _is_unknown(developer_name):
+        metadata_lines.append(f"Developer: {developer_name}")
+    if start_date:
+        metadata_lines.append(f"Start: {start_date}")
+    if end_date:
+        metadata_lines.append(f"End: {end_date}")
+    if start_date and end_date:
+        duration = _calculate_duration(start_date, end_date)
+        metadata_lines.append(f"Duration: {duration}")
+    if sprint:
+        metadata_lines.append(f"Sprint: {sprint}")
+    
+    for line in metadata_lines:
+        content.append({
+            "type": "paragraph",
+            "content": [{"type": "text", "text": line}]
+        })
+    
+    # Add steps section if available
+    if steps_executed and len(steps_executed) > 0:
+        content.append({"type": "paragraph", "content": [{"type": "text", "text": ""}]})  # blank line
+        content.append({
+            "type": "heading",
+            "attrs": {"level": 3},
+            "content": [{"type": "text", "text": "Steps Executed"}]
+        })
+        
+        for i, step in enumerate(steps_executed, 1):
+            content.append({
+                "type": "paragraph",
+                "content": [{"type": "text", "text": f"{i}. {step}"}]
+            })
+    
+    return {
+        "type": "doc",
+        "version": 1,
+        "content": content
+    }
+
+
 def build_extended_jira_payload(issue_key: str, business_payload: dict) -> dict:
     """
     Extended payload for console/frontend.
@@ -354,7 +489,7 @@ def build_extended_jira_payload(issue_key: str, business_payload: dict) -> dict:
         if k in embedded and embedded.get(k) not in (None, "", [], {}):
             merged[k] = embedded[k]
 
-    # Extra fallback: if app_name still unknown, try to parse from "Environment:\n<name> APK"
+    # Extra fallback: if app_name still unknown, try to parse from description
     if _is_unknown(merged.get("app_name")):
         env_app = _extract_app_name_from_environment_block(description_text)
         if env_app:
@@ -373,11 +508,11 @@ def build_extended_jira_payload(issue_key: str, business_payload: dict) -> dict:
     affects_versions = [app_name] if not _is_unknown(app_name) else []
     fix_versions = [_fix_env_label()]
     sprint_val = "Automation"
-    start_date_val = datetime.date.today().isoformat()
+    start_date_val = datetime.today().isoformat()
 
     end_date_val = fields_obj.get("duedate")
     if not end_date_val:
-        end_date_val = (datetime.date.today() + datetime.timedelta(days=1)).isoformat()
+        end_date_val = (datetime.today() + timedelta(days=1)).isoformat()
 
     merged.update(
         {
@@ -385,7 +520,6 @@ def build_extended_jira_payload(issue_key: str, business_payload: dict) -> dict:
             "issue_url": f"{config.url}/browse/{issue_key}",
             "title": summary,
             "description": description_text,
-
             "app_version": app_version,
             "affects_version": affects_versions,
             "fix_version": fix_versions,
@@ -413,28 +547,31 @@ def create_jira_issue(
     developer_name: Optional[str] = None,
     fix_version: Optional[str] = None,
     affects_version: Optional[str] = None,
-    start_date: Optional[str] = None,     # ISO format: 2026-03-29T08:43:00
-    end_date: Optional[str] = None,       # ISO format: 2026-03-29T08:44:00
-    sprint: Optional[str] = None,         # Sprint name: "Automation"
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    sprint: Optional[str] = None,
 ) -> Optional[str]:
     """
-    Create a JIRA issue with all metadata including test execution dates and sprint.
+    Create a JIRA issue using STANDARD FIELDS ONLY.
+    
+    Metadata is embedded in the description instead of custom fields.
+    This works with any JIRA instance without custom field configuration.
     
     Args:
         summary: Issue summary/title
         description: Issue description
         app_name: App name (e.g., "Krishivaas Farmer")
         app_version: App version (e.g., "1.3.96")
-        module: Module being tested (Login, Onboarding, etc.)
+        module: Module being tested
         feature: Feature name
         issue_summary: Another summary field
-        test_name: Name of the test that failed
+        test_name: Name of the test
         test_id: ID of the test
-        steps_executed: List of automation steps executed
+        steps_executed: List of automation steps
         developer_name: Developer responsible
         start_date: Test start time (ISO format)
         end_date: Test end time (ISO format)
-        sprint: Sprint name for JIRA sprint field
+        sprint: Sprint name for JIRA
     
     Returns:
         JIRA issue key (e.g., "AT-87") or None if creation failed
@@ -446,72 +583,63 @@ def create_jira_issue(
             f"token_set={bool(config.api_token)}, project_key={config.project_key}"
         )
 
-    # ═══════════════════════════════════════════════════════════════════════════
-    # Prepare issue fields
-    # ═══════════════════════════════════════════════════════════════════════════
-    
+    print("\n" + "=" * 70)
+    print("[JIRA] Creating issue...")
+    print("=" * 70)
+
+    # Build formatted description with embedded metadata (returns ADF format)
+    formatted_description_adf = _build_formatted_description(
+        description=description,
+        app_name=app_name,
+        app_version=app_version,
+        module=module,
+        feature=feature,
+        test_name=test_name,
+        test_id=test_id,
+        steps_executed=steps_executed,
+        developer_name=developer_name,
+        start_date=start_date,
+        end_date=end_date,
+        sprint=sprint,
+    )
+
+    # Prepare issue fields — STANDARD FIELDS ONLY
     fields = {
         "project": {"key": config.project_key},
-        "summary": summary,
-        "description": description,
+        "summary": summary or issue_summary or "Test Automation Failure",
+        "description": formatted_description_adf,  # ← ADF format
         "issuetype": {"name": "Bug"},
         "priority": {"name": "High"},
     }
 
-    # Add optional fields
-    if app_name:
-        fields["labels"] = fields.get("labels", []) + ["automation", app_name.lower()]
-    if module:
-        fields["labels"] = fields.get("labels", []) + [module.lower()]
-    
-    # ═══════════════════════════════════════════════════════════════════════════
-    # *** KEY FIX: Map dates and sprint to JIRA custom fields ***
-    # ═══════════════════════════════════════════════════════════════════════════
-    # These custom field IDs MUST match your JIRA instance
-    # Get them from: Project Settings → Issue Types → Bug → Configure Fields
-    
-    custom_fields = {
-        # Test execution dates (date type fields)
-        'customfield_10000': start_date,           # Test Start Date
-        'customfield_10001': end_date,             # Test End Date
-        
-        # Test metadata (text fields)
-        'customfield_10002': f"{_calculate_duration(start_date, end_date)}",  # Duration
-        'customfield_10003': module or "",         # Test Module
-        'customfield_10004': app_version or "",    # App Version
-        'customfield_10005': test_name or "",      # Test Name
-        
-        # Sprint (this is CRITICAL for board display)
-        # Note: Sprint field might be different in your JIRA — check actual field ID
-        'customfield_10006': sprint or "Automation",  # Sprint Name
-    }
-    
-    # Merge custom fields (remove None values to avoid API errors)
-    for field_id, value in custom_fields.items():
-        if value is not None and value != "":
-            fields[field_id] = value
-    
-    print(f"[JIRA] Fields prepared:")
-    print(f"  Summary: {summary}")
-    print(f"  Module: {module}")
-    print(f"  Start Date: {start_date}")
-    print(f"  End Date: {end_date}")
-    print(f"  Sprint: {sprint}")
-    print(f"  Custom fields: {list(custom_fields.keys())}")
+    # Add labels for categorization
+    labels = ["automation", "mobile-app"]
+    if app_name and not _is_unknown(app_name):
+        labels.append(app_name.lower().replace(" ", "-"))
+    if module and not _is_unknown(module):
+        labels.append(module.lower())
+    fields["labels"] = labels
 
-    # ═══════════════════════════════════════════════════════════════════════════
+    # Due date (tomorrow)
+    due_date = (datetime.today() + timedelta(days=1)).isoformat().split("T")[0]
+    fields["duedate"] = due_date
+
+    # Assign to configured user if available
+    if config.assignee_id:
+        fields["assignee"] = {"id": config.assignee_id}
+
+    print(f"[JIRA] Summary: {fields['summary']}")
+    print(f"[JIRA] Labels: {', '.join(labels)}")
+    print(f"[JIRA] Due Date: {due_date}")
+    print(f"[JIRA] Project: {config.project_key}")
+
     # Create issue via JIRA REST API
-    # ═══════════════════════════════════════════════════════════════════════════
-    
     auth = HTTPBasicAuth(config.email, config.api_token)
     headers = {"Accept": "application/json", "Content-Type": "application/json"}
-    
     url = f"{config.url}/rest/api/3/issue"
-    
+
     try:
-        print(f"\n[JIRA] POST {url}")
-        print(f"[JIRA] Auth: {config.email}")
-        print(f"[JIRA] Project: {config.project_key}")
+        print(f"[JIRA] POST {url}")
         
         response = requests.post(
             url,
@@ -520,81 +648,62 @@ def create_jira_issue(
             json={"fields": fields},
             timeout=15,
         )
-        
+
         print(f"[JIRA] Response status: {response.status_code}")
-        
+
         if response.status_code == 201:
             data = response.json()
             issue_key = data.get("key")
             issue_id = data.get("id")
-            
-            print(f"✓ JIRA Issue Created: {issue_key}")
-            print(f"  ID: {issue_id}")
+
+            print(f"\n✓ JIRA Issue Created Successfully!")
+            print(f"  Issue Key: {issue_key}")
+            print(f"  Issue ID: {issue_id}")
             print(f"  URL: {config.url}/browse/{issue_key}")
-            print(f"  Start Date Field: {start_date}")
-            print(f"  End Date Field: {end_date}")
-            print(f"  Sprint Field: {sprint}")
-            
+            print("=" * 70 + "\n")
+
             return issue_key
-        
+
         elif response.status_code == 400:
             error = response.json()
-            print(f"✗ JIRA 400 Bad Request")
-            print(f"  Error: {error}")
-            
-            # Check if it's a custom field error
-            errors = error.get("errors", {})
-            if any("customfield" in str(k) for k in errors.keys()):
-                print(f"\n⚠️  Custom field error detected!")
-                print(f"  You may need to update the custom field IDs in jira_service.py")
-                print(f"  Current IDs: {list(custom_fields.keys())}")
-                print(f"  Check: Project Settings → Issue Types → Bug → Configure Fields")
-            
+            print(f"\n✗ JIRA 400 Bad Request")
+            print(f"  Error: {json.dumps(error, indent=2)}")
             raise Exception(f"JIRA 400: {error}")
-        
+
         elif response.status_code == 401:
-            raise Exception(f"JIRA 401 Unauthorized: Check JIRA_EMAIL and JIRA_API_TOKEN in .env")
-        
+            raise Exception(
+                f"JIRA 401 Unauthorized: Check JIRA_EMAIL and JIRA_API_TOKEN in .env"
+            )
+
         elif response.status_code == 403:
-            raise Exception(f"JIRA 403 Forbidden: No permission to create issues in {config.project_key}")
-        
+            raise Exception(
+                f"JIRA 403 Forbidden: No permission to create issues in {config.project_key}"
+            )
+
         else:
             raise Exception(f"JIRA {response.status_code}: {response.text[:500]}")
-    
+
     except requests.exceptions.Timeout:
-        raise Exception("JIRA request timed out (15s). Check JIRA_URL and network connectivity.")
+        raise Exception(
+            "JIRA request timed out (15s). Check JIRA_URL and network connectivity."
+        )
     except requests.exceptions.ConnectionError:
         raise Exception(f"Cannot connect to JIRA at {config.url}. Check JIRA_URL in .env")
     except Exception as e:
-        print(f"✗ Error creating JIRA issue: {e}")
+        print(f"\n✗ Error creating JIRA issue: {e}")
+        print("=" * 70 + "\n")
         raise
-
-
-def _calculate_duration(start_date: Optional[str], end_date: Optional[str]) -> str:
-    """Calculate test duration from ISO format dates."""
-    if not start_date or not end_date:
-        return "Unknown"
-    
-    try:
-        start = datetime.fromisoformat(start_date.replace('Z', '+00:00'))
-        end = datetime.fromisoformat(end_date.replace('Z', '+00:00'))
-        duration = (end - start).total_seconds()
-        return f"{int(duration)} seconds"
-    except Exception as e:
-        print(f"[WARN] Could not calculate duration: {e}")
-        return "Unknown"
 
 
 def get_jira_issue(issue_key: str) -> Optional[Dict[str, Any]]:
     """Fetch JIRA issue details."""
     if not all([config.url, config.email, config.api_token]):
         raise Exception("JIRA config incomplete")
-    
+
     auth = HTTPBasicAuth(config.email, config.api_token)
     headers = {"Accept": "application/json"}
-    
     url = f"{config.url}/rest/api/3/issue/{issue_key}"
-    
+
     try:
         response = requests.get(url, auth=auth, headers=headers, timeout=10)
         if response.status_code == 200:
@@ -605,150 +714,46 @@ def get_jira_issue(issue_key: str) -> Optional[Dict[str, Any]]:
     except Exception as e:
         print(f"Error fetching issue: {e}")
         return None
-    """
-    Create Jira issue with duplicate detection + payload logs.
-    """
-    if not config.validate():
-        return None
-
-    effective_summary = issue_summary or summary or "Automation Failure"
-    description_text_input = (description or "").strip() or "Automation Test Failure"
-
-    inferred_env = _parse_environment_kv_from_description(description_text_input)
-    inferred_nodeid = _extract_nodeid_from_description(description_text_input)
-
-    # Infer missing app/module/test fields from description (so fewer Unknowns)
-    if _is_unknown(app_name):
-        app_name = inferred_env.get("app_name") or _extract_app_name_from_environment_block(description_text_input) or app_name
-
-    if _is_unknown(app_version):
-        # App version should come from runner/CLI (APK metadata). If you add "APK Version: x" in description, it will be picked.
-        app_version = inferred_env.get("app_version") or app_version
-
-    if _is_unknown(test_id):
-        test_id = inferred_env.get("test_id") or inferred_nodeid or test_id
-    if _is_unknown(test_name):
-        test_name = inferred_env.get("test_name") or _infer_test_name_from_nodeid(inferred_nodeid or "") or test_name
-
-    if _is_unknown(module):
-        module = inferred_env.get("module") or _infer_module_from_nodeid(inferred_nodeid or "") or module
-    if _is_unknown(feature):
-        feature = inferred_env.get("feature") or _infer_feature_from_nodeid(inferred_nodeid or "") or feature
-        if _is_unknown(feature) and not _is_unknown(module):
-            feature = module
-
-    # Prefer Jira assignee display name if developer_name not provided
-    if _is_unknown(developer_name):
-        developer_name = inferred_env.get("developer_name") or developer_name
-    if _is_unknown(developer_name):
-        developer_name = get_jira_user_display_name(config.assignee_id) or developer_name
-
-    business_payload = _build_business_payload(
-        app_name=None if _is_unknown(app_name) else app_name,
-        app_version=None if _is_unknown(app_version) else app_version,
-        module=None if _is_unknown(module) else module,
-        feature=None if _is_unknown(feature) else feature,
-        issue_summary=effective_summary,
-        test_name=None if _is_unknown(test_name) else test_name,
-        test_id=None if _is_unknown(test_id) else test_id,
-        steps_executed=steps_executed,
-        developer_name=None if _is_unknown(developer_name) else developer_name,
-    )
-
-    print("AUTOMATION_PAYLOAD_JSON:" + json.dumps(business_payload, ensure_ascii=False))
-
-    if config.dedup_enabled:
-        existing_issue = search_duplicate_issue(effective_summary)
-        if existing_issue:
-            print(f"Duplicate bug found: {existing_issue}")
-            add_comment(existing_issue, "Automation detected this failure again.")
-            try:
-                extended = build_extended_jira_payload(existing_issue, business_payload)
-                print("JIRA_PAYLOAD_JSON:" + json.dumps(extended, ensure_ascii=False))
-            except Exception as e:
-                print(f"Failed to build extended payload for duplicate issue {existing_issue}: {e}")
-            return existing_issue
-
-    # Embed payload in description so Jira API can be the source of truth later
-    desc_with_payload = (
-        f"{description_text_input}\n\n"
-        f"Automation Payload:\n"
-        f"{json.dumps(business_payload, ensure_ascii=False, indent=2)}"
-    )
-    if allure_url:
-        desc_with_payload += f"\n\nAllure Report:\n{allure_url}"
-
-    description_adf = {
-        "type": "doc",
-        "version": 1,
-        "content": [{"type": "paragraph", "content": [{"type": "text", "text": desc_with_payload}]}],
-    }
-
-    due_date = (datetime.date.today() + datetime.timedelta(days=1)).isoformat()
-
-    jira_payload = {
-        "fields": {
-            "project": {"key": config.project_key},
-            "summary": effective_summary,
-            "description": description_adf,
-            "issuetype": {"name": config.issue_type},
-            "priority": {"name": config.priority},
-            "assignee": {"id": config.assignee_id},
-            "duedate": due_date,
-            "labels": ["automation", "mobile-app", "krishivaas"],
-        }
-    }
-
-    response = requests.post(
-        config.issues_endpoint,
-        json=jira_payload,
-        auth=config.auth,
-        headers=config.json_headers,
-        timeout=30,
-    )
-
-    if response.status_code == 201:
-        issue_key = response.json()["key"]
-        # build_extended_jira_payload does a GET /rest/api/3/issue/{key}
-        # which can fail on restricted projects — wrap it so it never blocks ticket creation
-        try:
-            extended = build_extended_jira_payload(issue_key, business_payload)
-            print("JIRA_PAYLOAD_JSON:" + json.dumps(extended, ensure_ascii=False))
-        except Exception as e:
-            print(f"[WARN] Could not build extended payload for {issue_key}: {e}")
-        return issue_key
-
-    # ── Surface the exact Jira error so the caller can show it to the user ──
-    status  = response.status_code
-    try:
-        body    = response.json()
-        messages = body.get("errorMessages", [])
-        errors   = body.get("errors", {})
-        detail   = "; ".join(messages) if messages else str(errors) if errors else response.text
-    except Exception:
-        detail = response.text or f"HTTP {status}"
-
-    error_msg = f"Jira API {status}: {detail}"
-    print(f"Jira creation failed ({status}): {response.text}")
-    raise RuntimeError(error_msg)
 
 
-def add_comment(issue_key, comment):
+def add_comment(issue_key: str, comment_text: str) -> bool:
+    """Add a comment to a JIRA issue."""
+    if not all([config.url, config.email, config.api_token]):
+        raise Exception("JIRA config incomplete")
+
+    auth = HTTPBasicAuth(config.email, config.api_token)
+    headers = {"Accept": "application/json", "Content-Type": "application/json"}
+    
     comment_adf = {
         "body": {
             "type": "doc",
             "version": 1,
-            "content": [{"type": "paragraph", "content": [{"type": "text", "text": comment}]}],
+            "content": [
+                {
+                    "type": "paragraph",
+                    "content": [{"type": "text", "text": comment_text}],
+                }
+            ],
         }
     }
 
-    response = requests.post(
-        config.comment_endpoint(issue_key),
-        json=comment_adf,
-        auth=config.auth,
-        headers=config.json_headers,
-        timeout=20,
-    )
+    url = f"{config.url}/rest/api/3/issue/{issue_key}/comments"
 
-    if response.status_code == 201:
-        print(f"Comment added to {issue_key}")
+    try:
+        response = requests.post(
+            url,
+            json=comment_adf,
+            auth=auth,
+            headers=headers,
+            timeout=20,
+        )
+
+        if response.status_code == 201:
+            print(f"✓ Comment added to {issue_key}")
+            return True
+        else:
+            print(f"Failed to add comment: {response.status_code}")
+            return False
+    except Exception as e:
+        print(f"Error adding comment: {e}")
+        return False
