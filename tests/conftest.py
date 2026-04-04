@@ -1,4 +1,4 @@
-# tests/conftest.py - UPDATED VERSION
+# tests/conftest.py - FIXED VERSION
 """
 Step capture — four-layer strategy (most reliable first):
 
@@ -61,7 +61,7 @@ _ticket_id:      str  = ""
 _issue_counter:  int  = 0
 _session_issues: list = []
 _developer_name: str  = ""
-_test_start_time: datetime.datetime = None  # ← NEW: Track test start time globally
+_test_start_time: datetime.datetime = None
 
 # Per-test local step buffer — populated by _StepCapturingPlugin
 _local_step_buffer: dict = {}   # { test_name: [step, ...] }
@@ -350,7 +350,7 @@ def pytest_runtest_setup(item):
     """
     global _current_test_name, _test_start_time
     _current_test_name = item.name
-    _test_start_time = datetime.datetime.now()  # ← NEW: Capture test start time
+    _test_start_time = datetime.datetime.now()
     _local_step_buffer.setdefault(item.name, [])
 
     try:
@@ -377,7 +377,14 @@ def driver(request):
     options.platform_name = "Android"
     options.device_name   = "AndroidDevice"
     options.app           = apk_path
-    options.set_capability("appium:ignoreHiddenApiPolicyError", True)
+
+    # ── FIX: Prevents Appium from running "pm clear" which was causing
+    #         SecurityException on non-rooted / production devices ──────────
+    options.set_capability("appium:noReset",   True)   # Skip pm clear entirely
+    options.set_capability("appium:fullReset", False)  # No uninstall/reinstall
+    # ────────────────────────────────────────────────────────────────────────
+
+    options.set_capability("appium:ignoreHiddenApiPolicyError",      True)
     options.set_capability("appium:uiautomator2ServerLaunchTimeout", 60000)
     options.set_capability("appium:adbExecTimeout",                  50000)
     options.set_capability("appium:newCommandTimeout",                300)
@@ -556,34 +563,25 @@ def pytest_runtest_makereport(item, call):
     # 5. Error text
     error_text = _extract_error_only(report.longrepr)
 
-    # ═══════════════════════════════════════════════════════════════════════════
-    # *** FIX: CAPTURE ACCURATE TEST EXECUTION DATES ***
-    # ═════════════════════════════════════════════════════════════════════════════
+    # 6. Dates
     global _test_start_time
-    
+
     test_start = _test_start_time or datetime.datetime.now()
-    test_end = datetime.datetime.now()
-    
-    # Format as ISO 8601 for API (backend will convert to custom fields)
-    start_date_iso = test_start.isoformat()
-    end_date_iso = test_end.isoformat()
-    
-    # Also format for readability (matching TAP display: 29/03/2026, 08:43)
+    test_end   = datetime.datetime.now()
+
+    start_date_iso      = test_start.isoformat()
+    end_date_iso        = test_end.isoformat()
     start_date_readable = test_start.strftime('%d/%m/%Y, %H:%M')
-    end_date_readable = test_end.strftime('%d/%m/%Y, %H:%M')
-    
-    # Calculate duration
-    duration_seconds = (test_end - test_start).total_seconds()
-    duration_readable = f"{int(duration_seconds)} seconds"
-    
+    end_date_readable   = test_end.strftime('%d/%m/%Y, %H:%M')
+    duration_seconds    = (test_end - test_start).total_seconds()
+    duration_readable   = f"{int(duration_seconds)} seconds"
+
     print(f"\n📅 Test Execution Timeline:")
-    print(f"   Start: {start_date_readable} (ISO: {start_date_iso})")
-    print(f"   End:   {end_date_readable} (ISO: {end_date_iso})")
+    print(f"   Start:    {start_date_readable} (ISO: {start_date_iso})")
+    print(f"   End:      {end_date_readable} (ISO: {end_date_iso})")
     print(f"   Duration: {duration_readable}")
 
-    # ═══════════════════════════════════════════════════════════════════════════
-    # Build payload with DATES AND SPRINT
-    # ═════════════════════════════════════════════════════════════════════════════
+    # 7. Build and send payload
     payload = {
         "ticket_id":       _ticket_id,
         "issue_id":        issue_id,
@@ -597,11 +595,9 @@ def pytest_runtest_makereport(item, call):
         "steps_executed":  steps_executed,
         "developer_name":  developer_name,
         "description":     _build_description(error_text, steps_executed),
-        
-        # *** NEW: Include dates and sprint ***
-        "start_date":      start_date_iso,      # ISO format for API
-        "end_date":        end_date_iso,        # ISO format for API
-        "sprint":          "Automation",        # Default sprint name
+        "start_date":      start_date_iso,
+        "end_date":        end_date_iso,
+        "sprint":          "Automation",
         "fix_version":     ["Production"],
         "affects_version": [app_name] if app_name and app_name != "Unknown App" else [],
     }
