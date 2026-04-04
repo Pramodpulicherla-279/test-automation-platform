@@ -41,8 +41,8 @@ const APP_VARIANTS = {
         id: "state_client",
         label: "State Client App",
         modules: [
-            { name: 'Login', path: 'tests/state_client/test_login.py' },
-            { name: 'Tenders', path: 'tests/state_client/test_tenders.py' },
+            { name: 'Login', path: 'tests/test_cases/state_client_test_cases/test_login_pytest.py' },
+            { name: 'Onboarding', path: 'tests/test_cases/state_client_test_cases/test_Onboarding.py' },
         ]
     }
 };
@@ -326,6 +326,15 @@ function TestScreen({ onHistoryUpdate }) {
     });
 
     const handleIncomingData = (data) => {
+        if (data.type === "MODULES") {
+          const newModules = data.payload.modules.map(m => ({
+            ...m,
+            status: "pending",
+            isSelected: true
+         }));
+        setModules(newModules);
+        return;
+        }
         // IssuePanel handles JIRA_PAYLOAD via its own WebSocket — skip here
         if (data.type === 'JIRA_PAYLOAD') return;
 
@@ -369,6 +378,13 @@ function TestScreen({ onHistoryUpdate }) {
             }
         } else if (data.type === 'RUN_COMPLETE') {
             setIsRunning(false);
+
+            const reportUrl = data.payload?.report_url;
+            if (reportUrl && !hasOpenedReport) {
+                setHasOpenedReport(true);
+                window.open(reportUrl, '_blank', "noopener,noreferrer");
+            }
+
         }
     };
 

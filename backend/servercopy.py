@@ -4,8 +4,6 @@ import json
 import datetime
 import time
 import threading
-
-# from backend.servercopy import ALLURE_CMD
 sys.dont_write_bytecode = True
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, WebSocket, BackgroundTasks, HTTPException
@@ -36,7 +34,7 @@ PROCESSED_EVENTS = set()
 # ─── Load env ────────────────────────────────────────────────────────────────
 load_dotenv()
 SLACK_BOT_TOKEN      = os.getenv("SLACK_BOT_TOKEN")
-SLACK_NOTIFY_CHANNEL = os.getenv("SLACK_NOTIFY_CHANNEL", "")
+SLACK_NOTIFY_CHANNEL = os.getenv("SLACK_NOTIFY_CHANNEL", "")  # set in .env — channel to always notify after every run
 
 # ─── Project root ────────────────────────────────────────────────────────────
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(os.path.abspath(__file__))))
@@ -88,11 +86,7 @@ _appium_proc: subprocess.Popen | None = None
 _allure_proc: subprocess.Popen | None = None
 _allure_port: int | None = None
 APPIUM_PORT = 4723
-
-ALLURE_CMD = r"C:\Users\ABDUL SAMAD\scoop\shims\allure.cmd"
-# ✅ Ensure Allure exists
-if not os.path.exists(ALLURE_CMD):
-    raise Exception(f"Allure not found at: {ALLURE_CMD}")
+ALLURE_CMD = r"C:\Users\Pramo\scoop\shims\allure"
 DOWNLOAD_PROCESS_OBJ = None
 
 
@@ -104,30 +98,7 @@ def _pick_free_port() -> int:
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind(("127.0.0.1", 0))
         return int(s.getsockname()[1])
-def generate_allure_report():
-    try:
-        subprocess.run(
-            [ALLURE_CMD, "generate", "allure-results", "-o", "allure-report", "--clean"],
-            cwd=BASE_DIR,
-            check=True,
-            shell=True
-        )
-        print("✅ Allure report generated")
-    except Exception as e:
-        print(f"❌ Allure generate failed: {e}")
 
-# ✅ ADD HERE
-def log_to_ui(message, status="INFO"):
-    try:
-        asyncio.create_task(manager.broadcast({
-            "type": "LOG",
-            "payload": {
-                "message": message,
-                "status": status
-            }
-        }))
-    except:
-        pass
 
 def _is_appium_running() -> bool:
     global _appium_proc
@@ -188,19 +159,15 @@ def deploy_to_vercel() -> str | None:
 
     try:
         result = subprocess.run(
-        ["vercel", "--prod", "--yes"],  # ✅ added --yes
-        cwd=allure_report_path,
-        capture_output=True,
-        text=True,
-         encoding="utf-8",
-        errors="replace",
-        timeout=300,
-        shell=True,
-    )
+            ["vercel", "--prod"],
+            cwd=allure_report_path,
+            capture_output=True,
+            text=True,
+            timeout=120,
+            shell=True,
+        )
 
         print(result.stdout)
-
-        print(result.stderr)
 
         if result.returncode != 0:
             print(f"[Vercel] Deploy failed: {result.stderr}")
@@ -211,8 +178,6 @@ def deploy_to_vercel() -> str | None:
                 print(f"[Vercel] URL: {line}")
                 return line
 
-    except subprocess.TimeoutExpired:
-        print("[Vercel] Deploy timed out after 300 seconds.")
     except Exception as e:
         print(f"[Vercel] Exception: {e}")
 
@@ -234,6 +199,9 @@ def send_slack_message(
         "Content-Type": "application/json"
     }
 
+    # Ensure the report URL is always a valid https:// link.
+    # Slack shows a warning triangle on buttons whose URL is not a proper
+    # public https address (e.g. a plain string like "Report deployment failed").
     safe_url = report_url if (report_url or "").startswith("https://") else "https://allure-report-three.vercel.app"
 
     status_line = f"*🟢 Passed:* {passed}    *🔴 Failed:* {failed}"
@@ -264,7 +232,7 @@ def send_slack_message(
                 "elements": [
                     {
                         "type": "button",
-                        "action_id": "open_report",
+                        "action_id": "open_report",   # required — prevents the warning triangle
                         "text": {
                             "type": "plain_text",
                             "text": "📄 Open Report",
@@ -276,6 +244,7 @@ def send_slack_message(
                 ]
             }
         ],
+        # text field is a fallback for notifications / accessibility
         "text": f"Automation report for {app_name} v{apk_version} — Passed: {passed}, Failed: {failed}",
     }
 
@@ -290,7 +259,6 @@ def send_slack_message(
         print(f"[Slack] chat.postMessage error: {data.get('error')} | {data.get('response_metadata')}")
     else:
         print(f"[Slack] Message sent successfully to {channel_id}")
-
 
 def extract_drive_file_id(text: str) -> str | None:
     text = text.replace("<", "").replace(">", "")
@@ -321,45 +289,42 @@ async def _post_run_notify(
     """
     loop = asyncio.get_event_loop()
     await manager.broadcast({
-        "type": "MODULES",
-        "payload": {
-            "modules": tests_to_run
-        }
-    })
+    "type": "MODULES",
+    "payload": {
+        "modules": tests_to_run
+    }
+})
 
     # Step 1 — run tests
-    log_to_ui("Step 1: Running tests...", "INFO")
+    print("[PostRun] Step 1: Running tests...")
     try:
         await loop.run_in_executor(
             None,
             lambda: run_tests_and_get_suggestions(apk_path, tests_to_run=tests_to_run),
         )
-        log_to_ui("Step 1 done", "SUCCESS")
+        print("[PostRun] Step 1 done.")
     except Exception as e:
-        log_to_ui(f"[PostRun] Step 1 FAILED: {e}", "ERROR")
+        print(f"[PostRun] Step 1 FAILED: {e}")
         await manager.broadcast({"type": "LOG", "payload": {
             "message": f"[PostRun] Tests failed: {e}", "status": "FAILED"
         }})
         return
-
     await manager.broadcast({
-        "type": "MODULES",
-        "payload": {
-            "modules": tests_to_run
-        }
-    })
+    "type": "MODULES",
+    "payload": {
+        "modules": tests_to_run
+    }
+})
 
     # Step 2 — generate Allure report
-    log_to_ui("Step 2: Generating Allure report...", "INFO")
+    print("[PostRun] Step 2: Generating Allure report...")
     try:
-        # await loop.run_in_executor(None, generate_report)
-        # ✅ Start Allure only ONCE
-        # report_url = _start_allure_server()
-        await loop.run_in_executor(None, generate_allure_report)
-        
-        log_to_ui("Step 2 done", "SUCCESS")
+        await loop.run_in_executor(None, generate_report)
+        print("[PostRun] Step 2 done.")
     except Exception as e:
-        log_to_ui(f"[PostRun] Step 2 FAILED: {e}", "ERROR")
+        print(f"[PostRun] Step 2 FAILED: {e}")
+        # Don't return — still send Slack with whatever results we have
+    
 
     # Step 3 — count pass/fail from allure-results JSONs
     print("[PostRun] Step 3: Counting results...")
@@ -374,25 +339,40 @@ async def _post_run_notify(
                 passed += 1
             else:
                 failed += 1
-        log_to_ui(f"Step 3 done. Passed: {passed} | Failed: {failed}", "SUCCESS")
+        print(f"[PostRun] Step 3 done. Passed: {passed} | Failed: {failed}")
     except Exception as e:
         print(f"[PostRun] Step 3 FAILED: {e}")
 
     # Step 4 — resolve report URL
-    
     print("[PostRun] Step 4: Resolving report URL...")
 
-    local_url = _start_allure_server()  # for your local use
+    # # 1️⃣ Try deploying to Vercel (best case)
+    # report_url = deploy_to_vercel()
+    report_url = "https://allure-report-three.vercel.app"  # hardcoded fallback for now — Vercel deploys are too unreliable to be the primary source of truth
 
-       # 🔥 Deploy and get PUBLIC URL
-    vercel_url = deploy_to_vercel()
+    def deploy_asyn():
+        url = deploy_to_vercel()
+        print(f"[Vercel] Deploy result: {url}")
+    
+    threading.Thread(target=deploy_asyn, daemon=True).start()
 
-          # ✅ Use vercel URL for Slack
-    report_url = vercel_url if vercel_url else local_url
+    # # 2️⃣ If deploy fails → use env base URL
+    # if not report_url:
+    #     report_base = os.getenv("REPORT_BASE_URL")
+
+    #     if report_base:
+    #         report_url = f"{report_base}/allure-report"
+    #     else:
+            # 3️⃣ Final fallback → local
+            # report_url = "http://127.0.0.1:8000/allure-report"
+
+        # 🔥 prevent caching (VERY IMPORTANT)
+    report_url = f"{report_url}?t={int(time.time())}"
 
     print(f"[PostRun] Step 4: Report URL → {report_url}")
 
     # Step 5 — send Slack notification
+    # FORCE use .env channel
     final_channel_id = channel_id or SLACK_NOTIFY_CHANNEL
 
     print(f"[DEBUG] Final channel_id used: {final_channel_id}")
@@ -424,7 +404,7 @@ async def _post_run_notify(
             ),
         )
 
-        log_to_ui("Step 5 done. Slack notification sent", "SUCCESS")
+        print("[PostRun] Step 5 done. Slack notification sent ✅")
 
         await manager.broadcast({
             "type": "LOG",
@@ -443,7 +423,6 @@ async def _post_run_notify(
                 "status": "WARN"
             }
         })
-
 
 async def _handle_slack_apk(
     file_id:        str,
@@ -547,19 +526,6 @@ async def lifespan(app: FastAPI):
         except Exception:
             pass
 
-    # FIX: also clean up allure proc on shutdown
-    if _allure_proc is not None:
-        try:
-            if os.name == "nt":
-                subprocess.run(
-                    ["taskkill", "/F", "/T", "/PID", str(_allure_proc.pid)],
-                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-                )
-            else:
-                _allure_proc.kill()
-        except Exception:
-            pass
-
 
 # ════════════════════════════════════════════════════════════════════════════
 #  FASTAPI APP
@@ -614,7 +580,7 @@ def analyze_ui_screenshots(req: AnalyzeReq):
         raise HTTPException(500, detail=f"Validator script not found: {validator}")
 
     cmd = [sys.executable, str(validator), "--root-dir", str(run_dir)]
-    proc = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
+    proc = subprocess.run(cmd, capture_output=True, text=True)
 
     if proc.returncode != 0:
         raise HTTPException(500, detail=f"UI validator failed: {proc.stderr.strip() or proc.stdout.strip()}")
@@ -628,35 +594,24 @@ def analyze_ui_screenshots(req: AnalyzeReq):
 
     return {"run_id": run_id, "results": results}
 
+
 def _start_allure_server() -> str:
     global _allure_proc, _allure_port
-
-    # ✅ reuse existing server
-    if _allure_proc is not None and _allure_proc.poll() is None and _allure_port is not None:
-        print(f"[Allure] Reusing existing server on port {_allure_port}")
-        return f"http://127.0.0.1:{_allure_port}?t={int(time.time())}"
-
     if not os.path.isdir(ALLURE_REPORT_DIR):
         raise HTTPException(status_code=404, detail=f"Allure report dir not found: {ALLURE_REPORT_DIR}")
-
-    if _allure_proc is not None:
+    if _allure_proc is not None and _allure_proc.poll() is None:
         try:
             _allure_proc.terminate()
         except Exception:
             pass
         _allure_proc = None
-
     _allure_port = _pick_free_port()
-
     _allure_proc = subprocess.Popen(
-        [ALLURE_CMD, "open", "-h", "127.0.0.1", "-p", str(_allure_port), ALLURE_REPORT_DIR],
-        cwd=BASE_DIR,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-        shell=True,
+        ["allure", "open", "-h", "127.0.0.1", "-p", str(_allure_port), ALLURE_REPORT_DIR],
+        cwd=BASE_DIR, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+        creationflags=subprocess.CREATE_NO_WINDOW if hasattr(subprocess, "CREATE_NO_WINDOW") else 0,
     )
-
-    return f"http://127.0.0.1:{_allure_port}?t={int(time.time())}"
+    return f"http://127.0.0.1:{_allure_port}"
 
 
 ALLURE_RESULTS_DIR = os.path.join(BASE_DIR, "allure-results")
@@ -799,6 +754,7 @@ async def run_complete(event: RunCompleteEvent):
     return {"ok": True}
 
 
+# ─── NEW: Expose APP_VARIANTS to the frontend ─────────────────────────────────
 @app.get("/api/app-variants")
 async def get_app_variants():
     """
@@ -853,46 +809,18 @@ async def jira_test_connection():
             "message": f"Credentials OK. Connected as '{base.get('jira_account')}'. Project '{jira_config.project_key}' accessible."}
 
 
-# FIX: /api/allure/start now reuses existing server — no more multiple tabs
 @app.post("/api/allure/start")
 async def allure_start():
-    global _allure_proc, _allure_port
-
-    # Reuse if already alive
-    if _allure_proc is not None and _allure_proc.poll() is None and _allure_port is not None:
-        print(f"[Allure] Reusing existing server on port {_allure_port}")
-        return JSONResponse({"url": f"http://127.0.0.1:{_allure_port}"})
-
-    # Kill stale dead process
-    if _allure_proc is not None:
-        try:
-            _allure_proc.terminate()
-        except Exception:
-            pass
-        _allure_proc = None
-
-    _allure_port = _pick_free_port()
-    _allure_proc = subprocess.Popen(
-        [ALLURE_CMD, "open", "-h", "127.0.0.1", "-p", str(_allure_port), ALLURE_REPORT_DIR],
-        cwd=BASE_DIR,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-        shell=True,
-    )
-    return JSONResponse({"url": f"http://127.0.0.1:{_allure_port}"})
+    port = _pick_free_port()
+    subprocess.Popen([ALLURE_CMD, "open", "-h", "127.0.0.1", "-p", str(port), ALLURE_REPORT_DIR],
+                     cwd=BASE_DIR, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True)
+    return JSONResponse({"url": f"http://127.0.0.1:{port}"})
 
 
 @app.get("/device-status")
 async def device_status():
     try:
-        result = subprocess.run(
-            ["adb", "devices"],
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-            timeout=5,
-        )
+        result = subprocess.run(["adb", "devices"], capture_output=True, text=True, timeout=5)
         lines = result.stdout.strip().splitlines()[1:]
         return {"connected": any("\tdevice" in line for line in lines)}
     except Exception:
@@ -1212,9 +1140,6 @@ async def health():
         "step_store_counts": {k: len(v) for k, v in _test_steps_store.items()},
         "current_test":      _current_test_name,
         "pending_payloads":  len(_pending_payloads),
-        # FIX: expose allure server status in health check
-        "allure_port":       _allure_port,
-        "allure_running":    _allure_proc is not None and _allure_proc.poll() is None,
     }
 
 
@@ -1245,7 +1170,7 @@ async def start_test(request: TestRequest, background_tasks: BackgroundTasks):
             sys.executable, "-u", script_path, request.url,
             stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE, env=env)
         async for line in DOWNLOAD_PROCESS_OBJ.stdout:
-            decoded_line = line.decode("utf-8", errors="replace").strip()
+            decoded_line = line.decode("utf-8").strip()
             if decoded_line.startswith("PROGRESS:"):
                 await manager.broadcast({"type": "LOG", "payload": {"message": decoded_line.replace("PROGRESS:",""), "status": "PROGRESS"}})
             elif decoded_line.startswith("RESULT:"):
@@ -1255,7 +1180,7 @@ async def start_test(request: TestRequest, background_tasks: BackgroundTasks):
         await DOWNLOAD_PROCESS_OBJ.wait()
         if DOWNLOAD_PROCESS_OBJ.returncode != 0:
             stderr_data = await DOWNLOAD_PROCESS_OBJ.stderr.read()
-            raise Exception(f"Script Error: {stderr_data.decode('utf-8', errors='replace').strip() or 'Unknown error'}")
+            raise Exception(f"Script Error: {stderr_data.decode('utf-8').strip() or 'Unknown error'}")
         if not apk_path:
             raise Exception("Download script finished but returned no path.")
         DOWNLOAD_PROCESS_OBJ = None
@@ -1276,14 +1201,13 @@ async def start_test(request: TestRequest, background_tasks: BackgroundTasks):
 
         info = get_apk_info(apk_path) or {}
 
-        # FIX: added missing comma after developer_name argument
         background_tasks.add_task(
             _run_post_notify,
             apk_path=apk_path,
             tests_to_run=tests_to_run,
             app_name=info.get("app_name") or app_name or "",
             app_version=info.get("app_version") or "",
-            developer_name=APP_DEVELOPER_MAP.get(app_variant, "Unknown Developer"),
+            developer_name=APP_DEVELOPER_MAP.get(app_variant, "Unknown Developer")
             channel_id=SLACK_NOTIFY_CHANNEL,
         )
 
@@ -1320,13 +1244,15 @@ async def start_test_existing(request: ExistingTestRequest, background_tasks: Ba
         full_icon_url = f"http://localhost:8000{icon_url}" if icon_url else None
         info          = get_apk_info(apk_path) or {}
 
+        # ── Resolve variant from APK package name ─────────────────────────────
         package_name  = info.get("package_name")
         app_variant   = PACKAGE_VARIANT_MAP.get(package_name)
         variant_tests = APP_VARIANTS.get(app_variant, [])
 
-        tests_to_run = request.tests_to_run
+        tests_to_run = request.tests_to_run  # what the frontend sent
 
         if tests_to_run:
+            # Validate every path the frontend sent exists on disk
             valid   = [t for t in tests_to_run if os.path.isfile(os.path.join(BASE_DIR, t["path"]))]
             invalid = [t for t in tests_to_run if t not in valid]
 
@@ -1340,8 +1266,10 @@ async def start_test_existing(request: ExistingTestRequest, background_tasks: Ba
                     "status": "WARN",
                 }})
 
+            # If NONE were valid, fall back entirely to APP_VARIANTS
             tests_to_run = valid if valid else variant_tests
         else:
+            # Nothing sent from frontend → use APP_VARIANTS
             tests_to_run = variant_tests
 
         if not tests_to_run:
@@ -1358,14 +1286,13 @@ async def start_test_existing(request: ExistingTestRequest, background_tasks: Ba
             "status": "INFO",
         }})
 
-        # FIX: added missing comma after developer_name argument
         background_tasks.add_task(
             _run_post_notify,
             apk_path=apk_path,
             tests_to_run=tests_to_run,
             app_name=info.get("app_name") or "",
             app_version=info.get("app_version") or "",
-            developer_name=APP_DEVELOPER_MAP.get(app_variant, "Unknown Developer"),
+            developer_name=APP_DEVELOPER_MAP.get(app_variant, "Unknown Developer")
             channel_id=SLACK_NOTIFY_CHANNEL,
         )
 
