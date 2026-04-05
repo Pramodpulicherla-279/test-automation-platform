@@ -1,0 +1,45 @@
+import asyncio
+from fastapi import WebSocket
+
+
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: list[WebSocket] = []
+        self._lock = asyncio.Lock()
+
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        async with self._lock:
+            self.active_connections.append(websocket)
+
+    async def disconnect(self, websocket: WebSocket):
+        async with self._lock:
+            if websocket in self.active_connections:
+                self.active_connections.remove(websocket)
+
+    async def broadcast(self, message: dict):
+        async with self._lock:
+            connections = list(self.active_connections)
+
+        if not connections:
+            return
+
+        async def safe_send(ws: WebSocket):
+            try:
+                await ws.send_json(message)
+                return True
+            except Exception:
+                return False
+
+        results = await asyncio.gather(
+            *(safe_send(ws) for ws in connections),
+            return_exceptions=True
+        )
+
+        for ws, ok in zip(connections, results):
+            if ok is not True:
+                await self.disconnect(ws)
+
+
+# ✅ GLOBAL INSTANCE (IMPORTANT)
+manager = ConnectionManager()
