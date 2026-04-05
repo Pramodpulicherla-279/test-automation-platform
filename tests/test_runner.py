@@ -430,7 +430,7 @@ def run_tests_and_get_suggestions(
         else:
             send_log("Suite execution finished with errors.", "FAILED")
         
-        generate_report(project_root)
+        # generate_report(project_root)
         
         # Notify frontend that run is fully complete — stops polling state
         try:
