@@ -600,12 +600,12 @@ class JiraCreateRequest(BaseModel):
     test_id:         Optional[str]       = None
     steps_executed:  Optional[List[Any]] = None
     developer_name:  Optional[str]       = None
-    priority:        Optional[str]       = None
     title:           Optional[str]       = None
     description:     Optional[str]       = None
     parent:          Optional[str]       = None
     fix_version:     Optional[List[str]] = None
     affects_version: Optional[List[str]] = None
+    priority:        Optional[str]       = None
     issue_id:        Optional[str]       = None
     issue_url:       Optional[str]       = None
     ticket_id:       Optional[str]       = None
@@ -1172,7 +1172,6 @@ async def jira_create(req: JiraCreateRequest):
                 test_id        = req.test_id,
                 steps_executed = req.steps_executed or [],
                 developer_name = req.developer_name,
-                priority       = req.priority,
                 start_date     = req.start_date,
                 end_date       = req.end_date,
                 sprint         = req.sprint,
