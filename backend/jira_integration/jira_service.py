@@ -389,14 +389,6 @@ def _build_formatted_description(
                 "content": [{"type": "text", "text": line}]
             })
     
-    # Add metadata section
-    content.append({"type": "paragraph", "content": [{"type": "text", "text": ""}]})  # blank line
-    content.append({
-        "type": "heading",
-        "attrs": {"level": 3},
-        "content": [{"type": "text", "text": "Metadata"}]
-    })
-    
     metadata_lines = []
     if app_name and not _is_unknown(app_name):
         metadata_lines.append(f"App: {app_name}")
@@ -422,15 +414,21 @@ def _build_formatted_description(
     if sprint:
         metadata_lines.append(f"Sprint: {sprint}")
     
-    for line in metadata_lines:
+    if metadata_lines:
         content.append({
-            "type": "paragraph",
-            "content": [{"type": "text", "text": line}]
+            "type": "heading",
+            "attrs": {"level": 3},
+            "content": [{"type": "text", "text": "Metadata"}]
         })
+
+        for line in metadata_lines:
+            content.append({
+                "type": "paragraph",
+                "content": [{"type": "text", "text": line}]
+            })
     
     # Add steps section if available
     if steps_executed and len(steps_executed) > 0:
-        content.append({"type": "paragraph", "content": [{"type": "text", "text": ""}]})  # blank line
         content.append({
             "type": "heading",
             "attrs": {"level": 3},
@@ -545,6 +543,8 @@ def create_jira_issue(
     test_id: Optional[str] = None,
     steps_executed: Optional[List[str]] = None,
     developer_name: Optional[str] = None,
+    issue_type: Optional[str] = None,
+    priority: Optional[str] = None,
     fix_version: Optional[str] = None,
     affects_version: Optional[str] = None,
     start_date: Optional[str] = None,
@@ -608,8 +608,8 @@ def create_jira_issue(
         "project": {"key": config.project_key},
         "summary": summary or issue_summary or "Test Automation Failure",
         "description": formatted_description_adf,  # ← ADF format
-        "issuetype": {"name": "Bug"},
-        "priority": {"name": "High"},
+        "issuetype": {"name": issue_type or config.issue_type or "Bug"},
+        "priority": {"name": priority or config.priority or "High"},
     }
 
     # Add labels for categorization
@@ -638,16 +638,46 @@ def create_jira_issue(
     headers = {"Accept": "application/json", "Content-Type": "application/json"}
     url = f"{config.url}/rest/api/3/issue"
 
-    try:
+    def _post_issue(payload_fields: dict) -> requests.Response:
         print(f"[JIRA] POST {url}")
-        
-        response = requests.post(
+        return requests.post(
             url,
             auth=auth,
             headers=headers,
-            json={"fields": fields},
+            json={"fields": payload_fields},
             timeout=15,
         )
+
+    def _response_error_text(response: requests.Response) -> str:
+        try:
+            error_payload = response.json()
+        except Exception:
+            return response.text[:1000]
+
+        if isinstance(error_payload, dict):
+            error_messages = error_payload.get("errorMessages") or []
+            field_errors = error_payload.get("errors") or {}
+            pieces = []
+            if error_messages:
+                pieces.append("; ".join(str(item) for item in error_messages))
+            if field_errors:
+                pieces.append(
+                    ", ".join(f"{field}: {message}" for field, message in field_errors.items())
+                )
+            if pieces:
+                return " | ".join(pieces)
+        return json.dumps(error_payload, indent=2)
+
+    try:
+        response = _post_issue(fields)
+
+        if response.status_code == 400 and "assignee" in fields:
+            error_text = _response_error_text(response).lower()
+            if "assignee" in error_text or "assign" in error_text:
+                print("[JIRA] Retrying without assignee after Jira validation error")
+                fallback_fields = dict(fields)
+                fallback_fields.pop("assignee", None)
+                response = _post_issue(fallback_fields)
 
         print(f"[JIRA] Response status: {response.status_code}")
 
@@ -665,10 +695,10 @@ def create_jira_issue(
             return issue_key
 
         elif response.status_code == 400:
-            error = response.json()
+            error_text = _response_error_text(response)
             print(f"\n✗ JIRA 400 Bad Request")
-            print(f"  Error: {json.dumps(error, indent=2)}")
-            raise Exception(f"JIRA 400: {error}")
+            print(f"  Error: {error_text}")
+            raise Exception(f"JIRA 400: {error_text}")
 
         elif response.status_code == 401:
             raise Exception(

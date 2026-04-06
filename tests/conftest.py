@@ -27,6 +27,7 @@ Step capture — four-layer strategy (most reliable first):
 # ── MUST be the very first executable lines ───────────────────────────────────
 import sys
 sys.dont_write_bytecode = True          # Prevent Python writing NEW .pyc files
+import sys, os
 
 import os
 os.environ["PYTHONDONTWRITEBYTECODE"] = "1"   # Propagate to child processes
@@ -638,3 +639,9 @@ def pytest_sessionfinish(session, exitstatus):
 
 def notReportFailed(report):
     return report.outcome != "failed"
+
+
+# Make jira_integration importable from backend/
+backend_dir = os.path.join(os.path.dirname(__file__), "backend")
+if backend_dir not in sys.path:
+    sys.path.insert(0, backend_dir)
