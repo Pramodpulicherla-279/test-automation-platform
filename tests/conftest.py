@@ -1,4 +1,4 @@
-# tests/conftest.py - UPDATED VERSION
+# tests/conftest.py
 """
 Step capture — four-layer strategy (most reliable first):
 
@@ -8,6 +8,11 @@ Step capture — four-layer strategy (most reliable first):
   3. Live logcat scrape from device at failure time
   4. report.sections["Captured stdout call"] / capstdout
   (empty list if all fail)
+
+─── STEP CAPTURE FIX ──────────────────────────────────────────────────────────
+  Root cause:  _extract_steps_from_text only matched [FOUND] and [CLICK].
+               Tests that use [STEP], [ACTION], [TAP], ✅ markers got 0 steps.
+  Fix:  Expanded _STEP_PATTERNS to cover all common markers.
 
 ─── PYCACHE FIX ────────────────────────────────────────────────────────────────
   Root cause:  Python caches compiled .py → __pycache__/*.pyc.
@@ -40,6 +45,7 @@ import shutil
 import datetime
 import requests as http_requests
 from pathlib import Path
+from typing import List, Optional
 
 import pytest
 import allure
@@ -62,24 +68,39 @@ _ticket_id:      str  = ""
 _issue_counter:  int  = 0
 _session_issues: list = []
 _developer_name: str  = ""
-_test_start_time: datetime.datetime = None  # ← NEW: Track test start time globally
+_test_start_time: datetime.datetime = None  # Track test start time globally
 
 # Per-test local step buffer — populated by _StepCapturingPlugin
 _local_step_buffer: dict = {}   # { test_name: [step, ...] }
 _current_test_name: str  = ""
 
 
-# ─── Regex for parsing [FOUND] / [CLICK] lines ───────────────────────────────
-_FOUND_RE = re.compile(
-    r"\[FOUND\]\s+name='([^']+)'|\[FOUND\]\s+name=\"([^\"]+)\"",
-    re.IGNORECASE,
-)
-_CLICK_RE = re.compile(r"\[(?:CLICK|TAP|PRESSED|TAPPED)\]\s+(.+)", re.IGNORECASE)
+# ════════════════════════════════════════════════════════════════════════════
+#  STEP EXTRACTION — expanded pattern set
+#
+#  FIX: Added [STEP], [ACTION], [TAP], [PRESSED], [TAPPED], ✅ markers so
+#  that any test-side logging convention is captured, not just [FOUND].
+# ════════════════════════════════════════════════════════════════════════════
+
+# Each tuple: (compiled pattern, group index that holds the step label)
+_STEP_PATTERNS: List[tuple] = [
+    # [FOUND] name='Foo'  or  [FOUND] name="Foo"
+    (re.compile(r"\[FOUND\]\s+name='([^']+)'",   re.IGNORECASE), 1),
+    (re.compile(r'\[FOUND\]\s+name="([^"]+)"',   re.IGNORECASE), 1),
+    # [CLICK] label  /  [TAP] label  /  [PRESSED] label  /  [TAPPED] label
+    (re.compile(r'\[(?:CLICK|TAP|PRESSED|TAPPED)\]\s+(.+)', re.IGNORECASE), 1),
+    # [STEP] Step description
+    (re.compile(r'\[STEP\]\s+(.+)',   re.IGNORECASE), 1),
+    # [ACTION] did something
+    (re.compile(r'\[ACTION\]\s+(.+)', re.IGNORECASE), 1),
+    # ✅ Step name  (emitted by helper wrappers)
+    (re.compile(r'✅\s+(?:Step\s+)?[–—-]?\s*(.+)', re.IGNORECASE), 1),
+]
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# PYCACHE CLEANUP
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════════════════
+#  PYCACHE CLEANUP
+# ════════════════════════════════════════════════════════════════════════════
 def _clean_pycache(root: str = ".") -> None:
     """
     Recursively delete every __pycache__ dir and *.pyc / *.pyo file under root.
@@ -105,14 +126,14 @@ def _clean_pycache(root: str = ".") -> None:
     )
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# LOCAL BUFFER PLUGIN — captures steps live from pytest stdout
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════════════════
+#  LOCAL BUFFER PLUGIN — captures steps live from pytest stdout
+# ════════════════════════════════════════════════════════════════════════════
 class _StepCapturingPlugin:
     """
     Registered as a pytest plugin in pytest_configure.
     After each test call phase it reads capstdout and feeds any
-    [FOUND] / [CLICK] lines into _local_step_buffer[test_name].
+    recognised step lines into _local_step_buffer[test_name].
     """
 
     def pytest_runtest_logreport(self, report):
@@ -133,25 +154,27 @@ class _StepCapturingPlugin:
         print(f"[LOCAL_BUFFER] Stored {len(existing)} step(s) for {test_name}")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# STEP EXTRACTION HELPERS
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════════════════
+#  STEP EXTRACTION HELPERS
+# ════════════════════════════════════════════════════════════════════════════
 def _extract_steps_from_text(text: str) -> list:
-    """Parse [FOUND] / [CLICK] lines from any text blob, dedup consecutive."""
+    """
+    Parse step markers from any text blob using all patterns in _STEP_PATTERNS.
+    Deduplicates consecutive identical steps.
+    """
     if not text:
         return []
     raw = []
     for line in text.splitlines():
         line = line.strip()
-        m = _FOUND_RE.search(line)
-        if m:
-            step = (m.group(1) or m.group(2) or "").strip()
-            if step:
-                raw.append(step)
-            continue
-        m = _CLICK_RE.search(line)
-        if m:
-            raw.append(m.group(1).strip())
+        for pattern, group in _STEP_PATTERNS:
+            m = pattern.search(line)
+            if m:
+                step = m.group(group).strip()
+                if step:
+                    raw.append(step)
+                break  # first matching pattern wins per line
+    # dedup consecutive
     deduped = []
     for step in raw:
         if not deduped or step != deduped[-1]:
@@ -215,7 +238,7 @@ def _get_steps_from_local_buffer(test_name: str) -> list:
 
 def _get_steps_from_logcat(driver_obj) -> list:
     """
-    Layer 3: scrape device logcat for [FOUND]/[CLICK] lines at failure time.
+    Layer 3: scrape device logcat for step markers at failure time.
     """
     if not driver_obj:
         return []
@@ -273,9 +296,9 @@ def _get_steps(item, report, test_name: str) -> list:
     return []
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# GENERAL HELPERS
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════════════════
+#  GENERAL HELPERS
+# ════════════════════════════════════════════════════════════════════════════
 def _make_ticket_id() -> str:
     return "RUN-" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
@@ -310,9 +333,9 @@ def _fetch_developer_name_from_jira() -> str:
     return ""
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# PYTEST HOOKS
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════════════════
+#  PYTEST HOOKS
+# ════════════════════════════════════════════════════════════════════════════
 def pytest_configure(config):
     """
     Earliest pytest hook — before collection, before any test module is imported.
@@ -345,13 +368,13 @@ def pytest_sessionstart(session):
 
 def pytest_runtest_setup(item):
     """
-    Signal the server which test is starting so it buckets [FOUND] steps
+    Signal the server which test is starting so it buckets steps
     under the correct key (not 'default').
     Also pre-initialise the local buffer slot for this test.
     """
     global _current_test_name, _test_start_time
     _current_test_name = item.name
-    _test_start_time = datetime.datetime.now()  # ← NEW: Capture test start time
+    _test_start_time = datetime.datetime.now()
     _local_step_buffer.setdefault(item.name, [])
 
     try:
@@ -551,40 +574,32 @@ def pytest_runtest_makereport(item, call):
 
     issue_summary = f"Automation Failure: {test_name}"
 
-    # 4. Step collection (4-layer pipeline)
+    # 4. Step collection (4-layer pipeline — now uses expanded patterns)
     steps_executed = _get_steps(item, report, test_name)
 
     # 5. Error text
     error_text = _extract_error_only(report.longrepr)
 
-    # ═══════════════════════════════════════════════════════════════════════════
-    # *** FIX: CAPTURE ACCURATE TEST EXECUTION DATES ***
-    # ═════════════════════════════════════════════════════════════════════════════
+    # ── Capture accurate test execution dates ──────────────────────────────
     global _test_start_time
-    
-    test_start = _test_start_time or datetime.datetime.now()
-    test_end = datetime.datetime.now()
-    
-    # Format as ISO 8601 for API (backend will convert to custom fields)
-    start_date_iso = test_start.isoformat()
-    end_date_iso = test_end.isoformat()
-    
-    # Also format for readability (matching TAP display: 29/03/2026, 08:43)
-    start_date_readable = test_start.strftime('%d/%m/%Y, %H:%M')
-    end_date_readable = test_end.strftime('%d/%m/%Y, %H:%M')
-    
-    # Calculate duration
-    duration_seconds = (test_end - test_start).total_seconds()
-    duration_readable = f"{int(duration_seconds)} seconds"
-    
-    print(f"\n📅 Test Execution Timeline:")
-    print(f"   Start: {start_date_readable} (ISO: {start_date_iso})")
-    print(f"   End:   {end_date_readable} (ISO: {end_date_iso})")
-    print(f"   Duration: {duration_readable}")
 
-    # ═══════════════════════════════════════════════════════════════════════════
-    # Build payload with DATES AND SPRINT
-    # ═════════════════════════════════════════════════════════════════════════════
+    test_start = _test_start_time or datetime.datetime.now()
+    test_end   = datetime.datetime.now()
+
+    start_date_iso      = test_start.isoformat()
+    end_date_iso        = test_end.isoformat()
+    start_date_readable = test_start.strftime('%d/%m/%Y, %H:%M')
+    end_date_readable   = test_end.strftime('%d/%m/%Y, %H:%M')
+    duration_seconds    = (test_end - test_start).total_seconds()
+    duration_readable   = f"{int(duration_seconds)} seconds"
+
+    print(f"\n📅 Test Execution Timeline:")
+    print(f"   Start:    {start_date_readable} (ISO: {start_date_iso})")
+    print(f"   End:      {end_date_readable} (ISO: {end_date_iso})")
+    print(f"   Duration: {duration_readable}")
+    print(f"   Steps:    {len(steps_executed)}")
+
+    # ── Build payload ──────────────────────────────────────────────────────
     payload = {
         "ticket_id":       _ticket_id,
         "issue_id":        issue_id,
@@ -598,11 +613,9 @@ def pytest_runtest_makereport(item, call):
         "steps_executed":  steps_executed,
         "developer_name":  developer_name,
         "description":     _build_description(error_text, steps_executed),
-        
-        # *** NEW: Include dates and sprint ***
-        "start_date":      start_date_iso,      # ISO format for API
-        "end_date":        end_date_iso,        # ISO format for API
-        "sprint":          "Automation",        # Default sprint name
+        "start_date":      start_date_iso,
+        "end_date":        end_date_iso,
+        "sprint":          "Automation",
         "fix_version":     ["Production"],
         "affects_version": [app_name] if app_name and app_name != "Unknown App" else [],
     }

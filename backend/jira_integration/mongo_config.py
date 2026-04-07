@@ -124,8 +124,8 @@ class MongoDBConfig:
 
     def _create_indexes(self):
         """Create database indexes for performance"""
-        if not self.db:
-            return
+        if self.db is None:
+           return
 
         try:
             col = self.db["jira_tickets"]
@@ -147,17 +147,56 @@ class MongoDBConfig:
             self.client.close()
             logger.info("[MongoDB] Disconnected.")
 
+    # ✅ FIX
     def get_collection(self, name: str):
-        """Get a collection from the database"""
-        if not self.db:
-            return None
+        if self.db is None:    # ← correct
+           return None
         return self.db[name]
+    
+
+from pymongo import MongoClient
+import time
+import os
+
+MONGO_URI = os.getenv("MONGO_URI")  # or your URI
+
+client = None
+db = None
+
+def connect_to_mongo():
+    global client, db
+
+    for i in range(5):
+        try:
+            print(f"[MongoDB] Attempt {i+1} connecting...")
+
+            client = MongoClient(
+                MONGO_URI,
+                serverSelectionTimeoutMS=5000
+            )
+
+            client.server_info()  # force connection
+            db = client["jira_automation"]  # your DB name
+
+            print("✅ MongoDB connected successfully")
+            return db
+
+        except Exception as e:
+            print(f"❌ Attempt {i+1} failed:", e)
+            time.sleep(2)
+
+    raise Exception("❌ Could not connect to MongoDB after retries")  
+  
 
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Singleton + public helpers
 # ─────────────────────────────────────────────────────────────────────────────
 mongo_config = MongoDBConfig()
+
+# Auto-connect on module import
+if mongo_config.enabled:
+    mongo_config.connect()
 
 
 def connect_mongodb():

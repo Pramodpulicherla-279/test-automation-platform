@@ -5,7 +5,7 @@ Bridge between Jira issue creation and MongoDB storage.
 
 Usage:
     from jira_integration.mongo_jira_integration import create_and_store_jira_issue
-    
+
     # Create issue in Jira AND save to MongoDB
     result = create_and_store_jira_issue(
         summary="Test failed",
@@ -45,12 +45,12 @@ def create_and_store_jira_issue(
 ) -> Optional[Dict[str, Any]]:
     """
     Create a JIRA issue AND store it in MongoDB.
-    
+
     This function:
     1. Creates the issue in Jira via create_jira_issue()
     2. Saves all the data to MongoDB for record keeping
     3. Returns both the Jira issue key and MongoDB ticket ID
-    
+
     Args:
         summary: Issue summary/title
         description: Issue description
@@ -66,10 +66,10 @@ def create_and_store_jira_issue(
         start_date: Test start time (ISO format)
         end_date: Test end time (ISO format)
         sprint: Sprint name for JIRA
-    
+
     Returns:
         Dictionary with Jira issue key and MongoDB ticket ID, or None if failed
-        
+
         Example:
         {
             "success": True,
@@ -79,13 +79,12 @@ def create_and_store_jira_issue(
             "error": None
         }
     """
-    
     try:
         # Step 1: Create issue in Jira
         print("\n" + "=" * 70)
         print("[JIRA + MONGO] Creating issue in Jira and storing in MongoDB...")
         print("=" * 70)
-        
+
         issue_key = jira_service.create_jira_issue(
             summary=summary,
             description=description,
@@ -106,18 +105,18 @@ def create_and_store_jira_issue(
             end_date=end_date,
             sprint=sprint,
         )
-        
+
         if not issue_key:
             logger.error("[JIRA + MONGO] Failed to create Jira issue")
             return {
                 "success": False,
                 "issue_id": None,
                 "ticket_id": None,
-                "error": "Failed to create Jira issue"
+                "error": "Failed to create Jira issue",
             }
-        
+
         logger.info(f"[JIRA + MONGO] ✓ Jira issue created: {issue_key}")
-        
+
         # Step 2: Save to MongoDB
         ticket_id = mongo_operations.save_ticket(
             issue_id=issue_key,
@@ -137,48 +136,51 @@ def create_and_store_jira_issue(
             status="Open",
             environment="staging",
             start_date=start_date,
-            due_date=end_date
+            due_date=end_date,
         )
-        
+
         if ticket_id:
             logger.info(f"[JIRA + MONGO] ✓ Ticket saved to MongoDB: {ticket_id}")
         else:
-            logger.warning(f"[JIRA + MONGO] ⚠️ Failed to save to MongoDB, but Jira issue created: {issue_key}")
-        
+            logger.warning(
+                f"[JIRA + MONGO] ⚠️ Failed to save to MongoDB, but Jira issue created: {issue_key}"
+            )
+
         # Build response
         from jira_integration.jira_config import config
+
         result = {
             "success": True,
             "issue_id": issue_key,
             "ticket_id": ticket_id or "N/A",
             "issue_url": f"{config.url}/browse/{issue_key}",
-            "error": None if ticket_id else "MongoDB save failed"
+            "error": None if ticket_id else "MongoDB save failed",
         }
-        
+
         print("[JIRA + MONGO] ✓ Issue creation and storage complete!")
         print("=" * 70 + "\n")
-        
+
         return result
-        
+
     except Exception as e:
         error_msg = str(e)
         logger.error(f"[JIRA + MONGO] ✗ Error: {error_msg}")
-        
+
         return {
             "success": False,
             "issue_id": None,
             "ticket_id": None,
-            "error": error_msg
+            "error": error_msg,
         }
 
 
 def get_stored_ticket(issue_id: str) -> Optional[Dict[str, Any]]:
     """
     Retrieve a stored ticket from MongoDB.
-    
+
     Args:
         issue_id: Jira issue key (e.g., "AT-87")
-    
+
     Returns:
         Ticket data if found, None otherwise
     """
@@ -188,10 +190,10 @@ def get_stored_ticket(issue_id: str) -> Optional[Dict[str, Any]]:
 def get_all_stored_tickets(**filters) -> List[Dict[str, Any]]:
     """
     Retrieve all stored tickets from MongoDB.
-    
+
     Args:
         **filters: Optional filters (status, module, priority, assignee)
-    
+
     Returns:
         List of tickets
     """
@@ -201,11 +203,11 @@ def get_all_stored_tickets(**filters) -> List[Dict[str, Any]]:
 def update_stored_ticket(issue_id: str, **updates) -> Optional[Dict[str, Any]]:
     """
     Update a stored ticket in MongoDB.
-    
+
     Args:
         issue_id: Jira issue key
         **updates: Fields to update
-    
+
     Returns:
         Updated ticket data if successful
     """
@@ -213,17 +215,17 @@ def update_stored_ticket(issue_id: str, **updates) -> Optional[Dict[str, Any]]:
 
 
 def get_ticket_statistics() -> Dict[str, Any]:
-    """Get statistics about stored tickets"""
+    """Get statistics about stored tickets."""
     return mongo_operations.get_statistics()
 
 
 def search_stored_tickets(query: str) -> List[Dict[str, Any]]:
     """
     Search stored tickets by text.
-    
+
     Args:
         query: Search query
-    
+
     Returns:
         List of matching tickets
     """
