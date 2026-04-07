@@ -93,7 +93,7 @@ def save_ticket(
     
     try:
         collection = get_tickets_collection()
-        if not collection:
+        if collection is None:
             logger.error("[MongoDB] Could not get tickets collection")
             return None
         
@@ -153,7 +153,7 @@ def get_ticket(issue_id: str) -> Optional[Dict[str, Any]]:
     
     try:
         collection = get_tickets_collection()
-        if not collection:
+        if collection is None:
             return None
         
         ticket = collection.find_one({"issue_id": issue_id})
@@ -204,7 +204,7 @@ def get_all_tickets(
     
     try:
         collection = get_tickets_collection()
-        if not collection:
+        if collection is None:
             return []
         
         # Build filter
@@ -258,7 +258,7 @@ def update_ticket(
     
     try:
         collection = get_tickets_collection()
-        if not collection:
+        if collection is None:
             return None
         
         # Add updated_at timestamp
@@ -299,7 +299,7 @@ def delete_ticket(issue_id: str) -> bool:
     
     try:
         collection = get_tickets_collection()
-        if not collection:
+        if collection is None:
             return False
         
         result = collection.delete_one({"issue_id": issue_id})
@@ -329,7 +329,7 @@ def get_statistics() -> Dict[str, Any]:
     
     try:
         collection = get_tickets_collection()
-        if not collection:
+        if collection is None:
             return {}
         
         total = collection.count_documents({})
@@ -384,7 +384,7 @@ def search_tickets(query: str, fields: Optional[List[str]] = None) -> List[Dict[
     
     try:
         collection = get_tickets_collection()
-        if not collection:
+        if collection is None:
             return []
         
         if not fields:

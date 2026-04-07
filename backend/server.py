@@ -25,10 +25,7 @@ from gdrive_loader import download_apk, extract_app_icon, get_apk_info
 from typing import List, Optional, Dict, Any
 logger = logging.getLogger("uvicorn.error")
 from starlette.websockets import WebSocketDisconnect
-
-# ────────────────────────────────────────────────────────────────────────────
-# MongoDB Imports (NEW)
-# ────────────────────────────────────────────────────────────────────────────
+from jira_integration.mongo_config import mongo_config
 from jira_integration.mongo_config import connect_mongodb, disconnect_mongodb, is_mongodb_enabled
 from jira_integration.mongo_jira_integration import create_and_store_jira_issue
 
@@ -415,22 +412,20 @@ async def lifespan(app: FastAPI):
     # STARTUP
     # ────────────────────────────────────────────────────────────────────────
     print("\n" + "=" * 70)
-    print("[STARTUP] Initializing FastAPI server...")
+    print("[STARTUP] Initializing application...")
     print("=" * 70)
-    
-    # Connect to MongoDB
+
+    print("[STARTUP] Connecting to MongoDB...")
     if connect_mongodb():
         logger.info("✅ [STARTUP] MongoDB connected successfully")
+        print("✅ [STARTUP] MongoDB connected successfully")
     else:
-        logger.warning("⚠️  [STARTUP] MongoDB connection failed or disabled - tickets won't be saved to database")
-    
+        logger.warning("⚠️  [STARTUP] MongoDB connection failed or disabled")
+        print("⚠️  [STARTUP] MongoDB connection failed or disabled")
+
     print("[STARTUP] Server ready for requests\n")
-    
     yield
-    
-    # ────────────────────────────────────────────────────────────────────────
-    # SHUTDOWN
-    # ────────────────────────────────────────────────────────────────────────
+
     print("\n" + "=" * 70)
     print("[SHUTDOWN] Cleaning up...")
     print("=" * 70)
@@ -440,7 +435,6 @@ async def lifespan(app: FastAPI):
     
     # Clean up child processes
     global _appium_proc, _allure_proc
-
     if _appium_proc is not None:
         try:
             if os.name == "nt":
@@ -452,7 +446,7 @@ async def lifespan(app: FastAPI):
                 _appium_proc.kill()
         except Exception:
             pass
-    
+
     print("[SHUTDOWN] Cleanup complete\n")
 
 
@@ -496,7 +490,7 @@ class AnalyzeReq(BaseModel):
 def _latest_run_id() -> str:
     runs = [p for p in UI_SCREENSHOTS_BASE.iterdir() if p.is_dir()]
     if not runs:
-        raise HTTPException(404, detail="No UI screenshots found. Run tests and capture screenshots first.")
+        raise HTTPException(404, detail="No UI screenshots found.")
     runs.sort(key=lambda p: p.stat().st_mtime, reverse=True)
     return runs[0].name
 
@@ -505,7 +499,6 @@ def _latest_run_id() -> str:
 def analyze_ui_screenshots(req: AnalyzeReq):
     print("UI parser api called")
     run_id = req.run_id or _latest_run_id()
-    print(run_id)
     run_dir = UI_SCREENSHOTS_BASE / run_id
     if not run_dir.exists():
         raise HTTPException(404, detail=f"Run screenshots folder not found: {run_id}")
@@ -553,6 +546,7 @@ ALLURE_RESULTS_DIR = os.path.join(BASE_DIR, "allure-results")
 os.makedirs(ALLURE_RESULTS_DIR, exist_ok=True)
 app.mount("/allure-results", StaticFiles(directory=ALLURE_RESULTS_DIR), name="allure-results")
 app.mount("/ui-screenshots", StaticFiles(directory=str(UI_SCREENSHOTS_BASE)), name="ui-screenshots")
+
 
 # ─── Models ───────────────────────────────────────────────────────────────────
 class RunCompleteEvent(BaseModel):
@@ -660,7 +654,7 @@ def _broadcast_async(message: dict) -> None:
 
 
 # ════════════════════════════════════════════════════════════════════════════
-#  DESCRIPTION / STEPS HELPERS  (single source of truth)
+#  DESCRIPTION / STEPS HELPERS
 # ════════════════════════════════════════════════════════════════════════════
 
 def _is_unknown(value) -> bool:
@@ -934,13 +928,45 @@ def _resolve_steps_for_test(test_name: str) -> List[str]:
     return []
 
 
-# ─── POST /api/log-step ───────────────────────────────────────────────────────
+# ════════════════════════════════════════════════════════════════════════════
+#  FIX 1 — POST /api/log-step
+#  Capture [FOUND], [CLICK], [TAP], [STEP], [ACTION] markers so that tests
+#  which don't emit [FOUND] still get their steps recorded.
+# ════════════════════════════════════════════════════════════════════════════
+
+# Pre-compiled step-capture patterns (checked in order; first match wins)
+_STEP_CAPTURE_PATTERNS: List[re.Pattern] = [
+    # [FOUND] name='Foo'  or  [FOUND] name="Foo"
+    re.compile(r'\[FOUND\]\s+name=[\'"]([^\'"]+)[\'"]', re.IGNORECASE),
+    # [CLICK] some label  /  [TAP] ...  /  [PRESSED] ...  /  [TAPPED] ...
+    re.compile(r'\[(?:CLICK|TAP|PRESSED|TAPPED)\]\s+(.+)', re.IGNORECASE),
+    # [STEP] Step description
+    re.compile(r'\[STEP\]\s+(.+)', re.IGNORECASE),
+    # [ACTION] did something
+    re.compile(r'\[ACTION\]\s+(.+)', re.IGNORECASE),
+    # ✅ Step name  (emitted by Appium helper methods)
+    re.compile(r'✅\s+(?:Step\s+)?[–—-]?\s*(.+)', re.IGNORECASE),
+]
+
+
+def _parse_step_from_message(message: str) -> Optional[str]:
+    """Return the captured step label from a log message, or None."""
+    for pattern in _STEP_CAPTURE_PATTERNS:
+        m = pattern.search(message)
+        if m:
+            step = m.group(1).strip()
+            if step:
+                return step
+    return None
+
+
 @app.post("/api/log-step")
 async def log_step(msg: LogMessage):
     global _test_steps_store, _current_test_name
 
     message = msg.message
 
+    # ── Test context switch ──────────────────────────────────────────────
     if "[TEST_START:" in message:
         try:
             new_test = message.split("[TEST_START:")[1].split("]")[0].strip()
@@ -951,22 +977,22 @@ async def log_step(msg: LogMessage):
         except Exception as e:
             print(f"❌ TEST_START parse warning: {e}")
 
+    # ── Step capture (all patterns) ──────────────────────────────────────
     try:
         bucket = (
             message.split("[TEST:")[1].split("]")[0].strip()
             if "[TEST:" in message else _current_test_name
         )
-        if "[FOUND]" in message:
-            match = re.search(r"name='([^']+)'|name=\"([^\"]+)\"", message)
-            step = (match.group(1) or match.group(2)) if match else None
-            if step:
-                _test_steps_store.setdefault(bucket, [])
-                if step not in _test_steps_store[bucket]:
-                    _test_steps_store[bucket].append(step)
-                    print(f"✅ Step captured → {bucket}: {step}")
+        step = _parse_step_from_message(message)
+        if step:
+            _test_steps_store.setdefault(bucket, [])
+            if step not in _test_steps_store[bucket]:
+                _test_steps_store[bucket].append(step)
+                print(f"✅ Step captured → {bucket}: {step}")
     except Exception as e:
         print(f"❌ Step capture warning: {e}")
 
+    # ── Payload prefix handling ──────────────────────────────────────────
     for prefix in _PAYLOAD_PREFIXES:
         if message.startswith(prefix):
             raw = message[len(prefix):].strip()
@@ -983,7 +1009,6 @@ async def log_step(msg: LogMessage):
 
     _broadcast_async({"type": "LOG", "payload": {"message": message, "status": msg.status}})
     return {"status": "ok"}
-
 
 
 # ─── GET /api/jira/steps/{test_name} — NON-DESTRUCTIVE read ──────────────────
@@ -1034,7 +1059,12 @@ async def module_status(data: dict):
     return {"status": "ok"}
 
 
-# ─── POST /api/jira/payload ───────────────────────────────────────────────────
+# ════════════════════════════════════════════════════════════════════════════
+#  FIX 2 — POST /api/jira/payload
+#  Also recover steps embedded by conftest as a "Steps Executed:\n1. …" prose
+#  block (written by _build_description when _get_steps returns non-empty).
+# ════════════════════════════════════════════════════════════════════════════
+
 @app.post("/api/jira/payload")
 async def receive_jira_payload(req: JiraPayloadRequest):
     payload = req.model_dump(exclude_none=False)
@@ -1049,14 +1079,14 @@ async def receive_jira_payload(req: JiraPayloadRequest):
     clean_description = _strip_embedded_steps_from_description(raw_description).strip()
     payload["description"] = clean_description or "Test automation failure detected."
 
-    # ── Step 2: Resolve steps_executed ───────────────────────────────────────
+    # ── Step 2: Resolve steps_executed ────────────────────────────────────
     incoming_steps = [s for s in (payload.get("steps_executed") or []) if s]
 
     if not incoming_steps:
         test_name = req.test_name or "default"
         resolved  = _resolve_steps_for_test(test_name)
 
-        # Fallback: use steps we parsed out of the description text
+        # Fallback: steps that conftest embedded in the description text
         if not resolved and steps_from_desc:
             resolved = steps_from_desc
             logger.info(
@@ -1078,7 +1108,7 @@ async def receive_jira_payload(req: JiraPayloadRequest):
             len(incoming_steps), req.test_name,
         )
 
-    # ── Step 3: Rebuild description with metadata + steps ONCE ───────────────
+    # ── Step 3: Rebuild description with metadata + steps ONCE ───────────
     payload["description"] = format_description_with_steps(
         description    = payload["description"],
         app_name       = payload.get("app_name"),
@@ -1127,9 +1157,12 @@ async def dismiss_payload(data: dict):
     return {"status": "dismissed", "key": key}
 
 
-# ─── POST /api/jira/create ────────────────────────────────────────────────────
-# UPDATED: Now creates in Jira AND saves to MongoDB
-# ────────────────────────────────────────────────────────────────────────────
+# ════════════════════════════════════════════════════════════════════════════
+#  FIX 3 — POST /api/jira/create
+#  Always re-format description with steps at create time so that even if
+#  the frontend sends a stale/unformatted description the steps are never lost.
+# ════════════════════════════════════════════════════════════════════════════
+
 @app.post("/api/jira/create")
 async def jira_create(req: JiraCreateRequest):
     from jira_integration.jira_config import config as jira_config
@@ -1142,24 +1175,60 @@ async def jira_create(req: JiraCreateRequest):
         "JIRA_API_TOKEN": jira_config.api_token, "JIRA_PROJECT_KEY": jira_config.project_key,
     }.items() if not v]
     if missing:
-        raise HTTPException(status_code=400, detail=f"Missing .env variables: {', '.join(missing)}. Edit backend/.env and restart.")
+        raise HTTPException(status_code=400, detail=f"Missing .env variables: {', '.join(missing)}.")
 
-    summary     = (req.title or req.issue_summary or "Automation Failure").strip()
-    description = (req.description or "Automation Test Failure").strip()
+    summary = (req.title or req.issue_summary or "Automation Failure").strip()
+
+    # ── FIX 3: Resolve steps from all available sources ───────────────────
+    # Priority: (1) req.steps_executed, (2) server store, (3) description text
+    steps_for_ticket: List[str] = [s for s in (req.steps_executed or []) if s]
+
+    if not steps_for_ticket:
+        # Try server store (non-destructive peek first, then pop)
+        store_key = req.test_name or "default"
+        steps_for_ticket = _resolve_steps_for_test(store_key)
+
+    if not steps_for_ticket and req.description:
+        # Last resort: extract numbered list the conftest embedded in description
+        steps_for_ticket = _extract_steps_from_numbered_list(req.description)
+        if steps_for_ticket:
+            logger.info(
+                "[/api/jira/create] Steps recovered from description for test=%s count=%d",
+                req.test_name, len(steps_for_ticket),
+            )
+
+    # ── FIX 3: Always rebuild description with steps so Jira ticket always
+    #    shows the STEPS EXECUTED block regardless of frontend payload state.
+    raw_desc = req.description or "Automation Test Failure"
+    description = format_description_with_steps(
+        description    = _strip_embedded_steps_from_description(raw_desc),
+        app_name       = req.app_name,
+        app_version    = req.app_version,
+        module         = req.module or req.parent,
+        test_name      = req.test_name,
+        developer_name = req.developer_name,
+        start_date     = req.start_date,
+        end_date       = req.end_date,
+        sprint         = req.sprint,
+        steps_executed = steps_for_ticket,
+    )
+
+    logger.info(
+        "[/api/jira/create] Creating ticket test=%s steps=%d",
+        req.test_name, len(steps_for_ticket),
+    )
 
     import io as _io, contextlib as _ctx
     _captured = _io.StringIO()
     try:
         with _ctx.redirect_stdout(_captured):
             print(f"[JIRA_CREATE] Creating ticket with MongoDB storage:")
-            print(f"  Start Date: {req.start_date}")
-            print(f"  End Date: {req.end_date}")
-            print(f"  Sprint: {req.sprint}")
-            print(f"  MongoDB: {'Enabled' if is_mongodb_enabled() else 'Disabled'}")
+            print(f"  Start Date:   {req.start_date}")
+            print(f"  End Date:     {req.end_date}")
+            print(f"  Sprint:       {req.sprint}")
+            print(f"  Steps count:  {len(steps_for_ticket)}")
+            print(f"  MongoDB:      {'Enabled' if is_mongodb_enabled() else 'Disabled'}")
 
-            # ────────────────────────────────────────────────────────────────
-            # NEW: Use integrated function that creates in Jira AND MongoDB
-            # ────────────────────────────────────────────────────────────────
             result = create_and_store_jira_issue(
                 summary        = summary,
                 description    = description,
@@ -1170,17 +1239,17 @@ async def jira_create(req: JiraCreateRequest):
                 issue_summary  = summary,
                 test_name      = req.test_name,
                 test_id        = req.test_id,
-                steps_executed = req.steps_executed or [],
+                steps_executed = steps_for_ticket,
                 developer_name = req.developer_name,
                 priority       = req.priority,
                 start_date     = req.start_date,
                 end_date       = req.end_date,
                 sprint         = req.sprint,
             )
-            
+
             if not result["success"]:
                 raise Exception(result.get("error", "Unknown error"))
-            
+
             issue_key = result["issue_id"]
             ticket_id = result["ticket_id"]
             issue_url = result["issue_url"]
@@ -1204,43 +1273,43 @@ async def jira_create(req: JiraCreateRequest):
         _status = "PAYLOAD" if any(_line.startswith(p) for p in _PAYLOAD_PREFIXES) else "INFO"
         _broadcast_async({"type": "LOG", "payload": {"message": _line, "status": _status}})
 
-    # Add to local history
     entry = {
-        "issue_id":       issue_key,
-        "issue_url":      issue_url,
-        "title":          summary,
-        "description":    description,
-        "developer_name": req.developer_name or "",
-        "module":         req.module or req.parent or "",
-        "app_name":       req.app_name or "",
-        "app_version":    req.app_version or "",
-        "test_name":      req.test_name or "",
-        "ticket_id":      ticket_id or req.ticket_id or "",
-        "fix_version":    req.fix_version or [],
-        "affects_version":req.affects_version or [],
-        "priority":       req.priority or "High",
-        "sprint":         req.sprint or "Automation",
-        "start_date":     req.start_date or "",
-        "end_date":       req.end_date or "",
-        "steps_executed": req.steps_executed or [],
-        "status":         "Assigned",
-        "created_at":     datetime.datetime.now().isoformat(),
+        "issue_id":        issue_key,
+        "issue_url":       issue_url,
+        "title":           summary,
+        "description":     description,
+        "developer_name":  req.developer_name or "",
+        "module":          req.module or req.parent or "",
+        "app_name":        req.app_name or "",
+        "app_version":     req.app_version or "",
+        "test_name":       req.test_name or "",
+        "ticket_id":       ticket_id or req.ticket_id or "",
+        "fix_version":     req.fix_version or [],
+        "affects_version": req.affects_version or [],
+        "priority":        req.priority or "High",
+        "sprint":          req.sprint or "Automation",
+        "start_date":      req.start_date or "",
+        "end_date":        req.end_date or "",
+        "steps_executed":  steps_for_ticket,
+        "status":          "Assigned",
+        "created_at":      datetime.datetime.now().isoformat(),
     }
     _jira_history.append(entry)
     _broadcast_async({"type": "JIRA_CREATED", "payload": entry})
 
     print(f"\n✓ JIRA Ticket Created and Stored: {issue_key}")
-    print(f"  Ticket ID: {ticket_id}")
-    print(f"  MongoDB: {'✅ Saved' if ticket_id != 'N/A' else '⚠️  Not saved (MongoDB may be disabled)'}")
-    print(f"  Start Date: {req.start_date}")
-    print(f"  End Date: {req.end_date}")
-    print(f"  Sprint: {req.sprint}")
+    print(f"  Ticket ID:    {ticket_id}")
+    print(f"  Steps:        {len(steps_for_ticket)}")
+    print(f"  MongoDB:      {'✅ Saved' if ticket_id != 'N/A' else '⚠️  Not saved (MongoDB may be disabled)'}")
+    print(f"  Start Date:   {req.start_date}")
+    print(f"  End Date:     {req.end_date}")
+    print(f"  Sprint:       {req.sprint}")
 
     return {
-        "issue_id": issue_key,
-        "issue_key": issue_key,
-        "issue_url": issue_url,
-        "ticket_id": ticket_id,
+        "issue_id":    issue_key,
+        "issue_key":   issue_key,
+        "issue_url":   issue_url,
+        "ticket_id":   ticket_id,
         "mongodb_saved": ticket_id != "N/A",
         **entry
     }
@@ -1276,7 +1345,6 @@ async def jira_history_legacy():
                         "updated": e.get("created_at","")} for e in _jira_history]}
 
 
-# ─── Health check ─────────────────────────────────────────────────────────────
 @app.get("/api/health")
 async def health():
     from jira_integration.jira_config import config as jira_config
@@ -1295,7 +1363,6 @@ async def health():
     }
 
 
-# ─── Shared run-state reset ───────────────────────────────────────────────────
 def _reset_run_state():
     global _pending_payloads, _dismissed_keys, _test_steps_store, _current_test_name
     _test_steps_store  = {}
@@ -1303,8 +1370,6 @@ def _reset_run_state():
     _pending_payloads  = []
     _dismissed_keys    = set()
 
-
-# ─── Test runner routes ───────────────────────────────────────────────────────
 
 @app.post("/start-test")
 async def start_test(request: TestRequest, background_tasks: BackgroundTasks):
@@ -1341,7 +1406,6 @@ async def start_test(request: TestRequest, background_tasks: BackgroundTasks):
         full_icon_url = f"http://localhost:8000{icon_url}" if icon_url else None
 
         info         = get_apk_info(apk_path) or {}
-        print(f"[APK Info] {info}")
         app_name     = info.get("app_name")
         package_name = info.get("package_name")
         app_variant  = PACKAGE_VARIANT_MAP.get(package_name)
