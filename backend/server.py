@@ -8,6 +8,7 @@ from fastapi import FastAPI, WebSocket, BackgroundTasks, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
+from fastapi.responses import Response
 import uvicorn
 from pydantic import BaseModel
 from pathlib import Path
@@ -33,7 +34,10 @@ from jira_integration.mongo_jira_integration import create_and_store_jira_issue
 LAST_SLACK_EVENT_TS = None
 
 # ─── Load env ────────────────────────────────────────────────────────────────
-load_dotenv()
+# Always load .env from the backend directory, regardless of cwd
+_ENV_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+load_dotenv(dotenv_path=_ENV_PATH, override=True)
+print(f"[ENV] Loaded .env from: {_ENV_PATH}")
 SLACK_BOT_TOKEN    = os.getenv("SLACK_BOT_TOKEN")
 NETLIFY_AUTH_TOKEN = os.getenv("NETLIFY_AUTH_TOKEN")
 NETLIFY_SITE_ID    = os.getenv("NETLIFY_SITE_ID")
@@ -841,6 +845,9 @@ async def run_complete(event: RunCompleteEvent):
     await manager.broadcast({"type": "RUN_COMPLETE", "payload": {"report_url": event.report_url}})
     return {"ok": True}
 
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    return Response(status_code=204)
 
 @app.get("/api/jira/test-connection")
 async def jira_test_connection():
@@ -1319,8 +1326,71 @@ async def jira_create(req: JiraCreateRequest):
 _jira_comments: dict = {}
 
 @app.get("/api/jira/history")
-async def jira_history_api():
-    return {"issues": _jira_history}
+async def jira_history_api(
+    limit: int = 100,
+    skip: int = 0,
+    status: Optional[str] = None,
+    module: Optional[str] = None,
+    priority: Optional[str] = None,
+):
+    """
+    Return Jira ticket history.
+    Priority: MongoDB (persistent across restarts) → in-memory _jira_history (fallback).
+    """
+    from jira_integration.mongo_operations import get_all_tickets
+    from jira_integration.jira_config import config as jira_config
+
+    if is_mongodb_enabled():
+        try:
+            filters = {}
+            if status:
+                filters["status"] = status
+            if module:
+                filters["module"] = module
+            if priority:
+                filters["priority"] = priority
+
+            db_tickets = get_all_tickets(limit=limit, skip=skip, **filters)
+
+            normalised = []
+            for t in db_tickets:
+                normalised.append({
+                    "issue_id":        t.get("issue_id", ""),
+                    "issue_url":       t.get("issue_url") or (
+                        f"{jira_config.url}/browse/{t.get('issue_id', '')}"
+                        if t.get("issue_id") else ""
+                    ),
+                    "title":           t.get("summary", t.get("title", "")),
+                    "description":     t.get("description", ""),
+                    "developer_name":  t.get("developer_name", t.get("assignee", "")),
+                    "module":          t.get("module", ""),
+                    "app_name":        t.get("app_name", ""),
+                    "app_version":     t.get("app_version", ""),
+                    "test_name":       t.get("test_name", ""),
+                    "ticket_id":       t.get("ticket_id", ""),
+                    "priority":        t.get("priority", "High"),
+                    "status":          t.get("status", "Open"),
+                    "sprint":          t.get("sprint", ""),
+                    "start_date":      t.get("start_date", ""),
+                    "end_date":        t.get("due_date", t.get("end_date", "")),
+                    "steps_executed":  t.get("steps_executed", []),
+                    "fix_version":     t.get("fix_version", []),
+                    "affects_version": t.get("affects_version", []),
+                    "created_at":      t.get("created_at", ""),
+                })
+
+            logger.info("[/api/jira/history] Returning %d tickets from MongoDB", len(normalised))
+            return {"issues": normalised, "source": "mongodb", "total": len(normalised)}
+
+        except Exception as exc:
+            logger.error(
+                "[/api/jira/history] MongoDB query failed, falling back to memory: %s", exc
+            )
+
+    # Fallback: in-memory list (current session only)
+    logger.warning("[/api/jira/history] MongoDB unavailable – returning in-memory history only")
+    return {"issues": _jira_history, "source": "memory", "total": len(_jira_history)}
+
 
 @app.get("/api/jira/comments/{issue_key}")
 async def get_comments(issue_key: str):
@@ -1343,6 +1413,69 @@ async def jira_history_legacy():
                         "status": e.get("status","Assigned"), "url": e.get("issue_url",""),
                         "priority": e.get("priority",""), "assignee": e.get("developer_name",""),
                         "updated": e.get("created_at","")} for e in _jira_history]}
+
+
+# ─── New: dedicated MongoDB ticket listing endpoint ────────────────────────────
+
+@app.get("/api/jira/tickets")
+async def list_jira_tickets(
+    limit: int = 100,
+    skip: int = 0,
+    status: Optional[str] = None,
+    module: Optional[str] = None,
+    priority: Optional[str] = None,
+    assignee: Optional[str] = None,
+):
+    """
+    Dedicated endpoint to list all tickets directly from MongoDB.
+    Supports pagination and filtering.
+    """
+    from jira_integration.mongo_operations import get_all_tickets, get_statistics
+
+    if not is_mongodb_enabled():
+        raise HTTPException(status_code=503, detail="MongoDB is not connected.")
+
+    filters = {}
+    if status:   filters["status"]   = status
+    if module:   filters["module"]   = module
+    if priority: filters["priority"] = priority
+    if assignee: filters["assignee"] = assignee
+
+    tickets = get_all_tickets(limit=limit, skip=skip, **filters)
+    stats   = get_statistics()
+
+    return {
+        "tickets": tickets,
+        "total":   stats.get("total", len(tickets)),
+        "limit":   limit,
+        "skip":    skip,
+    }
+
+
+@app.get("/api/jira/tickets/{issue_id}")
+async def get_jira_ticket(issue_id: str):
+    """Retrieve a single ticket from MongoDB by Jira issue key."""
+    from jira_integration.mongo_operations import get_ticket
+
+    if not is_mongodb_enabled():
+        raise HTTPException(status_code=503, detail="MongoDB is not connected.")
+
+    ticket = get_ticket(issue_id)
+    if not ticket:
+        raise HTTPException(status_code=404, detail=f"Ticket {issue_id} not found in MongoDB.")
+
+    return {"ticket": ticket}
+
+
+@app.get("/api/jira/stats")
+async def jira_stats():
+    """Return aggregate statistics about stored tickets."""
+    from jira_integration.mongo_operations import get_statistics
+
+    if not is_mongodb_enabled():
+        return {"error": "MongoDB not connected", "stats": {}}
+
+    return {"stats": get_statistics()}
 
 
 @app.get("/api/health")

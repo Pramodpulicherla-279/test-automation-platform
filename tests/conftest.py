@@ -56,9 +56,13 @@ RUN_ID_CACHE = None
 
 _THIS_DIR     = os.path.dirname(os.path.abspath(__file__))
 _PROJECT_ROOT = os.path.dirname(_THIS_DIR)
-if _PROJECT_ROOT not in sys.path:
-    sys.path.insert(0, _PROJECT_ROOT)
 
+# ── Setup backend path BEFORE importing jira_integration ──────────────────────
+_BACKEND_DIR = os.path.join(_PROJECT_ROOT, "backend")
+if _BACKEND_DIR not in sys.path:
+    sys.path.insert(0, _BACKEND_DIR)
+
+# ── NOW import from jira_integration ──────────────────────────────────────────
 from jira_integration.jira_attachment import attach_screenshot
 from jira_integration.jira_config import config
 
