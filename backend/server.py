@@ -24,6 +24,7 @@ import re
 from dotenv import load_dotenv
 import glob
 import logging
+import shutil
 from gdrive_loader import download_apk, extract_app_icon, get_apk_info
 from typing import List, Optional, Dict, Any
 
@@ -116,6 +117,12 @@ def _new_run() -> str:
         "current_test_name": "default",
         "report_url":        None,
         "started_at":        datetime.datetime.now().isoformat(),
+        # ── APK metadata — populated as soon as info is resolved ──────────────
+        "app_name":          "",
+        "app_version":       "",
+        "package_name":      "",
+        "app_variant":       "",
+        "developer_name":    "",
     }
     return run_id
 
@@ -144,7 +151,176 @@ def _pick_free_port() -> int:
         return int(s.getsockname()[1])
 
 
+# ════════════════════════════════════════════════════════════════════════════
+#  FIX 1 — normalize_apk_info: exhaustive key normalization + aapt2 parsing
+# ════════════════════════════════════════════════════════════════════════════
+
+def _normalize_apk_info(raw: dict) -> dict:
+    """
+    Normalize all possible key names from get_apk_info() into stable keys.
+    Also attempts aapt2/aapt direct parse if all values are still unknown.
+
+    Stable output keys:
+      app_name     – human-readable label  (e.g. "KrishiVaas Farmer")
+      package_name – Java package id       (e.g. "com.agribride.krishivaas.farmer_app")
+      app_version  – version string        (e.g. "2.1.4")
+    """
+    if not raw:
+        raw = {}
+
+    # ── app_name ─────────────────────────────────────────────────────────────
+    app_name = (
+        raw.get("app_name")
+        or raw.get("application")
+        or raw.get("label")
+        or raw.get("applicationLabel")
+        or raw.get("name")
+        or raw.get("appName")
+        or raw.get("AppName")
+        or ""
+    ).strip().strip("'\"")
+
+    # ── package_name ──────────────────────────────────────────────────────────
+    package_name = (
+        raw.get("package_name")
+        or raw.get("package")
+        or raw.get("packageName")
+        or raw.get("PackageName")
+        or raw.get("id")
+        or ""
+    ).strip().strip("'\"")
+
+    # ── version ───────────────────────────────────────────────────────────────
+    app_version = (
+        raw.get("version_name")
+        or raw.get("versionName")
+        or raw.get("app_version")
+        or raw.get("version")
+        or raw.get("Version")
+        or raw.get("apk_version")
+        or raw.get("version_code")
+        or raw.get("versionCode")
+        or ""
+    ).strip().strip("'\"")
+
+    normalized = dict(raw)
+    normalized["app_name"]     = app_name     or "Unknown App"
+    normalized["package_name"] = package_name or ""
+    normalized["app_version"]  = app_version  or "Unknown Version"
+
+    # ── Debug dump so we always know what came back ───────────────────────────
+    print(f"[_normalize_apk_info] raw keys: {list(raw.keys())}")
+    print(f"[_normalize_apk_info] raw values: {dict(raw)}")
+    print(f"[_normalize_apk_info] → app_name='{normalized['app_name']}' "
+          f"package='{normalized['package_name']}' version='{normalized['app_version']}'")
+
+    return normalized
+
+
+# ════════════════════════════════════════════════════════════════════════════
+#  FIX 2 — _extract_apk_info_fallback: try aapt/aapt2 directly if get_apk_info fails
+# ════════════════════════════════════════════════════════════════════════════
+
+def _extract_apk_info_fallback(apk_path: str) -> dict:
+    """
+    Try to extract APK metadata using aapt/aapt2 CLI tools directly.
+    Called when get_apk_info() returns incomplete data.
+    Returns dict with app_name, package_name, app_version.
+    """
+    result = {"app_name": "", "package_name": "", "app_version": ""}
+
+    # Try aapt first
+    for tool in ("aapt", "aapt2"):
+        try:
+            cmd = [tool, "dump", "badging", apk_path]
+            proc = subprocess.run(
+                cmd, capture_output=True, text=True,
+                encoding="utf-8", errors="replace", timeout=30
+            )
+            output = proc.stdout
+            if not output:
+                continue
+
+            # package: name='com.example' versionCode='10' versionName='1.0'
+            pkg_match = re.search(r"package:\s+name='([^']+)'.*?versionName='([^']*)'", output)
+            if pkg_match:
+                result["package_name"] = pkg_match.group(1).strip()
+                result["app_version"]  = pkg_match.group(2).strip()
+
+            # application-label:'App Name'  OR  application-label-en:'App Name'
+            label_match = re.search(r"application-label(?:-\w+)?:'([^']+)'", output)
+            if label_match:
+                result["app_name"] = label_match.group(1).strip()
+
+            # application: label='App Name'
+            if not result["app_name"]:
+                app_match = re.search(r"application:.*?label='([^']+)'", output)
+                if app_match:
+                    result["app_name"] = app_match.group(1).strip()
+
+            if result["package_name"]:
+                print(f"[aapt fallback ({tool})] app='{result['app_name']}' "
+                      f"pkg='{result['package_name']}' ver='{result['app_version']}'")
+                return result
+
+        except FileNotFoundError:
+            continue
+        except Exception as e:
+            print(f"[aapt fallback ({tool})] Error: {e}")
+            continue
+
+    print("[aapt fallback] All tools failed — returning empty dict")
+    return result
+
+
+# ════════════════════════════════════════════════════════════════════════════
+#  FIX 3 — get_full_apk_info: combines get_apk_info + fallback in one call
+# ════════════════════════════════════════════════════════════════════════════
+
+def _get_full_apk_info(apk_path: str) -> dict:
+    """
+    Primary entry point for APK metadata extraction.
+    1. Calls get_apk_info() from gdrive_loader
+    2. Normalizes all keys
+    3. If package_name is still missing → runs aapt/aapt2 fallback
+    4. Returns a fully populated dict with guaranteed stable keys
+    """
+    try:
+        raw_info = get_apk_info(apk_path) or {}
+    except Exception as e:
+        print(f"[get_apk_info] Exception: {e}")
+        raw_info = {}
+
+    info = _normalize_apk_info(raw_info)
+
+    # If critical fields are still missing, try aapt fallback
+    if not info["package_name"] or info["app_name"] == "Unknown App":
+        print("[get_full_apk_info] Primary extraction incomplete — trying aapt fallback...")
+        fallback = _extract_apk_info_fallback(apk_path)
+
+        if fallback.get("package_name") and not info["package_name"]:
+            info["package_name"] = fallback["package_name"]
+        if fallback.get("app_name") and info["app_name"] == "Unknown App":
+            info["app_name"] = fallback["app_name"]
+        if fallback.get("app_version") and info["app_version"] == "Unknown Version":
+            info["app_version"] = fallback["app_version"]
+
+        print(f"[get_full_apk_info] After fallback → app='{info['app_name']}' "
+              f"pkg='{info['package_name']}' ver='{info['app_version']}'")
+
+    return info
+
+
+# ════════════════════════════════════════════════════════════════════════════
+#  generate_allure_report: do NOT clear results here.
+# ════════════════════════════════════════════════════════════════════════════
+
 def generate_allure_report():
+    """
+    Generate the Allure HTML report from allure-results.
+    NOTE: Do NOT wipe allure-results here — they were already populated by
+    the just-completed pytest run.  Only use --clean on the output folder.
+    """
     try:
         subprocess.run(
             [ALLURE_CMD, "generate", "allure-results", "-o", "allure-report", "--clean"],
@@ -197,6 +373,7 @@ async def _ensure_appium_running() -> None:
 
 
 def get_slack_user_name(user_id: str) -> str:
+    """Fetch the real name of a Slack user by their user ID."""
     try:
         resp = requests.get(
             "https://slack.com/api/users.info",
@@ -206,7 +383,17 @@ def get_slack_user_name(user_id: str) -> str:
         )
         data = resp.json()
         if data.get("ok"):
-            return data["user"]["real_name"]
+            profile = data["user"].get("profile", {})
+            # Prefer display_name → real_name → name
+            name = (
+                profile.get("real_name")
+                or profile.get("display_name")
+                or data["user"].get("real_name")
+                or data["user"].get("name")
+                or ""
+            ).strip()
+            print(f"[Slack] Resolved user_id='{user_id}' → name='{name}'")
+            return name or "Unknown Developer"
         print(f"[Slack] users.info error: {data.get('error')}")
     except Exception as e:
         print(f"[Slack] Could not fetch user name: {e}")
@@ -214,25 +401,34 @@ def get_slack_user_name(user_id: str) -> str:
 
 
 # ════════════════════════════════════════════════════════════════════════════
-#  VARIANT DETECTION HELPER  ← NEW CENTRALISED FUNCTION
+#  VARIANT DETECTION HELPER
 # ════════════════════════════════════════════════════════════════════════════
 
 def _detect_app_variant(package_name: str, app_name: str) -> str | None:
     """
     Detect app variant with a clear priority order:
       1. Exact package name match  (most reliable)
-      2. Keyword match on app_name (fallback)
+      2. Partial package name match (handles extra suffixes/prefixes)
+      3. Keyword match on app_name (fallback)
     Returns one of: 'regular_farmer', 'regular_client',
                     'state_farmer',   'state_client',  or None.
     """
-    # 1 — package name (exact, case-insensitive)
     pkg_lower = (package_name or "").strip().lower()
+
+    # 1. Exact match
     for pkg, variant in PACKAGE_VARIANT_MAP.items():
         if pkg.lower() == pkg_lower:
-            print(f"[Variant] Detected via package_name: '{package_name}' → {variant}")
+            print(f"[Variant] Detected via exact package_name: '{package_name}' → {variant}")
             return variant
 
-    # 2 — app name keywords
+    # 2. Partial / contains match (handles debug builds with extra suffixes)
+    if pkg_lower:
+        for pkg, variant in PACKAGE_VARIANT_MAP.items():
+            if pkg.lower() in pkg_lower or pkg_lower in pkg.lower():
+                print(f"[Variant] Detected via partial package_name: '{package_name}' → {variant}")
+                return variant
+
+    # 3. Keyword match on app_name
     name_lower = (app_name or "").strip().lower()
 
     if "state" in name_lower and "farmer" in name_lower:
@@ -248,34 +444,46 @@ def _detect_app_variant(package_name: str, app_name: str) -> str | None:
         print(f"[Variant] Detected via app_name keywords: '{app_name}' → regular_client")
         return "regular_client"
 
+    # 4. Also try matching on package keywords directly
+    if pkg_lower:
+        if "state" in pkg_lower and "farmer" in pkg_lower:
+            return "state_farmer"
+        if "state" in pkg_lower and "client" in pkg_lower:
+            return "state_client"
+        if "farmer" in pkg_lower:
+            return "regular_farmer"
+        if "client" in pkg_lower:
+            return "regular_client"
+
     print(f"[Variant] Could not detect variant — package='{package_name}' app='{app_name}'")
     return None
 
 
 # ════════════════════════════════════════════════════════════════════════════
-#  ALLURE SERVER
+#  ALLURE SERVER: always kill old server before starting new one
 # ════════════════════════════════════════════════════════════════════════════
+
+def _kill_allure_proc() -> None:
+    global _allure_proc
+    if _allure_proc is not None:
+        try:
+            if os.name == "nt":
+                subprocess.run(
+                    ["taskkill", "/F", "/T", "/PID", str(_allure_proc.pid)],
+                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                )
+            else:
+                _allure_proc.terminate()
+        except Exception:
+            pass
+        _allure_proc = None
+
 
 def _start_allure_server() -> str:
     global _allure_proc, _allure_port
 
     with _allure_start_lock:
-        if _allure_proc is not None and _allure_proc.poll() is None and _allure_port is not None:
-            print(f"[Allure] ♻️  Reusing existing server on port {_allure_port}")
-            return f"http://127.0.0.1:{_allure_port}"
-
-        if _allure_proc is not None:
-            try:
-                if os.name == "nt":
-                    subprocess.run(
-                        ["taskkill", "/F", "/T", "/PID", str(_allure_proc.pid)],
-                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-                    )
-                else:
-                    _allure_proc.terminate()
-            except Exception:
-                pass
-            _allure_proc = None
+        _kill_allure_proc()
 
         _allure_port = _pick_free_port()
         print(f"[Allure] 🚀 Starting new server on port {_allure_port}...")
@@ -293,47 +501,64 @@ def _start_allure_server() -> str:
 # ════════════════════════════════════════════════════════════════════════════
 #  VERCEL DEPLOY
 # ════════════════════════════════════════════════════════════════════════════
-
-def deploy_to_vercel(run_id: str) -> str | None:
+def deploy_to_github_pages(run_id: str) -> str | None:
     allure_report_path = os.path.join(BASE_DIR, "allure-report")
     if not os.path.isdir(allure_report_path):
-        print(f"[Vercel] allure-report folder not found: {allure_report_path}")
+        print(f"[GHPages] allure-report folder not found: {allure_report_path}")
         return None
 
-    unique_name = f"allure-{run_id[:8]}"
-    print(f"[Vercel] Deploying as project name: {unique_name} ...")
+    print(f"[GHPages] Deploying to GitHub Pages...")
 
     try:
-        result = subprocess.run(
-            ["vercel", "--prod", "--yes", "--name", unique_name],
-            cwd=allure_report_path,
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-            timeout=300,
-            shell=True,
+        remote_result = subprocess.run(
+            ["git", "remote", "get-url", "origin"],
+            cwd=BASE_DIR, capture_output=True, text=True,
         )
-        print(result.stdout)
-        print(result.stderr)
-
-        if result.returncode != 0:
-            print(f"[Vercel] Deploy failed: {result.stderr}")
+        remote_url = remote_result.stdout.strip()
+        match = re.search(r"github\.com[:/](.+?)(?:\.git)?$", remote_url)
+        if not match:
+            print(f"[GHPages] Could not parse remote URL: {remote_url}")
             return None
 
-        for line in result.stdout.splitlines():
-            line = line.strip()
-            if line.startswith("https://"):
-                print(f"[Vercel] ✅ Fresh URL: {line}")
-                return line
+        org, repo = match.group(1).split("/", 1)
+        short_id = run_id[:8]
+        prefix = f"runs/{short_id}"
+
+        result = subprocess.run(
+            [
+                "ghp-import",
+                "-n",               # adds .nojekyll
+                "-p",               # push to remote
+                "-f",               # force push
+                "-b", "gh-pages",
+                "-x", prefix,       # ← correct flag: -x PREFIX (not --dest)
+                allure_report_path,
+            ],
+            cwd=BASE_DIR,
+            capture_output=True, text=True,
+            encoding="utf-8", errors="replace",
+            timeout=120,
+        )
+
+        if result.stdout.strip():
+            print(result.stdout)
+        if result.stderr.strip():
+            print(result.stderr)
+
+        if result.returncode != 0:
+            print(f"[GHPages] Deploy failed (exit {result.returncode}): {result.stderr.strip()}")
+            return None
+
+        pages_url = f"https://{org}.github.io/{repo}/{prefix}"
+        print(f"[GHPages] ✅ Deployed → {pages_url}")
+        return pages_url
 
     except subprocess.TimeoutExpired:
-        print("[Vercel] Deploy timed out after 300 seconds.")
+        print("[GHPages] Deploy timed out.")
     except Exception as e:
-        print(f"[Vercel] Exception: {e}")
+        print(f"[GHPages] Exception: {e}")
 
     return None
-
 
 # ════════════════════════════════════════════════════════════════════════════
 #  SLACK NOTIFICATION
@@ -352,7 +577,7 @@ def send_slack_message(
         "Authorization": f"Bearer {SLACK_BOT_TOKEN}",
         "Content-Type": "application/json",
     }
-    safe_url = report_url if (report_url or "").startswith("https://") else "https://allure-report-three.vercel.app"
+    safe_url = report_url or ""
     status_line = f"*🟢 Passed:* {passed}    *🔴 Failed:* {failed}"
 
     payload = {
@@ -419,7 +644,7 @@ def _broadcast_async(message: dict) -> None:
 
 
 async def _broadcast_all_steps_to_frontend(run_id: str) -> None:
-    run = _runs.get(run_id, {})
+    run   = _runs.get(run_id, {})
     store = run.get("test_steps_store", {})
 
     if not store:
@@ -449,11 +674,16 @@ async def _broadcast_all_steps_to_frontend(run_id: str) -> None:
     })
 
     for test_name, steps in store.items():
+        deduped = []
+        for s in steps:
+            if not deduped or s != deduped[-1]:
+                deduped.append(s)
+
         await manager.broadcast({
             "type": "LOG",
-            "payload": {"message": f"  🧪 {test_name}  ({len(steps)} steps)", "status": "INFO"},
+            "payload": {"message": f"  🧪 {test_name}  ({len(deduped)} steps)", "status": "INFO"},
         })
-        for i, step in enumerate(steps, 1):
+        for i, step in enumerate(deduped, 1):
             await manager.broadcast({
                 "type": "LOG",
                 "payload": {"message": f"      {i}. {step}", "status": "STEP"},
@@ -479,17 +709,53 @@ async def _post_run_notify(
 ) -> None:
     loop = asyncio.get_event_loop()
 
+    # ── Store app metadata into run state RIGHT NOW so tests can fetch it ─────
+    if run_id in _runs:
+        _runs[run_id]["app_name"]       = app_name       or ""
+        _runs[run_id]["app_version"]    = app_version     or ""
+        _runs[run_id]["developer_name"] = developer_name  or ""
+    print(f"[_post_run_notify] Metadata stored → "
+          f"app='{app_name}' ver='{app_version}' dev='{developer_name}'")
+
+    # ── Broadcast a clean summary of what we resolved ────────────────────────
+    await manager.broadcast({
+        "type": "LOG",
+        "payload": {
+            "message": (
+                f"📦 App: {app_name} | Version: {app_version} | "
+                f"Developer: {developer_name} | Tests: {len(tests_to_run)}"
+            ),
+            "status": "INFO",
+        },
+    })
+
     await manager.broadcast({
         "type": "MODULES",
         "payload": {"run_id": run_id, "modules": tests_to_run},
     })
+
+    # ── Clear allure-results ONLY here, BEFORE running tests ─────────────────
+    results_dir = os.path.join(BASE_DIR, "allure-results")
+    try:
+        if os.path.isdir(results_dir):
+            shutil.rmtree(results_dir)
+        os.makedirs(results_dir, exist_ok=True)
+        log_to_ui(f"[{run_id[:8]}] Cleared stale allure-results before run", "INFO")
+    except Exception as e:
+        log_to_ui(f"[{run_id[:8]}] Could not clear allure-results: {e}", "WARN")
 
     # ── Step 1 — run tests ───────────────────────────────────────────────────
     log_to_ui(f"[{run_id[:8]}] Step 1: Running tests...", "INFO")
     try:
         await loop.run_in_executor(
             None,
-            lambda: run_tests_and_get_suggestions(apk_path, tests_to_run=tests_to_run),
+            lambda: run_tests_and_get_suggestions(
+                apk_path,
+                tests_to_run=tests_to_run,
+                app_name=app_name,
+                app_version=app_version,
+                developer_name=developer_name,
+            ),
         )
         log_to_ui(f"[{run_id[:8]}] Step 1 done", "SUCCESS")
     except Exception as e:
@@ -515,15 +781,31 @@ async def _post_run_notify(
     # ── Step 3 — count pass/fail ──────────────────────────────────────────────
     passed = failed = 0
     try:
-        results_dir = os.path.join(BASE_DIR, "allure-results")
+        report_results_dir = os.path.join(BASE_DIR, "allure-report", "data", "test-cases")
+        scan_dir = report_results_dir if os.path.isdir(report_results_dir) else results_dir
+        for json_file in glob.glob(os.path.join(scan_dir, "*.json")):
+            try:
+                with open(json_file, "r", encoding="utf-8") as f:
+                    result_data = json.load(f)
+                status = (result_data.get("status") or result_data.get("testStage", {}).get("status") or "").upper()
+                if status == "PASSED":
+                    passed += 1
+                elif status in ("FAILED", "BROKEN"):
+                    failed += 1
+            except Exception:
+                pass
+
         for json_file in glob.glob(os.path.join(results_dir, "*-result.json")):
-            with open(json_file, "r", encoding="utf-8") as f:
-                result_data = json.load(f)
-            status = result_data.get("status", "").upper()
-            if status == "PASSED":
-                passed += 1
-            else:
-                failed += 1
+            try:
+                with open(json_file, "r", encoding="utf-8") as f:
+                    result_data = json.load(f)
+                status = result_data.get("status", "").upper()
+                if status == "PASSED":
+                    passed += 1
+                elif status in ("FAILED", "BROKEN"):
+                    failed += 1
+            except Exception:
+                pass
         log_to_ui(f"[{run_id[:8]}] Step 3 done. Passed: {passed} | Failed: {failed}", "SUCCESS")
     except Exception as e:
         print(f"[PostRun] Step 3 FAILED: {e}")
@@ -534,9 +816,11 @@ async def _post_run_notify(
     # ── Step 4 — resolve report URL ──────────────────────────────────────────
     print(f"[{run_id[:8]}] Step 4: Resolving report URL...")
     local_url  = await loop.run_in_executor(None, _start_allure_server)
-    vercel_url = await loop.run_in_executor(None, lambda: deploy_to_vercel(run_id))
+    ghpages_url = await loop.run_in_executor(None, lambda: deploy_to_github_pages(run_id))
+    if not ghpages_url:
+       log_to_ui(f"[{run_id[:8]}] ⚠️ GitHub Pages deploy failed — report URL will be local only", "WARN")
 
-    report_url = vercel_url if vercel_url else local_url
+    report_url = ghpages_url if ghpages_url else local_url
     print(f"[{run_id[:8]}] Step 4: Report URL → {report_url}")
 
     if run_id in _runs:
@@ -559,6 +843,8 @@ async def _post_run_notify(
 
     print(f"[{run_id[:8]}] Step 5: Sending Slack notification...")
     print(f"[FINAL DEBUG] developer_name = '{developer_name}'")
+    print(f"[FINAL DEBUG] app_name       = '{app_name}'")
+    print(f"[FINAL DEBUG] app_version    = '{app_version}'")
 
     try:
         await loop.run_in_executor(
@@ -590,58 +876,99 @@ async def _post_run_notify(
 
 
 # ════════════════════════════════════════════════════════════════════════════
-#  SLACK APK HANDLER  ← FIXED: uses _detect_app_variant + APP_DEVELOPER_MAP
+#  SLACK APK HANDLER  —  FIX: resolve developer from Slack user_id
 # ════════════════════════════════════════════════════════════════════════════
-
 async def _handle_slack_apk(
     file_id: str,
     channel_id: str,
     sender_user_id: str,
 ) -> None:
     run_id = _new_run()
-    print(f"[Slack] New run_id: {run_id} for file_id: {file_id}")
+    global _latest_run_id
+    _latest_run_id = run_id
 
     download_url = f"https://drive.google.com/uc?export=download&id={file_id}"
 
     try:
-        loop = asyncio.get_event_loop()
-        apk_path = await loop.run_in_executor(None, lambda: download_apk(download_url))
+        # ── Broadcast that download is starting ──────────────────────────────
+        await manager.broadcast({
+            "type": "LOG",
+            "payload": {
+                "message": f"[Slack] APK download starting... (run_id: {run_id[:8]})",
+                "status": "INFO",
+            },
+        })
 
-        info = get_apk_info(apk_path) or {}
-        print(f"[APK Info] {info}")
+        # ── Stream download progress to frontend (same as /start-test) ───────
+        script_path = os.path.join(os.path.dirname(__file__), "gdrive_loader.py")
+        apk_path = None
+        env = os.environ.copy()
+        env["PYTHONIOENCODING"] = "utf-8"
 
-        package_name = (info.get("package_name") or "").strip()
-        app_name     = (info.get("app_name") or info.get("application") or "Unknown App").strip()
-        apk_version  = (
-            info.get("version_name")
-            or info.get("versionName")
-            or info.get("version_code")
-            or info.get("versionCode")
-            or info.get("apk_version")
-            or "Unknown"
+        proc = await asyncio.create_subprocess_exec(
+            sys.executable, "-u", script_path, download_url,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+            env=env,
         )
 
-        # ── FIX: single reliable variant detection ───────────────────────────
-        app_variant  = _detect_app_variant(package_name, app_name)
-        tests_to_run = APP_VARIANTS.get(app_variant, [])
+        async for line in proc.stdout:
+            decoded = line.decode("utf-8", errors="replace").strip()
+            if decoded.startswith("PROGRESS:"):
+                await manager.broadcast({
+                    "type": "LOG",
+                    "payload": {
+                        "message": decoded.replace("PROGRESS:", "").strip(),
+                        "status": "PROGRESS",
+                    },
+                })
+            elif decoded.startswith("RESULT:"):
+                apk_path = decoded.replace("RESULT:", "").strip()
+            elif decoded:
+                await manager.broadcast({
+                    "type": "LOG",
+                    "payload": {"message": decoded, "status": "INFO"},
+                })
 
-        # ── FIX: always look up from APP_DEVELOPER_MAP; never hardcode here ──
-        developer_name = APP_DEVELOPER_MAP.get(app_variant, "Unknown Developer")
+        await proc.wait()
+        if proc.returncode != 0:
+            stderr_data = await proc.stderr.read()
+            raise Exception(
+                f"Download failed: {stderr_data.decode('utf-8', errors='replace').strip() or 'Unknown error'}"
+            )
+        if not apk_path:
+            raise Exception("Download script finished but returned no APK path.")
 
-        # ── Debug logs ───────────────────────────────────────────────────────
-        print(f"[DEBUG] package_name:   '{package_name}'")
-        print(f"[DEBUG] app_name:       '{app_name}'")
-        print(f"[DEBUG] app_variant:    '{app_variant}'")
-        print(f"[DEBUG] developer_name: '{developer_name}'")
-        print(f"[DEBUG] tests_to_run:   {tests_to_run}")
-        print(f"[DEBUG] apk_version:    '{apk_version}'")
+        # ── Rest of the handler stays the same ───────────────────────────────
+        loop = asyncio.get_event_loop()
+        info         = await loop.run_in_executor(None, lambda: _get_full_apk_info(apk_path))
+        package_name = info["package_name"]
+        app_name     = info["app_name"]
+        app_version  = info["app_version"]
+
+        app_variant    = _detect_app_variant(package_name, app_name)
+        tests_to_run   = APP_VARIANTS.get(app_variant, [])
+        developer_name = APP_DEVELOPER_MAP.get(app_variant, "")
+        if not developer_name and sender_user_id:
+            developer_name = await loop.run_in_executor(
+                None, lambda: get_slack_user_name(sender_user_id)
+            )
+        if not developer_name:
+            developer_name = "Unknown Developer"
+
+        if run_id in _runs:
+            _runs[run_id]["package_name"]   = package_name  or ""
+            _runs[run_id]["app_variant"]    = app_variant    or ""
+            _runs[run_id]["app_name"]       = app_name       or ""
+            _runs[run_id]["app_version"]    = app_version    or ""
+            _runs[run_id]["developer_name"] = developer_name or ""
 
         await manager.broadcast({
             "type": "LOG",
             "payload": {
                 "message": (
                     f"[Slack] {developer_name} triggered: "
-                    f"{app_name} v{apk_version} | Variant: {app_variant} | run_id: {run_id[:8]}"
+                    f"{app_name} v{app_version} | Variant: {app_variant} | run_id: {run_id[:8]}"
                 ),
                 "status": "INFO",
             },
@@ -654,7 +981,7 @@ async def _handle_slack_apk(
             apk_path=apk_path,
             tests_to_run=tests_to_run,
             app_name=app_name,
-            app_version=apk_version,
+            app_version=app_version,
             developer_name=developer_name,
             channel_id=channel_id,
         )
@@ -663,12 +990,8 @@ async def _handle_slack_apk(
         print(f"[Slack] Error: {e}")
         await manager.broadcast({
             "type": "LOG",
-            "payload": {
-                "message": f"[Slack] Error: {str(e)}",
-                "status": "FAILED"
-            }
+            "payload": {"message": f"[Slack] Error: {str(e)}", "status": "FAILED"},
         })
-
 
 # ════════════════════════════════════════════════════════════════════════════
 #  APP LIFESPAN
@@ -1002,35 +1325,9 @@ async def jira_test_connection():
 
 @app.post("/api/allure/start")
 async def allure_start():
-    global _allure_proc, _allure_port
-
-    if _allure_proc is not None and _allure_proc.poll() is None and _allure_port is not None:
-        print(f"[Allure] ♻️  Reusing existing server on port {_allure_port}")
-        return JSONResponse({"url": f"http://127.0.0.1:{_allure_port}"})
-
-    if _allure_proc is not None:
-        try:
-            if os.name == "nt":
-                subprocess.run(
-                    ["taskkill", "/F", "/T", "/PID", str(_allure_proc.pid)],
-                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-                )
-            else:
-                _allure_proc.terminate()
-        except Exception:
-            pass
-        _allure_proc = None
-
-    _allure_port = _pick_free_port()
-    _allure_proc = subprocess.Popen(
-        [ALLURE_CMD, "open", "-h", "127.0.0.1", "-p", str(_allure_port), ALLURE_REPORT_DIR],
-        cwd=BASE_DIR,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-        shell=True,
-    )
-    await asyncio.sleep(2)
-    return JSONResponse({"url": f"http://127.0.0.1:{_allure_port}"})
+    loop = asyncio.get_event_loop()
+    url  = await loop.run_in_executor(None, _start_allure_server)
+    return JSONResponse({"url": url})
 
 
 @app.get("/device-status")
@@ -1072,6 +1369,7 @@ async def log_step(msg: LogMessage):
 
     message = msg.message
 
+    # ── TEST_START signal ────────────────────────────────────────────────────
     if "[TEST_START:" in message:
         try:
             new_test = message.split("[TEST_START:")[1].split("]")[0].strip()
@@ -1085,43 +1383,9 @@ async def log_step(msg: LogMessage):
                 })
         except Exception as e:
             print(f"❌ TEST_START parse warning: {e}")
+        return {"status": "ok"}
 
-    step_captured = False
-    if run_id:
-        try:
-            current_test = _runs[run_id]["current_test_name"]
-            bucket = (
-                message.split("[TEST:")[1].split("]")[0].strip()
-                if "[TEST:" in message else current_test
-            )
-            if "[FOUND]" in message:
-                match = re.search(r"name='([^']+)'|name=\"([^\"]+)\"", message)
-                step  = (match.group(1) or match.group(2)) if match else None
-                if step:
-                    store = _runs[run_id]["test_steps_store"]
-                    store.setdefault(bucket, []).append(step)
-                    step_num = len(store[bucket])
-                    print(f"✅ Step captured → [{run_id[:8]}] {bucket}: {step}")
-                    step_captured = True
-                    _broadcast_async({
-                        "type": "STEP_CAPTURED",
-                        "payload": {
-                            "run_id":      run_id,
-                            "test_name":   bucket,
-                            "step":        step,
-                            "step_number": step_num,
-                        },
-                    })
-                    _broadcast_async({
-                        "type": "LOG",
-                        "payload": {
-                            "message": f"  📍 [{bucket}] Step {step_num}: {step}",
-                            "status":  "STEP",
-                        },
-                    })
-        except Exception as e:
-            print(f"❌ Step capture warning: {e}")
-
+    # ── PAYLOAD prefix — forward only a clean summary ────────────────────────
     for prefix in _PAYLOAD_PREFIXES:
         if message.startswith(prefix):
             raw = message[len(prefix):].strip()
@@ -1140,6 +1404,50 @@ async def log_step(msg: LogMessage):
             except Exception as exc:
                 logger.warning("Failed to parse payload: %s", exc)
             return {"status": "ok"}
+
+    # ── [FOUND] / [CLICK] step capture ───────────────────────────────────────
+    step_captured = False
+    if run_id and ("[FOUND]" in message or "[CLICK]" in message or "[TAP]" in message):
+        try:
+            current_test = _runs[run_id]["current_test_name"]
+            bucket = (
+                message.split("[TEST:")[1].split("]")[0].strip()
+                if "[TEST:" in message else current_test
+            )
+            step = None
+            if "[FOUND]" in message:
+                match = re.search(r"name='([^']+)'|name=\"([^\"]+)\"", message)
+                step  = (match.group(1) or match.group(2)) if match else None
+            elif re.search(r"\[(?:CLICK|TAP|PRESSED|TAPPED)\]", message, re.IGNORECASE):
+                m = re.search(r"\[(?:CLICK|TAP|PRESSED|TAPPED)\]\s+(.+)", message, re.IGNORECASE)
+                step = m.group(1).strip() if m else None
+
+            if step:
+                store = _runs[run_id]["test_steps_store"]
+                store.setdefault(bucket, [])
+                existing = store[bucket]
+                if not existing or existing[-1] != step:
+                    existing.append(step)
+                    step_num = len(existing)
+                    print(f"✅ Step captured → [{run_id[:8]}] {bucket}: {step}")
+                    step_captured = True
+                    _broadcast_async({
+                        "type": "STEP_CAPTURED",
+                        "payload": {
+                            "run_id":      run_id,
+                            "test_name":   bucket,
+                            "step":        step,
+                            "step_number": step_num,
+                        },
+                    })
+                    # NOTE: Do NOT broadcast a LOG here — the raw [FOUND]/[CLICK]
+                    # line is already suppressed (return below).  The STEP_CAPTURED
+                    # event is enough for the UI step panel.
+                else:
+                    print(f"⚠️  Duplicate step skipped → [{run_id[:8]}] {bucket}: {step}")
+                return {"status": "ok"}
+        except Exception as e:
+            print(f"❌ Step capture warning: {e}")
 
     if not step_captured:
         _broadcast_async({"type": "LOG", "payload": {"message": message, "status": msg.status}})
@@ -1171,9 +1479,10 @@ async def add_step(data: dict):
 
     store = _runs[run_id]["test_steps_store"]
     store.setdefault(test_name, [])
-    if step and step not in store[test_name]:
-        store[test_name].append(step)
-        step_num = len(store[test_name])
+    existing = store[test_name]
+    if step and (not existing or existing[-1] != step):
+        existing.append(step)
+        step_num = len(existing)
         print(f"✅ Step added → [{run_id[:8]}] {test_name}: {step}")
         _broadcast_async({
             "type": "STEP_CAPTURED",
@@ -1184,13 +1493,7 @@ async def add_step(data: dict):
                 "step_number": step_num,
             },
         })
-        _broadcast_async({
-            "type": "LOG",
-            "payload": {
-                "message": f"  📍 [{test_name}] Step {step_num}: {step}",
-                "status":  "STEP",
-            },
-        })
+        # No LOG broadcast here — STEP_CAPTURED is enough for the UI step panel.
 
     return {"status": "ok", "run_id": run_id, "test_name": test_name, "step_count": len(store[test_name])}
 
@@ -1388,8 +1691,6 @@ async def jira_create(req: JiraCreateRequest):
     return {"issue_id": issue_key, "issue_key": issue_key, "issue_url": issue_url, **entry}
 
 
-# ─── Jira history & comments ──────────────────────────────────────────────────
-
 @app.get("/api/jira/history")
 async def jira_history_api():
     return {"issues": _jira_history}
@@ -1502,18 +1803,30 @@ async def start_test(request: TestRequest, background_tasks: BackgroundTasks):
         icon_url      = extract_app_icon(apk_path)
         full_icon_url = f"http://localhost:8000{icon_url}" if icon_url else None
 
-        info         = get_apk_info(apk_path) or {}
-        print(f"[APK Info] {info}")
-        package_name = info.get("package_name", "")
-        app_name     = info.get("app_name", "")
+        # ── FIX: use _get_full_apk_info ──────────────────────────────────────
+        info         = _get_full_apk_info(apk_path)
+        package_name = info["package_name"]
+        app_name     = info["app_name"]
+        app_version  = info["app_version"]
 
-        # ── FIX: use central helper ───────────────────────────────────────────
         app_variant  = _detect_app_variant(package_name, app_name)
         tests_to_run = request.tests_to_run or APP_VARIANTS.get(app_variant, [])
 
+        # ── Store into run state immediately so conftest can fetch it ─────────
+        developer_name = APP_DEVELOPER_MAP.get(app_variant, "Unknown Developer")
+        if run_id in _runs:
+            _runs[run_id]["app_name"]       = app_name       or ""
+            _runs[run_id]["app_version"]    = app_version     or ""
+            _runs[run_id]["package_name"]   = package_name   or ""
+            _runs[run_id]["app_variant"]    = app_variant     or ""
+            _runs[run_id]["developer_name"] = developer_name or ""
+
         await manager.broadcast({
             "type": "LOG",
-            "payload": {"message": f"Detected app variant: {app_variant}", "status": "INFO"},
+            "payload": {
+                "message": f"Detected: {app_name} v{app_version} | Variant: {app_variant}",
+                "status": "INFO"
+            },
         })
 
         background_tasks.add_task(
@@ -1521,9 +1834,9 @@ async def start_test(request: TestRequest, background_tasks: BackgroundTasks):
             run_id=run_id,
             apk_path=apk_path,
             tests_to_run=tests_to_run,
-            app_name=app_name or "",
-            app_version=info.get("app_version") or "",
-            developer_name=APP_DEVELOPER_MAP.get(app_variant, "Unknown Developer"),
+            app_name=app_name,
+            app_version=app_version,
+            developer_name=developer_name,
             channel_id=SLACK_NOTIFY_CHANNEL,
         )
 
@@ -1536,6 +1849,7 @@ async def start_test(request: TestRequest, background_tasks: BackgroundTasks):
             **info,
             "app_name":     app_name,
             "package_name": package_name,
+            "app_version":  app_version,
             "app_variant":  app_variant,
         }
 
@@ -1566,12 +1880,13 @@ async def start_test_existing(request: ExistingTestRequest, background_tasks: Ba
 
         icon_url      = extract_app_icon(apk_path)
         full_icon_url = f"http://localhost:8000{icon_url}" if icon_url else None
-        info          = get_apk_info(apk_path) or {}
 
-        package_name = info.get("package_name", "")
-        app_name     = info.get("app_name", "")
+        # ── FIX: use _get_full_apk_info ──────────────────────────────────────
+        info         = _get_full_apk_info(apk_path)
+        package_name = info["package_name"]
+        app_name     = info["app_name"]
+        app_version  = info["app_version"]
 
-        # ── FIX: use central helper ───────────────────────────────────────────
         app_variant   = _detect_app_variant(package_name, app_name)
         variant_tests = APP_VARIANTS.get(app_variant, [])
 
@@ -1613,8 +1928,8 @@ async def start_test_existing(request: ExistingTestRequest, background_tasks: Ba
             run_id=run_id,
             apk_path=apk_path,
             tests_to_run=tests_to_run,
-            app_name=app_name or "",
-            app_version=info.get("app_version") or "",
+            app_name=app_name,
+            app_version=app_version,
             developer_name=APP_DEVELOPER_MAP.get(app_variant, "Unknown Developer"),
             channel_id=SLACK_NOTIFY_CHANNEL,
         )
@@ -1739,6 +2054,63 @@ async def get_run_state(run_id: str):
         "step_store_keys":  list(run["test_steps_store"].keys()),
         "pending_payloads": len(run["pending_payloads"]),
     }
+
+
+@app.get("/api/run/app-info")
+async def get_run_app_info(run_id: Optional[str] = None):
+    """
+    Called by pytest conftest to get real app_name / app_version /
+    developer_name for the current run, so Jira payloads are never Unknown.
+
+    Usage in conftest.py:
+        import requests, os
+        run_id = os.getenv("RUN_ID", "")
+        info = requests.get(
+            f"http://localhost:8000/api/run/app-info?run_id={run_id}"
+        ).json()
+        app_name    = info["app_name"]
+        app_version = info["app_version"]
+        dev_name    = info["developer_name"]
+    """
+    global _latest_run_id
+    rid = run_id or _latest_run_id
+    if not rid or rid not in _runs:
+        return {
+            "run_id":         rid or "",
+            "app_name":       "",
+            "app_version":    "",
+            "package_name":   "",
+            "app_variant":    "",
+            "developer_name": "",
+            "found":          False,
+        }
+    run = _runs[rid]
+    return {
+        "run_id":         rid,
+        "app_name":       run.get("app_name")       or "",
+        "app_version":    run.get("app_version")    or "",
+        "package_name":   run.get("package_name")   or "",
+        "app_variant":    run.get("app_variant")    or "",
+        "developer_name": run.get("developer_name") or "",
+        "found":          True,
+    }
+
+
+@app.get("/api/latest-run-id")
+async def get_latest_run_id():
+    """Returns the most recent run_id. Useful for conftest that does not know run_id yet."""
+    global _latest_run_id
+    if not _latest_run_id or _latest_run_id not in _runs:
+        return {"run_id": None, "found": False}
+    run = _runs[_latest_run_id]
+    return {
+        "run_id":         _latest_run_id,
+        "app_name":       run.get("app_name")       or "",
+        "app_version":    run.get("app_version")    or "",
+        "developer_name": run.get("developer_name") or "",
+        "found":          True,
+    }
+
 
 
 # ════════════════════════════════════════════════════════════════════════════
