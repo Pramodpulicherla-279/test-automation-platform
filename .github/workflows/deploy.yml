@@ -6,18 +6,19 @@ on:
       - samad-updated
 
 permissions:
-  contents: write   # 🔥 THIS FIXES YOUR ERROR
+  contents: write
+  pages: write      # Added for native deployment
+  id-token: write   # Added for native deployment
 
 jobs:
   test-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
@@ -27,21 +28,23 @@ jobs:
           pip install allure-pytest
 
       - name: Run tests
-        run: |
-          pytest || true
+        run: pytest --alluredir=allure-results || true
+
+      # faster than apt-get install
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
 
       - name: Install Allure
         run: |
-          sudo apt-get update
-          sudo apt-get install -y default-jre
           wget https://github.com/allure-framework/allure2/releases/download/2.29.0/allure-2.29.0.tgz
           tar -xvzf allure-2.29.0.tgz
-          sudo mv allure-2.29.0 /opt/allure
-          sudo ln -s /opt/allure/bin/allure /usr/bin/allure
+          echo "$(pwd)/allure-2.29.0/bin" >> $GITHUB_PATH
 
       - name: Generate Allure Report
-        run: |
-          allure generate allure-results -o allure-report --clean
+        run: allure generate allure-results -o allure-report --clean
 
       - name: Deploy to GitHub Pages
         run: |
