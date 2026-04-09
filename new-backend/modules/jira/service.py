@@ -5,9 +5,9 @@ from core.websocket import manager
 from core.events import broadcast_async
 import datetime
 from fastapi import FastAPI, WebSocket, BackgroundTasks, HTTPException
+from .jira_config import config as jira_config
 
 async def health_flow():
-    from jira_integration.jira_config import config as jira_config
     return {
         "status": "ok",
         "jira_enabled": jira_config.enabled,
@@ -18,7 +18,7 @@ async def health_flow():
         # ── Debug info — shows exactly what's in the step store ──
         "step_store_keys":   list(test_steps_store.keys()),
         "step_store_counts": {k: len(v) for k, v in test_steps_store.items()},
-        "current_test":      _current_test_name,
+        "current_test":      current_test_name,
         "pending_payloads":  len(pending_payloads),
     }
 
@@ -81,9 +81,9 @@ async def add_step_flow(data: dict):
     return {"status": "ok", "test_name": test_name, "step_count": len(test_steps_store[test_name])}
 
 async def reset_steps_flow():
-    global _test_steps_store, _current_test_name
-    _test_steps_store  = {}
-    _current_test_name = "default"
+    global test_steps_store, current_test_name
+    test_steps_store  = {}
+    current_test_name = "default"
     print("🧹 Step store cleared")
     return {"status": "cleared"}
 

@@ -337,7 +337,7 @@ export default function JiraHistory({ issuePanelHistory = [] }) {
   const fetchIssues = async () => {
     setLoading(true); setError(null);
     try {
-      const res = await fetch(`${API_URL}/api/jira/history`);
+      const res = await fetch(`${API_URL}/jira/history`);
       if (!res.ok) throw new Error(`${res.status}`);
       setApiIssues((await res.json()).issues ?? []);
     } catch {
@@ -354,7 +354,7 @@ export default function JiraHistory({ issuePanelHistory = [] }) {
   // Fetch comments when selected issue changes
   useEffect(() => {
     if (!selectedIssue?.issueId) { setComments([]); return; }
-    fetch(`${API_URL}/api/jira/comments/${selectedIssue.issueId}`)
+    fetch(`${API_URL}/jira/comments/${selectedIssue.issueId}`)
       .then(r => r.json())
       .then(d => setComments(d.comments || []))
       .catch(() => setComments([]));
@@ -389,7 +389,7 @@ export default function JiraHistory({ issuePanelHistory = [] }) {
     if (!issueKey) return;
 
     try {
-      await fetch(`${API_URL}/api/jira/comments/${issueKey}`, {
+      await fetch(`${API_URL}/jira/comments/${issueKey}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

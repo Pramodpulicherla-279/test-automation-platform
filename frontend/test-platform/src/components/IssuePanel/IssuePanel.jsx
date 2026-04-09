@@ -63,7 +63,7 @@ const formatIssueId = (id) => {
 };
 const postDismiss = (payload) => {
   if (!payload) return;
-  fetch(`${BACKEND}/api/jira/dismiss`, {
+  fetch(`${BACKEND}/jira/dismiss`, {
     method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   }).catch(() => { });
@@ -172,7 +172,7 @@ function IssueCard({ iss, idx, isOpen, onToggle, onRemove, onCreated, serverRead
         affects_version: fields.affectsVersion ? fields.affectsVersion.split(",").map(s => s.trim()).filter(Boolean) : [],
         fix_version: fields.fixVersion ? fields.fixVersion.split(",").map(s => s.trim()).filter(Boolean) : [],
       };
-      const res = await fetch(`${BACKEND}/api/jira/enhance`, {
+      const res = await fetch(`${BACKEND}/llm/enhance`, {
         method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),
       });
       let data = {}; try { data = await res.json(); } catch (_) { }
@@ -189,7 +189,7 @@ function IssueCard({ iss, idx, isOpen, onToggle, onRemove, onCreated, serverRead
   };
 
   const handleCreate = async () => {
-    if (serverReady === false) { setErrMsg("Old server.py running — restart backend"); return; }
+    if (!serverReady === false) { setErrMsg("Old server.py running — restart backend"); return; }
     setCreating(true); setErrMsg(null);
     try {
       const body = {
@@ -212,7 +212,7 @@ function IssueCard({ iss, idx, isOpen, onToggle, onRemove, onCreated, serverRead
         end_date: fields.endDate || "",
         sprint: fields.sprint || "Automation",
       };
-      const res = await fetch(`${BACKEND}/api/jira/create`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+      const res = await fetch(`${BACKEND}/jira/create`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
       let data = {}; try { data = await res.json(); } catch (_) { }
       if (!res.ok) { setErrMsg(data?.detail || `HTTP ${res.status}`); return; }
 
@@ -335,7 +335,7 @@ function IssueCard({ iss, idx, isOpen, onToggle, onRemove, onCreated, serverRead
             <div style={{ background: "#fef2f2", border: "1px solid #fecaca", borderRadius: "5px", padding: "8px 10px", fontSize: "0.71rem", color: "#b91c1c", lineHeight: "1.6" }}>
               <strong>⚠️ Create failed:</strong> {errMsg}
               <div style={{ marginTop: "4px" }}>
-                <a href={`${BACKEND}/api/jira/test-connection`} target="_blank" rel="noreferrer" style={{ color: "#b91c1c", fontWeight: 700 }}>Test connection ↗</a>
+                <a href={`${BACKEND}/jira/test-connection`} target="_blank" rel="noreferrer" style={{ color: "#b91c1c", fontWeight: 700 }}>Test connection ↗</a>
               </div>
             </div>
           )}
@@ -446,7 +446,7 @@ export default function IssuePanel({ modules = [], jiraIssues = [], onHistoryUpd
   useEffect(() => { ssSave(issues); }, [issues]);
 
   useEffect(() => {
-    fetch(`${BACKEND}/api/health`).then(r => r.json()).then(d => setServerReady(d.status === "ok")).catch(() => setServerReady(false));
+    fetch(`${BACKEND}jira/health`).then(r => r.json()).then(d => setServerReady(d.status === "ok")).catch(() => setServerReady(false));
   }, []);
 
   const addPayload = useCallback((payload) => {
@@ -468,7 +468,7 @@ export default function IssuePanel({ modules = [], jiraIssues = [], onHistoryUpd
   useEffect(() => {
     const saved = ssLoad();
     if (saved && saved.length > 0) return;
-    fetch(`${BACKEND}/api/jira/payloads`).then(r => r.json()).then(d => {
+    fetch(`${BACKEND}/jira/payloads`).then(r => r.json()).then(d => {
       (d.payloads || []).forEach(addPayload);
     }).catch(() => { });
     // eslint-disable-next-line react-hooks/exhaustive-deps

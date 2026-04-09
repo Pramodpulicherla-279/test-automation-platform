@@ -7,6 +7,8 @@ from fastapi import HTTPException
 from core.logger import logger
 from core.utils import latest_run_id
 from core.constants import UI_SCREENSHOTS_BASE
+from .generate_jira_desc import generate_jira_description, generate_jira_title
+
 
 async def enhance_jira_issue_flow(req):
     """
@@ -14,7 +16,6 @@ async def enhance_jira_issue_flow(req):
     (with Steps to Reproduce, Actual Result, Expected Result) and returns
     them so the frontend can paste directly into the issue card fields.
     """
-    from generate_jira_desc import generate_jira_description, generate_jira_title
  
     issue_data = req.model_dump(exclude_none=True)
  
@@ -28,14 +29,14 @@ async def enhance_jira_issue_flow(req):
         )
  
     except Exception as exc:
-        logger.error("[/api/jira/enhance] Gemini call failed: %s", exc)
+        logger.error("[/llm/enhance] Gemini call failed: %s", exc)
         raise HTTPException(
             status_code=500,
             detail=f"LLM enhancement failed: {str(exc)}",
         )
  
     logger.info(
-        "[/api/jira/enhance] Enhanced issue_id=%s title='%s'",
+        "[/llm/enhance] Enhanced issue_id=%s title='%s'",
         req.issue_id, enhanced_title,
     )
  
