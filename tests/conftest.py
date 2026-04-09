@@ -9,6 +9,11 @@ Step capture — four-layer strategy (most reliable first):
   4. report.sections["Captured stdout call"] / capstdout
   (empty list if all fail)
 
+─── STEP CAPTURE FIX ──────────────────────────────────────────────────────────
+  Root cause:  _extract_steps_from_text only matched [FOUND] and [CLICK].
+               Tests that use [STEP], [ACTION], [TAP], ✅ markers got 0 steps.
+  Fix:  Expanded _STEP_PATTERNS to cover all common markers.
+
 ─── PYCACHE FIX ────────────────────────────────────────────────────────────────
   Root cause:  Python caches compiled .py → __pycache__/*.pyc.
                Stale .pyc loaded on next run → old Appium config → timeout.
@@ -17,12 +22,17 @@ Step capture — four-layer strategy (most reliable first):
     2. PYTHONDONTWRITEBYTECODE env var  — covers subprocesses
     3. _clean_pycache() in pytest_configure — wipes existing stale files
        before collection/import starts.
+
+─── JIRA DATES FIX ────────────────────────────────────────────────────────────
+  Root cause:  Dates and sprint captured locally but not sent to JIRA API.
+  Fix:  Include start_date, end_date, sprint in payload to backend.
 ────────────────────────────────────────────────────────────────────────────────
 """
 
 # ── MUST be the very first executable lines ───────────────────────────────────
 import sys
 sys.dont_write_bytecode = True          # Prevent Python writing NEW .pyc files
+import sys, os
 
 import os
 os.environ["PYTHONDONTWRITEBYTECODE"] = "1"   # Propagate to child processes
@@ -35,15 +45,12 @@ import shutil
 import datetime
 import requests as http_requests
 from pathlib import Path
+from typing import List, Optional
 
-import re
 import pytest
 import allure
-from pathlib import Path
 from appium import webdriver
 from appium.options.android import UiAutomator2Options
-import sys
-sys.dont_write_bytecode = True
 
 RUN_ID_CACHE = None
 print("🔥 conftest loaded")
@@ -61,24 +68,39 @@ _ticket_id:      str  = ""
 _issue_counter:  int  = 0
 _session_issues: list = []
 _developer_name: str  = ""
+_test_start_time: datetime.datetime = None  # Track test start time globally
 
 # Per-test local step buffer — populated by _StepCapturingPlugin
-# This is the safety net when the server returns empty steps
 _local_step_buffer: dict = {}   # { test_name: [step, ...] }
 current_test_name: str  = ""
 
 
-# ─── Regex for parsing [FOUND] / [CLICK] lines ───────────────────────────────
-_FOUND_RE = re.compile(
-    r"\[FOUND\]\s+name='([^']+)'|\[FOUND\]\s+name=\"([^\"]+)\"",
-    re.IGNORECASE,
-)
-_CLICK_RE = re.compile(r"\[(?:CLICK|TAP|PRESSED|TAPPED)\]\s+(.+)", re.IGNORECASE)
+# ════════════════════════════════════════════════════════════════════════════
+#  STEP EXTRACTION — expanded pattern set
+#
+#  FIX: Added [STEP], [ACTION], [TAP], [PRESSED], [TAPPED], ✅ markers so
+#  that any test-side logging convention is captured, not just [FOUND].
+# ════════════════════════════════════════════════════════════════════════════
+
+# Each tuple: (compiled pattern, group index that holds the step label)
+_STEP_PATTERNS: List[tuple] = [
+    # [FOUND] name='Foo'  or  [FOUND] name="Foo"
+    (re.compile(r"\[FOUND\]\s+name='([^']+)'",   re.IGNORECASE), 1),
+    (re.compile(r'\[FOUND\]\s+name="([^"]+)"',   re.IGNORECASE), 1),
+    # [CLICK] label  /  [TAP] label  /  [PRESSED] label  /  [TAPPED] label
+    (re.compile(r'\[(?:CLICK|TAP|PRESSED|TAPPED)\]\s+(.+)', re.IGNORECASE), 1),
+    # [STEP] Step description
+    (re.compile(r'\[STEP\]\s+(.+)',   re.IGNORECASE), 1),
+    # [ACTION] did something
+    (re.compile(r'\[ACTION\]\s+(.+)', re.IGNORECASE), 1),
+    # ✅ Step name  (emitted by helper wrappers)
+    (re.compile(r'✅\s+(?:Step\s+)?[–—-]?\s*(.+)', re.IGNORECASE), 1),
+]
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# PYCACHE CLEANUP
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════════════════
+#  PYCACHE CLEANUP
+# ════════════════════════════════════════════════════════════════════════════
 def _clean_pycache(root: str = ".") -> None:
     """
     Recursively delete every __pycache__ dir and *.pyc / *.pyo file under root.
@@ -104,24 +126,19 @@ def _clean_pycache(root: str = ".") -> None:
     )
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# LOCAL BUFFER PLUGIN — captures steps live from pytest stdout
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════════════════
+#  LOCAL BUFFER PLUGIN — captures steps live from pytest stdout
+# ════════════════════════════════════════════════════════════════════════════
 class _StepCapturingPlugin:
     """
     Registered as a pytest plugin in pytest_configure.
     After each test call phase it reads capstdout and feeds any
-    [FOUND] / [CLICK] lines into _local_step_buffer[test_name].
-
-    This is the safety net: even if the backend server query returns []
-    (e.g. the test died before sending log-step POSTs), the steps that
-    pytest captured in its own stdout buffer are still available here.
+    recognised step lines into _local_step_buffer[test_name].
     """
 
     def pytest_runtest_logreport(self, report):
         if report.when != "call":
             return
-        # nodeid example: tests/.../TestOnboarding.py::TestOnboarding::test_onboarding_success
         test_name = report.nodeid.split("::")[-1]
         cap = getattr(report, "capstdout", "") or ""
         if not cap:
@@ -137,25 +154,27 @@ class _StepCapturingPlugin:
         print(f"[LOCAL_BUFFER] Stored {len(existing)} step(s) for {test_name}")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# STEP EXTRACTION HELPERS
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════════════════
+#  STEP EXTRACTION HELPERS
+# ════════════════════════════════════════════════════════════════════════════
 def _extract_steps_from_text(text: str) -> list:
-    """Parse [FOUND] / [CLICK] lines from any text blob, dedup consecutive."""
+    """
+    Parse step markers from any text blob using all patterns in _STEP_PATTERNS.
+    Deduplicates consecutive identical steps.
+    """
     if not text:
         return []
     raw = []
     for line in text.splitlines():
         line = line.strip()
-        m = _FOUND_RE.search(line)
-        if m:
-            step = (m.group(1) or m.group(2) or "").strip()
-            if step:
-                raw.append(step)
-            continue
-        m = _CLICK_RE.search(line)
-        if m:
-            raw.append(m.group(1).strip())
+        for pattern, group in _STEP_PATTERNS:
+            m = pattern.search(line)
+            if m:
+                step = m.group(group).strip()
+                if step:
+                    raw.append(step)
+                break  # first matching pattern wins per line
+    # dedup consecutive
     deduped = []
     for step in raw:
         if not deduped or step != deduped[-1]:
@@ -219,9 +238,7 @@ def _get_steps_from_local_buffer(test_name: str) -> list:
 
 def _get_steps_from_logcat(driver_obj) -> list:
     """
-    Layer 3: scrape device logcat for [FOUND]/[CLICK] lines at failure time.
-    Catches steps that were printed to logcat but whose log-step POST
-    hadn't arrived at the server yet when the test crashed.
+    Layer 3: scrape device logcat for step markers at failure time.
     """
     if not driver_obj:
         return []
@@ -257,11 +274,6 @@ def _get_steps_from_sections(report) -> list:
 def _get_steps(item, report, test_name: str) -> list:
     """
     Full pipeline — tries all layers in order, returns first non-empty result.
-
-    Layer 1: server (exact key → default bucket, with 1s retry)
-    Layer 2: local in-process buffer (from _StepCapturingPlugin)
-    Layer 3: live logcat scrape from device
-    Layer 4: report.sections / capstdout
     """
     steps = _get_steps_from_server(test_name)
     if steps:
@@ -284,9 +296,9 @@ def _get_steps(item, report, test_name: str) -> list:
     return []
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# GENERAL HELPERS
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════════════════
+#  GENERAL HELPERS
+# ════════════════════════════════════════════════════════════════════════════
 def _make_ticket_id() -> str:
     return "RUN-" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
@@ -321,9 +333,9 @@ def _fetch_developer_name_from_jira() -> str:
     return ""
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# PYTEST HOOKS
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════════════════
+#  PYTEST HOOKS
+# ════════════════════════════════════════════════════════════════════════════
 def pytest_configure(config):
     """
     Earliest pytest hook — before collection, before any test module is imported.
@@ -356,12 +368,13 @@ def pytest_sessionstart(session):
 
 def pytest_runtest_setup(item):
     """
-    Signal the server which test is starting so it buckets [FOUND] steps
+    Signal the server which test is starting so it buckets steps
     under the correct key (not 'default').
     Also pre-initialise the local buffer slot for this test.
     """
-    global current_test_name
+    global current_test_name, _test_start_time
     current_test_name = item.name
+    _test_start_time = datetime.datetime.now()
     _local_step_buffer.setdefault(item.name, [])
 
     try:
@@ -396,7 +409,7 @@ def driver(request):
 
     drv = webdriver.Remote("http://127.0.0.1:4723", options=options)
     try:
-        drv.get_log("logcat")   # flush logcat buffer at session start
+        drv.get_log("logcat")
     except Exception:
         pass
     yield drv
@@ -561,17 +574,32 @@ def pytest_runtest_makereport(item, call):
 
     issue_summary = f"Automation Failure: {test_name}"
 
-    # 4. Step collection (4-layer pipeline)
+    # 4. Step collection (4-layer pipeline — now uses expanded patterns)
     steps_executed = _get_steps(item, report, test_name)
 
     # 5. Error text
     error_text = _extract_error_only(report.longrepr)
 
-    today      = datetime.date.today()
-    start_date = today.isoformat()
-    end_date   = (today + datetime.timedelta(days=1)).isoformat()
+    # ── Capture accurate test execution dates ──────────────────────────────
+    global _test_start_time
 
-    # 6. Build and send payload
+    test_start = _test_start_time or datetime.datetime.now()
+    test_end   = datetime.datetime.now()
+
+    start_date_iso      = test_start.isoformat()
+    end_date_iso        = test_end.isoformat()
+    start_date_readable = test_start.strftime('%d/%m/%Y, %H:%M')
+    end_date_readable   = test_end.strftime('%d/%m/%Y, %H:%M')
+    duration_seconds    = (test_end - test_start).total_seconds()
+    duration_readable   = f"{int(duration_seconds)} seconds"
+
+    print(f"\n📅 Test Execution Timeline:")
+    print(f"   Start:    {start_date_readable} (ISO: {start_date_iso})")
+    print(f"   End:      {end_date_readable} (ISO: {end_date_iso})")
+    print(f"   Duration: {duration_readable}")
+    print(f"   Steps:    {len(steps_executed)}")
+
+    # ── Build payload ──────────────────────────────────────────────────────
     payload = {
         "ticket_id":       _ticket_id,
         "issue_id":        issue_id,
@@ -584,12 +612,12 @@ def pytest_runtest_makereport(item, call):
         "test_name":       test_name,
         "steps_executed":  steps_executed,
         "developer_name":  developer_name,
-        "start_date":      start_date,
-        "end_date":        end_date,
+        "description":     _build_description(error_text, steps_executed),
+        "start_date":      start_date_iso,
+        "end_date":        end_date_iso,
         "sprint":          "Automation",
         "fix_version":     ["Production"],
         "affects_version": [app_name] if app_name and app_name != "Unknown App" else [],
-        "description":     _build_description(error_text, steps_executed),
     }
 
     allure.attach(
@@ -624,3 +652,9 @@ def pytest_sessionfinish(session, exitstatus):
 
 def notReportFailed(report):
     return report.outcome != "failed"
+
+
+# Make jira_integration importable from backend/
+backend_dir = os.path.join(os.path.dirname(__file__), "backend")
+if backend_dir not in sys.path:
+    sys.path.insert(0, backend_dir)

@@ -68,9 +68,20 @@ const postDismiss = (payload) => {
     body: JSON.stringify(payload),
   }).catch(() => { });
 };
-const ssLoad = () => { try { const r = sessionStorage.getItem(SS_KEY); return r ? JSON.parse(r) : null; } catch { return null; } };
-const ssSave = (v) => { try { sessionStorage.setItem(SS_KEY, JSON.stringify(v)); } catch { } };
-const ssClear = () => { try { sessionStorage.removeItem(SS_KEY); } catch { } };
+const ssLoad  = () => { try { const r = sessionStorage.getItem(SS_KEY); return r ? JSON.parse(r) : null; } catch { return null; } };
+const ssSave  = (v) => { try { sessionStorage.setItem(SS_KEY, JSON.stringify(v)); } catch {} };
+const ssClear = () => { try { sessionStorage.removeItem(SS_KEY); } catch {} };
+
+// ── Build the display title: "AppName (vX.Y.Z) — original title" ─────────────
+const buildDisplayTitle = (payload) => {
+  const base   = safeStr(pickFirst(payload, ["title", "issue_summary", "summary"]));
+  const app    = safeStr(payload?.app_name    || "").trim();
+  const ver    = safeStr(payload?.app_version || "").trim();
+  const prefix = app
+    ? ver ? `${app} (v${ver})` : app
+    : "";
+  return prefix ? `${prefix} — ${base}` : base;
+};
 
 const emptyIssue = () => ({
   source: "manual", jiraUrl: "", issueId: "", title: "", description: "",
@@ -83,30 +94,32 @@ const emptyIssue = () => ({
 
 const mapPayloadToIssue = (payload) => ({
   ...emptyIssue(),
-  source: "draft",
-  issueId: safeStr(pickFirst(payload, ["jira_key", "jira_issue_key"])),
-  jiraUrl: safeStr(pickFirst(payload, ["jira_url", "issue_url", "browse_url", "url"])),
-  title: safeStr(pickFirst(payload, ["title", "issue_summary", "summary"])),
-  description: safeStr(payload.description || ""),
-  developer: safeStr(pickFirst(payload, ["developer_name", "developerName"])) || "Unassigned",
-  parent: safeStr(payload.parent || payload.module || ""),
-  fixVersion: toArr(payload.fix_version ?? payload.fixVersion).join(", "),
-  affectsVersion: toArr(payload.affects_version ?? payload.affectsVersion).join(", "),
-  startDate: safeStr(payload.start_date || ""),
-  endDate: safeStr(payload.end_date || ""),
-  sprint: safeStr(payload.sprint || "Automation"),
-  priority: safeStr(payload.priority || "High"),
-  app_name: safeStr(payload.app_name),
-  app_version: safeStr(payload.app_version),
-  module: safeStr(payload.module || ""),
-  feature: safeStr(payload.feature),
-  test_name: safeStr(payload.test_name),
-  steps_executed: Array.isArray(payload.steps_executed) ? payload.steps_executed : [],
-  issue_summary: safeStr(payload.issue_summary) || safeStr(payload.title),
-  ticket_id: safeStr(payload.ticket_id),
+  source:            "draft",
+  issueId:           safeStr(pickFirst(payload, ["jira_key", "jira_issue_key"])),
+  jiraUrl:           safeStr(pickFirst(payload, ["jira_url", "issue_url", "browse_url", "url"])),
+  // ── FIX 1: prefix title with app name + version ───────────────────────────
+  title:             buildDisplayTitle(payload),
+  description:       safeStr(payload.description || ""),
+  developer:         safeStr(pickFirst(payload, ["developer_name", "developerName"])) || "Unassigned",
+  parent:            safeStr(payload.parent || payload.module || ""),
+  // ── FIX 2: map fix/affects version from payload ───────────────────────────
+  fixVersion:        toArr(payload.fix_version    ?? payload.fixVersion).join(", "),
+  affectsVersion:    toArr(payload.affects_version ?? payload.affectsVersion).join(", "),
+  startDate:         safeStr(payload.start_date || "").slice(0, 10),
+  endDate:           safeStr(payload.end_date   || "").slice(0, 10),
+  sprint:            safeStr(payload.sprint     || "Automation"),
+  priority:          safeStr(payload.priority   || "High"),
+  app_name:          safeStr(payload.app_name),
+  app_version:       safeStr(payload.app_version),
+  module:            safeStr(payload.module || ""),
+  feature:           safeStr(payload.feature),
+  test_name:         safeStr(payload.test_name),
+  steps_executed:    Array.isArray(payload.steps_executed) ? payload.steps_executed : [],
+  issue_summary:     safeStr(payload.issue_summary) || safeStr(payload.title),
+  ticket_id:         safeStr(payload.ticket_id),
   internal_issue_id: formatIssueId(safeStr(payload.issue_id)),
-  created: !!(safeStr(pickFirst(payload, ["jira_key", "jira_issue_key"])) && safeStr(pickFirst(payload, ["jira_url", "issue_url"]))),
-  rawPayload: payload,
+  created:           !!(safeStr(pickFirst(payload, ["jira_key", "jira_issue_key"])) && safeStr(pickFirst(payload, ["jira_url", "issue_url"]))),
+  rawPayload:        payload,
 });
 
 /* ─── Styles ──────────────────────────────────────────────────────────────── */
@@ -133,14 +146,13 @@ const S = {
   }),
 };
 
-/* ─── IssueCard: individual child accordion ──────────────────────────────── */
+/* ─── IssueCard ──────────────────────────────────────────────────────────── */
 function IssueCard({ iss, idx, isOpen, onToggle, onRemove, onCreated, serverReady }) {
   const [creating, setCreating] = useState(false);
   const [fields, setFields] = useState(iss);
   const [errMsg, setErrMsg] = useState(null);
   const [enhancing, setEnhancing] = useState(false);
 
-  // Sync if iss changes from parent (e.g. after create)
   useEffect(() => { setFields(iss); }, [iss]);
 
   const setF = (f, v) => setFields(p => ({ ...p, [f]: v }));
@@ -193,24 +205,24 @@ function IssueCard({ iss, idx, isOpen, onToggle, onRemove, onCreated, serverRead
     setCreating(true); setErrMsg(null);
     try {
       const body = {
-        app_name: fields.app_name || "",
-        app_version: fields.app_version || "",
-        module: fields.module || fields.parent || "",
-        feature: fields.feature || "",
-        issue_summary: fields.issue_summary || fields.title || "",
-        test_name: fields.test_name || "",
-        steps_executed: Array.isArray(fields.steps_executed) && fields.steps_executed.length ? fields.steps_executed : [],
-        developer_name: fields.developer !== "Unassigned" ? fields.developer : "",
-        title: fields.title || "",
-        description: fields.description || "",
-        parent: fields.parent || "",
-        fix_version: fields.fixVersion ? fields.fixVersion.split(",").map(s => s.trim()).filter(Boolean) : [],
+        app_name:        fields.app_name        || "",
+        app_version:     fields.app_version     || "",
+        module:          fields.module          || fields.parent || "",
+        feature:         fields.feature         || "",
+        issue_summary:   fields.issue_summary   || fields.title  || "",
+        test_name:       fields.test_name       || "",
+        steps_executed:  Array.isArray(fields.steps_executed) && fields.steps_executed.length ? fields.steps_executed : [],
+        developer_name:  fields.developer !== "Unassigned" ? fields.developer : "",
+        title:           fields.title           || "",
+        description:     fields.description     || "",
+        parent:          fields.parent          || "",
+        fix_version:     fields.fixVersion     ? fields.fixVersion.split(",").map(s => s.trim()).filter(Boolean)     : [],
         affects_version: fields.affectsVersion ? fields.affectsVersion.split(",").map(s => s.trim()).filter(Boolean) : [],
-        priority: fields.priority || "High",
-        ticket_id: fields.ticket_id || "",
-        start_date: fields.startDate || "",
-        end_date: fields.endDate || "",
-        sprint: fields.sprint || "Automation",
+        priority:        fields.priority        || "High",
+        ticket_id:       fields.ticket_id       || "",
+        start_date:      fields.startDate       || "",
+        end_date:        fields.endDate         || "",
+        sprint:          fields.sprint          || "Automation",
       };
       const res = await fetch(`${BACKEND}/jira/create`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
       let data = {}; try { data = await res.json(); } catch (_) { }
@@ -226,50 +238,50 @@ function IssueCard({ iss, idx, isOpen, onToggle, onRemove, onCreated, serverRead
   };
 
   return (
-    <div style={{ borderLeft: `3px solid ${pColor}`, borderRadius: "6px", border: "1px solid var(--border-color)", marginBottom: "4px", background: "var(--bg-card)" }}>
+    <div style={{ borderLeft:  `3px solid ${pColor}`, borderRadius:  "6px", border:  "1px solid var(--border-color)", marginBottom:  "4px", background:  "var(--bg-card)" }}>
       {/* Child row */}
-      <button onClick={onToggle} style={{ width: "100%", display: "flex", alignItems: "center", gap: "6px", padding: "6px 10px", background: isOpen ? "var(--input-bg)" : "transparent", border: "none", cursor: "pointer", textAlign: "left", borderBottom: isOpen ? "1px solid var(--border-color)" : "none", borderRadius: isOpen ? "5px 5px 0 0" : "5px" }}>
+      <button onClick={onToggle} style={{ width:  "100%", display:  "flex", alignItems:  "center", gap:  "6px", padding:  "6px 10px", background: isOpen ? "var(--input-bg)" : "transparent", border:  "none", cursor:  "pointer", textAlign:  "left", borderBottom: isOpen ? "1px solid var(--border-color)" : "none", borderRadius: isOpen ? "5px 5px 0 0" : "5px" }}>
         {isOpen ? <ChevronDown size={12} color="var(--text-secondary)" /> : <ChevronRight size={12} color="var(--text-secondary)" />}
-        <span style={S.badge("#dbeafe", "#1d4ed8")}>AUTO</span>
-        {fields.module && <span style={S.badge("#ede9fe", "#7c3aed")}>{fields.module}</span>}
-        <span style={{ color: "var(--accent-blue)", fontWeight: 700, fontSize: "0.76rem", flexShrink: 0 }}>
+        <span style={S.badge("#dbeafe",  "#1d4ed8")}>AUTO</span>
+        {fields.module && <span style={S.badge("#ede9fe",  "#7c3aed")}>{fields.module}</span>}
+        <span style={{ color:  "var(--accent-blue)", fontWeight:  700, fontSize:  "0.76rem", flexShrink:  0 }}>
           {iss.issueId || displayId}
         </span>
-        <span style={{ flex: 1, fontSize: "0.76rem", color: "var(--text-primary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-          {fields.title || <em style={{ color: "var(--text-secondary)" }}>Untitled</em>}
+        <span style={{ flex:  1, fontSize:  "0.76rem", color:  "var(--text-primary)", overflow:  "hidden", textOverflow:  "ellipsis", whiteSpace:  "nowrap" }}>
+          {fields.title || <em style={{ color:  "var(--text-secondary)" }}>Untitled</em>}
         </span>
-        {isCreated && <span style={S.badge("#dcfce7", "#16a34a")}>✓ Created</span>}
-        <span style={{ color: pColor, fontSize: "0.68rem", fontWeight: 700, flexShrink: 0 }}>{fields.priority}</span>
+        {isCreated && <span style={S.badge("#dcfce7",  "#16a34a")}>✓ Created</span>}
+        <span style={{ color:  pColor, fontSize:  "0.68rem", fontWeight:  700, flexShrink:  0 }}>{fields.priority}</span>
       </button>
 
       {/* Expanded body */}
       {isOpen && (
-        <div style={{ padding: "10px 12px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <div style={{ padding:  "10px 12px", display:  "flex", flexDirection:  "column", gap:  "8px" }}>
 
           {/* Jira Key + Title */}
-          <div style={{ display: "flex", gap: "7px" }}>
-            <div style={{ flex: "0 0 32%" }}>
+          <div style={{ display:  "flex", gap:  "7px" }}>
+            <div style={{ flex:  "0 0 32%" }}>
               <label style={S.label}>Jira Issue Key</label>
               <input style={S.input(true)} value={iss.issueId} readOnly placeholder={displayId} />
             </div>
-            <div style={{ flex: 1 }}>
-              <label style={S.label}>Title <span style={{ color: "#ef4444" }}>*</span></label>
+            <div style={{ flex:  1 }}>
+              <label style={S.label}>Title <span style={{ color:  "#ef4444" }}>*</span></label>
               <input style={S.input(locked)} value={fields.title} readOnly={locked}
                 onChange={e => !locked && setF("title", e.target.value)} />
             </div>
           </div>
 
-          {/* Error */}
+          {/* Description */}
           <div>
-            <label style={S.label}>Description <span style={{ color: "#ef4444" }}>*</span></label>
-            <textarea style={{ ...S.input(locked), resize: "vertical", minHeight: "260px", fontFamily: "inherit", fontSize: "0.71rem", lineHeight: "1.5" }}
+            <label style={S.label}>Description <span style={{ color:  "#ef4444" }}>*</span></label>
+            <textarea style={{ ...S.input(locked), resize:  "vertical", minHeight:  "260px", fontFamily:  "inherit", fontSize:  "0.71rem", lineHeight:  "1.5" }}
               value={fields.description} readOnly={locked}
               onChange={e => !locked && setF("description", e.target.value)} />
           </div>
 
           {/* Developer + Priority */}
-          <div style={{ display: "flex", gap: "7px" }}>
-            <div style={{ flex: 1 }}>
+          <div style={{ display:  "flex", gap:  "7px" }}>
+            <div style={{ flex:  1 }}>
               <label style={S.label}>Developer</label>
               {locked ? <input style={S.input(true)} value={fields.developer} readOnly /> :
                 <select style={S.input(false)} value={fields.developer} onChange={e => setF("developer", e.target.value)}>
@@ -277,7 +289,7 @@ function IssueCard({ iss, idx, isOpen, onToggle, onRemove, onCreated, serverRead
                   {DEVELOPERS.map(d => <option key={d}>{d}</option>)}
                 </select>}
             </div>
-            <div style={{ flex: 1 }}>
+            <div style={{ flex:  1 }}>
               <label style={S.label}>Priority</label>
               {locked ? <input style={S.input(true)} value={fields.priority} readOnly /> :
                 <select style={S.input(false)} value={fields.priority} onChange={e => setF("priority", e.target.value)}>
@@ -287,12 +299,12 @@ function IssueCard({ iss, idx, isOpen, onToggle, onRemove, onCreated, serverRead
           </div>
 
           {/* Parent + Sprint */}
-          <div style={{ display: "flex", gap: "7px" }}>
-            <div style={{ flex: 1 }}>
+          <div style={{ display:  "flex", gap:  "7px" }}>
+            <div style={{ flex:  1 }}>
               <label style={S.label}>Parent (Module)</label>
               <input style={S.input(locked)} value={fields.parent} readOnly={locked} onChange={e => !locked && setF("parent", e.target.value)} />
             </div>
-            <div style={{ flex: 1 }}>
+            <div style={{ flex:  1 }}>
               <label style={S.label}>Sprint</label>
               <input style={S.input(locked)} value={fields.sprint} readOnly={locked} onChange={e => !locked && setF("sprint", e.target.value)} />
             </div>
@@ -302,11 +314,15 @@ function IssueCard({ iss, idx, isOpen, onToggle, onRemove, onCreated, serverRead
           <div style={{ display: "flex", gap: "7px" }}>
             <div style={{ flex: 1 }}>
               <label style={S.label}>Fix Version</label>
-              <input style={S.input(locked)} value={fields.fixVersion} readOnly={locked} placeholder="e.g. Production" onChange={e => !locked && setF("fixVersion", e.target.value)} />
+              <input style={S.input(locked)} value={fields.fixVersion} readOnly={locked}
+                placeholder="e.g. Production"
+                onChange={e => !locked && setF("fixVersion", e.target.value)} />
             </div>
             <div style={{ flex: 1 }}>
               <label style={S.label}>Affects Version</label>
-              <input style={S.input(locked)} value={fields.affectsVersion} readOnly={locked} onChange={e => !locked && setF("affectsVersion", e.target.value)} />
+              <input style={S.input(locked)} value={fields.affectsVersion} readOnly={locked}
+                placeholder="e.g. Krishivaas Farmer"
+                onChange={e => !locked && setF("affectsVersion", e.target.value)} />
             </div>
           </div>
 
@@ -314,11 +330,13 @@ function IssueCard({ iss, idx, isOpen, onToggle, onRemove, onCreated, serverRead
           <div style={{ display: "flex", gap: "7px" }}>
             <div style={{ flex: 1 }}>
               <label style={S.label}>Start Date</label>
-              <input type="date" style={S.input(locked)} value={fields.startDate} readOnly={locked} onChange={e => !locked && setF("startDate", e.target.value)} />
+              <input type="date" style={S.input(locked)} value={fields.startDate} readOnly={locked}
+                onChange={e => !locked && setF("startDate", e.target.value)} />
             </div>
             <div style={{ flex: 1 }}>
               <label style={S.label}>End Date (Due)</label>
-              <input type="date" style={S.input(locked)} value={fields.endDate} readOnly={locked} onChange={e => !locked && setF("endDate", e.target.value)} />
+              <input type="date" style={S.input(locked)} value={fields.endDate} readOnly={locked}
+                onChange={e => !locked && setF("endDate", e.target.value)} />
             </div>
           </div>
 
@@ -368,7 +386,7 @@ function IssueCard({ iss, idx, isOpen, onToggle, onRemove, onCreated, serverRead
                 style={{
                   padding: "5px 20px", fontSize: "0.8rem", minWidth: "90px",
                   opacity: (!fields.title.trim() || !fields.description.trim()) ? 0.4 : 1,
-                  cursor: (!fields.title.trim() || !fields.description.trim() || creating) ? "not-allowed" : "pointer"
+                  cursor: (!fields.title.trim() || !fields.description.trim() || creating) ? "not-allowed" : "pointer",
                 }}>
                 {creating ? "Creating…" : "Create"}
               </button>
@@ -380,31 +398,27 @@ function IssueCard({ iss, idx, isOpen, onToggle, onRemove, onCreated, serverRead
   );
 }
 
-/* ─── RunGroup: parent accordion for one test run ────────────────────────── */
+/* ─── RunGroup ───────────────────────────────────────────────────────────── */
 function RunGroup({ ticketId, issues, openChildren, onToggleChild, onRemoveIssue, onIssueCreated, serverReady, isGroupOpen, onToggleGroup }) {
-  const total = issues.length;
+  const total   = issues.length;
   const created = issues.filter(i => i.created || (i.issueId && i.jiraUrl)).length;
   const pending = total - created;
 
   return (
     <div style={{ border: "1px solid var(--border-color)", borderRadius: "8px", background: "var(--bg-card)", marginBottom: "6px" }}>
-      {/* Parent header */}
       <button onClick={onToggleGroup} style={{ width: "100%", display: "flex", alignItems: "center", gap: "8px", padding: "9px 12px", background: isGroupOpen ? "var(--input-bg)" : "var(--bg-console)", border: "none", cursor: "pointer", textAlign: "left", borderBottom: isGroupOpen ? "1px solid var(--border-color)" : "none" }}>
         {isGroupOpen ? <FolderOpen size={15} color="var(--accent-blue)" /> : <Folder size={15} color="var(--accent-blue)" />}
         {isGroupOpen ? <ChevronDown size={13} color="var(--text-secondary)" /> : <ChevronRight size={13} color="var(--text-secondary)" />}
         <span style={{ fontWeight: 800, fontSize: "0.8rem", color: "var(--accent-blue)", fontFamily: "monospace", letterSpacing: "0.03em" }}>
           {ticketId || "Manual Issues"}
         </span>
-        <span style={{ fontSize: "0.68rem", color: "var(--text-secondary)", marginLeft: "4px" }}>
-          Run ID
-        </span>
+        <span style={{ fontSize: "0.68rem", color: "var(--text-secondary)", marginLeft: "4px" }}>Run ID</span>
         <div style={{ flex: 1 }} />
         {pending > 0 && <span style={S.badge("#fee2e2", "#dc2626")}>{pending} pending</span>}
         {created > 0 && <span style={S.badge("#dcfce7", "#16a34a")}>{created} created</span>}
         <span style={{ ...S.badge("var(--border-color)", "var(--text-secondary)") }}>{total} issue{total !== 1 ? "s" : ""}</span>
       </button>
 
-      {/* Children */}
       {isGroupOpen && (
         <div style={{ padding: "8px 10px" }}>
           {issues.map((iss, localIdx) => {
@@ -430,13 +444,11 @@ function RunGroup({ ticketId, issues, openChildren, onToggleChild, onRemoveIssue
 
 /* ─── IssuePanel ─────────────────────────────────────────────────────────── */
 export default function IssuePanel({ modules = [], jiraIssues = [], onHistoryUpdate = null }) {
-  const [issues, setIssues] = useState(() => ssLoad() || []);
+  const [issues,       setIssues]      = useState(() => ssLoad() || []);
   const [isFullScreen, setIsFullScreen] = useState(false);
-  const [wsConnected, setWsConnected] = useState(false);
-  const [serverReady, setServerReady] = useState(null);
-  // openGroups: Set of ticketIds that are expanded
-  const [openGroups, setOpenGroups] = useState(() => new Set());
-  // openChildren: Set of "ticketId::issueId" that are expanded
+  const [wsConnected,  setWsConnected]  = useState(false);
+  const [serverReady,  setServerReady]  = useState(null);
+  const [openGroups,   setOpenGroups]   = useState(() => new Set());
   const [openChildren, setOpenChildren] = useState(() => new Set());
 
   const importedKeys = useRef(new Set(
@@ -456,10 +468,8 @@ export default function IssuePanel({ modules = [], jiraIssues = [], onHistoryUpd
     importedKeys.current.add(key);
     const issue = mapPayloadToIssue(payload);
     setIssues(prev => [...prev, issue]);
-    // Auto-open the group for this ticket
     const tid = safeStr(payload.ticket_id) || "manual";
     setOpenGroups(prev => new Set([...prev, tid]));
-    // Auto-open this child
     const iid = formatIssueId(safeStr(payload.issue_id)) || String(Date.now());
     setOpenChildren(prev => new Set([...prev, `${tid}::${iid}`]));
     console.log(payload, issue);
@@ -470,7 +480,7 @@ export default function IssuePanel({ modules = [], jiraIssues = [], onHistoryUpd
     if (saved && saved.length > 0) return;
     fetch(`${BACKEND}/jira/payloads`).then(r => r.json()).then(d => {
       (d.payloads || []).forEach(addPayload);
-    }).catch(() => { });
+    }).catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -508,14 +518,12 @@ export default function IssuePanel({ modules = [], jiraIssues = [], onHistoryUpd
     (Array.isArray(jiraIssues) ? jiraIssues : []).forEach(addPayload);
   }, [jiraIssues, addPayload]);
 
-  // Group issues by ticket_id
   const groupedMap = {};
   issues.forEach(iss => {
     const tid = iss.ticket_id || "manual";
     if (!groupedMap[tid]) groupedMap[tid] = [];
     groupedMap[tid].push(iss);
   });
-  // Sort ticket_ids descending (newest run first)
   const sortedTicketIds = Object.keys(groupedMap).sort((a, b) => b.localeCompare(a));
 
   const totalIssues = issues.length;
@@ -548,16 +556,19 @@ export default function IssuePanel({ modules = [], jiraIssues = [], onHistoryUpd
         test_name: iss.test_name || "",
         issueId: "",
         internal_issue_id: iss.internal_issue_id || "",
-        jiraUrl: "",
-        steps_executed: Array.isArray(iss.steps_executed) ? iss.steps_executed : [],
-        description: iss.description || "",
-        sprint: iss.sprint || "",
+        jiraUrl:           "",
+        steps_executed:    Array.isArray(iss.steps_executed) ? iss.steps_executed : [],
+        description:       iss.description       || "",
+        sprint:            iss.sprint            || "",
+        fix_version:       iss.fixVersion     ? iss.fixVersion.split(",").map(s => s.trim()).filter(Boolean)     : [],
+        affects_version:   iss.affectsVersion ? iss.affectsVersion.split(",").map(s => s.trim()).filter(Boolean) : [],
+        start_date:        iss.startDate         || "",
+        end_date:          iss.endDate           || "",
       });
     }
   };
 
   const issueCreated = (ticketId, oldIss, updatedIss) => {
-    // Remove from panel after Jira ticket created (it moves to JiraHistory)
     setIssues(prev => prev.filter(i => dedupKey(i) !== dedupKey(oldIss)));
     if (typeof onHistoryUpdate === "function") {
       onHistoryUpdate({
@@ -573,18 +584,22 @@ export default function IssuePanel({ modules = [], jiraIssues = [], onHistoryUpd
         app_version: updatedIss.app_version || "",
         test_name: updatedIss.test_name || "",
         internal_issue_id: updatedIss.internal_issue_id || "",
-        steps_executed: Array.isArray(updatedIss.steps_executed) ? updatedIss.steps_executed : [],
-        description: updatedIss.description || "",
-        sprint: updatedIss.sprint || "",
-        fix_version: updatedIss.fixVersion ? updatedIss.fixVersion.split(",").map(s => s.trim()).filter(Boolean) : [],
-        start_date: updatedIss.startDate || "",
-        end_date: updatedIss.endDate || "",
-        created_at: new Date().toISOString(),
+        steps_executed:    Array.isArray(updatedIss.steps_executed) ? updatedIss.steps_executed : [],
+        description:       updatedIss.description       || "",
+        sprint:            updatedIss.sprint            || "",
+        // ── FIX: pass both version arrays to JiraHistory ──────────────────
+        fix_version:       updatedIss.fixVersion
+          ? updatedIss.fixVersion.split(",").map(s => s.trim()).filter(Boolean)
+          : [],
+        affects_version:   updatedIss.affectsVersion
+          ? updatedIss.affectsVersion.split(",").map(s => s.trim()).filter(Boolean)
+          : [],
+        start_date:        updatedIss.startDate         || "",
+        end_date:          updatedIss.endDate           || "",
+        created_at:        new Date().toISOString(),
       });
     }
   };
-
-
 
   /* ─── Render ──────────────────────────────────────────────────────────── */
   return (
@@ -617,7 +632,7 @@ export default function IssuePanel({ modules = [], jiraIssues = [], onHistoryUpd
           <span style={{
             fontSize: "0.63rem", fontWeight: 700, borderRadius: "4px", padding: "1px 5px",
             background: serverReady === true ? "#dcfce7" : serverReady === false ? "#fee2e2" : "#f1f5f9",
-            color: serverReady === true ? "#16a34a" : serverReady === false ? "#dc2626" : "#64748b"
+            color:      serverReady === true ? "#16a34a" : serverReady === false ? "#dc2626" : "#64748b",
           }}>
             {serverReady === null ? "…" : serverReady ? "v2 ✓" : "OLD"}
           </span>
@@ -626,23 +641,20 @@ export default function IssuePanel({ modules = [], jiraIssues = [], onHistoryUpd
           {[`${totalIssues} total`, `${sortedTicketIds.length} run${sortedTicketIds.length !== 1 ? "s" : ""}`, `${totalCreated} created`].map(lbl => (
             <span key={lbl} style={{ fontSize: "0.65rem", color: "var(--text-secondary)", background: "var(--border-color)", borderRadius: "999px", padding: "2px 7px" }}>{lbl}</span>
           ))}
-
           <button onClick={() => setIsFullScreen(f => !f)} style={{ background: "none", border: "none", cursor: "pointer", color: "#94a3b8", display: "flex", alignItems: "center", padding: "2px" }}>
             {isFullScreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
           </button>
         </div>
       </div>
 
-      {/* Groups list — scrollable, flex:1 fills remaining height after fixed header */}
+      {/* Groups list */}
       <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: "8px", display: "flex", flexDirection: "column", minHeight: 0 }}>
         {sortedTicketIds.length === 0 && (
           <div style={{ textAlign: "center", color: "var(--text-secondary)", fontSize: "0.77rem", padding: "24px 16px" }}>
             <div style={{ fontSize: "1.4rem", marginBottom: "6px" }}>🔍</div>
             {wsConnected ? "Waiting for test failures… issues appear here automatically." : "WebSocket disconnected — is backend running?"}
-
           </div>
         )}
-
         {sortedTicketIds.map(tid => (
           <RunGroup
             key={tid}
