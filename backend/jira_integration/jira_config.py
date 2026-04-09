@@ -17,9 +17,11 @@ from requests.auth import HTTPBasicAuth
 # Use absolute path so .env is found regardless of cwd.
 # jira_config.py lives at: jira_integration/jira_config.py
 # .env lives at:           backend/.env
-_THIS_FILE    = os.path.abspath(__file__)
-_PROJECT_ROOT = os.path.dirname(os.path.dirname(_THIS_FILE))
-_ENV_PATH     = os.path.join(_PROJECT_ROOT, "backend", ".env")
+# Resolve .env from backend/ regardless of where this file lives
+_THIS_FILE    = os.path.abspath(__file__)                      # .../backend/jira_integration/jira_config.py
+_BACKEND_DIR  = os.path.dirname(os.path.dirname(_THIS_FILE))  # .../backend/
+_ENV_PATH     = os.path.join(_BACKEND_DIR, ".env")
+
 load_dotenv(dotenv_path=_ENV_PATH, override=True)
 
 
