@@ -3,35 +3,33 @@ name: Deploy Allure Report
 on:
   push:
     branches:
-      - samad-updated   # your branch
+      - samad-updated
+
+permissions:
+  contents: write   # 🔥 THIS FIXES YOUR ERROR
 
 jobs:
   test-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout code
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      # 2. Setup Python
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.12'
 
-      # 3. Install dependencies
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
           pip install allure-pytest
 
-      # 4. Run tests (optional)
       - name: Run tests
         run: |
           pytest || true
 
-      # 5. Install Allure
       - name: Install Allure
         run: |
           sudo apt-get update
@@ -41,12 +39,10 @@ jobs:
           sudo mv allure-2.29.0 /opt/allure
           sudo ln -s /opt/allure/bin/allure /usr/bin/allure
 
-      # 6. Generate Allure report
       - name: Generate Allure Report
         run: |
           allure generate allure-results -o allure-report --clean
 
-      # 7. Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         run: |
           pip install ghp-import
