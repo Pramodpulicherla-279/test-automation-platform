@@ -522,18 +522,17 @@ def deploy_to_github_pages(run_id: str) -> str | None:
 
         org, repo = match.group(1).split("/", 1)
         short_id = run_id[:8]
-        prefix = f"runs/{short_id}"
+        prefix = ""
 
         result = subprocess.run(
-            [
-                "ghp-import",
-                "-n",               # adds .nojekyll
-                "-p",               # push to remote
-                "-f",               # force push
-                "-b", "gh-pages",
-                "-x", prefix,       # ← correct flag: -x PREFIX (not --dest)
-                allure_report_path,
-            ],
+    [
+        "ghp-import",
+        "-n",
+        "-p",
+        "-f",
+        "-b", "gh-pages",
+        allure_report_path,
+    ],
             cwd=BASE_DIR,
             capture_output=True, text=True,
             encoding="utf-8", errors="replace",
@@ -549,7 +548,7 @@ def deploy_to_github_pages(run_id: str) -> str | None:
             print(f"[GHPages] Deploy failed (exit {result.returncode}): {result.stderr.strip()}")
             return None
 
-        pages_url = f"https://{org}.github.io/{repo}/{prefix}"
+        pages_url = f"https://{org}.github.io/{repo}/{prefix}/index.html"
         print(f"[GHPages] ✅ Deployed → {pages_url}")
         return pages_url
 
