@@ -1,11 +1,11 @@
 from fastapi import APIRouter
-from .service import jira_test_connection_flow, get_steps_flow, add_step_flow, reset_steps_flow, receive_jira_payload_flow, get_pending_payloads_flow, dismiss_payload_flow, jira_create_flow, add_comment_flow, health_flow
+from .service import health_flow, jira_test_connection_flow, get_steps_flow, add_step_flow, reset_steps_flow, receive_jira_payload_flow, get_pending_payloads_flow, dismiss_payload_flow, jira_create_flow, add_comment_flow
 from .models import JiraPayloadRequest, JiraCreateRequest
 from core.state import jira_history, jira_comments
 
 router = APIRouter()
 
-@router.get("/api/health")
+@router.get("/health")
 async def health():
     return await health_flow()
 

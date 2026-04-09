@@ -6,15 +6,25 @@ import json
 import socket
 from fastapi.responses import JSONResponse
 from typing import Dict, List
+import core.state as state
+from core.state import (
+    test_steps_store,
+    current_test_name,
+    pending_payloads,
+    dismissed_keys,
+    PAYLOAD_PREFIXES
+)
 from core.state import reset_run_state
 from core.state import _appium_proc, APPIUM_PORT
 from core.utils import pick_free_port
-from core.constants import ALLURE_CMD, ALLURE_REPORT_DIR, PAYLOAD_PREFIXES
+from core.constants import ALLURE_CMD, ALLURE_REPORT_DIR
 from fastapi import HTTPException
 from core.websocket import manager
 from core.logger import logger
 from core.events import broadcast_async
-from modules.test_runner.test_runner import (
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../"))
+sys.path.insert(0, PROJECT_ROOT)
+from tests.test_runner import (
     run_tests_and_get_suggestions,
     stop_current_tests,
     generate_report
@@ -51,7 +61,7 @@ APP_VARIANTS = {
 }
 
 async def log_step_flow(msg):
-    global _test_steps_store, _current_test_name
+    global test_steps_store, current_test_name
 
     # logger.info("[PYTEST][%s] %s", msg.status, msg.message)
     message = msg.message
@@ -60,10 +70,10 @@ async def log_step_flow(msg):
     if "[TEST_START:" in message:
         try:
             new_test = message.split("[TEST_START:")[1].split("]")[0].strip()
-            if new_test and new_test != _current_test_name:
-                _current_test_name = new_test
-                _test_steps_store.setdefault(_current_test_name, [])
-                print(f"🔄 Test context switched → {_current_test_name}")
+            if new_test and new_test != current_test_name:
+                current_test_name = new_test
+                test_steps_store.setdefault(current_test_name, [])
+                print(f"🔄 Test context switched → {current_test_name}")
         except Exception as e:
             print(f"❌ TEST_START parse warning: {e}")
 
@@ -71,14 +81,14 @@ async def log_step_flow(msg):
     try:
         bucket = (
             message.split("[TEST:")[1].split("]")[0].strip()
-            if "[TEST:" in message else _current_test_name
+            if "[TEST:" in message else current_test_name
         )
         if "[FOUND]" in message:
             import re
             match = re.search(r"name='([^']+)'|name=\"([^\"]+)\"", message)
             step = (match.group(1) or match.group(2)) if match else None
             if step:
-                _test_steps_store.setdefault(bucket, []).append(step)
+                test_steps_store.setdefault(bucket, []).append(step)
                 print(f"✅ Step captured → {bucket}: {step}")
     except Exception as e:
         print(f"❌ Step capture warning: {e}")

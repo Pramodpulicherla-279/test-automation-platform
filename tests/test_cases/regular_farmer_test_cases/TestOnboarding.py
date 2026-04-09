@@ -148,12 +148,10 @@ import pytest
 from appium.webdriver.common.appiumby import AppiumBy
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from utils.wait_utils import smart_find_element
-from utils.ocr_utils import extract_text_with_coordinates
 import json
 import os
 from selenium.common.exceptions import WebDriverException
-from utils.wait_utils import find_and_click, smart_click
+from utils.wait_utils import smart_click
 import sys
 sys.dont_write_bytecode = True
 

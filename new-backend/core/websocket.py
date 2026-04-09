@@ -1,6 +1,9 @@
 import asyncio
 from fastapi import WebSocket
+from fastapi import APIRouter
+from starlette.websockets import WebSocketDisconnect
 
+router = APIRouter()
 
 class ConnectionManager:
     def __init__(self):
@@ -43,3 +46,17 @@ class ConnectionManager:
 
 # ✅ GLOBAL INSTANCE (IMPORTANT)
 manager = ConnectionManager()
+
+@router.websocket("/test-status")
+async def websocket_endpoint(websocket: WebSocket):
+    await manager.connect(websocket)
+    try:
+        while True:
+            # Most frontends never send messages; this just keeps the socket open
+            await websocket.receive_text()
+    except WebSocketDisconnect:
+        await manager.disconnect(websocket)
+    except Exception:
+        await manager.disconnect(websocket)
+
+print("WebSocket manager initialized")

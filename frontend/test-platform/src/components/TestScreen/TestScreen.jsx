@@ -388,7 +388,7 @@ function TestScreen({ onHistoryUpdate }) {
 
         try {
             const payload = { tests_to_run: testsToRun, app_type: APP_VARIANTS[selectedAppKey].id };
-            const endpoint = selectedApk ? '/start-test-existing' : '/start-test';
+            const endpoint = selectedApk ? '/test/start-test-existing' : '/test/start-test';
             const body = selectedApk ? { ...payload, apk_name: selectedApk } : { ...payload, url: apkUrl };
 
             const response = await fetch(`${API_URL}${endpoint}`, {
@@ -416,7 +416,7 @@ function TestScreen({ onHistoryUpdate }) {
     };
 
     const handleStopTest = async () => {
-        try { await fetch(`${API_URL}/stop-test`, { method: 'POST' }); } catch { }
+        try { await fetch(`${API_URL}/test/stop-test`, { method: 'POST' }); } catch { }
         setIsRunning(false); setIsDownloading(false);
         handleIncomingData({ type: 'LOG', payload: { message: 'Test stopped by user.', status: 'FAILED' } });
         setShowStopPopup(true);
@@ -424,7 +424,7 @@ function TestScreen({ onHistoryUpdate }) {
 
     const handleGenerateReport = async () => {
         setShowStopPopup(false);
-        try { await fetch(`${API_URL}/api/generate-report`, { method: 'POST' }); } catch { }
+        try { await fetch(`${API_URL}/test/generate-report`, { method: 'POST' }); } catch { }
         handleIncomingData({ type: 'LOG', payload: { message: 'Generating partial report...', status: 'INFO' } });
     };
 
@@ -437,7 +437,7 @@ function TestScreen({ onHistoryUpdate }) {
     const analyzeUiScreenshots = async () => {
         setUiAnalysisStatus('loading'); setUiAnalysisError('');
         try {
-            const res = await fetch(`${API_URL}/api/ui-screenshots/analyze`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+            const res = await fetch(`${API_URL}/llm/ui-screenshots/analyze`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
             const data = await res.json().catch(() => ({}));
             if (!res.ok) throw new Error(data?.detail || 'UI analysis failed');
             setUiAnalysisResults(data.results || []); setUiAnalysisStatus('ready');
@@ -445,13 +445,13 @@ function TestScreen({ onHistoryUpdate }) {
     };
 
     const checkAppiumStatus = async () => {
-        try { const r = await fetch(`${API_URL}/api/appium/status`); setAppiumStatus((await r.json()).status); }
+        try { const r = await fetch(`${API_URL}/test/appium/status`); setAppiumStatus((await r.json()).status); }
         catch { setAppiumStatus('stopped'); }
     };
 
     const toggleAppium = async () => {
         try {
-            await fetch(`${API_URL}/api/appium/${appiumStatus === 'running' ? 'stop' : 'start'}`, { method: 'POST' });
+            await fetch(`${API_URL}/test/appium/${appiumStatus === 'running' ? 'stop' : 'start'}`, { method: 'POST' });
             handleIncomingData({ type: 'LOG', payload: { message: `${appiumStatus === 'running' ? 'Stopping' : 'Starting'} Appium Server...`, status: 'INFO' } });
             setTimeout(checkAppiumStatus, 1000);
         } catch { }
@@ -459,11 +459,11 @@ function TestScreen({ onHistoryUpdate }) {
 
     useEffect(() => {
         const checkDevice = async () => {
-            try { const r = await fetch(`${API_URL}/device-status`); setIsDeviceConnected(!!(await r.json()).connected); }
+            try { const r = await fetch(`${API_URL}/test/device-status`); setIsDeviceConnected(!!(await r.json()).connected); }
             catch { setIsDeviceConnected(false); }
         };
         const loadApks = async () => {
-            try { const r = await fetch(`${API_URL}/api/apk-list`); setExistingApks((await r.json()).apks || []); } catch { }
+            try { const r = await fetch(`${API_URL}/test/apk-list`); setExistingApks((await r.json()).apks || []); } catch { }
         };
         loadApks(); checkDevice(); checkAppiumStatus();
         // Clear stale jiraIssues from old version (IssuePanel now manages its own)
