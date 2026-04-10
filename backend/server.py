@@ -499,9 +499,10 @@ def _start_allure_server() -> str:
 
 
 # ════════════════════════════════════════════════════════════════════════════
-#  VERCEL DEPLOY
+#  GITHUB DEPLOY
 # ════════════════════════════════════════════════════════════════════════════
 def deploy_to_github_pages(run_id: str) -> str | None:
+    printf("")
     allure_report_path = os.path.join(BASE_DIR, "allure-report")
     if not os.path.isdir(allure_report_path):
         print(f"[GHPages] allure-report folder not found: {allure_report_path}")
