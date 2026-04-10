@@ -821,6 +821,8 @@ async def _post_run_notify(
 
     report_url = ghpages_url if ghpages_url else local_url
     print(f"[{run_id[:8]}] Step 4: Report URL → {report_url}")
+    # 🔥 AUTO PUSH TO TRIGGER CI/CD
+    await loop.run_in_executor(None, auto_push_to_github)
 
     if run_id in _runs:
         _runs[run_id]["report_url"] = report_url
@@ -1858,6 +1860,59 @@ async def start_test(request: TestRequest, background_tasks: BackgroundTasks):
             "message": f"Download interrupted: {str(e)}", "status": "FAILED",
         }})
         raise HTTPException(status_code=400, detail=f"Download Failed: {str(e)}")
+    
+def trigger_github_action():
+    try:
+        github_token = os.getenv("GITHUB_TOKEN_CUSTOM")
+
+        if not github_token:
+            print("[CI/CD] GitHub token not found")
+            return None
+
+        url = "https://api.github.com/repos/Pramodpulicherla-279/test-automation-platform/actions/workflows/deploy.yml/dispatches"
+
+        headers = {
+            "Authorization": f"Bearer {github_token}",
+            "Accept": "application/vnd.github+json"
+        }
+
+        data = {
+            "ref": "samad-updated"
+        }
+
+        response = requests.post(url, json=data, headers=headers)
+
+        print(f"[CI/CD] Trigger status: {response.status_code}")
+        return response.status_code
+
+    except Exception as e:
+        print(f"[CI/CD] Error triggering workflow: {e}")
+        return None
+
+def auto_push_to_github():
+    try:
+        print("[CI/CD] Auto pushing to GitHub...")
+
+        subprocess.run(["git", "add", "."], cwd=BASE_DIR, check=True)
+
+        commit_message = f"auto-deploy-{datetime.datetime.now().strftime('%Y%m%d-%H%M%S')}"
+
+        subprocess.run(
+            ["git", "commit", "-m", commit_message],
+            cwd=BASE_DIR,
+            check=False  # avoid error if nothing to commit
+        )
+
+        subprocess.run(
+            ["git", "push", "origin", "samad-updated"],
+            cwd=BASE_DIR,
+            check=True
+        )
+
+        print("[CI/CD] ✅ Code pushed successfully")
+
+    except Exception as e:
+        print(f"[CI/CD] ❌ Push failed: {e}")        
 
 
 @app.post("/start-test-existing")
