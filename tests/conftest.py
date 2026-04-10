@@ -380,8 +380,8 @@ def driver(request):
 
     # ── FIX: Prevents Appium from running "pm clear" which was causing
     #         SecurityException on non-rooted / production devices ──────────
-    options.set_capability("appium:noReset",   True)   # Skip pm clear entirely
-    options.set_capability("appium:fullReset", False)  # No uninstall/reinstall
+    options.set_capability("appium:noReset",   False)   # Skip pm clear entirely
+    options.set_capability("appium:fullReset", True)  # No uninstall/reinstall
     # ────────────────────────────────────────────────────────────────────────
 
     options.set_capability("appium:ignoreHiddenApiPolicyError",      True)
