@@ -1,0 +1,3 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","0","Dashboard → Add Farmer → Add Farm → Add Crop","tests.test_cases.state_client_test_cases","2026-04-10","broken","2026-04-10","TestOnboarding","test_Onboarding","",""
+"","0","Verify user can login with valid credentials","tests.test_cases.state_client_test_cases","2026-04-10","broken","2026-04-10","TestLogin","test_login_pytest","",""
