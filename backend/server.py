@@ -5,6 +5,7 @@ import datetime
 import time
 import threading
 import uuid
+import shutil
 
 sys.dont_write_bytecode = True
 from contextlib import asynccontextmanager
@@ -502,7 +503,7 @@ def _start_allure_server() -> str:
 #  GITHUB DEPLOY
 # ════════════════════════════════════════════════════════════════════════════
 def deploy_to_github_pages(run_id: str) -> str | None:
-    printf("")
+
     allure_report_path = os.path.join(BASE_DIR, "allure-report")
     if not os.path.isdir(allure_report_path):
         print(f"[GHPages] allure-report folder not found: {allure_report_path}")
@@ -516,45 +517,50 @@ def deploy_to_github_pages(run_id: str) -> str | None:
             cwd=BASE_DIR, capture_output=True, text=True,
         )
         remote_url = remote_result.stdout.strip()
+
         match = re.search(r"github\.com[:/](.+?)(?:\.git)?$", remote_url)
         if not match:
             print(f"[GHPages] Could not parse remote URL: {remote_url}")
             return None
 
         org, repo = match.group(1).split("/", 1)
-        short_id = run_id[:8]
-        prefix = ""
 
+        # ✅ UNIQUE FOLDER FOR EACH REPORT
+        short_id = run_id[:8]
+        target_dir = os.path.join(BASE_DIR, "gh-pages-temp", short_id)
+
+        # 🔥 copy allure report into unique folder
+        if os.path.exists(target_dir):
+            shutil.rmtree(target_dir)
+
+        shutil.copytree(allure_report_path, target_dir)
+
+        # ✅ Deploy WHOLE gh-pages-temp folder (not just allure-report)
         result = subprocess.run(
-    [
-        "ghp-import",
-        "-n",
-        "-p",
-        "-f",
-        "-b", "gh-pages",
-        allure_report_path,
-    ],
+            [
+                "ghp-import",
+                "-n",
+                "-p",
+                "-f",
+                "-b", "gh-pages",
+                os.path.join(BASE_DIR, "gh-pages-temp"),
+            ],
             cwd=BASE_DIR,
             capture_output=True, text=True,
             encoding="utf-8", errors="replace",
             timeout=120,
         )
 
-        if result.stdout.strip():
-            print(result.stdout)
-        if result.stderr.strip():
-            print(result.stderr)
-
         if result.returncode != 0:
-            print(f"[GHPages] Deploy failed (exit {result.returncode}): {result.stderr.strip()}")
+            print(f"[GHPages] Deploy failed: {result.stderr}")
             return None
 
-        pages_url = f"https://{org}.github.io/{repo}/{prefix}/index.html"
+        # ✅ FINAL UNIQUE URL
+        pages_url = f"https://{org}.github.io/{repo}/{short_id}/index.html"
+
         print(f"[GHPages] ✅ Deployed → {pages_url}")
         return pages_url
 
-    except subprocess.TimeoutExpired:
-        print("[GHPages] Deploy timed out.")
     except Exception as e:
         print(f"[GHPages] Exception: {e}")
 
