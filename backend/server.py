@@ -5,6 +5,7 @@ import datetime
 import time
 import threading
 import uuid
+import tempfile
 import requests
 
 sys.dont_write_bytecode = True
@@ -502,81 +503,153 @@ def _start_allure_server() -> str:
 #  GITHUB DEPLOY
 # ════════════════════════════════════════════════════════════════════════════
  
+# ════════════════════════════════════════════════════════════════════════════
+#  GITHUB DEPLOY  —  FIXED VERSION
+#
+#  ROOT CAUSE OF THE BUG:
+#  ─────────────────────────────────────────────────────────────────────────
+#  ghp-import with "-f" (force) REPLACES the entire gh-pages branch every
+#  time it runs.  So even though you copy the report into a unique sub-folder
+#  (e.g. gh-pages-temp/abcd1234/), the NEXT deploy wipes the whole branch
+#  and only the NEW folder survives.  Yesterday's A-developer report is gone.
+#
+#  FIX:
+#  ─────────────────────────────────────────────────────────────────────────
+#  Instead of letting ghp-import overwrite everything, we:
+#    1. Clone / fetch the existing gh-pages branch into a temp worktree.
+#    2. Copy ONLY the new report folder into that worktree (other folders
+#       stay untouched).
+#    3. Commit + push — all old reports remain, new one is added.
+#
+#  This guarantees every Slack link stays valid forever.
+# ════════════════════════════════════════════════════════════════════════════
 def deploy_to_github_pages(run_id: str) -> str | None:
- 
+    """
+    Deploy the current allure-report into a UNIQUE sub-folder on gh-pages.
+
+    Strategy
+    ────────
+    • Checkout the existing gh-pages branch into a temporary directory.
+    • Copy allure-report  →  <temp>/<short_id>/
+    • Commit & push  →  all previous folders are preserved.
+    • Poll until the URL returns HTTP 200 before returning it.
+    • Returns None on any failure so the caller never sends a Slack message
+      with a broken link.
+    """
     allure_report_path = os.path.join(BASE_DIR, "allure-report")
     if not os.path.isdir(allure_report_path):
         print(f"[GHPages] allure-report folder not found: {allure_report_path}")
         return None
- 
-    print(f"[GHPages] Deploying to GitHub Pages...")
- 
+
+    print(f"[GHPages] Deploying run_id={run_id[:8]} to GitHub Pages...")
+
     try:
+        # ── 1. Resolve remote URL ─────────────────────────────────────────────
         remote_result = subprocess.run(
             ["git", "remote", "get-url", "origin"],
             cwd=BASE_DIR, capture_output=True, text=True,
         )
         remote_url = remote_result.stdout.strip()
- 
+
         match = re.search(r"github\.com[:/](.+?)(?:\.git)?$", remote_url)
         if not match:
             print(f"[GHPages] Could not parse remote URL: {remote_url}")
             return None
- 
+
         org, repo = match.group(1).split("/", 1)
- 
-        # ✅ UNIQUE FOLDER PER REPORT
-        short_id = run_id[:8]
-        target_dir = os.path.join(BASE_DIR, "gh-pages-temp", short_id)
- 
-        if os.path.exists(target_dir):
-            shutil.rmtree(target_dir)
- 
-        shutil.copytree(allure_report_path, target_dir)
- 
-        # ✅ Deploy WHOLE gh-pages-temp folder
-        result = subprocess.run(
-            [
-                "ghp-import",
-                "-n", "-p", "-f",
-                "-b", "gh-pages",
-                os.path.join(BASE_DIR, "gh-pages-temp"),
-            ],
-            cwd=BASE_DIR,
-            capture_output=True, text=True,
-            encoding="utf-8", errors="replace",
-            timeout=120,
-        )
- 
-        if result.returncode != 0:
-            print(f"[GHPages] Deploy failed: {result.stderr}")
-            return None
- 
+        short_id  = run_id[:8]
         pages_url = f"https://{org}.github.io/{repo}/{short_id}/index.html"
-        print(f"[GHPages] ✅ Deployed → {pages_url}")
- 
-        # ✅ FIX 1: Wait until the page is actually live before returning URL
+
+        # ── 2. Clone gh-pages into a fresh temp directory ─────────────────────
+        #      We use a plain temp dir so we never touch the main worktree.
+        tmp_dir = tempfile.mkdtemp(prefix="ghpages_")
+        print(f"[GHPages] Using temp dir: {tmp_dir}")
+
+        try:
+            # Try to clone the existing gh-pages branch.
+            # If it doesn't exist yet, initialise an empty repo instead.
+            clone_result = subprocess.run(
+                [
+                    "git", "clone",
+                    "--branch", "gh-pages",
+                    "--single-branch",
+                    "--depth", "1",
+                    remote_url,
+                    tmp_dir,
+                ],
+                capture_output=True, text=True,
+                encoding="utf-8", errors="replace",
+                timeout=120,
+            )
+
+            if clone_result.returncode != 0:
+                # gh-pages branch doesn't exist yet — init a bare repo
+                print("[GHPages] gh-pages branch not found, creating fresh...")
+                subprocess.run(["git", "init"],            cwd=tmp_dir, check=True)
+                subprocess.run(["git", "checkout", "-b", "gh-pages"], cwd=tmp_dir, check=True)
+                subprocess.run(["git", "remote", "add", "origin", remote_url],
+                               cwd=tmp_dir, check=True)
+
+            # ── 3. Copy ONLY the new report into its unique folder ─────────────
+            target_dir = os.path.join(tmp_dir, short_id)
+            if os.path.exists(target_dir):
+                shutil.rmtree(target_dir)
+            shutil.copytree(allure_report_path, target_dir)
+            print(f"[GHPages] Copied report → {target_dir}")
+
+            # ── 4. Commit & push (all other folders remain intact) ────────────
+            subprocess.run(["git", "add", short_id], cwd=tmp_dir, check=True)
+
+            # Only commit if there is actually something new
+            diff_result = subprocess.run(
+                ["git", "diff", "--cached", "--quiet"],
+                cwd=tmp_dir,
+            )
+            if diff_result.returncode == 0:
+                print("[GHPages] Nothing changed — report already deployed.")
+            else:
+                subprocess.run(
+                    ["git", "commit", "-m", f"report: add {short_id}"],
+                    cwd=tmp_dir, check=True,
+                )
+                push_result = subprocess.run(
+                    ["git", "push", "origin", "gh-pages"],
+                    cwd=tmp_dir,
+                    capture_output=True, text=True,
+                    encoding="utf-8", errors="replace",
+                    timeout=120,
+                )
+                if push_result.returncode != 0:
+                    print(f"[GHPages] Push failed: {push_result.stderr}")
+                    return None
+
+            print(f"[GHPages] ✅ Pushed → {pages_url}")
+
+        finally:
+            # Always clean up the temp clone
+            shutil.rmtree(tmp_dir, ignore_errors=True)
+
+        # ── 5. Wait for GitHub Pages CDN to propagate ─────────────────────────
         if not _wait_for_page_live(pages_url):
-            print(f"[GHPages] ⚠️ Page did not become live in time: {pages_url}")
-            return None  # Return None so Slack is NOT sent
- 
+            print(f"[GHPages] ⚠️ Page did not go live in time: {pages_url}")
+            return None   # ← Slack will NOT be sent
+
         return pages_url
- 
+
     except Exception as e:
         print(f"[GHPages] Exception: {e}")
- 
+
     return None
- 
- 
+
+
 def _wait_for_page_live(
     url: str,
-    retries: int = 12,
+    retries: int = 18,          # 18 × 10 s = 3 minutes max
     delay_seconds: int = 10,
 ) -> bool:
     """
-    Polls the deployed URL until it returns HTTP 200.
-    Retries up to `retries` times with `delay_seconds` between each attempt.
-    Returns True if the page is live, False if it timed out.
+    Poll the URL until HTTP 200 or timeout.
+    Returns True only when the page is confirmed live.
     """
     print(f"[GHPages] Waiting for page to go live: {url}")
     for attempt in range(1, retries + 1):
@@ -585,16 +658,130 @@ def _wait_for_page_live(
             if response.status_code == 200:
                 print(f"[GHPages] ✅ Page is live (attempt {attempt})")
                 return True
-            else:
-                print(f"[GHPages] Attempt {attempt}/{retries} → HTTP {response.status_code}, retrying in {delay_seconds}s...")
-        except requests.RequestException as e:
-            print(f"[GHPages] Attempt {attempt}/{retries} → Request error: {e}, retrying in {delay_seconds}s...")
- 
+            print(f"[GHPages] Attempt {attempt}/{retries} → HTTP {response.status_code}, "
+                  f"retrying in {delay_seconds}s...")
+        except requests.RequestException as exc:
+            print(f"[GHPages] Attempt {attempt}/{retries} → {exc}, "
+                  f"retrying in {delay_seconds}s...")
+
         time.sleep(delay_seconds)
- 
+
     print(f"[GHPages] ❌ Page never became live after {retries * delay_seconds}s")
     return False
- 
+
+
+# ════════════════════════════════════════════════════════════════════════════
+#  CORRECTED  _post_run_notify  —  Step 4 + Step 5 only
+#
+#  Replace the existing Step 4 and Step 5 blocks inside _post_run_notify
+#  in server.py with this snippet.  Everything above Step 4 stays the same.
+# ════════════════════════════════════════════════════════════════════════════
+
+async def _post_run_notify_step_4_and_5(
+    loop,
+    run_id,
+    passed,
+    failed,
+    channel_id,
+    app_name,
+    app_version,
+    developer_name,
+    manager,
+    _runs,
+    SLACK_NOTIFY_CHANNEL,
+    send_slack_message,
+    _start_allure_server,
+    auto_push_to_github,
+    log_to_ui,
+):
+    """
+    Drop-in replacement for Step 4 + Step 5 of _post_run_notify.
+
+    KEY CHANGES vs the old code
+    ───────────────────────────
+    1. auto_push_to_github() is called BEFORE deploy_to_github_pages() so the
+       gh-pages branch clone always sees the latest code.
+    2. Slack is sent ONLY when ghpages_url is not None (i.e. page confirmed
+       live).  If deploy fails we fall back to the local Allure URL for the
+       local server notification only — Slack is skipped entirely.
+    3. No more "send Slack with local URL" — that URL is useless for remote
+       developers.
+    """
+
+    # ── Step 4 — start local allure server (for internal viewing) ────────────
+    print(f"[{run_id[:8]}] Step 4: Resolving report URL...")
+    local_url = await loop.run_in_executor(None, _start_allure_server)
+
+    # Push code first so the clone in deploy_to_github_pages sees the latest
+    await loop.run_in_executor(None, auto_push_to_github)
+
+    # Deploy and wait for the page to be confirmed live
+    ghpages_url = await loop.run_in_executor(None, lambda: deploy_to_github_pages(run_id))
+
+    if not ghpages_url:
+        log_to_ui(
+            f"[{run_id[:8]}] ⚠️ GitHub Pages deploy failed or timed out — "
+            "Slack notification will NOT be sent.",
+            "WARN",
+        )
+        # Still store the local URL so the UI can show something
+        if run_id in _runs:
+            _runs[run_id]["report_url"] = local_url
+        return  # ← EXIT HERE — no Slack with a broken link
+
+    report_url = ghpages_url
+    print(f"[{run_id[:8]}] Step 4: Report URL → {report_url}")
+
+    if run_id in _runs:
+        _runs[run_id]["report_url"] = report_url
+
+    # ── Step 5 — send Slack notification (only reaches here if page is live) ──
+    final_channel_id = channel_id or SLACK_NOTIFY_CHANNEL
+    print(f"[{run_id[:8]}] Final channel_id: {final_channel_id}")
+
+    if not final_channel_id:
+        print("[ERROR] No Slack channel found even after fallback")
+        await manager.broadcast({
+            "type": "LOG",
+            "payload": {
+                "message": "⚠️ Slack notification skipped: No channel_id found",
+                "status": "WARN",
+            },
+        })
+        return
+
+    print(f"[{run_id[:8]}] Step 5: Sending Slack notification...")
+    print(f"[FINAL DEBUG] developer_name = '{developer_name}'")
+    print(f"[FINAL DEBUG] app_name       = '{app_name}'")
+    print(f"[FINAL DEBUG] app_version    = '{app_version}'")
+
+    try:
+        await loop.run_in_executor(
+            None,
+            lambda: send_slack_message(
+                channel_id=final_channel_id,
+                developer_name=developer_name,
+                app_name=app_name or "Unknown App",
+                apk_version=app_version or "Unknown",
+                passed=passed,
+                failed=failed,
+                report_url=report_url,   # ← confirmed-live URL
+            ),
+        )
+        log_to_ui(f"[{run_id[:8]}] Step 5 done. Slack notification sent", "SUCCESS")
+        await manager.broadcast({
+            "type": "LOG",
+            "payload": {
+                "message": f"✅ Slack report sent! Passed: {passed} | Failed: {failed}",
+                "status": "INFO",
+            },
+        })
+    except Exception as e:
+        print(f"[PostRun] Step 5 FAILED: {e}")
+        await manager.broadcast({
+            "type": "LOG",
+            "payload": {"message": f"⚠️ Slack notification failed: {e}", "status": "WARN"},
+        })
  
 # ════════════════════════════════════════════════════════════════════════════
 #  SLACK NOTIFICATION
