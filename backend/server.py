@@ -5,7 +5,7 @@ import datetime
 import time
 import threading
 import uuid
-import shutil
+import requests
 
 sys.dont_write_bytecode = True
 from contextlib import asynccontextmanager
@@ -498,50 +498,47 @@ def _start_allure_server() -> str:
         time.sleep(2)
         return f"http://127.0.0.1:{_allure_port}"
 
-
 # ════════════════════════════════════════════════════════════════════════════
 #  GITHUB DEPLOY
 # ════════════════════════════════════════════════════════════════════════════
+ 
 def deploy_to_github_pages(run_id: str) -> str | None:
-
+ 
     allure_report_path = os.path.join(BASE_DIR, "allure-report")
     if not os.path.isdir(allure_report_path):
         print(f"[GHPages] allure-report folder not found: {allure_report_path}")
         return None
-
+ 
     print(f"[GHPages] Deploying to GitHub Pages...")
-
+ 
     try:
         remote_result = subprocess.run(
             ["git", "remote", "get-url", "origin"],
             cwd=BASE_DIR, capture_output=True, text=True,
         )
         remote_url = remote_result.stdout.strip()
-
+ 
         match = re.search(r"github\.com[:/](.+?)(?:\.git)?$", remote_url)
         if not match:
             print(f"[GHPages] Could not parse remote URL: {remote_url}")
             return None
-
+ 
         org, repo = match.group(1).split("/", 1)
-
-        # ✅ UNIQUE FOLDER FOR EACH REPORT
+ 
+        # ✅ UNIQUE FOLDER PER REPORT
         short_id = run_id[:8]
         target_dir = os.path.join(BASE_DIR, "gh-pages-temp", short_id)
-
-        # 🔥 copy allure report into unique folder
+ 
         if os.path.exists(target_dir):
             shutil.rmtree(target_dir)
-
+ 
         shutil.copytree(allure_report_path, target_dir)
-
-        # ✅ Deploy WHOLE gh-pages-temp folder (not just allure-report)
+ 
+        # ✅ Deploy WHOLE gh-pages-temp folder
         result = subprocess.run(
             [
                 "ghp-import",
-                "-n",
-                "-p",
-                "-f",
+                "-n", "-p", "-f",
                 "-b", "gh-pages",
                 os.path.join(BASE_DIR, "gh-pages-temp"),
             ],
@@ -550,26 +547,59 @@ def deploy_to_github_pages(run_id: str) -> str | None:
             encoding="utf-8", errors="replace",
             timeout=120,
         )
-
+ 
         if result.returncode != 0:
             print(f"[GHPages] Deploy failed: {result.stderr}")
             return None
-
-        # ✅ FINAL UNIQUE URL
+ 
         pages_url = f"https://{org}.github.io/{repo}/{short_id}/index.html"
-
         print(f"[GHPages] ✅ Deployed → {pages_url}")
+ 
+        # ✅ FIX 1: Wait until the page is actually live before returning URL
+        if not _wait_for_page_live(pages_url):
+            print(f"[GHPages] ⚠️ Page did not become live in time: {pages_url}")
+            return None  # Return None so Slack is NOT sent
+ 
         return pages_url
-
+ 
     except Exception as e:
         print(f"[GHPages] Exception: {e}")
-
+ 
     return None
-
+ 
+ 
+def _wait_for_page_live(
+    url: str,
+    retries: int = 12,
+    delay_seconds: int = 10,
+) -> bool:
+    """
+    Polls the deployed URL until it returns HTTP 200.
+    Retries up to `retries` times with `delay_seconds` between each attempt.
+    Returns True if the page is live, False if it timed out.
+    """
+    print(f"[GHPages] Waiting for page to go live: {url}")
+    for attempt in range(1, retries + 1):
+        try:
+            response = requests.get(url, timeout=10)
+            if response.status_code == 200:
+                print(f"[GHPages] ✅ Page is live (attempt {attempt})")
+                return True
+            else:
+                print(f"[GHPages] Attempt {attempt}/{retries} → HTTP {response.status_code}, retrying in {delay_seconds}s...")
+        except requests.RequestException as e:
+            print(f"[GHPages] Attempt {attempt}/{retries} → Request error: {e}, retrying in {delay_seconds}s...")
+ 
+        time.sleep(delay_seconds)
+ 
+    print(f"[GHPages] ❌ Page never became live after {retries * delay_seconds}s")
+    return False
+ 
+ 
 # ════════════════════════════════════════════════════════════════════════════
 #  SLACK NOTIFICATION
 # ════════════════════════════════════════════════════════════════════════════
-
+ 
 def send_slack_message(
     channel_id:     str,
     developer_name: str,
@@ -585,7 +615,7 @@ def send_slack_message(
     }
     safe_url = report_url or ""
     status_line = f"*🟢 Passed:* {passed}    *🔴 Failed:* {failed}"
-
+ 
     payload = {
         "channel": channel_id,
         "blocks": [
@@ -618,7 +648,7 @@ def send_slack_message(
         ],
         "text": f"Automation report for {app_name} v{apk_version} — Passed: {passed}, Failed: {failed}",
     }
-
+ 
     response = requests.post(
         "https://slack.com/api/chat.postMessage",
         headers=headers,
@@ -629,15 +659,50 @@ def send_slack_message(
     if not data.get("ok"):
         print(f"[Slack] chat.postMessage error: {data.get('error')} | {data.get('response_metadata')}")
     else:
-        print(f"[Slack] Message sent successfully to {channel_id}")
-
-
+        print(f"[Slack] ✅ Message sent successfully to {channel_id}")
+ 
+ 
+# ════════════════════════════════════════════════════════════════════════════
+#  MAIN ENTRY POINT  —  call this after your test run finishes
+# ════════════════════════════════════════════════════════════════════════════
+ 
+def deploy_and_notify(
+    run_id:         str,
+    channel_id:     str,
+    developer_name: str,
+    app_name:       str,
+    apk_version:    str,
+    passed:         int,
+    failed:         int,
+) -> None:
+    """
+    1. Deploy allure report to GitHub Pages (unique URL per run).
+    2. Only send Slack message AFTER confirming the page is actually live.
+    3. If deploy fails or page never goes live → Slack is NOT sent.
+    """
+ 
+    # ✅ FIX 2: Only notify Slack if deploy succeeded AND page is live
+    report_url = deploy_to_github_pages(run_id)
+ 
+    if not report_url:
+        print("[Notify] ❌ Deploy failed or page not live — Slack message NOT sent.")
+        return
+ 
+    send_slack_message(
+        channel_id=channel_id,
+        developer_name=developer_name,
+        app_name=app_name,
+        apk_version=apk_version,
+        passed=passed,
+        failed=failed,
+        report_url=report_url,
+    )
+ 
+ 
 def extract_drive_file_id(text: str) -> str | None:
     text = text.replace("<", "").replace(">", "")
     match = re.search(r'/d/([a-zA-Z0-9_-]+)', text)
     return match.group(1) if match else None
-
-
 # ════════════════════════════════════════════════════════════════════════════
 #  BROADCAST HELPERS
 # ════════════════════════════════════════════════════════════════════════════
