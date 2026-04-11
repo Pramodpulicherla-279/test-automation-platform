@@ -779,57 +779,57 @@ def _strip_embedded_steps_from_description(text: str) -> str:
 
 
 def format_description_with_steps(
-    description:    str,
-    app_name:       Optional[str] = None,
-    app_version:    Optional[str] = None,
-    module:         Optional[str] = None,
-    test_name:      Optional[str] = None,
-    developer_name: Optional[str] = None,
-    start_date:     Optional[str] = None,
-    end_date:       Optional[str] = None,
-    sprint:         Optional[str] = None,
-    steps_executed: Optional[List[str]] = None,
-) -> str:
-    """
-    Build a clean plain-text description:
-      <error / base text>
-      ==================================================
-      METADATA
-      ==================================================
-      App / Version / Module / Test / Developer / Start / End / Duration / Sprint
-      ==================================================
-      STEPS EXECUTED
-      ==================================================
-      1. step …
+        description:    str,
+        app_name:       Optional[str] = None,
+        app_version:    Optional[str] = None,
+        module:         Optional[str] = None,
+        test_name:      Optional[str] = None,
+        developer_name: Optional[str] = None,
+        start_date:     Optional[str] = None,
+        end_date:       Optional[str] = None,
+        sprint:         Optional[str] = None,
+        steps_executed: Optional[List[str]] = None,
+    ) -> str:
+        """
+        Build a clean plain-text description:
+        <error / base text>
+        ==================================================
+        METADATA
+        ==================================================
+        App / Version / Module / Test / Developer / Start / End / Duration / Sprint
+        ==================================================
+        STEPS EXECUTED
+        ==================================================
+        1. step …
 
-    Strips any previously embedded steps / metadata blocks first so this
-    function is safe to call repeatedly without causing duplication.
-    """
-    # 1. Remove any previously embedded steps/metadata from the raw description
-    base = _strip_embedded_steps_from_description(
-        description.strip() if description else "Test automation failure detected."
-    ).strip() or "Test automation failure detected."
+        Strips any previously embedded steps / metadata blocks first so this
+        function is safe to call repeatedly without causing duplication.
+        """
+        # 1. Remove any previously embedded steps/metadata from the raw description
+        base = _strip_embedded_steps_from_description(
+            description.strip() if description else "Test automation failure detected."
+        ).strip() or "Test automation failure detected."
 
-    lines = [base, "", "=" * 50, "METADATA", "=" * 50]
+        lines = [base, "", "=" * 50, "METADATA", "=" * 50]
 
-    if app_name       and not _is_unknown(app_name):       lines.append(f"App: {app_name}")
-    if app_version    and not _is_unknown(app_version):    lines.append(f"Version: {app_version}")
-    if module         and not _is_unknown(module):         lines.append(f"Module: {module}")
-    if test_name      and not _is_unknown(test_name):      lines.append(f"Test: {test_name}")
-    if developer_name and not _is_unknown(developer_name): lines.append(f"Developer: {developer_name}")
-    if start_date:     lines.append(f"Start: {start_date}")
-    if end_date:       lines.append(f"End: {end_date}")
-    if start_date and end_date:
-        lines.append(f"Duration: {_calculate_duration(start_date, end_date)}")
-    if sprint:         lines.append(f"Sprint: {sprint}")
+        if app_name       and not _is_unknown(app_name):       lines.append(f"App: {app_name}")
+        if app_version    and not _is_unknown(app_version):    lines.append(f"Version: {app_version}")
+        if module         and not _is_unknown(module):         lines.append(f"Module: {module}")
+        if test_name      and not _is_unknown(test_name):      lines.append(f"Test: {test_name}")
+        if developer_name and not _is_unknown(developer_name): lines.append(f"Developer: {developer_name}")
+        if start_date:     lines.append(f"Start: {start_date}")
+        if end_date:       lines.append(f"End: {end_date}")
+        if start_date and end_date:
+            lines.append(f"Duration: {_calculate_duration(start_date, end_date)}")
+        if sprint:         lines.append(f"Sprint: {sprint}")
 
-    # 2. Append steps ONCE
-    if steps_executed:
-        lines += ["", "=" * 50, "STEPS EXECUTED", "=" * 50]
-        for i, step in enumerate(steps_executed, 1):
-            lines.append(f"{i}. {step}")
+        # 2. Append steps ONCE
+        if steps_executed:
+            lines += ["", "=" * 50, "STEPS EXECUTED", "=" * 50]
+            for i, step in enumerate(steps_executed, 1):
+                lines.append(f"{i}. {step}")
 
-    return "\n".join(lines)
+        return "\n".join(lines)
 
 
 # ════════════════════════════════════════════════════════════════════════════

@@ -31,6 +31,7 @@ class JiraCreateRequest(BaseModel):
     test_id:         Optional[str]       = None
     steps_executed:  Optional[List[Any]] = None
     developer_name:  Optional[str]       = None
+    priority:        Optional[str]       = None
     title:           Optional[str]       = None
     description:     Optional[str]       = None
     parent:          Optional[str]       = None

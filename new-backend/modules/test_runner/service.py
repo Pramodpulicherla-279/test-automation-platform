@@ -16,7 +16,7 @@ from core.state import (
 )
 from core.state import reset_run_state
 from core.state import _appium_proc, APPIUM_PORT
-from core.utils import pick_free_port
+from core.utils import pick_free_port, parse_step_from_message
 from core.constants import ALLURE_CMD, ALLURE_REPORT_DIR
 from fastapi import HTTPException
 from core.websocket import manager
@@ -63,10 +63,9 @@ APP_VARIANTS = {
 async def log_step_flow(msg):
     global test_steps_store, current_test_name
 
-    # logger.info("[PYTEST][%s] %s", msg.status, msg.message)
     message = msg.message
 
-    # Switch active bucket when conftest sends [TEST_START:xxx]
+    # ── Test context switch ──────────────────────────────────────────────
     if "[TEST_START:" in message:
         try:
             new_test = message.split("[TEST_START:")[1].split("]")[0].strip()
@@ -77,23 +76,22 @@ async def log_step_flow(msg):
         except Exception as e:
             print(f"❌ TEST_START parse warning: {e}")
 
-    # Capture [FOUND] steps into the correct bucket
+    # ── Step capture (all patterns) ──────────────────────────────────────
     try:
         bucket = (
             message.split("[TEST:")[1].split("]")[0].strip()
             if "[TEST:" in message else current_test_name
         )
-        if "[FOUND]" in message:
-            import re
-            match = re.search(r"name='([^']+)'|name=\"([^\"]+)\"", message)
-            step = (match.group(1) or match.group(2)) if match else None
-            if step:
-                test_steps_store.setdefault(bucket, []).append(step)
+        step = parse_step_from_message(message)
+        if step:
+            test_steps_store.setdefault(bucket, [])
+            if step not in test_steps_store[bucket]:
+                test_steps_store[bucket].append(step)
                 print(f"✅ Step captured → {bucket}: {step}")
     except Exception as e:
         print(f"❌ Step capture warning: {e}")
 
-    # Intercept payload log lines
+    # ── Payload prefix handling ──────────────────────────────────────────
     for prefix in PAYLOAD_PREFIXES:
         if message.startswith(prefix):
             raw = message[len(prefix):].strip()
@@ -107,7 +105,6 @@ async def log_step_flow(msg):
             except Exception as exc:
                 logger.warning("Failed to parse payload: %s", exc)
             return {"status": "ok"}
-
 
     broadcast_async({"type": "LOG", "payload": {"message": message, "status": msg.status}})
     return {"status": "ok"}
