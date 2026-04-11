@@ -1,5 +1,5 @@
 {
-  "ticket_id": "RUN-20260411-130753",
+  "ticket_id": "RUN-20260411-154121",
   "issue_id": "ISS-001",
   "app_name": "Krishivaas Farmer",
   "app_version": "1.3.96",
@@ -17,8 +17,8 @@
   ],
   "developer_name": "@Anuj",
   "description": "selenium.common.exceptions.TimeoutException: Message:\nStacktrace:\nNoSuchElementError: An element could not be located on the page using the given search parameters.\nat AndroidUiautomator2Driver.findElOrEls (C:\\Users\\ABDUL SAMAD\\node_modules\\appium-uiautomator2-driver\\node_modules\\appium-android-driver\\build\\lib\\commands\\find.js:62:15)\nat process.processTicksAndRejections (node:internal/process/task_queues:105:5)\nat async AndroidUiautomator2Driver.findElOrElsWithProcessing (C:\\Users\\ABDUL SAMAD\\node_modules\\appium-uiautomator2-driver\\node_modules\\@appium\\base-driver\\build\\lib\\basedriver\\commands\\find.js:12:16)\nat async AndroidUiautomator2Driver.findElement (C:\\Users\\ABDUL SAMAD\\node_modules\\appium-uiautomator2-driver\\node_modules\\@appium\\base-driver\\build\\lib\\basedriver\\commands\\find.js:27:16)\n\nSteps Executed:\n1. Next Button (Language)\n2. While using the app (allow picture)\n3. While using (allow location)\n4. While using the app (allow audio)\n5. Allow notifications",
-  "start_date": "2026-04-11T13:07:54.476861",
-  "end_date": "2026-04-11T13:08:47.498152",
+  "start_date": "2026-04-11T15:41:21.773184",
+  "end_date": "2026-04-11T15:42:14.968273",
   "sprint": "Automation",
   "fix_version": [
     "Production"
