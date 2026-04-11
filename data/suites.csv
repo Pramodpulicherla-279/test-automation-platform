@@ -1,0 +1,4 @@
+"Status","Start Time","Stop Time","Duration in ms","Parent Suite","Suite","Sub Suite","Test Class","Test Method","Name","Description"
+"failed","Sat Apr 11 10:13:04 UTC 2026","Sat Apr 11 10:13:33 UTC 2026","29542","tests.test_cases.regular_farmer_test_cases","TestOnboarding","TestOnboarding","","","Onboarding the farms and crops",""
+"broken","Sat Apr 11 10:11:46 UTC 2026","Sat Apr 11 10:12:08 UTC 2026","21724","tests.test_cases.regular_farmer_test_cases","test_login_pytest","TestLogin","","","Verify user can login with valid credentials",""
+"failed","Sat Apr 11 10:12:19 UTC 2026","Sat Apr 11 10:12:47 UTC 2026","28513","tests.test_cases.regular_farmer_test_cases","TestOnboarding","TestOnboarding","","","add farm",""
