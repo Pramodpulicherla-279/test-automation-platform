@@ -43,3 +43,5 @@ screenshots/
 reports/
 artifacts/
 *.png
+.env
+.env.local

@@ -1,11 +1,61 @@
 from core.state import test_steps_store, pending_payloads, dismissed_keys, PAYLOAD_PREFIXES, jira_history, jira_comments
-from core.utils import resolve_steps_for_test, make_dismiss_key
+from core.utils import resolve_steps_for_test, make_dismiss_key, extract_steps_from_numbered_list, format_description_with_steps, strip_embedded_steps_from_description
 from core.logger import logger
 from core.websocket import manager
 from core.events import broadcast_async
 import datetime
+import os
+import subprocess
+from typing import List, Dict, Any, Optional
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, WebSocket, BackgroundTasks, HTTPException
 from .jira_config import config as jira_config
+from .mongo_config import mongo_config
+from .mongo_config import connect_mongodb, disconnect_mongodb, is_mongodb_enabled
+from .mongo_jira_integration import create_and_store_jira_issue
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # ────────────────────────────────────────────────────────────────────────
+    # STARTUP
+    # ────────────────────────────────────────────────────────────────────────
+    print("\n" + "=" * 70)
+    print("[STARTUP] Initializing application...")
+    print("=" * 70)
+
+    print("[STARTUP] Connecting to MongoDB...")
+    if connect_mongodb():
+        logger.info("✅ [STARTUP] MongoDB connected successfully")
+        print("✅ [STARTUP] MongoDB connected successfully")
+    else:
+        logger.warning("⚠️  [STARTUP] MongoDB connection failed or disabled")
+        print("⚠️  [STARTUP] MongoDB connection failed or disabled")
+
+    print("[STARTUP] Server ready for requests\n")
+    yield
+
+    print("\n" + "=" * 70)
+    print("[SHUTDOWN] Cleaning up...")
+    print("=" * 70)
+    
+    # Disconnect from MongoDB
+    disconnect_mongodb()
+    
+    # Clean up child processes
+    global _appium_proc, _allure_proc
+    if _appium_proc is not None:
+        try:
+            if os.name == "nt":
+                subprocess.run(
+                    ["taskkill", "/F", "/T", "/PID", str(_appium_proc.pid)],
+                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                )
+            else:
+                _appium_proc.kill()
+        except Exception:
+            pass
+
+    print("[SHUTDOWN] Cleanup complete\n")
 
 async def health_flow():
     return {
@@ -24,7 +74,7 @@ async def health_flow():
 
 async def jira_test_connection_flow():
     import requests as req_lib
-    from jira_integration.jira_config import config as jira_config
+    from .jira_config import config as jira_config
     from requests.auth import HTTPBasicAuth
     base = {
         "jira_url": jira_config.url or "(not set)", "jira_email": jira_config.email or "(not set)",
@@ -90,6 +140,71 @@ async def reset_steps_flow():
 async def receive_jira_payload_flow(req):
     payload = req.model_dump(exclude_none=False)
 
+    # ── Step 1: Clean the raw description ────────────────────────────────────
+    # The conftest may embed a "Steps Executed:" block directly in the
+    # description string. Strip it out NOW so it never appears twice.
+    raw_description = payload.get("description") or ""
+    # Extract steps from the embedded block BEFORE stripping (used as fallback)
+    steps_from_desc = extract_steps_from_numbered_list(raw_description)
+    # Remove the embedded steps / metadata blocks from the description
+    clean_description = strip_embedded_steps_from_description(raw_description).strip()
+    payload["description"] = clean_description or "Test automation failure detected."
+
+    # ── Step 2: Resolve steps_executed ────────────────────────────────────
+    incoming_steps = [s for s in (payload.get("steps_executed") or []) if s]
+
+    if not incoming_steps:
+        test_name = req.test_name or "default"
+        resolved  = resolve_steps_for_test(test_name)
+
+        # Fallback: steps that conftest embedded in the description text
+        if not resolved and steps_from_desc:
+            resolved = steps_from_desc
+            logger.info(
+                "[/api/jira/payload] Steps recovered from description text for test=%s count=%d",
+                test_name, len(resolved),
+            )
+
+        payload["steps_executed"] = resolved
+        logger.info(
+            "[/api/jira/payload] Injected %d steps for test=%s",
+            len(resolved), test_name,
+        )
+    else:
+        # Steps already present — just clean the store for the next test
+        resolve_steps_for_test(req.test_name or "default")
+        payload["steps_executed"] = incoming_steps
+        logger.info(
+            "[/api/jira/payload] Payload already has %d steps for test=%s",
+            len(incoming_steps), req.test_name,
+        )
+
+    # ── Step 3: Rebuild description with metadata + steps ONCE ───────────
+    payload["description"] = format_description_with_steps(
+        description    = payload["description"],
+        app_name       = payload.get("app_name"),
+        app_version    = payload.get("app_version"),
+        module         = payload.get("module"),
+        test_name      = payload.get("test_name"),
+        developer_name = payload.get("developer_name"),
+        start_date     = payload.get("start_date"),
+        end_date       = payload.get("end_date"),
+        sprint         = payload.get("sprint"),
+        steps_executed = payload.get("steps_executed"),
+    )
+
+    pending_payloads.append(payload)
+    await manager.broadcast({"type": "JIRA_PAYLOAD", "payload": payload})
+
+    logger.info(
+        "[/api/jira/payload] %s module=%s test=%s steps=%d",
+        req.issue_id, req.module, req.test_name,
+        len(payload.get("steps_executed") or []),
+    )
+
+    return {"status": "received", "issue_id": req.issue_id, "module": req.module}
+    payload = req.model_dump(exclude_none=False)
+
     incoming_steps = payload.get("steps_executed")
 
     if not incoming_steps:
@@ -135,35 +250,98 @@ async def dismiss_payload_flow(data):
 
 
 async def jira_create_flow(req):
-    from jira_integration.jira_service import create_jira_issue
-    from jira_integration.jira_config import config as jira_config
+    from .jira_config import config as jira_config
 
     if not jira_config.enabled:
         raise HTTPException(status_code=400, detail="Jira is disabled. Set JIRA_ENABLED=true in backend/.env")
+
     missing = [n for n, v in {
         "JIRA_URL": jira_config.url, "JIRA_EMAIL": jira_config.email,
         "JIRA_API_TOKEN": jira_config.api_token, "JIRA_PROJECT_KEY": jira_config.project_key,
     }.items() if not v]
     if missing:
-        raise HTTPException(status_code=400, detail=f"Missing .env variables: {', '.join(missing)}. Edit backend/.env and restart.")
+        raise HTTPException(status_code=400, detail=f"Missing .env variables: {', '.join(missing)}.")
 
-    summary     = (req.title or req.issue_summary or "Automation Failure").strip()
-    description = (req.description or "Automation Test Failure").strip()
+    summary = (req.title or req.issue_summary or "Automation Failure").strip()
+
+    # ── FIX 3: Resolve steps from all available sources ───────────────────
+    # Priority: (1) req.steps_executed, (2) server store, (3) description text
+    steps_for_ticket: List[str] = [s for s in (req.steps_executed or []) if s]
+
+    if not steps_for_ticket:
+        # Try server store (non-destructive peek first, then pop)
+        store_key = req.test_name or "default"
+        steps_for_ticket = resolve_steps_for_test(store_key)
+
+    if not steps_for_ticket and req.description:
+        # Last resort: extract numbered list the conftest embedded in description
+        steps_for_ticket = extract_steps_from_numbered_list(req.description)
+        if steps_for_ticket:
+            logger.info(
+                "[/api/jira/create] Steps recovered from description for test=%s count=%d",
+                req.test_name, len(steps_for_ticket),
+            )
+
+    # ── FIX 3: Always rebuild description with steps so Jira ticket always
+    #    shows the STEPS EXECUTED block regardless of frontend payload state.
+    raw_desc = req.description or "Automation Test Failure"
+    description = format_description_with_steps(
+        description    = strip_embedded_steps_from_description(raw_desc),
+        app_name       = req.app_name,
+        app_version    = req.app_version,
+        module         = req.module or req.parent,
+        test_name      = req.test_name,
+        developer_name = req.developer_name,
+        start_date     = req.start_date,
+        end_date       = req.end_date,
+        sprint         = req.sprint,
+        steps_executed = steps_for_ticket,
+    )
+
+    logger.info(
+        "[/api/jira/create] Creating ticket test=%s steps=%d",
+        req.test_name, len(steps_for_ticket),
+    )
 
     import io as _io, contextlib as _ctx
     _captured = _io.StringIO()
     try:
         with _ctx.redirect_stdout(_captured):
-            issue_key = create_jira_issue(
-                summary=summary, description=description,
-                app_name=req.app_name, app_version=req.app_version,
-                module=req.module or req.parent, feature=req.feature,
-                issue_summary=summary, test_name=req.test_name, test_id=req.test_id,
-                steps_executed=req.steps_executed or [], developer_name=req.developer_name,
+            print(f"[JIRA_CREATE] Creating ticket with MongoDB storage:")
+            print(f"  Start Date:   {req.start_date}")
+            print(f"  End Date:     {req.end_date}")
+            print(f"  Sprint:       {req.sprint}")
+            print(f"  Steps count:  {len(steps_for_ticket)}")
+            print(f"  MongoDB:      {'Enabled' if is_mongodb_enabled() else 'Disabled'}")
+
+            result = create_and_store_jira_issue(
+                summary        = summary,
+                description    = description,
+                app_name       = req.app_name,
+                app_version    = req.app_version,
+                module         = req.module or req.parent,
+                feature        = req.feature,
+                issue_summary  = summary,
+                test_name      = req.test_name,
+                test_id        = req.test_id,
+                steps_executed = steps_for_ticket,
+                developer_name = req.developer_name,
+                priority       = req.priority,
+                start_date     = req.start_date,
+                end_date       = req.end_date,
+                sprint         = req.sprint,
             )
+
+            if not result["success"]:
+                raise Exception(result.get("error", "Unknown error"))
+
+            issue_key = result["issue_id"]
+            ticket_id = result["ticket_id"]
+            issue_url = result["issue_url"]
+
     except Exception as exc:
         err = str(exc)
-        logger.error("Jira create exception: %s", err)
+        logger.error("[/api/jira/create] Exception: %s", err)
         if "401" in err:
             raise HTTPException(status_code=400, detail=f"Jira 401 Unauthorized — wrong JIRA_EMAIL or JIRA_API_TOKEN.\nJira said: {err}")
         if "403" in err or "permission" in err.lower():
@@ -180,23 +358,48 @@ async def jira_create_flow(req):
         _status = "PAYLOAD" if any(_line.startswith(p) for p in PAYLOAD_PREFIXES) else "INFO"
         broadcast_async({"type": "LOG", "payload": {"message": _line, "status": _status}})
 
-    issue_url = f"{jira_config.url}/browse/{issue_key}"
     entry = {
-        "issue_id": issue_key, "issue_url": issue_url, "title": summary,
-        "description": description, "developer_name": req.developer_name or "",
-        "module": req.module or req.parent or "", "app_name": req.app_name or "",
-        "app_version": req.app_version or "", "test_name": req.test_name or "",
-        "ticket_id": req.ticket_id or "", "fix_version": req.fix_version or [],
-        "affects_version": req.affects_version or [], "priority": req.priority or "High",
-        "sprint": req.sprint or "", "start_date": req.start_date or "",
-        "end_date": req.end_date or "", "steps_executed": req.steps_executed or [],
-        "status": "Assigned", "created_at": datetime.datetime.now().isoformat(),
+        "issue_id":        issue_key,
+        "issue_url":       issue_url,
+        "title":           summary,
+        "description":     description,
+        "developer_name":  req.developer_name or "",
+        "module":          req.module or req.parent or "",
+        "app_name":        req.app_name or "",
+        "app_version":     req.app_version or "",
+        "test_name":       req.test_name or "",
+        "ticket_id":       ticket_id or req.ticket_id or "",
+        "fix_version":     req.fix_version or [],
+        "affects_version": req.affects_version or [],
+        "priority":        req.priority or "High",
+        "sprint":          req.sprint or "Automation",
+        "start_date":      req.start_date or "",
+        "end_date":        req.end_date or "",
+        "steps_executed":  steps_for_ticket,
+        "status":          "Assigned",
+        "created_at":      datetime.datetime.now().isoformat(),
     }
     jira_history.append(entry)
     broadcast_async({"type": "JIRA_CREATED", "payload": entry})
-    return {"issue_id": issue_key, "issue_key": issue_key, "issue_url": issue_url, **entry}
 
-async def add_comment_flow(issue_key, data):
+    print(f"\n✓ JIRA Ticket Created and Stored: {issue_key}")
+    print(f"  Ticket ID:    {ticket_id}")
+    print(f"  Steps:        {len(steps_for_ticket)}")
+    print(f"  MongoDB:      {'✅ Saved' if ticket_id != 'N/A' else '⚠️  Not saved (MongoDB may be disabled)'}")
+    print(f"  Start Date:   {req.start_date}")
+    print(f"  End Date:     {req.end_date}")
+    print(f"  Sprint:       {req.sprint}")
+
+    return {
+        "issue_id":    issue_key,
+        "issue_key":   issue_key,
+        "issue_url":   issue_url,
+        "ticket_id":   ticket_id,
+        "mongodb_saved": ticket_id != "N/A",
+        **entry
+    }
+
+async def add_comment_flow(issue_key: str, data: dict):
     text = (data.get("text") or "").strip()
     if not text:
         raise HTTPException(status_code=400, detail="Comment text required")
@@ -205,4 +408,6 @@ async def add_comment_flow(issue_key, data):
     jira_comments.setdefault(issue_key, []).append(comment)
     broadcast_async({"type": "JIRA_COMMENT", "payload": {"issue_key": issue_key, "comment": comment}})
     return {"status": "ok", "comment": comment}
+
+
 
