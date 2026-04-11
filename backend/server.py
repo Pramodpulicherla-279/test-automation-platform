@@ -784,7 +784,7 @@ def deploy_and_notify(
     # if not report_url:
     #     logger.info("[Notify] ❌ Deploy failed or page not live — Slack message NOT sent.")
     #     return
-    print("DEBUG app_variant:", app_variant)
+    # print("DEBUG app_variant:", app_variant)
     send_slack_message(
         channel_id=channel_id,
         developer_name=developer_name,
@@ -882,6 +882,12 @@ async def _post_run_notify(
         _runs[run_id]["app_name"]       = app_name       or ""
         _runs[run_id]["app_version"]    = app_version     or ""
         _runs[run_id]["developer_name"] = developer_name  or ""
+        if not _runs[run_id].get("app_variant"):
+            _runs[run_id]["app_variant"] = _detect_app_variant(
+                _runs[run_id].get("package_name", ""),
+                app_name,
+            )
+        print(f"[_post_run_notify] app_variant resolved → {_runs[run_id]['app_variant']}")
     print(f"[_post_run_notify] Metadata stored → "
           f"app='{app_name}' ver='{app_version}' dev='{developer_name}'")
 
@@ -1084,54 +1090,65 @@ async def _handle_slack_apk(
             },
         })
 
-        # ── Stream download progress to frontend (same as /start-test) ───────
+        # ── Download APK via thread executor (Windows-safe) ──────────────────
         script_path = os.path.join(os.path.dirname(__file__), "gdrive_loader.py")
+        loop = asyncio.get_event_loop()
+
+        def _run_download():
+            dl_env = os.environ.copy()
+            dl_env["PYTHONIOENCODING"] = "utf-8"
+            dl_env["PYTHONUTF8"]       = "1"   # Python 3.7+ UTF-8 mode flag
+            return subprocess.run(
+                [sys.executable, "-u", script_path, download_url],
+                capture_output=True,
+                encoding="utf-8",
+                errors="replace",
+                env=dl_env,
+                timeout=300,
+            )
+ 
+        result = await loop.run_in_executor(None, _run_download)
+        stdout_text = result.stdout or ""
+        stderr_text = result.stderr or ""
+ 
         apk_path = None
-        env = os.environ.copy()
-        env["PYTHONIOENCODING"] = "utf-8"
-
-        proc = await asyncio.create_subprocess_exec(
-            sys.executable, "-u", script_path, download_url,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-            env=env,
-        )
-
-        async for line in proc.stdout:
-            decoded = line.decode("utf-8", errors="replace").strip()
-            if decoded.startswith("PROGRESS:"):
+        for line in stdout_text.splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            if line.startswith("PROGRESS:"):
                 await manager.broadcast({
                     "type": "LOG",
                     "payload": {
-                        "message": decoded.replace("PROGRESS:", "").strip(),
+                        "message": line.replace("PROGRESS:", "").strip(),
                         "status": "PROGRESS",
                     },
                 })
-            elif decoded.startswith("RESULT:"):
-                apk_path = decoded.replace("RESULT:", "").strip()
-            elif decoded:
+            elif line.startswith("RESULT:"):
+                apk_path = line.replace("RESULT:", "").strip()
+            else:
                 await manager.broadcast({
                     "type": "LOG",
-                    "payload": {"message": decoded, "status": "INFO"},
+                    "payload": {"message": line, "status": "INFO"},
                 })
-
-        await proc.wait()
-        if proc.returncode != 0:
-            stderr_data = await proc.stderr.read()
+ 
+        if result.returncode != 0:
             raise Exception(
-                f"Download failed: {stderr_data.decode('utf-8', errors='replace').strip() or 'Unknown error'}"
+                f"Download failed (exit {result.returncode}): "
+                f"{stderr_text.strip() or 'Unknown error'}"
             )
         if not apk_path:
             raise Exception("Download script finished but returned no APK path.")
-
+ 
         # ── Rest of the handler stays the same ───────────────────────────────
         loop = asyncio.get_event_loop()
         info         = await loop.run_in_executor(None, lambda: _get_full_apk_info(apk_path))
         package_name = info["package_name"]
         app_name     = info["app_name"]
         app_version  = info["app_version"]
-
+ 
         app_variant    = _detect_app_variant(package_name, app_name)
+        _runs[run_id]["app_variant"] = app_variant
         tests_to_run   = APP_VARIANTS.get(app_variant, [])
         developer_name = APP_DEVELOPER_MAP.get(app_variant, "")
         if not developer_name and sender_user_id:
@@ -1140,14 +1157,14 @@ async def _handle_slack_apk(
             )
         if not developer_name:
             developer_name = "Unknown Developer"
-
+ 
         if run_id in _runs:
             _runs[run_id]["package_name"]   = package_name  or ""
             _runs[run_id]["app_variant"]    = app_variant    or ""
             _runs[run_id]["app_name"]       = app_name       or ""
             _runs[run_id]["app_version"]    = app_version    or ""
             _runs[run_id]["developer_name"] = developer_name or ""
-
+ 
         await manager.broadcast({
             "type": "LOG",
             "payload": {
@@ -1158,9 +1175,9 @@ async def _handle_slack_apk(
                 "status": "INFO",
             },
         })
-
+ 
         await _ensure_appium_running()
-
+ 
         await _post_run_notify(
             run_id=run_id,
             apk_path=apk_path,
@@ -1170,12 +1187,16 @@ async def _handle_slack_apk(
             developer_name=developer_name,
             channel_id=channel_id,
         )
-
+ 
     except Exception as e:
-        print(f"[Slack] Error: {e}")
+        import traceback
+        full_error = traceback.format_exc()
+        print(f"[Slack] Error type: {type(e).__name__}")
+        print(f"[Slack] Error message: {repr(e)}")
+        print(f"[Slack] Full traceback:\n{full_error}")
         await manager.broadcast({
             "type": "LOG",
-            "payload": {"message": f"[Slack] Error: {str(e)}", "status": "FAILED"},
+            "payload": {"message": f"[Slack] Error: {type(e).__name__}: {repr(e)}", "status": "FAILED"},
         })
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -2383,11 +2404,12 @@ async def slack_events(request: Request, background_tasks: BackgroundTasks):
             if file_id:
                 channel_id     = event.get("channel")
                 sender_user_id = event.get("user")
-                background_tasks.add_task(
-                    _handle_slack_apk,
-                    file_id=file_id,
-                    channel_id=channel_id,
-                    sender_user_id=sender_user_id,
+                asyncio.create_task(
+                    _handle_slack_apk(
+                        file_id=file_id,
+                        channel_id=channel_id,
+                        sender_user_id=sender_user_id,
+                    )
                 )
 
     return {"status": "ok"}
@@ -2427,5 +2449,9 @@ async def enhance_jira_issue(req: JiraEnhanceRequest):
 #  ENTRYPOINT
 # ════════════════════════════════════════════════════════════════════════════
 
+# ── Windows asyncio subprocess fix ──────────────────────────────────────────
+if os.name == "nt":
+    asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
+ 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
