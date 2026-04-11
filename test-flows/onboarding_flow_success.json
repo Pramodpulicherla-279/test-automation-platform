@@ -69,5 +69,13 @@
     {
         "step": "Select Transplanted Date",
         "status": "Success"
+    },
+    {
+        "step": "Select Sowing Date",
+        "status": "Success"
+    },
+    {
+        "step": "Android Back",
+        "status": "Success"
     }
 ]
