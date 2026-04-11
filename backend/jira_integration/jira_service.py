@@ -182,7 +182,7 @@ def _build_business_payload(
         "feature": feature or "Unknown Feature",
         "issue_summary": issue_summary or "Automation Failure",
         "test_name": test_name or "Unknown Test",
-        "test_id": test_id or "Unknown Test ID",
+        # "test_id": test_id or "Unknown Test ID",
         "steps_executed": _normalize_steps(steps_executed),
         "developer_name": developer_name or "Unknown Developer",
     }
@@ -400,8 +400,8 @@ def _build_formatted_description(
         metadata_lines.append(f"Feature: {feature}")
     if test_name and not _is_unknown(test_name):
         metadata_lines.append(f"Test: {test_name}")
-    if test_id and not _is_unknown(test_id):
-        metadata_lines.append(f"Test ID: {test_id}")
+    # if test_id and not _is_unknown(test_id):
+    #     metadata_lines.append(f"Test ID: {test_id}")
     if developer_name and not _is_unknown(developer_name):
         metadata_lines.append(f"Developer: {developer_name}")
     if start_date:

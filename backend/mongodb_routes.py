@@ -297,13 +297,13 @@ async def update_ticket(issue_id: str, update_data: TicketUpdate):
 # Health Check
 # ─────────────────────────────
 
-@router.get("/health", response_model=Dict[str, Any])
-async def health_check():
-    """Check if MongoDB connection is healthy"""
-    from jira_integration.mongo_config import is_mongodb_enabled
+# @router.get("/health", response_model=Dict[str, Any])
+# async def health_check():
+#     """Check if MongoDB connection is healthy"""
+#     from jira_integration.mongo_config import is_mongodb_enabled
     
-    return {
-        "success": True,
-        "mongodb_enabled": is_mongodb_enabled(),
-        "message": "MongoDB API is ready"
-    }
+#     return {
+#         "success": True,
+#         "mongodb_enabled": is_mongodb_enabled(),
+#         "message": "MongoDB API is ready"
+#     }

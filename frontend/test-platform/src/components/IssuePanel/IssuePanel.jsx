@@ -170,7 +170,7 @@ function IssueCard({ iss, idx, isOpen, onToggle, onRemove, onCreated, serverRead
         issue_id: fields.internal_issue_id || payload.issue_id || "",
         title: fields.title || "",
         test_name: fields.test_name || "",
-        test_id: payload.test_id || null,
+        // test_id: payload.test_id || null,
         app_name: fields.app_name || "",
         app_version: fields.app_version || "",
         module: fields.module || fields.parent || "",
@@ -457,9 +457,9 @@ export default function IssuePanel({ modules = [], jiraIssues = [], onHistoryUpd
 
   useEffect(() => { ssSave(issues); }, [issues]);
 
-  useEffect(() => {
-    fetch(`${BACKEND}/api/health`).then(r => r.json()).then(d => setServerReady(d.status === "ok")).catch(() => setServerReady(false));
-  }, []);
+  // useEffect(() => {
+  //   fetch(`${BACKEND}/api/health`).then(r => r.json()).then(d => setServerReady(d.status === "ok")).catch(() => setServerReady(false));
+  // }, []);
 
   const addPayload = useCallback((payload) => {
     if (!payload || typeof payload !== "object") return;

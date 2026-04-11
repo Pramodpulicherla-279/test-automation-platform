@@ -1,19 +1,18 @@
 /**
- * JiraHistory.jsx  –  fixed (single export default, merged features)
+ * JiraHistory.jsx
  *
- * Split-pane layout:
- *   LEFT  – issue list grouped by ticket_id, tabs All/Assigned/Unassigned,
- *            module + status filters, search bar, summary cards
- *   RIGHT – detail panel: fields, description, comments + add-comment
- *
- * FIX: Module dropdown now always shows ALL modules regardless of which
- *      module is currently selected. Filtering is 100% client-side so the
- *      backend fetch never narrows the module list.
+ * Fixes:
+ *  1. Uses ticket_type/type from API instead of hardcoding "created"
+ *  2. Removed Refresh button
+ *  3. Removed MongoDB health polling / MongoBanner / reconnect logic
+ *  4. Removed status filter dropdown
+ *  5. Module dropdown always shows ALL modules (client-side filtering)
+ *  6. N/A / null ticketId all normalised → "Manual" group
  */
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
-  History, ExternalLink, RefreshCw, Search,
+  History, ExternalLink, Search,
   ChevronDown, ChevronRight, Send, MessageSquare,
   CheckCircle, AlertCircle, Clock, LayoutList,
 } from "lucide-react";
@@ -31,6 +30,17 @@ const fmt = (iso) => {
   } catch { return iso; }
 };
 
+/**
+ * Normalise any "no ticket" value → null so all blanks bucket under "Manual".
+ * Handles: null, undefined, "", "unknown", "N/A", "n/a", "null", "undefined", "-"
+ */
+const normaliseTicketId = (raw) => {
+  if (!raw) return null;
+  const s = String(raw).trim();
+  if (!s || ["unknown", "n/a", "null", "undefined", "-"].includes(s.toLowerCase())) return null;
+  return s;
+};
+
 const STATUS_COLORS = {
   Open:          { bg: "#eff6ff", text: "#1d4ed8" },
   "In Progress": { bg: "#faf5ff", text: "#7c3aed" },
@@ -40,9 +50,9 @@ const STATUS_COLORS = {
   Closed:        { bg: "#f1f5f9", text: "#475569" },
 };
 
-/* ─── small shared components ──────────────────────────────────────────────── */
+/* ─── shared UI ─────────────────────────────────────────────────────────────── */
 const StatusBadge = ({ status }) => {
-  const s = STATUS_COLORS[status] || { bg: "#dbeafe", text: "#1d4ed8" };
+  const s   = STATUS_COLORS[status] || { bg: "#dbeafe", text: "#1d4ed8" };
   const icon =
     status === "Assigned"   ? <CheckCircle size={12} /> :
     status === "Unassigned" ? <AlertCircle size={12} /> :
@@ -66,8 +76,8 @@ const ModuleBadge = ({ module }) =>
 
 const Avatar = ({ name, size = 28 }) => {
   const initials = (name || "?").split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
-  const COLORS = ["#3b82f6", "#8b5cf6", "#10b981", "#f59e0b", "#ef4444"];
-  const bg = COLORS[(name || "").charCodeAt(0) % COLORS.length];
+  const COLORS   = ["#3b82f6", "#8b5cf6", "#10b981", "#f59e0b", "#ef4444"];
+  const bg       = COLORS[(name || "").charCodeAt(0) % COLORS.length];
   return (
     <span style={{
       display: "inline-flex", alignItems: "center", justifyContent: "center",
@@ -94,8 +104,9 @@ const PillBtn = ({ active, onClick, children }) => (
   </button>
 );
 
-/* ─── IssueListCard ────────────────────────────────────────────────────────── */
+/* ─── IssueListCard ─────────────────────────────────────────────────────────── */
 const IssueListCard = ({ issue, isSelected, onClick }) => {
+  // ✅ FIX: use actual type from API, not hardcoded "created"
   const isAssigned = issue.type === "created";
   return (
     <div
@@ -139,13 +150,14 @@ const IssueListCard = ({ issue, isSelected, onClick }) => {
   );
 };
 
-/* ─── RunGroupList ─────────────────────────────────────────────────────────── */
+/* ─── RunGroupList ──────────────────────────────────────────────────────────── */
 const RunGroupList = ({ ticketId, issues, selectedId, onSelect }) => {
   const [open, setOpen] = useState(true);
   if (!issues.length) return null;
 
   const assignedCt   = issues.filter(h => h.type === "created").length;
   const unassignedCt = issues.filter(h => h.type === "removed").length;
+  const label        = ticketId || "Manual";
 
   return (
     <div style={{ borderBottom: "1px solid var(--border-color)" }}>
@@ -163,17 +175,19 @@ const RunGroupList = ({ ticketId, issues, selectedId, onSelect }) => {
           ? <ChevronDown  size={12} color="var(--text-secondary)" />
           : <ChevronRight size={12} color="var(--text-secondary)" />}
         <span style={{
-          fontSize: "0.72rem", fontWeight: 800, color: "var(--accent-blue)",
-          fontFamily: "monospace", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+          fontSize: "0.72rem", fontWeight: 800,
+          color: ticketId ? "var(--accent-blue)" : "var(--text-secondary)",
+          fontFamily: "monospace", flex: 1,
+          overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
         }}>
-          {ticketId || "Manual"}
+          {label}
         </span>
         {assignedCt   > 0 && <span style={{ fontSize: "0.65rem", background: "#dcfce7", color: "#16a34a", borderRadius: 3, padding: "1px 5px", fontWeight: 700 }}>{assignedCt}✓</span>}
         {unassignedCt > 0 && <span style={{ fontSize: "0.65rem", background: "#f1f5f9", color: "#64748b", borderRadius: 3, padding: "1px 5px", fontWeight: 700 }}>{unassignedCt}○</span>}
       </button>
 
       {open && issues.map((h, i) => {
-        const uid = h.issueId || h.internal_issue_id || `${ticketId}-${i}`;
+        const uid = h.issueId || h.internal_issue_id || `${label}-${i}`;
         return (
           <IssueListCard
             key={uid}
@@ -187,10 +201,10 @@ const RunGroupList = ({ ticketId, issues, selectedId, onSelect }) => {
   );
 };
 
-/* ─── DetailPanel ──────────────────────────────────────────────────────────── */
+/* ─── DetailPanel ───────────────────────────────────────────────────────────── */
 function DetailPanel({ issue, comments, onAddComment }) {
   const [commentText, setCommentText] = useState("");
-  const [submitting, setSubmitting]   = useState(false);
+  const [submitting,  setSubmitting]  = useState(false);
   const textRef = useRef(null);
 
   useEffect(() => { setCommentText(""); }, [issue?.issueId]);
@@ -241,7 +255,7 @@ function DetailPanel({ issue, comments, onAddComment }) {
       </span>,
     },
     {
-      label: "Last Updated",
+      label: "End Date",
       value: <span style={{ fontSize: "0.85rem", color: "var(--text-primary)" }}>
         {fmt(issue.end_date || issue.updated_at || issue.created_at || issue.savedAt)}
       </span>,
@@ -250,18 +264,19 @@ function DetailPanel({ issue, comments, onAddComment }) {
       label: "Priority",
       value: <span style={{
         fontWeight: 700, fontSize: "0.85rem",
-        color: issue.priority === "High" ? "#dc2626" : issue.priority === "Medium" ? "#d97706" : "#64748b",
+        color: issue.priority === "High" || issue.priority === "Critical" ? "#dc2626"
+             : issue.priority === "Medium" ? "#d97706" : "#64748b",
       }}>{issue.priority}</span>,
     }] : []),
-    ...(issue.app_version         ? [{ label: "App Version",     value: <span style={{ fontSize: "0.85rem" }}>{issue.app_version}</span>                 }] : []),
-    ...(issue.sprint               ? [{ label: "Sprint",          value: <span style={{ fontSize: "0.85rem" }}>{issue.sprint}</span>                      }] : []),
-    ...(issue.fix_version?.length  ? [{ label: "Fix Version",     value: <span style={{ fontSize: "0.85rem" }}>{renderVersion(issue.fix_version)}</span>  }] : []),
+    ...(issue.app_version            ? [{ label: "App Version",     value: <span style={{ fontSize: "0.85rem" }}>{issue.app_version}</span>                    }] : []),
+    ...(issue.test_name               ? [{ label: "Test",            value: <span style={{ fontSize: "0.85rem" }}>{issue.test_name}</span>                      }] : []),
+    ...(issue.sprint                  ? [{ label: "Sprint",          value: <span style={{ fontSize: "0.85rem" }}>{issue.sprint}</span>                         }] : []),
+    ...(issue.fix_version?.length     ? [{ label: "Fix Version",     value: <span style={{ fontSize: "0.85rem" }}>{renderVersion(issue.fix_version)}</span>     }] : []),
     ...(issue.affects_version?.length ? [{ label: "Affects Version", value: <span style={{ fontSize: "0.85rem" }}>{renderVersion(issue.affects_version)}</span> }] : []),
   ];
 
   return (
     <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-
       {/* Header */}
       <div style={{
         padding: "16px 20px", borderBottom: "1px solid var(--border-color)",
@@ -290,8 +305,6 @@ function DetailPanel({ issue, comments, onAddComment }) {
 
       {/* Scrollable body */}
       <div style={{ flex: 1, overflowY: "auto", padding: "0 20px 20px" }}>
-
-        {/* Fields table */}
         <table style={{ width: "100%", borderCollapse: "collapse", margin: "16px 0 0" }}>
           <tbody>
             {fields.map(f => (
@@ -307,14 +320,23 @@ function DetailPanel({ issue, comments, onAddComment }) {
           </tbody>
         </table>
 
+        {/* Steps Executed */}
+        {Array.isArray(issue.steps_executed) && issue.steps_executed.length > 0 && (
+          <div style={{ marginTop: 20 }}>
+            <div style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--text-primary)", marginBottom: 8 }}>
+              Steps Executed ({issue.steps_executed.length})
+            </div>
+            <ol style={{ margin: 0, paddingLeft: 20, fontSize: "0.82rem", color: "var(--text-primary)", lineHeight: 1.8 }}>
+              {issue.steps_executed.map((s, i) => <li key={i}>{s}</li>)}
+            </ol>
+          </div>
+        )}
+
         {/* Description */}
         {issue.description && (
           <div style={{ marginTop: 20 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 10 }}>
-              <div style={{
-                width: 20, height: 20, display: "inline-flex", alignItems: "center",
-                justifyContent: "center", background: "var(--border-color)", borderRadius: 4,
-              }}>
+              <div style={{ width: 20, height: 20, display: "inline-flex", alignItems: "center", justifyContent: "center", background: "var(--border-color)", borderRadius: 4 }}>
                 <span style={{ fontSize: "0.7rem" }}>✏️</span>
               </div>
               <span style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--text-primary)" }}>Description</span>
@@ -334,10 +356,7 @@ function DetailPanel({ issue, comments, onAddComment }) {
         {/* Comments */}
         <div style={{ marginTop: 24 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 12 }}>
-            <div style={{
-              width: 22, height: 22, display: "inline-flex", alignItems: "center",
-              justifyContent: "center", background: "var(--accent-blue)", borderRadius: "50%",
-            }}>
+            <div style={{ width: 22, height: 22, display: "inline-flex", alignItems: "center", justifyContent: "center", background: "var(--accent-blue)", borderRadius: "50%" }}>
               <MessageSquare size={12} color="#fff" />
             </div>
             <span style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--text-primary)" }}>
@@ -350,7 +369,6 @@ function DetailPanel({ issue, comments, onAddComment }) {
               No comments yet.
             </div>
           )}
-
           {comments.map((c, i) => (
             <div key={i} style={{ display: "flex", gap: 10, marginBottom: 14 }}>
               <Avatar name={c.author} size={30} />
@@ -359,18 +377,13 @@ function DetailPanel({ issue, comments, onAddComment }) {
                   <span style={{ fontWeight: 700, fontSize: "0.82rem", color: "var(--text-primary)" }}>{c.author}</span>
                   <span style={{ fontSize: "0.73rem", color: "var(--text-secondary)" }}>{fmt(c.created_at)}</span>
                 </div>
-                <div style={{
-                  background: "var(--bg-console)", border: "1px solid var(--border-color)",
-                  borderRadius: 8, padding: "10px 12px",
-                  fontSize: "0.82rem", color: "var(--text-primary)", lineHeight: 1.6,
-                }}>
+                <div style={{ background: "var(--bg-console)", border: "1px solid var(--border-color)", borderRadius: 8, padding: "10px 12px", fontSize: "0.82rem", color: "var(--text-primary)", lineHeight: 1.6 }}>
                   {c.text}
                 </div>
               </div>
             </div>
           ))}
 
-          {/* Add comment */}
           <div style={{ display: "flex", gap: 8, alignItems: "flex-end", marginTop: 4 }}>
             <textarea
               ref={textRef}
@@ -380,12 +393,11 @@ function DetailPanel({ issue, comments, onAddComment }) {
               placeholder="Add a comment…"
               rows={2}
               style={{
-                flex: 1, resize: "vertical",
-                padding: "10px 12px", borderRadius: 8,
+                flex: 1, resize: "vertical", padding: "10px 12px", borderRadius: 8,
                 border: "1px solid var(--border-color)",
                 background: "var(--bg-card)", color: "var(--text-primary)",
-                fontSize: "0.82rem", lineHeight: 1.5,
-                fontFamily: "inherit", outline: "none", minHeight: 48,
+                fontSize: "0.82rem", lineHeight: 1.5, fontFamily: "inherit",
+                outline: "none", minHeight: 48,
               }}
             />
             <button
@@ -403,17 +415,14 @@ function DetailPanel({ issue, comments, onAddComment }) {
               <Send size={16} color="#fff" />
             </button>
           </div>
-          <div style={{ fontSize: "0.68rem", color: "var(--text-secondary)", marginTop: 4 }}>
-            Ctrl+Enter to submit
-          </div>
+          <div style={{ fontSize: "0.68rem", color: "var(--text-secondary)", marginTop: 4 }}>Ctrl+Enter to submit</div>
         </div>
-
       </div>
     </div>
   );
 }
 
-/* ─── JiraHistory — main export ────────────────────────────────────────────── */
+/* ─── JiraHistory — main export ─────────────────────────────────────────────── */
 export default function JiraHistory({ issuePanelHistory = [], newTicket = null }) {
   const [apiIssues,     setApiIssues]     = useState([]);
   const [loading,       setLoading]       = useState(false);
@@ -422,61 +431,51 @@ export default function JiraHistory({ issuePanelHistory = [], newTicket = null }
   const [search,        setSearch]        = useState("");
   const [activeTab,     setActiveTab]     = useState("all");
   const [filterModule,  setFilterModule]  = useState("");
-  const [filterStatus,  setFilterStatus]  = useState("");
 
-  // ✅ KEY FIX: allModules is a SEPARATE state that is ONLY ever set from
-  // the full unfiltered API response. It never gets overwritten when a
-  // module filter is active, so the dropdown always shows every module.
+  // Full module list — NEVER overwritten by filter changes
   const [allModules,    setAllModules]    = useState([]);
 
   const [selectedId,    setSelectedId]    = useState(null);
   const [selectedIssue, setSelectedIssue] = useState(null);
   const [comments,      setComments]      = useState([]);
 
-  // ✅ KEY FIX: fetchIssues does NOT send filterModule or filterStatus to
-  // the backend. It always fetches ALL tickets. The filtering happens
-  // client-side below, so allModules never shrinks.
+  // ── Fetch ALL tickets — no backend filtering ────────────────────────────
   const fetchIssues = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${API_URL}/api/jira/history?limit=200`);
+      const res = await fetch(`${API_URL}/api/jira/history?limit=500`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
       const data   = await res.json();
       const issues = data.issues ?? [];
       setApiIssues(issues);
       setSource(data.source || "unknown");
-
-      // Build the full module list from the COMPLETE unfiltered dataset
-      setAllModules(
-        [...new Set(issues.map(t => t.module).filter(Boolean))].sort()
-      );
+      setAllModules([...new Set(issues.map(t => t.module).filter(Boolean))].sort());
     } catch (err) {
       try {
         const r2 = await fetch(`${API_URL}/jira/history`);
         if (r2.ok) {
-          const d2     = await r2.json();
+          const d2 = await r2.json();
           const issues2 = d2.issues ?? [];
           setApiIssues(issues2);
           setAllModules([...new Set(issues2.map(t => t.module).filter(Boolean))].sort());
           return;
         }
       } catch { /* ignore */ }
-      setError(err.message || "Could not fetch from server");
+      setError(err.message || "Could not reach server");
     } finally {
       setLoading(false);
     }
-  }, []); // ← empty deps: never re-runs because of a filter change
+  }, []);
 
   useEffect(() => { fetchIssues(); }, [fetchIssues]);
 
-  /* prepend new ticket from IssuePanel without a full refresh */
+  // Prepend new ticket from IssuePanel
   useEffect(() => {
     if (!newTicket) return;
     setApiIssues(prev => {
       if (prev.some(t => t.issue_id === newTicket.issue_id)) return prev;
-      // Also add its module to the dropdown if it's genuinely new
       if (newTicket.module) {
         setAllModules(m => [...new Set([...m, newTicket.module])].sort());
       }
@@ -484,7 +483,7 @@ export default function JiraHistory({ issuePanelHistory = [], newTicket = null }
     });
   }, [newTicket]);
 
-  /* fetch comments when selection changes */
+  // Comments
   useEffect(() => {
     if (!selectedIssue?.issueId) { setComments([]); return; }
     fetch(`${API_URL}/api/jira/comments/${selectedIssue.issueId}`)
@@ -493,7 +492,7 @@ export default function JiraHistory({ issuePanelHistory = [], newTicket = null }
       .catch(() => setComments([]));
   }, [selectedIssue?.issueId]);
 
-  /* live comment updates via WebSocket */
+  // Live comment updates via WebSocket
   useEffect(() => {
     let ws;
     try {
@@ -532,16 +531,17 @@ export default function JiraHistory({ issuePanelHistory = [], newTicket = null }
     setComments([]);
   };
 
-  /* normalise API response → internal shape */
+  // ✅ FIX: Use ticket_type/type from API response, NOT hardcoded "created"
   const apiEntries = apiIssues.map(i => ({
-    type:              "created",
-    ticketId:          i.ticket_id          || "unknown",
-    issueId:           i.issue_id           || i.key        || "",
-    jiraUrl:           i.issue_url          || i.url        || "",
-    title:             i.title              || i.summary    || "Untitled",
+    type:              i.ticket_type || i.type || "created",   // ← key fix
+    ticketId:          normaliseTicketId(i.ticket_id),
+    issueId:           i.issue_id           || i.key      || "",
+    jiraUrl:           i.issue_url          || i.url      || "",
+    title:             i.title              || i.summary  || "Untitled",
     module:            i.module             || "",
-    developer:         i.developer_name     || i.assignee   || "",
-    priority:          i.priority           || "High",
+    developer:         i.developer_name     || i.assignee || "",
+    priority: (i.ticket_type || i.type) === "removed"? "NA"
+    : (i.priority ?? null),
     internal_issue_id: i.internal_issue_id  || "",
     description:       i.description        || "",
     app_name:          i.app_name           || "",
@@ -552,18 +552,24 @@ export default function JiraHistory({ issuePanelHistory = [], newTicket = null }
     fix_version:       Array.isArray(i.fix_version)     ? i.fix_version     : [],
     affects_version:   Array.isArray(i.affects_version) ? i.affects_version : [],
     start_date:        i.start_date         || "",
-    end_date:          i.end_date           || "",
+    end_date:          i.end_date           || i.due_date || "",
     created_at:        i.created_at         || "",
     savedAt:           i.created_at         || "",
   }));
 
-  /* merge with real-time panel history, dedup */
+  // Merge with real-time panel history
   const panelCreatedIds = new Set(
     issuePanelHistory.filter(h => h.type === "created" && h.issueId).map(h => h.issueId)
   );
-  const allHistory = [...issuePanelHistory, ...apiEntries.filter(e => !panelCreatedIds.has(e.issueId))];
+  const allHistory = [
+    ...issuePanelHistory.map(h => ({
+      ...h,
+      ticketId: normaliseTicketId(h.ticketId),
+    })),
+    ...apiEntries.filter(e => !panelCreatedIds.has(e.issueId)),
+  ];
 
-  // ✅ All filtering is CLIENT-SIDE — module filter never touches the backend
+  // Client-side filtering only
   const filteredHistory = allHistory.filter(h => {
     const matchTab =
       activeTab === "all" ||
@@ -571,14 +577,7 @@ export default function JiraHistory({ issuePanelHistory = [], newTicket = null }
       (activeTab === "unassigned" && h.type === "removed");
     if (!matchTab) return false;
 
-    if (filterStatus) {
-      const hStatus = h.type === "created" ? "Assigned" : "Unassigned";
-      if (hStatus.toLowerCase() !== filterStatus.toLowerCase()) return false;
-    }
-
-    if (filterModule) {
-      if ((h.module || "").toLowerCase() !== filterModule.toLowerCase()) return false;
-    }
+    if (filterModule && (h.module || "").toLowerCase() !== filterModule.toLowerCase()) return false;
 
     if (search) {
       const q = search.toLowerCase();
@@ -586,23 +585,30 @@ export default function JiraHistory({ issuePanelHistory = [], newTicket = null }
         (h.issueId   || "").toLowerCase().includes(q) ||
         (h.title     || "").toLowerCase().includes(q) ||
         (h.module    || "").toLowerCase().includes(q) ||
-        (h.developer || "").toLowerCase().includes(q)
+        (h.developer || "").toLowerCase().includes(q) ||
+        (h.test_name || "").toLowerCase().includes(q)
       );
     }
     return true;
   });
 
-  /* group by ticketId */
+  // Group by ticketId (null → __manual__ bucket)
   const groupedMap = {};
   filteredHistory.forEach(h => {
-    const tid = h.ticketId || "unknown";
-    if (!groupedMap[tid]) groupedMap[tid] = [];
-    groupedMap[tid].push(h);
+    const key = h.ticketId ?? "__manual__";
+    if (!groupedMap[key]) groupedMap[key] = [];
+    groupedMap[key].push(h);
   });
-  const sortedTicketIds = Object.keys(groupedMap).sort((a, b) => b.localeCompare(a));
 
-  /* clear selection if it's no longer visible */
-  const visibleIssues = sortedTicketIds.flatMap(tid => groupedMap[tid] || []);
+  // Sort: real IDs descending, manual last
+  const sortedTicketIds = Object.keys(groupedMap).sort((a, b) => {
+    if (a === "__manual__") return 1;
+    if (b === "__manual__") return -1;
+    return b.localeCompare(a);
+  });
+
+  // Clear selection if filtered out
+  const visibleIssues = sortedTicketIds.flatMap(k => groupedMap[k] || []);
   useEffect(() => {
     const stillVisible = selectedIssue && visibleIssues.some(h =>
       (h.issueId || h.internal_issue_id) === selectedId
@@ -613,48 +619,27 @@ export default function JiraHistory({ issuePanelHistory = [], newTicket = null }
       setComments([]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab, search, filterModule, filterStatus]);
+  }, [activeTab, search, filterModule]);
 
-  /* summary counts — always from full history */
+  // Summary counts — always from full unfiltered history
   const totalAssigned   = allHistory.filter(h => h.type === "created").length;
   const totalUnassigned = allHistory.filter(h => h.type === "removed").length;
   const total           = allHistory.length;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "calc(100vh - 80px)", gap: "1rem" }}>
-
-      {/* Page header */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
-        <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <History size={22} color="var(--accent-blue)" />
-            <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 700, color: "var(--text-primary)" }}>
-              Jira History
-            </h1>
-          </div>
-          {source && (
-            <div style={{ fontSize: "0.72rem", color: "var(--text-secondary)", marginTop: 2, paddingLeft: 32 }}>
-              {source === "mongodb"
-                ? `✅ MongoDB — ${total} ticket${total !== 1 ? "s" : ""}`
-                : `⚠️ MongoDB unavailable — session memory only (${total})`}
-            </div>
-          )}
-        </div>
-        <button
-          onClick={fetchIssues}
-          disabled={loading}
-          style={{
-            display: "flex", alignItems: "center", gap: 6,
-            background: "var(--accent-blue)", color: "#fff",
-            border: "none", borderRadius: 8, padding: "8px 16px",
-            cursor: loading ? "not-allowed" : "pointer",
-            fontSize: "0.875rem", fontWeight: 600,
-            opacity: loading ? 0.6 : 1,
-          }}
-        >
-          <RefreshCw size={14} style={{ animation: loading ? "spin 1s linear infinite" : "none" }} />
-          {loading ? "Loading…" : "Refresh"}
-        </button>
+{/* 
+      Page header — NO Refresh button */}
+      <div style={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
+        {/* <History size={22} color="var(--accent-blue)" /> */}
+        <h1 style={{ margin: "0 0 0 10px", fontSize: "1.5rem", fontWeight: 700, color: "var(--text-primary)" }}>
+          Jira History
+        </h1>
+        {source && (
+          <span style={{ fontSize: "0.72rem", color: source === "mongodb" ? "#16a34a" : "var(--text-secondary)", marginLeft: 14 }}>
+            {source === "mongodb" ? `✅ MongoDB — ${total} ticket${total !== 1 ? "s" : ""}` : `⚠️ Session memory (${total})`}
+          </span>
+        )}
       </div>
 
       {/* Summary cards */}
@@ -671,15 +656,10 @@ export default function JiraHistory({ issuePanelHistory = [], newTicket = null }
         ))}
       </div>
 
-      {/* Search + filters + tabs */}
+      {/* Search + module filter + tab pills — NO status dropdown, NO chevron dropdown */}
       <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexShrink: 0, flexWrap: "wrap" }}>
-
-        {/* Search */}
         <div style={{ flex: 1, position: "relative", minWidth: 200 }}>
-          <Search size={14} style={{
-            position: "absolute", left: 11, top: "50%",
-            transform: "translateY(-50%)", color: "var(--text-secondary)",
-          }} />
+          <Search size={14} style={{ position: "absolute", left: 11, top: "50%", transform: "translateY(-50%)", color: "var(--text-secondary)" }} />
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
@@ -694,7 +674,7 @@ export default function JiraHistory({ issuePanelHistory = [], newTicket = null }
           />
         </div>
 
-        {/* ✅ Module dropdown — reads from allModules (full list, never filtered) */}
+        {/* Module dropdown — always full list */}
         <select
           value={filterModule}
           onChange={e => setFilterModule(e.target.value)}
@@ -709,24 +689,7 @@ export default function JiraHistory({ issuePanelHistory = [], newTicket = null }
           {allModules.map(m => <option key={m} value={m}>{m}</option>)}
         </select>
 
-        {/* Status filter */}
-        {/* <select
-          value={filterStatus}
-          onChange={e => setFilterStatus(e.target.value)}
-          style={{
-            padding: "7px 10px", border: "1px solid var(--border-color)",
-            borderRadius: 8, fontSize: "0.82rem",
-            background: "var(--bg-card)", color: "var(--text-primary)",
-            cursor: "pointer",
-          }}
-        >
-          <option value="">All Statuses</option>
-          {["Open", "In Progress", "Assigned", "Unassigned", "Done", "Closed"].map(s => (
-            <option key={s} value={s}>{s}</option>
-          ))}
-        </select> */}
-
-        {/* Tab pills */}
+        {/* Tab pills only — no extra dropdown buttons */}
         <div style={{ display: "flex", gap: 6 }}>
           <PillBtn active={activeTab === "all"}        onClick={() => setActiveTab("all")}>All</PillBtn>
           <PillBtn active={activeTab === "assigned"}   onClick={() => setActiveTab("assigned")}>Assigned</PillBtn>
@@ -737,12 +700,11 @@ export default function JiraHistory({ issuePanelHistory = [], newTicket = null }
       {/* Error banner */}
       {error && (
         <div style={{
-          background: "#fef2f2", border: "1px solid #fecaca",
-          borderRadius: 8, padding: "10px 14px",
-          color: "#b91c1c", fontSize: "0.85rem", flexShrink: 0,
-          display: "flex", alignItems: "center", gap: 10,
+          background: "#fef2f2", border: "1px solid #fecaca", borderRadius: 8,
+          padding: "10px 14px", color: "#b91c1c", fontSize: "0.85rem",
+          flexShrink: 0, display: "flex", alignItems: "center", gap: 10,
         }}>
-          <span>⚠️ Failed to load: {error}</span>
+          <span>⚠️ {error}</span>
           <button onClick={fetchIssues} style={{
             marginLeft: "auto", color: "#b91c1c", textDecoration: "underline",
             background: "none", border: "none", cursor: "pointer", fontSize: "0.85rem",
@@ -751,36 +713,24 @@ export default function JiraHistory({ issuePanelHistory = [], newTicket = null }
       )}
 
       {/* Split pane */}
-      <div style={{
-        flex: 1, display: "flex", gap: 0, overflow: "hidden",
-        border: "1px solid var(--border-color)", borderRadius: 12,
-      }}>
+      <div style={{ flex: 1, display: "flex", overflow: "hidden", border: "1px solid var(--border-color)", borderRadius: 12 }}>
 
         {/* LEFT: issue list */}
-        <div style={{
-          width: 340, flexShrink: 0,
-          borderRight: "1px solid var(--border-color)",
-          overflowY: "auto", background: "var(--bg-card)",
-        }}>
+        <div style={{ width: 340, flexShrink: 0, borderRight: "1px solid var(--border-color)", overflowY: "auto", background: "var(--bg-card)" }}>
           {loading && sortedTicketIds.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "60px 20px", color: "var(--text-secondary)" }}>
-              Loading…
-            </div>
+            <div style={{ textAlign: "center", padding: "60px 20px", color: "var(--text-secondary)" }}>Loading…</div>
           ) : sortedTicketIds.length === 0 ? (
-            <div style={{
-              textAlign: "center", padding: "60px 20px", color: "var(--text-secondary)",
-              fontSize: "0.85rem",
-            }}>
-              {search || filterModule || filterStatus
+            <div style={{ textAlign: "center", padding: "60px 20px", color: "var(--text-secondary)", fontSize: "0.85rem" }}>
+              {search || filterModule
                 ? "No issues match your filters."
-                : "No issues yet. Create one from the Issue Panel."}
+                : "No issues yet. Run a test to create one."}
             </div>
           ) : (
-            sortedTicketIds.map(tid => (
+            sortedTicketIds.map(key => (
               <RunGroupList
-                key={tid}
-                ticketId={tid === "unknown" ? "" : tid}
-                issues={groupedMap[tid]}
+                key={key}
+                ticketId={key === "__manual__" ? null : key}
+                issues={groupedMap[key]}
                 selectedId={selectedId}
                 onSelect={handleSelect}
               />
@@ -796,7 +746,6 @@ export default function JiraHistory({ issuePanelHistory = [], newTicket = null }
             onAddComment={addComment}
           />
         </div>
-
       </div>
     </div>
   );
