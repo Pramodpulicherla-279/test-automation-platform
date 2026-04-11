@@ -3,52 +3,15 @@ name: Deploy Allure Report
 on:
   push:
     branches:
-      - samad-updated   # 🔥 triggered by server auto push
+      - samad-updated
 
 permissions:
   contents: write
-  pages: write      # Added for native deployment
-  id-token: write   # Added for native deployment
 
 jobs:
-  test-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
-          pip install allure-pytest
-
-      - name: Run tests (optional)
-        run: |
-          pytest --alluredir=allure-results || true
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Install Allure
-        run: |
-          wget https://github.com/allure-framework/allure2/releases/download/2.29.0/allure-2.29.0.tgz
-          tar -xvzf allure-2.29.0.tgz
-          echo "$(pwd)/allure-2.29.0/bin" >> $GITHUB_PATH
-
-      - name: Generate Allure Report
-        run: |
-          allure generate allure-results -o allure-report --clean
-
-      - name: Deploy to GitHub Pages
-        run: |
-          pip install ghp-import
-          ghp-import -n -p -f -b gh-pages allure-report
