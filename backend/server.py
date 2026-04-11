@@ -6,6 +6,7 @@ import time
 import threading
 import uuid
 import tempfile
+from wsgiref import headers
 import requests
 
 sys.dont_write_bytecode = True
@@ -57,7 +58,6 @@ PACKAGE_VARIANT_MAP = {
     "com.agribride.krishivaas.farmer_state_app": "state_farmer",
     "com.agribride.krishivaas.client_state_app": "state_client",
 }
-
 APP_VARIANTS = {
     "regular_farmer": [
         {"name": "Login",       "path": "tests/test_cases/regular_farmer_test_cases/test_login_pytest.py"},
@@ -85,6 +85,28 @@ APP_DEVELOPER_MAP = {
     "regular_client": "@samad ahmed",
     "state_farmer":   "@Swaroopa",
     "state_client":   "@Vikash Chandra",
+}
+APP_CONFIG = {
+    "regular_farmer": {
+        "developer_name": "Pramod",   # 👈 IMPORTANT
+        "slack_user_id": "U0AT2P7V1K2",   # 👈 IMPORTANT
+        "channel_id": "C0AJY6W7FFF"
+    },
+    "regular_client": {
+        "developer_name": "Kiran",
+        "slack_user_id": "U02BBBBBBB",
+        "channel_id": "C0AJY6W7FFF"
+    },
+    "state_farmer": {
+        "developer_name": "Swaroopa",
+        "slack_user_id": "U03CCCCCCC",
+        "channel_id": "C0AJY6W7FFF"
+    },
+    "state_client": {
+        "developer_name": "Vikash Chandra",
+        "slack_user_id": "U04DDDDDD",
+        "channel_id": "C0AJY6W7FFF"
+    }
 }
 
 # ─── Global process handles ──────────────────────────────────────────────────
@@ -668,186 +690,74 @@ def _wait_for_page_live(
 
     print(f"[GHPages] ❌ Page never became live after {retries * delay_seconds}s")
     return False
-
-
-# ════════════════════════════════════════════════════════════════════════════
-#  CORRECTED  _post_run_notify  —  Step 4 + Step 5 only
-#
-#  Replace the existing Step 4 and Step 5 blocks inside _post_run_notify
-#  in server.py with this snippet.  Everything above Step 4 stays the same.
-# ════════════════════════════════════════════════════════════════════════════
-
-async def _post_run_notify_step_4_and_5(
-    loop,
-    run_id,
-    passed,
-    failed,
-    channel_id,
-    app_name,
-    app_version,
-    developer_name,
-    manager,
-    _runs,
-    SLACK_NOTIFY_CHANNEL,
-    send_slack_message,
-    _start_allure_server,
-    auto_push_to_github,
-    log_to_ui,
-):
-    """
-    Drop-in replacement for Step 4 + Step 5 of _post_run_notify.
-
-    KEY CHANGES vs the old code
-    ───────────────────────────
-    1. auto_push_to_github() is called BEFORE deploy_to_github_pages() so the
-       gh-pages branch clone always sees the latest code.
-    2. Slack is sent ONLY when ghpages_url is not None (i.e. page confirmed
-       live).  If deploy fails we fall back to the local Allure URL for the
-       local server notification only — Slack is skipped entirely.
-    3. No more "send Slack with local URL" — that URL is useless for remote
-       developers.
-    """
-
-    # ── Step 4 — start local allure server (for internal viewing) ────────────
-    print(f"[{run_id[:8]}] Step 4: Resolving report URL...")
-    local_url = await loop.run_in_executor(None, _start_allure_server)
-
-    # Push code first so the clone in deploy_to_github_pages sees the latest
-    await loop.run_in_executor(None, auto_push_to_github)
-
-    # Deploy and wait for the page to be confirmed live
-    ghpages_url = await loop.run_in_executor(None, lambda: deploy_to_github_pages(run_id))
-
-    if not ghpages_url:
-        log_to_ui(
-            f"[{run_id[:8]}] ⚠️ GitHub Pages deploy failed or timed out — "
-            "Slack notification will NOT be sent.",
-            "WARN",
-        )
-        # Still store the local URL so the UI can show something
-        if run_id in _runs:
-            _runs[run_id]["report_url"] = local_url
-        return  # ← EXIT HERE — no Slack with a broken link
-
-    report_url = ghpages_url
-    print(f"[{run_id[:8]}] Step 4: Report URL → {report_url}")
-
-    if run_id in _runs:
-        _runs[run_id]["report_url"] = report_url
-
-    # ── Step 5 — send Slack notification (only reaches here if page is live) ──
-    final_channel_id = channel_id or SLACK_NOTIFY_CHANNEL
-    print(f"[{run_id[:8]}] Final channel_id: {final_channel_id}")
-
-    if not final_channel_id:
-        print("[ERROR] No Slack channel found even after fallback")
-        await manager.broadcast({
-            "type": "LOG",
-            "payload": {
-                "message": "⚠️ Slack notification skipped: No channel_id found",
-                "status": "WARN",
-            },
-        })
-        return
-
-    print(f"[{run_id[:8]}] Step 5: Sending Slack notification...")
-    print(f"[FINAL DEBUG] developer_name = '{developer_name}'")
-    print(f"[FINAL DEBUG] app_name       = '{app_name}'")
-    print(f"[FINAL DEBUG] app_version    = '{app_version}'")
-
-    try:
-        await loop.run_in_executor(
-            None,
-            lambda: send_slack_message(
-                channel_id=final_channel_id,
-                developer_name=developer_name,
-                app_name=app_name or "Unknown App",
-                apk_version=app_version or "Unknown",
-                passed=passed,
-                failed=failed,
-                report_url=report_url,   # ← confirmed-live URL
-            ),
-        )
-        log_to_ui(f"[{run_id[:8]}] Step 5 done. Slack notification sent", "SUCCESS")
-        await manager.broadcast({
-            "type": "LOG",
-            "payload": {
-                "message": f"✅ Slack report sent! Passed: {passed} | Failed: {failed}",
-                "status": "INFO",
-            },
-        })
-    except Exception as e:
-        print(f"[PostRun] Step 5 FAILED: {e}")
-        await manager.broadcast({
-            "type": "LOG",
-            "payload": {"message": f"⚠️ Slack notification failed: {e}", "status": "WARN"},
-        })
  
 # ════════════════════════════════════════════════════════════════════════════
 #  SLACK NOTIFICATION
 # ════════════════════════════════════════════════════════════════════════════
  
 def send_slack_message(
-    channel_id:     str,
-    developer_name: str,
-    app_name:       str,
-    apk_version:    str,
-    passed:         int,
-    failed:         int,
-    report_url:     str,
-) -> None:
+    channel_id,
+    developer_name,
+    slack_user_id,
+    app_name,
+    apk_version,
+    passed,
+    failed,
+    report_url,
+):
+    mention = f"<@{slack_user_id}>"
+
     headers = {
         "Authorization": f"Bearer {SLACK_BOT_TOKEN}",
-        "Content-Type": "application/json",
+        "Content-Type": "application/json"
     }
-    safe_url = report_url or ""
-    status_line = f"*🟢 Passed:* {passed}    *🔴 Failed:* {failed}"
- 
+
     payload = {
         "channel": channel_id,
+        "text": f"{mention} 🚀 Automation Report Ready!",
         "blocks": [
             {
-                "type": "header",
-                "text": {"type": "plain_text", "text": "🚀 Automation Report Ready!", "emoji": True},
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": f"{mention} 🚀 *Automation Report Ready!*"
+                }
             },
             {
                 "type": "section",
                 "fields": [
-                    {"type": "mrkdwn", "text": f"*👤 Developer*\n{developer_name}"},
-                    {"type": "mrkdwn", "text": f"*📱 App*\n{app_name}"},
-                    {"type": "mrkdwn", "text": f"*🔖 Version*\n{apk_version}"},
-                    {"type": "mrkdwn", "text": f"*📊 Results*\n{status_line}"},
-                ],
+                    {"type": "mrkdwn", "text": f"👤 *Developer*\n{mention}"},
+                    {"type": "mrkdwn", "text": f"📱 *App*\n{app_name}"},
+                    {"type": "mrkdwn", "text": f"🏷️ *Version*\n{apk_version}"},
+                    {"type": "mrkdwn", "text": f"📊 *Results*\n🟢 Passed: {passed}   🔴 Failed: {failed}"}
+                ]
             },
-            {"type": "divider"},
             {
                 "type": "actions",
                 "elements": [
                     {
                         "type": "button",
-                        "action_id": "open_report",
-                        "text": {"type": "plain_text", "text": "📄 Open Report", "emoji": True},
-                        "url": safe_url,
-                        "style": "primary",
+                        "text": {"type": "plain_text", "text": "📄 Open Report"},
+                        "url": report_url,
+                        "style": "primary"
                     }
-                ],
-            },
-        ],
-        "text": f"Automation report for {app_name} v{apk_version} — Passed: {passed}, Failed: {failed}",
+                ]
+            }
+        ]
     }
- 
+
     response = requests.post(
         "https://slack.com/api/chat.postMessage",
         headers=headers,
         json=payload,
         timeout=10,
     )
+
     data = response.json()
     if not data.get("ok"):
-        print(f"[Slack] chat.postMessage error: {data.get('error')} | {data.get('response_metadata')}")
+        print(f"[Slack ERROR] {data}")
     else:
-        print(f"[Slack] ✅ Message sent successfully to {channel_id}")
- 
+        print(f"[Slack] ✅ Sent to {channel_id}") 
  
 # ════════════════════════════════════════════════════════════════════════════
 #  MAIN ENTRY POINT  —  call this after your test run finishes
@@ -871,10 +781,10 @@ def deploy_and_notify(
     # ✅ FIX 2: Only notify Slack if deploy succeeded AND page is live
     report_url = deploy_to_github_pages(run_id)
  
-    if not report_url:
-        print("[Notify] ❌ Deploy failed or page not live — Slack message NOT sent.")
-        return
- 
+    # if not report_url:
+    #     logger.info("[Notify] ❌ Deploy failed or page not live — Slack message NOT sent.")
+    #     return
+    print("DEBUG app_variant:", app_variant)
     send_slack_message(
         channel_id=channel_id,
         developer_name=developer_name,
@@ -1069,19 +979,24 @@ async def _post_run_notify(
         print(f"[PostRun] Step 3 FAILED: {e}")
 
     # ── Broadcast captured steps for this run ────────────────────────────────
-    await _broadcast_all_steps_to_frontend(run_id)
+    # await _broadcast_all_steps_to_frontend(run_id)
 
     # ── Step 4 — resolve report URL ──────────────────────────────────────────
     print(f"[{run_id[:8]}] Step 4: Resolving report URL...")
+    # 1. Start local server
     local_url  = await loop.run_in_executor(None, _start_allure_server)
+     # 2. Push to GitHub
+    await loop.run_in_executor(None, lambda: auto_push_to_github(run_id))
+    # 3. Deploy to GitHub Pages
     ghpages_url = await loop.run_in_executor(None, lambda: deploy_to_github_pages(run_id))
-    if not ghpages_url:
-       log_to_ui(f"[{run_id[:8]}] ⚠️ GitHub Pages deploy failed — report URL will be local only", "WARN")
-
-    report_url = ghpages_url if ghpages_url else local_url
+   # 4. Decide final URL
+    if ghpages_url:
+        report_url = ghpages_url
+    else:
+        report_url = local_url
+        log_to_ui(f"[{run_id[:8]}] ⚠️ GitHub Pages deploy failed", "WARN")
+    
     print(f"[{run_id[:8]}] Step 4: Report URL → {report_url}")
-    # 🔥 AUTO PUSH TO TRIGGER CI/CD
-    await loop.run_in_executor(None, auto_push_to_github)
 
     if run_id in _runs:
         _runs[run_id]["report_url"] = report_url
@@ -1107,17 +1022,24 @@ async def _post_run_notify(
     print(f"[FINAL DEBUG] app_version    = '{app_version}'")
 
     try:
+        app_variant = _runs.get(run_id, {}).get("app_variant")
+        config = APP_CONFIG.get(app_variant)
+        if not config:
+           print(f"[ERROR] No config for app_variant={app_variant}")
+           return
+
         await loop.run_in_executor(
             None,
             lambda: send_slack_message(
-                channel_id=final_channel_id,
-                developer_name=developer_name,
-                app_name=app_name or "Unknown App",
-                apk_version=app_version or "Unknown",
-                passed=passed,
-                failed=failed,
-                report_url=report_url,
-            ),
+            channel_id = config.get("channel_id") or final_channel_id,
+            developer_name=config.get("developer_name"),
+            slack_user_id=config.get("slack_user_id"),   # 🔥 ADD THIS
+            app_name=app_name,
+            apk_version=app_version,
+            passed=passed,
+            failed=failed,
+            report_url=report_url,
+        ),
         )
         log_to_ui(f"[{run_id[:8]}] Step 5 done. Slack notification sent", "SUCCESS")
         await manager.broadcast({
@@ -1127,6 +1049,9 @@ async def _post_run_notify(
                 "status": "INFO",
             },
         })
+        if not config:
+           print(f"[ERROR] No config found for app_variant={app_variant}")
+        return
     except Exception as e:
         print(f"[PostRun] Step 5 FAILED: {e}")
         await manager.broadcast({
@@ -2148,13 +2073,15 @@ def trigger_github_action():
         print(f"[CI/CD] Error triggering workflow: {e}")
         return None
 
-def auto_push_to_github():
+def auto_push_to_github(run_id: str):
     try:
         print("[CI/CD] Auto pushing to GitHub...")
+        short_id = run_id[:8]
 
-        subprocess.run(["git", "add", "."], cwd=BASE_DIR, check=True)
+        subprocess.run(["git", "add", f"allure-results"], cwd=BASE_DIR, check=True)
+        subprocess.run(["git", "add", f"allure-report"], cwd=BASE_DIR, check=True)
 
-        commit_message = f"auto-deploy-{datetime.datetime.now().strftime('%Y%m%d-%H%M%S')}"
+        commit_message = f"allure-report-{short_id}"
 
         subprocess.run(
             ["git", "commit", "-m", commit_message],
@@ -2168,7 +2095,7 @@ def auto_push_to_github():
             check=True
         )
 
-        print("[CI/CD] ✅ Code pushed successfully")
+        print("[CI/CD] ✅ Allure Report pushed successfully")
 
     except Exception as e:
         print(f"[CI/CD] ❌ Push failed: {e}")        
