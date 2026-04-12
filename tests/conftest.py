@@ -53,14 +53,14 @@ from appium import webdriver
 from appium.options.android import UiAutomator2Options
 
 RUN_ID_CACHE = None
-print("🔥 conftest loaded")
+print("conftest loaded")
 _THIS_DIR     = os.path.dirname(os.path.abspath(__file__))
 _PROJECT_ROOT = os.path.dirname(_THIS_DIR)
 if _PROJECT_ROOT not in sys.path:
     sys.path.insert(0, _PROJECT_ROOT)
 
-from jira_integration.jira_attachment import attach_screenshot
-from jira_integration.jira_config import config
+from new_backend.modules.jira.jira_attachment import attach_screenshot
+from new_backend.modules.jira.jira_config import config
 
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
 

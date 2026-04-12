@@ -61,7 +61,6 @@ async def allure_start():
 async def run_complete(event: RunCompleteEvent):
     return await run_complete_flow(event)
 
-
-@router.post("/api/generate-report")
+@router.post("/generate-report")
 async def generate_report():
     return await api_generate_report_flow()

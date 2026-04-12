@@ -2,14 +2,16 @@ import socket
 import re
 import datetime
 import asyncio
+import os
+import time
+import subprocess
 from pathlib import Path
 from fastapi import HTTPException
 from aiohttp_retry import List, Optional, Dict, Any
 from core.websocket import manager
-from core.state import test_steps_store
-from core.constants import UI_SCREENSHOTS_BASE
+from core.state import test_steps_store, allure_proc
+from core.constants import UI_SCREENSHOTS_BASE, allure_start_lock, ALLURE_CMD, BASE_DIR, ALLURE_REPORT_DIR
 from modules.jira.jira_service import calculate_duration
-
 def pick_free_port() -> int:
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind(("127.0.0.1", 0))
@@ -247,5 +249,38 @@ def parse_step_from_message(message: str) -> Optional[str]:
                 return step
     return None
 
+def kill_allure_proc() -> None:
+    global allure_proc
+    if allure_proc is not None:
+        try:
+            if os.name == "nt":
+                subprocess.run(
+                    ["taskkill", "/F", "/T", "/PID", str(allure_proc.pid)],
+                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                )
+            else:
+                allure_proc.terminate()
+        except Exception:
+            pass
+        allure_proc = None
+
+
+def start_allure_server() -> str:
+    global allure_proc, _allure_port
+
+    with allure_start_lock:
+        kill_allure_proc()
+
+        _allure_port = pick_free_port()
+        print(f"[Allure] 🚀 Starting new server on port {_allure_port}...")
+        allure_proc = subprocess.Popen(
+            [ALLURE_CMD, "open", "-h", "127.0.0.1", "-p", str(_allure_port), ALLURE_REPORT_DIR],
+            cwd=BASE_DIR,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            shell=True,
+        )
+        time.sleep(2)
+        return f"http://127.0.0.1:{_allure_port}"
 
 

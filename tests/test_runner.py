@@ -68,7 +68,7 @@ def generate_report(project_root: Optional[str] = None) -> None:
         project_root = os.path.dirname(os.path.dirname(__file__))
 
     allure_cmd = "allure"
-    scoop_path = r"C:\Users\ram\scoop\shims\allure.cmd"
+    scoop_path = r"C:\Users\Pramo\scoop\shims\allure.cmd"
     if os.path.exists(scoop_path):
         allure_cmd = scoop_path
     elif shutil.which("allure.cmd"):

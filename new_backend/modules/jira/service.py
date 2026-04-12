@@ -42,16 +42,16 @@ async def lifespan(app: FastAPI):
     disconnect_mongodb()
     
     # Clean up child processes
-    global _appium_proc, _allure_proc
-    if _appium_proc is not None:
+    global appium_proc, allure_proc
+    if appium_proc is not None:
         try:
             if os.name == "nt":
                 subprocess.run(
-                    ["taskkill", "/F", "/T", "/PID", str(_appium_proc.pid)],
+                    ["taskkill", "/F", "/T", "/PID", str(appium_proc.pid)],
                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
                 )
             else:
-                _appium_proc.kill()
+                appium_proc.kill()
         except Exception:
             pass
 

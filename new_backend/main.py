@@ -1,10 +1,13 @@
+import os
+import asyncio
+import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from modules.test_runner.routes import router as test_router
 from modules.jira.routes import router as jira_router
 from modules.llm.routes import router as llm_router
 from core.websocket import router as websocket_router
-# from modules.slack.routes import router as slack_router
+from modules.slack.routes import router as slack_router
 
 app = FastAPI()
 
@@ -20,4 +23,11 @@ app.include_router(websocket_router, prefix="/ws")
 app.include_router(test_router, prefix="/test")
 app.include_router(jira_router, prefix="/jira")
 app.include_router(llm_router, prefix="/llm")
-# app.include_router(slack_router, prefix="/slack")
+app.include_router(slack_router, prefix="/slack")
+
+# ── Windows asyncio subprocess fix ──────────────────────────────────────────
+if os.name == "nt":
+    asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
+ 
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
