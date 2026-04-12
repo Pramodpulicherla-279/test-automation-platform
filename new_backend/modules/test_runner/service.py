@@ -6,7 +6,7 @@ import json
 import socket
 from fastapi.responses import JSONResponse
 from typing import Dict, List
-import core.state as state
+# import core.state as state
 from core.state import (
     test_steps_store,
     current_test_name,
@@ -14,14 +14,15 @@ from core.state import (
     dismissed_keys,
     PAYLOAD_PREFIXES
 )
-from core.state import reset_run_state
-from core.state import _appium_proc, APPIUM_PORT
+from core.state import reset_run_state, runs, appium_proc, APPIUM_PORT
 from core.utils import pick_free_port, parse_step_from_message
 from core.constants import ALLURE_CMD, ALLURE_REPORT_DIR
 from fastapi import HTTPException
 from core.websocket import manager
 from core.logger import logger
 from core.events import broadcast_async
+from modules.slack.service import APP_DEVELOPER_MAP, new_run, detect_app_variant, run_post_notify
+from core.constants import SLACK_NOTIFY_CHANNEL
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../"))
 sys.path.insert(0, PROJECT_ROOT)
 from tests.test_runner import (
@@ -29,7 +30,7 @@ from tests.test_runner import (
     stop_current_tests,
     generate_report
 )
-
+from modules.slack.config import APP_VARIANTS, APP_DEVELOPER_MAP
 from .gdrive_loader import download_apk, extract_app_icon, get_apk_info
 
 
@@ -38,27 +39,6 @@ APKS_DIR = os.path.join(BASE_DIR, "backend", "temp_apks")
 os.makedirs(APKS_DIR, exist_ok=True)
 
 DOWNLOAD_PROCESS_OBJ = None
-
-# SAME AS YOUR SERVER (no change)
-PACKAGE_VARIANT_MAP = {
-    "com.agribride.krishivaas.farmer_app": "regular_farmer",
-    "com.agribride.krishivaas.client_app": "regular_client",
-    "com.agribride.krishivaas.farmer_state_app": "state_farmer",
-    "com.agribride.krishivaas.client_state_app": "state_client",
-}
-
-APP_VARIANTS = {
-    "regular_farmer": [
-        {"name": "Login", "path": "tests/test_cases/regular_farmer_test_cases/test_login_pytest.py"},
-        {"name": "Dashboard", "path": "tests/test_cases/regular_farmer_test_cases/TestOnboarding.py"},
-        {"name": "Add Updates", "path": "tests/farmer/test_updates.py"},
-    ],
-    "regular_client": [
-        {"name": "Login", "path": "tests/test_cases/regular_client_test_cases/login_pytest.py"},
-        {"name": "Marketplace", "path": "tests/client/test_marketplace.py"},
-        {"name": "Cart", "path": "tests/client/test_cart.py"},
-    ],
-}
 
 async def log_step_flow(msg):
     global test_steps_store, current_test_name
@@ -119,14 +99,14 @@ async def device_status_flow():
         return {"connected": False}
     
 async def appium_start_flow():
-    global _appium_proc
-    if _appium_proc is not None and _appium_proc.poll() is None:
+    global appium_proc
+    if appium_proc is not None and appium_proc.poll() is None:
         return {"status": "running", "message": "Appium is already running via backend."}
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         if s.connect_ex(("127.0.0.1", APPIUM_PORT)) == 0:
             return {"status": "running", "message": f"Appium already active on port {APPIUM_PORT}"}
     try:
-        _appium_proc = subprocess.Popen(["appium", "-p", str(APPIUM_PORT)],
+        appium_proc = subprocess.Popen(["appium", "-p", str(APPIUM_PORT)],
                                          shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         return {"status": "started", "message": f"Appium started on port {APPIUM_PORT}"}
     except Exception as e:
@@ -179,21 +159,21 @@ async def download_apk_from_url(url: str, manager):
     return apk_path
 
 async def appium_status_flow():
-    global _appium_proc
-    if _appium_proc is not None and _appium_proc.poll() is None:
+    global appium_proc
+    if appium_proc is not None and appium_proc.poll() is None:
         return {"status": "running", "port": APPIUM_PORT}
     return {"status": "stopped"}
 
 async def appium_stop_flow():
-    global _appium_proc
-    if _appium_proc is not None:
+    global appium_proc
+    if appium_proc is not None:
         if os.name == "nt":
             try:
-                subprocess.run(["taskkill", "/F", "/T", "/PID", str(_appium_proc.pid)],
+                subprocess.run(["taskkill", "/F", "/T", "/PID", str(appium_proc.pid)],
                                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             except Exception:
-                _appium_proc.kill()
-        _appium_proc = None
+                appium_proc.kill()
+        appium_proc = None
         return {"status": "stopped"}
     return {"status": "not_running"}
 
@@ -220,7 +200,11 @@ async def module_status_flow(data: dict):
 
 async def start_test_flow(request, background_tasks, manager):
     reset_run_state()
-    global DOWNLOAD_PROCESS_OBJ
+    global DOWNLOAD_PROCESS_OBJ, _latest_run_id
+
+    run_id        = new_run()
+    _latest_run_id = run_id
+
     try:
         await manager.broadcast({
             "type": "LOG",
@@ -231,99 +215,187 @@ async def start_test_flow(request, background_tasks, manager):
         apk_path = None
         env = os.environ.copy()
         env["PYTHONIOENCODING"] = "utf-8"
+        
         DOWNLOAD_PROCESS_OBJ = await asyncio.create_subprocess_exec(
             sys.executable, "-u", script_path, request.url,
-            stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE, env=env)
+            stdout=asyncio.subprocess.PIPE, 
+            stderr=asyncio.subprocess.PIPE, 
+            env=env
+        )
+
         async for line in DOWNLOAD_PROCESS_OBJ.stdout:
             decoded_line = line.decode("utf-8").strip()
             if decoded_line.startswith("PROGRESS:"):
-                await manager.broadcast({"type": "LOG", "payload": {"message": decoded_line.replace("PROGRESS:",""), "status": "PROGRESS"}})
+                await manager.broadcast({"type": "LOG", "payload": {
+                    "message": decoded_line.replace("PROGRESS:",""), "status": "PROGRESS"
+                }})
             elif decoded_line.startswith("RESULT:"):
                 apk_path = decoded_line.replace("RESULT:","").strip()
             elif decoded_line:
                 await manager.broadcast({"type": "LOG", "payload": {"message": decoded_line, "status": "INFO"}})
+        
         await DOWNLOAD_PROCESS_OBJ.wait()
         if DOWNLOAD_PROCESS_OBJ.returncode != 0:
             stderr_data = await DOWNLOAD_PROCESS_OBJ.stderr.read()
             raise Exception(f"Script Error: {stderr_data.decode('utf-8').strip() or 'Unknown error'}")
         if not apk_path:
             raise Exception("Download script finished but returned no path.")
+        
         DOWNLOAD_PROCESS_OBJ = None
+
         icon_url      = extract_app_icon(apk_path)
         full_icon_url = f"http://localhost:8000{icon_url}" if icon_url else None
 
         info         = get_apk_info(apk_path) or {}
-        print(f"[APK Info] {info}")
         app_name     = info.get("app_name")
+        app_version  = info["app_version"]
         package_name = info.get("package_name")
-
-        app_variant  = PACKAGE_VARIANT_MAP.get(package_name)
+        app_variant  = detect_app_variant.get(package_name, app_name)
         tests_to_run = request.tests_to_run or APP_VARIANTS.get(app_variant, [])
-
+        
+         # ── Store into run state immediately so conftest can fetch it ─────────
+        developer_name = APP_DEVELOPER_MAP.get(app_variant, "Unknown Developer")
+        if run_id in runs:
+            runs[run_id]["app_name"]       = app_name       or ""
+            runs[run_id]["app_version"]    = app_version     or ""
+            runs[run_id]["package_name"]   = package_name   or ""
+            runs[run_id]["app_variant"]    = app_variant     or ""
+            runs[run_id]["developer_name"] = developer_name or ""
         await manager.broadcast({
             "type": "LOG",
-            "payload": {"message": f"Detected app variant: {app_variant}", "status": "INFO"},
+            "payload": {
+                "message": f"Detected app variant: {app_variant}", "status": "INFO"
+            },
         })
 
         # background_tasks.add_task(run_tests_and_get_suggestions, apk_path, tests_to_run=tests_to_run)
 
-        info = get_apk_info(apk_path) or {}
-
         background_tasks.add_task(
-            run_tests_and_get_suggestions, apk_path,
-            tests_to_run   = request.tests_to_run,
+            run_post_notify,
+            run_tests_and_get_suggestions,
+            run_id=run_id,
+            apk_path=apk_path,
+            tests_to_run   = tests_to_run,
             app_name       = info.get("app_name"),
             app_version    = info.get("app_version"),
             developer_name = info.get("developer_name"),
+            # developer_name=APP_DEVELOPER_MAP.get(app_variant, "Unknown Developer"),
+            channel_id=SLACK_NOTIFY_CHANNEL,
         )
 
         return {
-            "status": "success", "message": "APK Downloaded. Test Starting...",
-            "app_icon": full_icon_url, "apk_path": apk_path, **info,
-            "status":       "success",
-            "message":      "APK Downloaded. Test Starting...",
-            "app_icon":     full_icon_url,
-            "app_name":     app_name,
+            "status": "success", 
+            "message": "APK Downloaded. Test Starting...",
+            "run_id": run_id,
+            "app_icon": full_icon_url, 
+            "apk_path": apk_path, 
+            **info,
+            "status": "success",
+            "message": "APK Downloaded. Test Starting...",
+            "app_icon": full_icon_url,
+            "app_name": app_name,
             "package_name": package_name,
-            "apk_path":     apk_path,
-            "app_variant":  app_variant,
+            "apk_path": apk_path,
+            "app_variant": app_variant,
+            "app_version": app_version,
         }
 
     except Exception as e:
         DOWNLOAD_PROCESS_OBJ = None
-        await manager.broadcast({"type": "LOG", "payload": {"message": f"Download interrupted: {str(e)}", "status": "FAILED"},})
+        await manager.broadcast({"type": "LOG", "payload": {
+            "message": f"Download interrupted: {str(e)}", "status": "FAILED",
+        }})
         raise HTTPException(status_code=400, detail=f"Download Failed: {str(e)}")
 
 async def start_test_existing_flow(request, background_tasks, manager):
+    global _latest_run_id
+
+    run_id        = new_run()
+    _latest_run_id = run_id
+
     reset_run_state()
+
     try:
         apk_path = os.path.join(APKS_DIR, request.apk_name)
         if not os.path.isfile(apk_path):
             raise HTTPException(status_code=404, detail="APK not found on server")
+        
         await manager.broadcast({"type": "RUN_START", "payload": {}})
-        await manager.broadcast({"type": "LOG", "payload": {"message": f"Using existing APK: {request.apk_name}", "status": "INFO"}})
+        await manager.broadcast({"type": "LOG", "payload": {
+            "message": f"Using existing APK: {request.apk_name}", "status": "INFO"
+        }})
+
         icon_url      = extract_app_icon(apk_path)
         full_icon_url = f"http://localhost:8000{icon_url}" if icon_url else None
         info = get_apk_info(apk_path) or {}
+        package_name = info["package_name"]
+        app_name     = info["app_name"]
+        app_version  = info["app_version"]
+        app_variant   = detect_app_variant(package_name, app_name)
+        variant_tests = APP_VARIANTS.get(app_variant, [])
+        tests_to_run = request.tests_to_run
+
+        if tests_to_run:
+            valid   = [t for t in tests_to_run if os.path.isfile(os.path.join(BASE_DIR, t["path"]))]
+            invalid = [t for t in tests_to_run if t not in valid]
+
+            if invalid:
+                bad_paths = [t["path"] for t in invalid]
+                await manager.broadcast({"type": "LOG", "payload": {
+                    "message": (
+                        f"⚠️  {len(invalid)} invalid path(s) removed: {bad_paths}. "
+                        f"Falling back to APP_VARIANTS defaults for variant '{app_variant}'."
+                    ),
+                    "status": "WARN",
+                }})
+            tests_to_run = valid if valid else variant_tests
+        else:
+            tests_to_run = variant_tests
+
+        if not tests_to_run:
+            raise HTTPException(
+                status_code=400,
+                detail=(
+                    f"No valid test scripts found for variant '{app_variant}'. "
+                    f"Check APP_VARIANTS paths in server.py."
+                ),
+            )
+
+        await manager.broadcast({"type": "LOG", "payload": {
+            "message": f"Running {len(tests_to_run)} test(s): {[t['name'] for t in tests_to_run]}",
+            "status": "INFO",
+        }})
 
         background_tasks.add_task(
-            run_tests_and_get_suggestions, apk_path,
+            run_post_notify,
+            run_id=run_id,
+            apk_path=apk_path,
             tests_to_run   = request.tests_to_run,
             app_name       = info.get("app_name"),
             app_version    = info.get("app_version"),
-            developer_name = info.get("developer_name"),
+            # developer_name = info.get("developer_name"),
+            developer_name=APP_DEVELOPER_MAP.get(app_variant, "Unknown Developer"),
+            channel_id=SLACK_NOTIFY_CHANNEL,
         )
 
 
         return {
-            "status": "success", "message": "Using existing APK. Test Starting...",
-            "app_icon": full_icon_url, "apk_path": apk_path, **info,
+            "status": "success", 
+            "message": "Using existing APK. Test Starting...",
+            "run_id":       run_id,
+            "app_icon": full_icon_url, 
+            "apk_path": apk_path, 
+            **info,
+            "app_variant":  app_variant,
+            "tests_to_run": tests_to_run,
         }
 
     except HTTPException:
         raise
     except Exception as e:
-        await manager.broadcast({"type": "LOG", "payload": {"message": f"Failed to start test: {str(e)}", "status": "FAILED"},})
+        await manager.broadcast({"type": "LOG", "payload": {
+            "message": f"Failed to start test: {str(e)}", "status": "FAILED"
+            }})
         raise HTTPException(status_code=400, detail=f"Failed: {str(e)}")
 
 def stop_test_flow(manager):
