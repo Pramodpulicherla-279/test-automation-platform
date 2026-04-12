@@ -1,0 +1,1 @@
+[{"uid":"94c1a5dff85f23be","name":"Verify user can login with valid credentials","time":{"start":1775970000150,"stop":1775970062435,"duration":62285},"status":"passed","severity":"normal"},{"uid":"28a672bb9a8c702c","name":"Dashboard → Add Farmer → Add Farm → Add Crop","time":{"start":1775970066785,"stop":1775970171873,"duration":105088},"status":"failed","severity":"normal"}]

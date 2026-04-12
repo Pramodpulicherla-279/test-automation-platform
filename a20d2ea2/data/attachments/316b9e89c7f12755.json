@@ -1,0 +1,34 @@
+{
+  "ticket_id": "RUN-20260412-102851",
+  "issue_id": "ISS-001",
+  "app_name": "Krishivaas Telangana Client",
+  "app_version": "0.0.30",
+  "module": "Onboarding",
+  "feature": "Authentication",
+  "issue_summary": "Automation Failure: test_add_new_farmer_flow",
+  "title": "Automation Failure: test_add_new_farmer_flow",
+  "test_name": "test_add_new_farmer_flow",
+  "steps_executed": [
+    "Dashboard Add Button",
+    "Add New Farmer",
+    "Farm Village Dropdown",
+    "Select Farm Village",
+    "Submit Village",
+    "Search Bund",
+    "Submit Farmer",
+    "Crop Dropdown",
+    "Transplanted Date",
+    "Calendar OK"
+  ],
+  "developer_name": "@Vikash Chandra",
+  "description": "pytest.fail(\"Could not open sowing date calendar\")\nFailed: Could not open sowing date calendar\n\nSteps Executed:\n1. Dashboard Add Button\n2. Add New Farmer\n3. Farm Village Dropdown\n4. Select Farm Village\n5. Submit Village\n6. Search Bund\n7. Submit Farmer\n8. Crop Dropdown\n9. Transplanted Date\n10. Calendar OK",
+  "start_date": "2026-04-12T10:31:04.738642",
+  "end_date": "2026-04-12T10:32:57.134559",
+  "sprint": "Automation",
+  "fix_version": [
+    "Production"
+  ],
+  "affects_version": [
+    "Krishivaas Telangana Client"
+  ]
+}
