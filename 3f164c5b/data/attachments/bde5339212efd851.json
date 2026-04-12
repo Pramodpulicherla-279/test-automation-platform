@@ -1,0 +1,23 @@
+{
+  "ticket_id": "RUN-20260412-103619",
+  "issue_id": "ISS-002",
+  "app_name": "Krishivaas Farmer",
+  "app_version": "1.3.93",
+  "module": "Onboarding",
+  "feature": "Authentication",
+  "issue_summary": "Automation Failure: test_add_new_farmer_flow",
+  "title": "Automation Failure: test_add_new_farmer_flow",
+  "test_name": "test_add_new_farmer_flow",
+  "steps_executed": [],
+  "developer_name": "@Anuj",
+  "description": "pytest.fail(\"Could not click Add button\")\nFailed: Could not click Add button",
+  "start_date": "2026-04-12T10:37:23.886657",
+  "end_date": "2026-04-12T10:38:02.894647",
+  "sprint": "Automation",
+  "fix_version": [
+    "Production"
+  ],
+  "affects_version": [
+    "Krishivaas Farmer"
+  ]
+}
