@@ -42,7 +42,7 @@ def _start_log_worker() -> None:
             message, status = _LOG_Q.get()
             try:
                 session.post(
-                    f"{BACKEND_URL}/api/log-step",
+                    f"{BACKEND_URL}/test/log-step",
                     json={"message": message, "status": status},
                     timeout=1,
                 )
@@ -68,7 +68,7 @@ def generate_report(project_root: Optional[str] = None) -> None:
         project_root = os.path.dirname(os.path.dirname(__file__))
 
     allure_cmd = "allure"
-    scoop_path = r"C:\Users\ram\scoop\shims\allure.cmd"
+    scoop_path = r"C:\Users\Pramo\scoop\shims\allure.cmd"
     if os.path.exists(scoop_path):
         allure_cmd = scoop_path
     elif shutil.which("allure.cmd"):
@@ -120,7 +120,7 @@ def send_module_status(module: str, status: str, message: str = ""):
     """Notify backend which module is running/completed."""
     try:
         requests.post(
-            f"{BACKEND_URL}/api/module-status",
+            f"{BACKEND_URL}/test/module-status",
             json={"module": module, "status": status, "message": message},
             timeout=3,
         )
@@ -215,7 +215,7 @@ def run_tests_and_get_suggestions(
     try:
         import requests as _req
         _req.post(
-            f"{BACKEND_URL}/api/module-status",
+            f"{BACKEND_URL}/test/module-status",
             json={"module": "__RUN_START__", "status": "start", "message": ""},
             timeout=2,
         )
@@ -249,7 +249,7 @@ def run_tests_and_get_suggestions(
         try:
             import requests as _req
             _req.post(
-                f"{BACKEND_URL}/api/run-complete",
+                f"{BACKEND_URL}/test/run-complete",
                 json={"report_url": "http://localhost:8000/allure-report/index.html"},
                 timeout=3,
             )

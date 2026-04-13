@@ -2,8 +2,8 @@
 """
 Step capture — four-layer strategy (most reliable first):
 
-  1. Query server GET /api/jira/steps/{test_name}  (exact key)
-     Falls back to GET /api/jira/steps/default if test_name returns empty.
+  1. Query server GET /jira/steps/{test_name}  (exact key)
+     Falls back to GET /jira/steps/default if test_name returns empty.
   2. Local in-process step buffer (_StepCapturingPlugin reads capstdout live)
   3. Live logcat scrape from device at failure time
   4. report.sections["Captured stdout call"] / capstdout
@@ -53,7 +53,7 @@ from appium import webdriver
 from appium.options.android import UiAutomator2Options
 
 RUN_ID_CACHE = None
-
+print("conftest loaded")
 _THIS_DIR     = os.path.dirname(os.path.abspath(__file__))
 _PROJECT_ROOT = os.path.dirname(_THIS_DIR)
 
@@ -62,9 +62,8 @@ _BACKEND_DIR = os.path.join(_PROJECT_ROOT, "backend")
 if _BACKEND_DIR not in sys.path:
     sys.path.insert(0, _BACKEND_DIR)
 
-# ── NOW import from jira_integration ──────────────────────────────────────────
-from jira_integration.jira_attachment import attach_screenshot
-from jira_integration.jira_config import config
+from new_backend.modules.jira.jira_attachment import attach_screenshot
+from new_backend.modules.jira.jira_config import config
 
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
 
@@ -76,7 +75,7 @@ _test_start_time: datetime.datetime = None  # Track test start time globally
 
 # Per-test local step buffer — populated by _StepCapturingPlugin
 _local_step_buffer: dict = {}   # { test_name: [step, ...] }
-_current_test_name: str  = ""
+current_test_name: str  = ""
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -187,10 +186,10 @@ def _extract_steps_from_text(text: str) -> list:
 
 
 def _query_steps_endpoint(key: str) -> list:
-    """GET /api/jira/steps/{key} → list, or [] on any error."""
+    """GET /jira/steps/{key} → list, or [] on any error."""
     try:
         resp = http_requests.get(
-            f"{BACKEND_URL}/api/jira/steps/{key}", timeout=4
+            f"{BACKEND_URL}/jira/steps/{key}", timeout=4
         )
         if resp.status_code == 200:
             return resp.json().get("steps", [])
@@ -376,14 +375,14 @@ def pytest_runtest_setup(item):
     under the correct key (not 'default').
     Also pre-initialise the local buffer slot for this test.
     """
-    global _current_test_name, _test_start_time
-    _current_test_name = item.name
+    global current_test_name, _test_start_time
+    current_test_name = item.name
     _test_start_time = datetime.datetime.now()
     _local_step_buffer.setdefault(item.name, [])
 
     try:
         http_requests.post(
-            f"{BACKEND_URL}/api/log-step",
+            f"{BACKEND_URL}/test/log-step",
             json={"message": f"[TEST_START:{item.name}]", "status": "INFO"},
             timeout=2,
         )
@@ -513,7 +512,7 @@ def _send_payload_to_backend(payload: dict) -> None:
     print("JIRA_PAYLOAD_JSON:" + json.dumps(payload, ensure_ascii=False))
     try:
         resp = http_requests.post(
-            f"{BACKEND_URL}/api/jira/payload",
+            f"{BACKEND_URL}/jira/payload",
             json=payload, timeout=5,
         )
         if resp.status_code == 200:

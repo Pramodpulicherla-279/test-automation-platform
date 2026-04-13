@@ -243,7 +243,6 @@ def smart_find_element(
             EC.presence_of_element_located((AppiumBy.XPATH, xpath))
         )
         _console_log(f"[FOUND] name='{name}' via XPATH")
-        _console_log(f"[FOUND] name='{name}' via XPATH")
         return element, False
     except TimeoutException:
         print(f"[{name}] Not found via Primary XPath.")
@@ -336,18 +335,6 @@ def smart_click(
     enable_dom_fallback: bool = True,
     ocr_attempts: int = 2,
 ):
-# def smart_click(
-#     driver,
-#     name,
-#     xpath,
-#     fallback_text=None,
-#     screenshot_path="screenshots/ocr_fallback.png",
-#     *,
-#     force_ocr: bool = False,
-#     enable_scroll: bool = True,
-#     enable_dom_fallback: bool = True,
-#     ocr_attempts: int = 2,
-# ):
     """
     Wrapper around smart_find_element to perform a click.
     AUTO screenshots:

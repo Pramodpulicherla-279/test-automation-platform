@@ -10,7 +10,7 @@
     "submit_login_button": "//android.view.ViewGroup[@content-desc=\"Login\"]",
     "allow_location_button": "//android.widget.Button[@resource-id=\"com.android.permissioncontroller:id/permission_allow_foreground_only_button\"]",
     "allow_audio_button": "//android.widget.Button[@resource-id=\"com.android.permissioncontroller:id/permission_allow_foreground_only_button\"]",
-    "allow_picture_button": "//android.widget.Button[@resource-id=\"com.android.permissioncontroller:id/permission_allow_foreground_only_button\"]"
+    "allow_picture_button": "/android.widget.Button[@resource-id=\"com.android.permissioncontroller:id/permission_allow_foreground_only_button\"]"
   },
   "dashboard_screen": {
     "add_button_dashboard": "//android.widget.Button[@content-desc=\"Add\"]",

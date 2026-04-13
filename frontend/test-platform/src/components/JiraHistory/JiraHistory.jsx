@@ -486,7 +486,7 @@ export default function JiraHistory({ issuePanelHistory = [], newTicket = null }
   // Comments
   useEffect(() => {
     if (!selectedIssue?.issueId) { setComments([]); return; }
-    fetch(`${API_URL}/api/jira/comments/${selectedIssue.issueId}`)
+    fetch(`${API_URL}/jira/comments/${selectedIssue.issueId}`)
       .then(r => r.json())
       .then(d => setComments(d.comments || []))
       .catch(() => setComments([]));
@@ -517,7 +517,7 @@ export default function JiraHistory({ issuePanelHistory = [], newTicket = null }
   const addComment = async (issueKey, text) => {
     if (!issueKey) return;
     try {
-      await fetch(`${API_URL}/api/jira/comments/${issueKey}`, {
+      await fetch(`${API_URL}/jira/comments/${issueKey}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text, author: selectedIssue?.developer || "QA Automation" }),
