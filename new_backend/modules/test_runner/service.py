@@ -4,6 +4,7 @@ import asyncio
 import subprocess
 import json
 import socket
+import threading
 from fastapi.responses import JSONResponse
 from typing import Dict, List
 # import core.state as state
@@ -26,7 +27,6 @@ from core.constants import SLACK_NOTIFY_CHANNEL
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../"))
 sys.path.insert(0, PROJECT_ROOT)
 from tests.test_runner import (
-    run_tests_and_get_suggestions,
     stop_current_tests,
     generate_report
 )
@@ -200,10 +200,10 @@ async def module_status_flow(data: dict):
 
 async def start_test_flow(request, background_tasks, manager):
     reset_run_state()
-    global DOWNLOAD_PROCESS_OBJ, _latest_run_id
+    global DOWNLOAD_PROCESS_OBJ, latest_run_id
 
     run_id        = new_run()
-    _latest_run_id = run_id
+    latest_run_id = run_id
 
     try:
         await manager.broadcast({
@@ -268,11 +268,8 @@ async def start_test_flow(request, background_tasks, manager):
             },
         })
 
-        # background_tasks.add_task(run_tests_and_get_suggestions, apk_path, tests_to_run=tests_to_run)
-
         background_tasks.add_task(
             run_post_notify,
-            run_tests_and_get_suggestions,
             run_id=run_id,
             apk_path=apk_path,
             tests_to_run   = tests_to_run,
@@ -308,10 +305,10 @@ async def start_test_flow(request, background_tasks, manager):
         raise HTTPException(status_code=400, detail=f"Download Failed: {str(e)}")
 
 async def start_test_existing_flow(request, background_tasks, manager):
-    global _latest_run_id
+    global latest_run_id
 
     run_id        = new_run()
-    _latest_run_id = run_id
+    latest_run_id = run_id
 
     reset_run_state()
 
@@ -424,7 +421,6 @@ async def run_complete_flow(event):
 
 async def api_generate_report_flow():
     try:
-        import threading
         threading.Thread(target=generate_report).start()
         return {"status": "ok", "message": "Report generation started"}
     except Exception as e:
