@@ -15,7 +15,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-
+gh-pages-temp/
 node_modules
 dist
 dist-ssr

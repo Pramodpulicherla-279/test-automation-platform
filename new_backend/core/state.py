@@ -6,6 +6,8 @@ import socket
 appium_proc: subprocess.Popen | None = None
 allure_proc: subprocess.Popen | None = None
 allure_port: int | None = None
+latest_run_id: str | None = None
+appium_proc = None
 APPIUM_PORT = 4723
 
 jira_history:      list[dict]           = []

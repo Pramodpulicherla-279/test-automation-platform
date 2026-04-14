@@ -17,12 +17,17 @@ sys.path.insert(0, PROJECT_ROOT)
 from tests.test_runner import (
     run_tests_and_get_suggestions,
 )
-from core.state import runs, is_appium_running, APPIUM_PORT, PROCESSED_EVENTS
+from core.state import runs, is_appium_running, APPIUM_PORT, PROCESSED_EVENTS, appium_proc, latest_run_id
 from core.utils import start_allure_server
 from core.websocket import manager
 from modules.test_runner.gdrive_loader import get_apk_info
-from core.constants import BASE_DIR, SLACK_BOT_TOKEN, SLACK_NOTIFY_CHANNEL, ALLURE_CMD
+from core.constants import SLACK_BOT_TOKEN, SLACK_NOTIFY_CHANNEL, ALLURE_CMD
 from .config import APP_CONFIG, PACKAGE_VARIANT_MAP, APP_VARIANTS, APP_DEVELOPER_MAP
+
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../"))
+print(f"[DEBUG] BASE_DIR = {BASE_DIR}")
+print(f"[DEBUG] allure-results path = {os.path.join(BASE_DIR, 'allure-results')}")
+
 # PACKAGE_VARIANT_MAP = {
 #     "com.agribride.krishivaas.farmer_app":       "regular_farmer",
 #     "com.agribride.krishivaas.client_app":       "regular_client",
@@ -99,22 +104,28 @@ def new_run() -> str:
     }
     return run_id
 
-def generate_allure_report():
-    """
-    Generate the Allure HTML report from allure-results.
-    NOTE: Do NOT wipe allure-results here — they were already populated by
-    the just-completed pytest run.  Only use --clean on the output folder.
-    """
-    try:
-        subprocess.run(
-            [ALLURE_CMD, "generate", "allure-results", "-o", "allure-report", "--clean"],
-            cwd=BASE_DIR,
-            check=True,
-            shell=True,
-        )
-        print("✅ Allure report generated")
-    except Exception as e:
-        print(f"❌ Allure generate failed: {e}")
+# def generate_allure_report():
+#     results_dir = os.path.join(BASE_DIR, "allure-results")
+#     json_files = glob.glob(os.path.join(results_dir, "*.json"))
+#     print("\n[Allure] Generating report from allure-results...")
+#     """
+#     Generate the Allure HTML report from allure-results.
+#     NOTE: Do NOT wipe allure-results here — they were already populated by
+#     the just-completed pytest run.  Only use --clean on the output folder.
+#     """
+#     if not json_files:
+#         print("❌ allure-results is EMPTY — tests did not write results here!")
+#         return
+#     try:
+#         subprocess.run(
+#             [ALLURE_CMD, "generate", "allure-results", "-o", "allure-report", "--clean"],
+#             cwd=BASE_DIR,
+#             check=True,
+#             shell=True,
+#         )
+#         print("✅ Allure report generated")
+#     except Exception as e:
+#         print(f"❌ Allure generate failed: {e}")
 
 def log_to_ui(message: str, status: str = "INFO"):
     try:
@@ -511,8 +522,8 @@ async def post_run_notify(
     results_dir = os.path.join(BASE_DIR, "allure-results")
     try:
         if os.path.isdir(results_dir):
-            shutil.rmtree(results_dir)
-        os.makedirs(results_dir, exist_ok=True)
+            # shutil.rmtree(results_dir)
+            os.makedirs(results_dir, exist_ok=True)
         log_to_ui(f"[{run_id[:8]}] Cleared stale allure-results before run", "INFO")
     except Exception as e:
         log_to_ui(f"[{run_id[:8]}] Could not clear allure-results: {e}", "WARN")
@@ -543,15 +554,7 @@ async def post_run_notify(
         "payload": {"run_id": run_id, "modules": tests_to_run},
     })
 
-    # ── Step 2 — generate Allure report ──────────────────────────────────────
-    log_to_ui(f"[{run_id[:8]}] Step 2: Generating Allure report...", "INFO")
-    try:
-        await loop.run_in_executor(None, generate_allure_report)
-        log_to_ui(f"[{run_id[:8]}] Step 2 done", "SUCCESS")
-    except Exception as e:
-        log_to_ui(f"[{run_id[:8]}] Step 2 FAILED: {e}", "ERROR")
-
-    # ── Step 3 — count pass/fail ──────────────────────────────────────────────
+    # ── Step 2 — count pass/fail ──────────────────────────────────────────────
     passed = failed = 0
     try:
         report_results_dir = os.path.join(BASE_DIR, "allure-report", "data", "test-cases")
@@ -579,34 +582,34 @@ async def post_run_notify(
                     failed += 1
             except Exception:
                 pass
-        log_to_ui(f"[{run_id[:8]}] Step 3 done. Passed: {passed} | Failed: {failed}", "SUCCESS")
+        log_to_ui(f"[{run_id[:8]}] Step 2 done. Passed: {passed} | Failed: {failed}", "SUCCESS")
     except Exception as e:
-        print(f"[PostRun] Step 3 FAILED: {e}")
+        print(f"[PostRun] Step 2 FAILED: {e}")
 
     # ── Broadcast captured steps for this run ────────────────────────────────
     # await _broadcast_all_steps_to_frontend(run_id)
 
     # ── Step 4 — resolve report URL ──────────────────────────────────────────
-    print(f"[{run_id[:8]}] Step 4: Resolving report URL...")
+    print(f"[{run_id[:8]}] Step 3: Resolving report URL...")
     # 1. Start local server
-    local_url  = await loop.run_in_executor(None, start_allure_server)
+    # local_url  = await loop.run_in_executor(None, start_allure_server)
      # 2. Push to GitHub
     await loop.run_in_executor(None, lambda: auto_push_to_github(run_id))
     # 3. Deploy to GitHub Pages
     ghpages_url = await loop.run_in_executor(None, lambda: deploy_to_github_pages(run_id))
    # 4. Decide final URL
-    if ghpages_url:
-        report_url = ghpages_url
-    else:
-        report_url = local_url
-        log_to_ui(f"[{run_id[:8]}] ⚠️ GitHub Pages deploy failed", "WARN")
-    
-    print(f"[{run_id[:8]}] Step 4: Report URL → {report_url}")
+    if not ghpages_url:
+        log_to_ui(f"[{run_id[:8]}] ❌ GitHub Pages deploy failed", "ERROR")
+        return   # 🚨 STOP execution
+
+    report_url = ghpages_url
+    print(f"[{run_id[:8]}] Step 3: Report URL → {report_url}")
 
     if run_id in runs:
         runs[run_id]["report_url"] = report_url
 
     # ── Step 5 — send Slack notification ─────────────────────────────────────
+    print(f"channel ID: {channel_id}")
     final_channel_id = channel_id or SLACK_NOTIFY_CHANNEL
     print(f"[{run_id[:8]}] Final channel_id: {final_channel_id}")
 
@@ -621,7 +624,7 @@ async def post_run_notify(
         })
         return
 
-    print(f"[{run_id[:8]}] Step 5: Sending Slack notification...")
+    print(f"[{run_id[:8]}] Step 4: Sending Slack notification...")
     print(f"[FINAL DEBUG] developer_name = '{developer_name}'")
     print(f"[FINAL DEBUG] app_name       = '{app_name}'")
     print(f"[FINAL DEBUG] app_version    = '{app_version}'")
@@ -863,8 +866,8 @@ async def handle_slack_apk(
     sender_user_id: str,
 ) -> None:
     run_id = new_run()
-    global _latest_run_id
-    _latest_run_id = run_id
+    global latest_run_id
+    latest_run_id = run_id
 
     download_url = f"https://drive.google.com/uc?export=download&id={file_id}"
 

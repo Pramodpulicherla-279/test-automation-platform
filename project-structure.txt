@@ -39,3 +39,50 @@ TAP-Android-Platform/
 │
 ├── .gitignore                      # Git Ignore Rules
 └── README.md                       # Project Documentation
+
+test-automation-platform/
+│
+├── frontend/                # React app → deploy to Vercel
+│   ├── src/
+│   ├── public/
+│   ├── package.json
+│   └── vite.config.js / next.config.js
+│
+├── backend/                 # FastAPI → deploy to Render
+│   ├── app/
+│   │   ├── main.py
+│   │   ├── routes/
+│   │   ├── modules/
+│   │   ├── core/
+│   │   └── services/
+│   ├── requirements.txt
+│   ├── Dockerfile (optional but recommended)
+│   └── render.yaml (optional infra config)
+│
+├── automation/              # 💥 isolate testing engine
+│   ├── tests/
+│   ├── test-flows/
+│   ├── ui-parser/
+│   ├── artifacts/
+│   ├── screenshots/
+│   ├── allure-results/
+│   ├── pytest.ini
+│   └── requirements.txt
+│
+├── reports/                 # GitHub Pages deployment folder
+│   └── allure-report/       # generated static site
+│
+├── scripts/                 # helper scripts
+│   ├── run-tests.sh
+│   ├── generate-report.sh
+│   └── deploy-report.sh
+│
+├── .github/
+│   └── workflows/
+│       ├── frontend.yml
+│       ├── backend.yml
+│       └── tests.yml       # CI for automation + gh-pages deploy
+│
+├── .env
+├── README.md
+└── package.json (optional root config)
