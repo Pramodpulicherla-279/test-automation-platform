@@ -11,7 +11,7 @@ from aiohttp_retry import List, Optional, Dict, Any
 from core.websocket import manager
 from core.state import test_steps_store, allure_proc
 from core.constants import UI_SCREENSHOTS_BASE, allure_start_lock, ALLURE_CMD, BASE_DIR, ALLURE_REPORT_DIR
-from modules.jira.jira_service import calculate_duration
+from modules.jira.jira_service import calculate_duration, is_unknown
 def pick_free_port() -> int:
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind(("127.0.0.1", 0))

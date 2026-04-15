@@ -444,7 +444,7 @@ export default function JiraHistory({ issuePanelHistory = [], newTicket = null }
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${API_URL}/api/jira/history?limit=500`);
+      const res = await fetch(`${API_URL}/jira/history?limit=500`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
       const data   = await res.json();
