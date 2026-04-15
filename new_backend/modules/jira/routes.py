@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from .service import health_flow, jira_test_connection_flow, get_steps_flow, add_step_flow, reset_steps_flow, receive_jira_payload_flow, get_pending_payloads_flow, dismiss_payload_flow, jira_create_flow, add_comment_flow
+from .service import health_flow, jira_test_connection_flow, get_steps_flow, add_step_flow, reset_steps_flow, receive_jira_payload_flow, get_pending_payloads_flow, dismiss_payload_flow, jira_create_flow, add_comment_flow, jira_history_api_flow, list_jira_tickets_flow, jira_stats_slow
 from .models import JiraPayloadRequest, JiraCreateRequest
 from core.state import jira_history, jira_comments
 
@@ -41,9 +41,9 @@ async def dismiss_payload(data: dict):
 async def jira_create(req: JiraCreateRequest):
     return await jira_create_flow(req)
 
-@router.get("/api/history")
+@router.get("/history")
 async def jira_history_api():
-    return {"issues": jira_history}
+    return await jira_history_api_flow()
 
 @router.get("/comments/{issue_key}")
 async def get_comments(issue_key: str):
@@ -55,9 +55,19 @@ async def add_comment(issue_key: str, data: dict):
    
 @router.get("/history")
 async def jira_history_legacy():
-    return {"issues": [{"key": e.get("issue_id",""), "summary": e.get("title",""),
-                        "status": e.get("status","Assigned"), "url": e.get("issue_url",""),
-                        "priority": e.get("priority",""), "assignee": e.get("developer_name",""),
-                        "updated": e.get("created_at","")} for e in jira_history]}
+    return {"issues": [
+        {"key": e.get("issue_id",""), "summary": e.get("title",""),
+         "status": e.get("status","Assigned"), "url": e.get("issue_url",""),
+         "priority": e.get("priority",""), "assignee": e.get("developer_name",""),
+         "updated": e.get("created_at","")}
+        for e in jira_history
+    ]}    
 
-    
+@router.get("/tickets")
+async def list_jira_tickets():
+    return await list_jira_tickets_flow()
+
+
+@router.get("/stats")
+async def jira_stats():
+    return await jira_stats_slow()

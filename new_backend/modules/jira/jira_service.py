@@ -1,4 +1,6 @@
 import os
+
+# from core.utils import is_unknown
 from .jira_config import config
 from typing import Optional, List, Dict, Any
 from requests.auth import HTTPBasicAuth
@@ -34,24 +36,18 @@ def search_duplicate_issue(summary: str):
 
     return None
 
+def is_unknown(value) -> bool:
+    if value is None:
+        return True
+    if isinstance(value, str):
+        s = value.strip()
+        return not s or s.lower().startswith("unknown")
+    return False
 
 def _normalize_steps(steps_executed):
     if not steps_executed:
         return []
     return [str(step).strip() for step in steps_executed if str(step).strip()]
-
-
-def _is_unknown(value) -> bool:
-    if value is None:
-        return True
-    if isinstance(value, str):
-        s = value.strip()
-        if not s:
-            return True
-        if s.lower().startswith("unknown"):
-            return True
-    return False
-
 
 def _extract_nodeid_from_description(description_text: str) -> str | None:
     """
@@ -182,7 +178,6 @@ def _build_business_payload(
         "feature": feature or "Unknown Feature",
         "issue_summary": issue_summary or "Automation Failure",
         "test_name": test_name or "Unknown Test",
-        "test_id": test_id or "Unknown Test ID",
         "steps_executed": _normalize_steps(steps_executed),
         "developer_name": developer_name or "Unknown Developer",
     }
@@ -390,19 +385,17 @@ def _build_formatted_description(
             })
     
     metadata_lines = []
-    if app_name and not _is_unknown(app_name):
+    if app_name and not is_unknown(app_name):
         metadata_lines.append(f"App: {app_name}")
-    if app_version and not _is_unknown(app_version):
+    if app_version and not is_unknown(app_version):
         metadata_lines.append(f"Version: {app_version}")
-    if module and not _is_unknown(module):
+    if module and not is_unknown(module):
         metadata_lines.append(f"Module: {module}")
-    if feature and not _is_unknown(feature):
+    if feature and not is_unknown(feature):
         metadata_lines.append(f"Feature: {feature}")
-    if test_name and not _is_unknown(test_name):
+    if test_name and not is_unknown(test_name):
         metadata_lines.append(f"Test: {test_name}")
-    if test_id and not _is_unknown(test_id):
-        metadata_lines.append(f"Test ID: {test_id}")
-    if developer_name and not _is_unknown(developer_name):
+    if developer_name and not is_unknown(developer_name):
         metadata_lines.append(f"Developer: {developer_name}")
     if start_date:
         metadata_lines.append(f"Start: {start_date}")
@@ -488,7 +481,7 @@ def build_extended_jira_payload(issue_key: str, business_payload: dict) -> dict:
             merged[k] = embedded[k]
 
     # Extra fallback: if app_name still unknown, try to parse from description
-    if _is_unknown(merged.get("app_name")):
+    if is_unknown(merged.get("app_name")):
         env_app = _extract_app_name_from_environment_block(description_text)
         if env_app:
             merged["app_name"] = env_app
@@ -503,7 +496,7 @@ def build_extended_jira_payload(issue_key: str, business_payload: dict) -> dict:
     app_version = merged.get("app_version") or "Unknown Version"
     module = merged.get("module") or "Unknown Module"
 
-    affects_versions = [app_name] if not _is_unknown(app_name) else []
+    affects_versions = [app_name] if not is_unknown(app_name) else []
     fix_versions = [_fix_env_label()]
     sprint_val = "Automation"
     start_date_val = datetime.today().isoformat()
@@ -614,9 +607,9 @@ def create_jira_issue(
 
     # Add labels for categorization
     labels = ["automation", "mobile-app"]
-    if app_name and not _is_unknown(app_name):
+    if app_name and not is_unknown(app_name):
         labels.append(app_name.lower().replace(" ", "-"))
-    if module and not _is_unknown(module):
+    if module and not is_unknown(module):
         labels.append(module.lower())
     fields["labels"] = labels
 

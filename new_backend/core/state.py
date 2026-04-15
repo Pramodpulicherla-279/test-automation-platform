@@ -17,6 +17,7 @@ test_steps_store:  Dict[str, List[str]] = {}
 current_test_name: str = "default"
 jira_comments: dict = {}
 runs: Dict[str, Dict[str, Any]] = {}
+dismissed_history: list[dict] = []
 PAYLOAD_PREFIXES = ("AUTOMATION_PAYLOAD_JSON:", "JIRA_PAYLOAD_JSON:")
 PROCESSED_EVENTS: set = set()
 
