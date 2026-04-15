@@ -1,0 +1,4 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","66846","add farm","tests.test_cases.regular_farmer_test_cases","Thu Apr 16 00:12:14 IST 2026","failed","Thu Apr 16 00:13:21 IST 2026","TestOnboarding","TestOnboarding","",""
+"","67717","Verify user can login with valid credentials","tests.test_cases.regular_farmer_test_cases","Thu Apr 16 00:10:57 IST 2026","failed","Thu Apr 16 00:12:04 IST 2026","TestLogin","test_login_pytest","",""
+"","66257","Onboarding the farms and crops","tests.test_cases.regular_farmer_test_cases","Thu Apr 16 00:13:37 IST 2026","failed","Thu Apr 16 00:14:43 IST 2026","TestOnboarding","TestOnboarding","",""
