@@ -27,9 +27,5 @@
     {
         "step": "Click Next after entering phone number",
         "status": "Success"
-    },
-    {
-        "step": "Click Verify OTP",
-        "status": "Success"
     }
 ]

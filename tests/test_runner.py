@@ -11,7 +11,16 @@ from dotenv import load_dotenv
 from typing import Optional, List, Dict
 import threading
 import queue
+from datetime import datetime
+import json
 sys.dont_write_bytecode = True
+
+# Import API testing module
+try:
+    from api_test_runner import APITestRunner, load_apis_from_excel
+except ImportError:
+    APITestRunner = None
+    load_apis_from_excel = None
 
 load_dotenv()
 
@@ -149,6 +158,99 @@ def send_log(message: str, status: str = "INFO") -> None:
     except Exception:
         pass
 
+# ============================================================================
+# API TESTING INTEGRATION
+# ============================================================================
+
+def run_api_tests(base_url: str, api_configs: List[Dict], timeout: int = 10000) -> Dict:
+    """
+    Run API tests during automation
+    
+    Args:
+        base_url: Base URL for API endpoints
+        api_configs: List of API configuration dicts
+        timeout: Request timeout in milliseconds
+    
+    Returns:
+        Summary dict with results
+    """
+    if not APITestRunner:
+        send_log("API Testing module not available", "FAILED")
+        return {"error": "API Testing module not available"}
+    
+    send_log(f"Starting API tests ({len(api_configs)} endpoints)...", "INFO")
+    
+    runner = APITestRunner(base_url, log_callback=send_log)
+    summary = runner.run_tests_sync(api_configs, timeout)
+    
+    return summary
+
+
+def run_api_tests_from_excel(base_url: str, excel_path: str, timeout: int = 10000) -> Dict:
+    """
+    Run API tests from Excel file during automation
+    
+    Args:
+        base_url: Base URL for API endpoints
+        excel_path: Path to Excel file with API configurations
+        timeout: Request timeout in milliseconds
+    
+    Returns:
+        Summary dict with results
+    """
+    if not load_apis_from_excel or not APITestRunner:
+        send_log("API Testing module not available", "FAILED")
+        return {"error": "API Testing module not available"}
+    
+    try:
+        send_log(f"Loading APIs from {excel_path}...", "INFO")
+        api_configs = load_apis_from_excel(excel_path)
+        send_log(f"Loaded {len(api_configs)} API configurations", "SUCCESS")
+        
+        return run_api_tests(base_url, api_configs, timeout)
+    
+    except Exception as e:
+        send_log(f"Failed to load Excel: {str(e)}", "FAILED")
+        return {"error": str(e)}
+
+
+def run_ui_and_api_tests(
+    app_type: str,
+    modules: Optional[List[str]] = None,
+    base_url: str = "http://localhost:3000",
+    api_configs: Optional[List[Dict]] = None,
+    api_timeout: int = 10000
+) -> Dict:
+    """
+    Run UI tests and API tests together
+    
+    Args:
+        app_type: UI app type to test
+        modules: Modules to run
+        base_url: Base URL for API endpoints
+        api_configs: List of API configurations
+        api_timeout: API test timeout
+    
+    Returns:
+        Combined results dict
+    """
+    send_log("Running combined UI and API tests...", "INFO")
+    
+    # Run UI tests
+    ui_results = run_tests(app_type, modules)
+    
+    # Run API tests if configs provided
+    api_results = None
+    if api_configs:
+        send_log("Now running API tests...", "INFO")
+        api_results = run_api_tests(base_url, api_configs, api_timeout)
+    
+    return {
+        "ui_results": ui_results,
+        "api_results": api_results,
+        "timestamp": subprocess.get_event_loop().time()
+    }
+
 def run_pytest_with_logs(pytest_args, module_name: str) -> bool:
   """
   Run pytest in a subprocess and stream all stdout lines
@@ -205,6 +307,175 @@ def send_module_status(module: str, status: str, message: str = ""):
     except Exception:
         # Do not break tests if backend is down
         pass
+
+# ============================================================================
+# API RESULTS EXTRACTION AND FORWARDING
+# ============================================================================
+
+def extract_api_validator_results(project_root: str) -> List[Dict]:
+    """
+    Extract API test results from APIValidator captured by pytest plugin.
+    Reads the .api_results_captured.json file created by pytest.
+    
+    Returns list of API test results with full response data from device
+    """
+    results = []
+    
+    try:
+        results_file = os.path.join(project_root, "tests", ".api_results_captured.json")
+        
+        if not os.path.exists(results_file):
+            return results
+        
+        with open(results_file, 'r') as f:
+            data = json.load(f)
+            results = data.get("results", [])
+            captured_count = data.get("total_results", 0)
+            
+            if captured_count > 0:
+                send_log(f"Captured {captured_count} API results from validators", "INFO")
+        
+        # Clean up the file after reading
+        try:
+            os.remove(results_file)
+        except:
+            pass
+    
+    except Exception as e:
+        send_log(f"Error reading captured API results: {str(e)}", "WARNING")
+        return results
+    
+    return results
+
+def extract_api_test_results(project_root: str) -> List[Dict]:
+    """
+    Extract API test results from Allure report data.
+    Looks for API validation steps in test-result JSON files.
+    
+    Returns list of API test results
+    """
+    results = []
+    results_dir = os.path.join(project_root, RESULTS_DIR)
+    
+    if not os.path.exists(results_dir):
+        return results
+    
+    try:
+        # Look for test-result JSON files
+        for filename in os.listdir(results_dir):
+            if filename.endswith('-result.json'):
+                filepath = os.path.join(results_dir, filename)
+                try:
+                    with open(filepath, 'r') as f:
+                        test_data = json.load(f)
+                    
+                    # Extract test information
+                    test_name = test_data.get('name', 'unknown')
+                    steps = test_data.get('steps', [])
+                    
+                    # Look for API validation steps
+                    for step in steps:
+                        step_name = step.get('name', '')
+                        step_status = step.get('status', 'unknown')
+                        
+                        # Detect API validation steps
+                        if 'api' in step_name.lower() or 'verify' in step_name.lower():
+                            # Extract API details from step
+                            api_result = parse_api_step(step_name, step_status, test_name)
+                            if api_result:
+                                results.append(api_result)
+                
+                except json.JSONDecodeError:
+                    continue
+                except Exception as e:
+                    send_log(f"Error parsing {filename}: {str(e)}", "WARNING")
+                    continue
+    
+    except Exception as e:
+        send_log(f"Error extracting API results: {str(e)}", "WARNING")
+        return results
+    
+    return results
+
+def parse_api_step(step_name: str, step_status: str, test_name: str) -> Optional[Dict]:
+    """
+    Parse an individual API validation step from Allure data.
+    Example step_name: "Verify session via API"
+    
+    Returns a dict with API test result info or None if not an API step
+    """
+    # Simple pattern matching for API steps
+    if 'api' not in step_name.lower():
+        return None
+    
+    # Determine if passed
+    passed = step_status.lower() == 'passed'
+    
+    # Extract endpoint info from step name if available
+    endpoint = "unknown"
+    method = "GET"
+    
+    # Try to extract from step name
+    if 'endpoint' in step_name.lower():
+        # e.g., "Verify GET /api/auth/verify endpoint"
+        parts = step_name.split()
+        if len(parts) > 1:
+            method = parts[0] if parts[0].upper() in ['GET', 'POST', 'PUT', 'DELETE'] else 'GET'
+            for i, part in enumerate(parts):
+                if part.startswith('/api'):
+                    endpoint = part
+                    break
+    
+    return {
+        "test_name": test_name,
+        "endpoint": endpoint,
+        "method": method,
+        "description": step_name,
+        "passed": passed,
+        "expected_status": 200,
+        "actual_status": 200 if passed else 400,
+        "error": None if passed else "API validation failed",
+        "duration": 0,
+        "timestamp": datetime.now().isoformat()
+    }
+
+def send_api_results_to_matrix(api_results: List[Dict]) -> bool:
+    """
+    Send extracted API test results to the matrix API backend.
+    
+    Returns True if successful, False otherwise
+    """
+    if not api_results:
+        return True
+    
+    try:
+        response = requests.post(
+            f"{BACKEND_URL}/api/matrix/automation-results",
+            json=api_results,
+            timeout=10
+        )
+        
+        success = response.status_code in [200, 201]
+        
+        if success:
+            result_data = response.json()
+            summary = result_data.get("summary", {})
+            send_log(
+                f"API Results saved - Total: {summary.get('total')}, "
+                f"Passed: {summary.get('passed')}, Failed: {summary.get('failed')}",
+                "SUCCESS"
+            )
+        else:
+            send_log(f"Matrix API returned {response.status_code}: {response.text}", "WARNING")
+        
+        return success
+    
+    except requests.ConnectionError:
+        send_log(f"Cannot connect to matrix API at {BACKEND_URL}", "WARNING")
+        return False
+    except Exception as e:
+        send_log(f"Error sending API results to matrix: {str(e)}", "WARNING")
+        return False
 
 def stop_current_tests() -> bool:
     global CURRENT_PROC, STOP_FLAG
@@ -318,6 +589,7 @@ def run_tests_and_get_suggestions(
     """
     Runs all tests in a single session to keep the app open, 
     while tracking individual module statuses in real-time.
+    Captures API test results and sends them to matrix API.
     """
     global STOP_FLAG
     STOP_FLAG = False 
@@ -372,7 +644,36 @@ def run_tests_and_get_suggestions(
         clean_allure=True
     )
 
-    # 4. Final Cleanup
+    # 4. Capture and Send API Test Results
+    send_log("Processing API test results...", "INFO")
+    
+    # Try to extract from APIValidator if tests used it
+    api_results = extract_api_validator_results(project_root)
+    
+    if not api_results:
+        # Fallback: extract from Allure JSON
+        api_results = extract_api_test_results(project_root)
+    
+    if api_results:
+        send_log(f"Found {len(api_results)} API test results", "INFO")
+        try:
+            success = send_api_results_to_matrix(api_results)
+            if success:
+                sent_count = len(api_results)
+                passed_count = sum(1 for r in api_results if r.get("passed", False))
+                failed_count = sent_count - passed_count
+                send_log(
+                    f"Sent {sent_count} API results to matrix (Passed: {passed_count}, Failed: {failed_count})",
+                    "SUCCESS"
+                )
+            else:
+                send_log("Failed to send API results to matrix", "WARNING")
+        except Exception as e:
+            send_log(f"Error sending API results: {str(e)}", "WARNING")
+    else:
+        send_log("No API test results found", "INFO")
+
+    # 5. Final Cleanup
     if not STOP_FLAG:
         if overall_ok:
             send_log("Full test suite execution completed successfully.", "SUCCESS")

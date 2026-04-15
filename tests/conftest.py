@@ -5,7 +5,12 @@ import time
 from appium import webdriver
 from appium.options.android import UiAutomator2Options
 import sys
+import json
+from datetime import datetime
 sys.dont_write_bytecode = True
+
+# Global storage for API results across all tests in session
+_api_results_session = []
 
 # 1. Register the custom command-line option
 def pytest_addoption(parser):
@@ -18,6 +23,58 @@ def pytest_addoption(parser):
         default=None,
         help="Path to the APK file under test",
     )
+
+# 2. Capture API validation results from APIValidator fixture
+def pytest_runtest_teardown(item):
+    """
+    Hook called after each test runs.
+    Captures API validation results from APIValidator fixture.
+    """
+    try:
+        if hasattr(item, 'funcargs'):
+            # Check for api_validator fixture with captured responses
+            if 'api_validator' in item.funcargs:
+                validator = item.funcargs.get('api_validator')
+                if validator and hasattr(validator, 'captured_responses'):
+                    responses = validator.captured_responses
+                    if responses:
+                        # Add test context
+                        for response in responses:
+                            response['test_name'] = item.name
+                            response['test_file'] = item.fspath.basename if hasattr(item, 'fspath') else 'unknown'
+                        
+                        _api_results_session.extend(responses)
+                        print(f"✓ Captured {len(responses)} API results from {item.name}")
+    except Exception as e:
+        pass
+
+
+def pytest_sessionfinish(session, exitstatus):
+    """
+    Hook called when pytest session finishes.
+    Saves all captured API results to JSON for test_runner to read.
+    """
+    if not _api_results_session:
+        return
+    
+    try:
+        # Get project root
+        project_root = session.config.rootdir.strpath if hasattr(session.config, 'rootdir') else os.path.dirname(__file__)
+        
+        # Save to file
+        output_file = os.path.join(project_root, "tests", ".api_results_captured.json")
+        
+        with open(output_file, 'w') as f:
+            json.dump({
+                "timestamp": datetime.now().isoformat(),
+                "total_results": len(_api_results_session),
+                "results": _api_results_session
+            }, f, indent=2, default=str)
+        
+        print(f"\n✓ Saved {len(_api_results_session)} API test results from device to matrix API")
+        
+    except Exception as e:
+        print(f"Error saving API results: {e}")
 
 @pytest.fixture(scope="session")
 def driver(request):
@@ -54,6 +111,7 @@ def driver(request):
     yield driver
 
     driver.quit()
+    
 
 def check_for_crashes(driver):
     """

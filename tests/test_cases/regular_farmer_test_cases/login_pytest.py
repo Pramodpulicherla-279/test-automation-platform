@@ -11,10 +11,17 @@ import os
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.actions.action_builder import ActionBuilder
 from selenium.webdriver.common.actions.pointer_input import PointerInput, Interaction
+from utils.api_validator import APIValidator
 
 @allure.epic("Login Flow")
 @allure.feature("Authentication")
 class TestLogin:
+
+    @pytest.fixture(autouse=True)
+    def setup(self):
+        """Initialize API validator for this test class"""
+        self.api = APIValidator(base_url="http://localhost:8000")
+        yield
 
     @allure.story("Successful Login")
     @allure.title("Verify user can login with valid credentials")
@@ -104,7 +111,33 @@ class TestLogin:
                 elif not used_ocr: pytest.fail("Could not find Verify button")
                 test_flow_steps.append({"step": "Click Verify OTP", "status": "Success"})
 
-            with allure.step("9. Verify Dashboard"):
+            with allure.step("9. Verify session via API"):
+                """Verify that user is authenticated by checking backend API"""
+                self.api.assert_endpoint(
+                    method="GET",
+                    endpoint="/api/auth/verify",
+                    expected_status=200,
+                    description="Verify user session is active after login"
+                )
+                test_flow_steps.append({"step": "Verify session via API", "status": "Success"})
+
+            with allure.step("10. Verify user profile via API"):
+                """Verify that user profile is accessible"""
+                self.api.assert_endpoint(
+                    method="GET",
+                    endpoint="/api/user/profile",
+                    expected_status=200,
+                    description="Get user profile from backend"
+                )
+                test_flow_steps.append({"step": "Verify user profile via API", "status": "Success"})
+
+            with allure.step("11. Validate all API tests passed"):
+                """Assert that all API validation checks passed"""
+                summary = self.api.get_summary()
+                assert summary["failed"] == 0, f"API validation failed: {summary}"
+                test_flow_steps.append({"step": "All API validations passed", "status": "Success"})
+
+            with allure.step("12. Verify Dashboard"):
                print("[INFO] Waiting for dashboard screen...")
                dashboard = None
                timeout = 15  # seconds
