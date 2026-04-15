@@ -3,8 +3,9 @@ import useWebSocket, { ReadyState } from 'react-use-websocket';
 import Header from "../Header/Header";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Play, Terminal, Activity, CheckCircle, Circle, AlertCircle, Cpu, Maximize2, Minimize2 } from 'lucide-react';
-import UIScreenshotIssues from '../UIScreenshotIssues';
+import UIScreenshotIssues from '../UIScreenshotIssues/UIScreenshotIssues';
 import IssuePanel from '../IssuePanel/IssuePanel';
+import NetworkConfigPanel from '../NetworkConfig/NetworkConfig'
 import '../../App.css';
 
 const WS_URL = 'ws://localhost:8000/ws/test-status';
@@ -49,7 +50,7 @@ const APP_VARIANTS = {
 
 /* ─── ModuleFlow ─────────────────────────────────────────────────────────── */
 const ModuleFlow = ({ modules, isRunning, onToggleModule }) => (
-    <div className="dashboard-card module-card">
+    <div className="dashboard-card">
         <h3 className="card-title">
             <Activity size={20} className="icon-blue" /> Module Flow Status
         </h3>
@@ -518,68 +519,72 @@ function TestScreen({ onHistoryUpdate }) {
             )}
 
             <div className="dashboard-grid">
-
-                {/* Controls */}
-                <div className="dashboard-card control-panel">
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '15px', marginBottom: '15px', borderBottom: '1px solid #334155' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: appiumStatus === 'running' ? '#4ade80' : '#ef4444', boxShadow: appiumStatus === 'running' ? '0 0 8px #4ade80' : 'none' }} />
-                            <span className="input-label" style={{ marginBottom: 0 }}>Appium Server</span>
+                <div className='dashboard-grid-1'>
+                    <div className="dashboard-card">
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '15px', marginBottom: '15px', borderBottom: '1px solid #334155' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: appiumStatus === 'running' ? '#4ade80' : '#ef4444', boxShadow: appiumStatus === 'running' ? '0 0 8px #4ade80' : 'none' }} />
+                                <span className="input-label" style={{ marginBottom: 0 }}>Appium Server</span>
+                            </div>
+                            <button onClick={toggleAppium} className="input-label"
+                                style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid #CBD5E1', backgroundColor: appiumStatus === 'running' ? '#1e293b' : '#0f172a', color: appiumStatus === 'running' ? '#ef4444' : '#4ade80', cursor: 'pointer', fontWeight: '600', transition: 'all 0.2s' }}>
+                                {appiumStatus === 'running' ? 'Stop Server' : 'Start Server'}
+                            </button>
                         </div>
-                        <button onClick={toggleAppium}
-                            style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid #CBD5E1', backgroundColor: appiumStatus === 'running' ? '#1e293b' : '#0f172a', color: appiumStatus === 'running' ? '#ef4444' : '#4ade80', cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600', transition: 'all 0.2s' }}>
-                            {appiumStatus === 'running' ? 'Stop Server' : 'Start Server'}
-                        </button>
-                    </div>
+                        <div className="input-group mb-4">
+                            <label className="input-label">Select Application</label>
+                            <div className="select-wrapper">
+                                <select className="text-input" value={selectedAppKey} onChange={e => setSelectedAppKey(e.target.value)} disabled={isRunning}>
+                                    {Object.entries(APP_VARIANTS).map(([key, cfg]) => (
+                                        <option key={key} value={key}>{cfg.label}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                        <div className="input-group">
+                            <label className="input-label">APK Source (Drive URL)</label>
+                            <input type="text" placeholder="https://drive.google.com/..." value={apkUrl}
+                                onChange={e => { setApkUrl(e.target.value); if (e.target.value) setSelectedApk(''); }}
+                                className="text-input" disabled={isRunning || !!selectedApk} />
+                        </div>
 
-                    <div className="input-group mb-4">
-                        <label className="input-label">Select Application</label>
-                        <div className="select-wrapper">
-                            <select className="text-input" value={selectedAppKey} onChange={e => setSelectedAppKey(e.target.value)} disabled={isRunning}>
-                                {Object.entries(APP_VARIANTS).map(([key, cfg]) => (
-                                    <option key={key} value={key}>{cfg.label}</option>
-                                ))}
+                        <div className="input-group mt-2">
+                            <label className="input-label">OR Select Existing APK</label>
+                            <select className="text-input" value={selectedApk}
+                                onChange={e => { setSelectedApk(e.target.value); if (e.target.value) setApkUrl(''); }}
+                                disabled={isRunning || !!apkUrl}>
+                                <option value="">-- Select from Server --</option>
+                                {existingApks.map(name => <option key={name} value={name}>{name}</option>)}
                             </select>
                         </div>
-                    </div>
 
-                    <div className="input-group">
-                        <label className="input-label">APK Source (Drive URL)</label>
-                        <input type="text" placeholder="https://drive.google.com/..." value={apkUrl}
-                            onChange={e => { setApkUrl(e.target.value); if (e.target.value) setSelectedApk(''); }}
-                            className="text-input" disabled={isRunning || !!selectedApk} />
-                    </div>
-
-                    <div className="input-group mt-2">
-                        <label className="input-label">OR Select Existing APK</label>
-                        <select className="text-input" value={selectedApk}
-                            onChange={e => { setSelectedApk(e.target.value); if (e.target.value) setApkUrl(''); }}
-                            disabled={isRunning || !!apkUrl}>
-                            <option value="">-- Select from Server --</option>
-                            {existingApks.map(name => <option key={name} value={name}>{name}</option>)}
-                        </select>
-                    </div>
-
-                    <div className="action-row mt-4">
-                        <button onClick={handleRunTest} disabled={isRunning} className={`run-button ${isRunning ? 'disabled' : ''}`}>
-                            <Play size={18} fill="currentColor" />
-                            {isDownloading ? 'Downloading...' : isRunning ? 'Running Tests...' : 'Start Automation'}
-                        </button>
-                        {isRunning && (
-                            <button onClick={handleStopTest} className="run-button stop-button ml-2">Stop</button>
-                        )}
-                        {!isRunning && logs.length > 0 && (
-                            <button onClick={handleReset} className="run-button ml-2"
-                                style={{ backgroundColor: '#334155', color: '#e2e8f0', border: '1px solid #475569' }}>
-                                Start New Test
+                        <div className="action-row mt-4">
+                            <button onClick={handleRunTest} disabled={isRunning} className={`run-button ${isRunning ? 'disabled' : ''}`}>
+                                <Play size={18} fill="currentColor" />
+                                {isDownloading ? 'Downloading...' : isRunning ? 'Running Tests...' : 'Start Automation'}
                             </button>
-                        )}
+                            {isRunning && (
+                                <button onClick={handleStopTest} className="run-button stop-button ml-2">Stop</button>
+                            )}
+                            {!isRunning && logs.length > 0 && (
+                                <button onClick={handleReset} className="run-button ml-2"
+                                    style={{ backgroundColor: '#334155', color: '#e2e8f0', border: '1px solid #475569' }}>
+                                    Start New Test
+                                </button>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Module Flow */}
+                    <div className="grid-item-flo">
+                        <ModuleFlow modules={modules} isRunning={isRunning} onToggleModule={toggleModuleSelection} />
                     </div>
                 </div>
-
-                {/* Module Flow */}
-                <div className="grid-item-flow">
-                    <ModuleFlow modules={modules} isRunning={isRunning} onToggleModule={toggleModuleSelection} />
+                <div>
+                    <NetworkConfigPanel />
+                </div>
+                <div className="grid-item-chart">
+                    <MetricsChart data={metrics} />
                 </div>
 
                 {/* Logs + IssuePanel */}
@@ -588,24 +593,12 @@ function TestScreen({ onHistoryUpdate }) {
                         <LogConsole logs={logs} statusMode={getConsoleStatus()} />
                     </div>
                     <div style={{ flex: '0 0 calc(40% - 1rem)', minWidth: 0 }}>
-                        {/*
-                         * onHistoryUpdate comes from App.jsx via JiraHistoryContext.
-                         * IssuePanel calls it when:
-                         *   Create clicked → { type: "created", issueId, title, jiraUrl, ... }
-                         *   Remove clicked → { type: "removed", title, module, ... }
-                         * JiraHistory screen reads these from context to populate tabs.
-                         *
-                         * Removed props vs old version:
-                         *   ✗ jiraIssues  — IssuePanel fetches via WebSocket + /api/jira/payloads
-                         *   ✗ apiUrl      — hardcoded as BACKEND inside IssuePanel
-                         */}
                         <IssuePanel
                             modules={modules}
                             onHistoryUpdate={onHistoryUpdate}
                         />
                     </div>
                 </div>
-
             </div>
         </div>
     );
