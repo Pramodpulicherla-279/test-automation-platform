@@ -71,18 +71,6 @@ def extract_steps_from_numbered_list(text: str) -> List[str]:
                 steps.append(step)
     return steps
 
-def _is_unknown(value) -> bool:
-    """Return True if value is None, blank, or starts with 'unknown'."""
-    if value is None:
-        return True
-    if isinstance(value, str):
-        s = value.strip()
-        if not s:
-            return True
-        if s.lower().startswith("unknown"):
-            return True
-    return False
-
 def format_description_with_steps(
         description:    str,
         app_name:       Optional[str] = None,
@@ -117,11 +105,11 @@ def format_description_with_steps(
 
         lines = [base, "", "=" * 50, "METADATA", "=" * 50]
 
-        if app_name       and not _is_unknown(app_name):       lines.append(f"App: {app_name}")
-        if app_version    and not _is_unknown(app_version):    lines.append(f"Version: {app_version}")
-        if module         and not _is_unknown(module):         lines.append(f"Module: {module}")
-        if test_name      and not _is_unknown(test_name):      lines.append(f"Test: {test_name}")
-        if developer_name and not _is_unknown(developer_name): lines.append(f"Developer: {developer_name}")
+        if app_name       and not is_unknown(app_name):       lines.append(f"App: {app_name}")
+        if app_version    and not is_unknown(app_version):    lines.append(f"Version: {app_version}")
+        if module         and not is_unknown(module):         lines.append(f"Module: {module}")
+        if test_name      and not is_unknown(test_name):      lines.append(f"Test: {test_name}")
+        if developer_name and not is_unknown(developer_name): lines.append(f"Developer: {developer_name}")
         if start_date:     lines.append(f"Start: {start_date}")
         if end_date:       lines.append(f"End: {end_date}")
         if start_date and end_date:
