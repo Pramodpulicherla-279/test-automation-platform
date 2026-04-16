@@ -1,1 +1,1 @@
-{"total":1,"items":[{"uid":"b34870ff982ef3095c102c204daaa15c","name":"tests.test_cases.regular_farmer_test_cases","statistic":{"failed":2,"broken":0,"skipped":0,"passed":1,"unknown":0,"total":3}}]}
+{"total":1,"items":[{"uid":"b34870ff982ef3095c102c204daaa15c","name":"tests.test_cases.regular_farmer_test_cases","statistic":{"failed":0,"broken":1,"skipped":0,"passed":2,"unknown":0,"total":3}}]}
