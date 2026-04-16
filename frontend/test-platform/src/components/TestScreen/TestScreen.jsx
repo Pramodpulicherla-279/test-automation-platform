@@ -124,6 +124,7 @@ const LogConsole = ({ logs, statusMode = 'idle' }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [isFullScreen, setIsFullScreen] = useState(false);
     const [activeTab, setActiveTab] = useState('test');
+    const [apiLogs, setApiLogs] = useState([]);
 
     const filteredLogs = logs.filter((log) => {
         if (!searchTerm) return true;
@@ -184,7 +185,30 @@ const LogConsole = ({ logs, statusMode = 'idle' }) => {
     };
 
     // Determine which logs to display based on the active tab
-    const currentLogs = activeTab === 'test' ? logs : staticApiLogs;
+    const currentLogs = activeTab === 'test' ? logs : apiLogs;
+
+    useEffect(() => {
+    if (activeTab !== 'api') return;
+
+    const interval = setInterval(async () => {
+        try {
+            const res = await fetch("http://localhost:8000/api-testing/logs");
+            const data = await res.json();
+
+            const formatted = data.map(log => ({
+                time: log.timestamp,
+                type: log.status >= 400 ? "error" : "info",
+                message: `${log.method} ${log.endpoint} - ${log.status} (${log.response_time_ms} ms)`
+            }));
+
+            setApiLogs(formatted.reverse());
+        } catch (e) {
+            console.error("API log fetch error", e);
+        }
+    }, 2000);
+
+    return () => clearInterval(interval);
+}, [activeTab]);
 
     return (
         <div className={`log-console ${isFullScreen ? 'full-screen' : ''}`}>

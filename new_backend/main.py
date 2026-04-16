@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from modules.test_runner.routes import router as test_router
 from modules.jira.routes import router as jira_router
 from modules.llm.routes import router as llm_router
+from modules.api_testing.routes import router as api_testing_router
 from core.websocket import router as websocket_router
 from modules.slack.routes import router as slack_router
 
@@ -24,6 +25,7 @@ app.include_router(test_router, prefix="/test")
 app.include_router(jira_router, prefix="/jira")
 app.include_router(llm_router, prefix="/llm")
 app.include_router(slack_router, prefix="/slack")
+app.include_router(api_testing_router, prefix="/api-testing")
 
 # ── Windows asyncio subprocess fix ──────────────────────────────────────────
 if os.name == "nt":
