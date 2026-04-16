@@ -110,11 +110,20 @@ const MetricsChart = ({ data }) => (
     </div>
 );
 
+const staticApiLogs = [
+    { time: "10:00:01.234", type: "info", message: "GET /api/v1/health-check - 200 OK (12ms)" },
+    { time: "10:00:02.100", type: "info", message: "POST /api/v1/auth/login - 200 OK (45ms)" },
+    { time: "10:00:05.400", type: "error", message: "GET /api/v1/users/profile - 401 Unauthorized (8ms)" },
+    { time: "10:00:08.220", type: "warn", message: "Rate limit threshold approaching for IP 192.168.1.105" },
+    { time: "10:00:15.000", type: "info", message: "GET /api/v1/dashboard/metrics - 200 OK (110ms)" },
+];
+
 /* ─── LogConsole ─────────────────────────────────────────────────────────── */
 const LogConsole = ({ logs, statusMode = 'idle' }) => {
     const endRef = useRef(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [isFullScreen, setIsFullScreen] = useState(false);
+    const [activeTab, setActiveTab] = useState('test');
 
     const filteredLogs = logs.filter((log) => {
         if (!searchTerm) return true;
@@ -174,6 +183,9 @@ const LogConsole = ({ logs, statusMode = 'idle' }) => {
         return baseStyle;
     };
 
+    // Determine which logs to display based on the active tab
+    const currentLogs = activeTab === 'test' ? logs : staticApiLogs;
+
     return (
         <div className={`log-console ${isFullScreen ? 'full-screen' : ''}`}>
             <style>{`
@@ -189,6 +201,30 @@ const LogConsole = ({ logs, statusMode = 'idle' }) => {
           0%, 100% { opacity: 1; box-shadow: 0 0 8px #22c55e66; }
           50% { opacity: 0.4; box-shadow: none; }
         }
+          .log-tabs {
+                    display: flex;
+                    background-color: none;
+                    border-bottom: 1px solid #334155;
+                    padding: 0 16px;
+                }
+                .log-tab-btn {
+                    background: none;
+                    border: none;
+                    color: #94a3b8;
+                    padding: 8px 16px;
+                    font-size: 0.85rem;
+                    font-weight: 600;
+                    cursor: pointer;
+                    border-bottom: 2px solid transparent;
+                    transition: all 0.2s;
+                }
+                .log-tab-btn:hover {
+                    color: #e2e8f0;
+                }
+                .log-tab-btn.active {
+                    color: #3b82f6;
+                    border-bottom-color: #3b82f6;
+                }
       `}</style>
 
             <div className="console-header-row">
@@ -200,7 +236,7 @@ const LogConsole = ({ logs, statusMode = 'idle' }) => {
                 <div className="log-search">
                     <input
                         type="text"
-                        placeholder="Search logs..."
+                        placeholder={`Search ${activeTab} logs...`}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="text-input"
@@ -223,14 +259,28 @@ const LogConsole = ({ logs, statusMode = 'idle' }) => {
                     {isFullScreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
                 </button>
             </div>
+            {/* Tabs Row */}
+            <div className="log-tabs">
+                <button 
+                    className={`log-tab-btn ${activeTab === 'test' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('test')}
+                >
+                    Test Logs
+                </button>
+                <button 
+                    className={`log-tab-btn ${activeTab === 'api' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('api')}
+                >
+                    API Logs
+                </button>
+            </div>
             <div className="console-body">
-                {logs.map((log, i) => {
+                 {currentLogs.map((log, i) => {
                     const isMatch = matchesSearch(log);
                     return (
                         <div
                             key={i}
-                            className={`log-line ${log.type.toLowerCase()} ${isMatch ? 'log-line-highlight' : ''
-                                }`}
+                            className={`log-line ${log.type.toLowerCase()} ${isMatch ? 'log-line-highlight' : ''}`}
                         >
                             <span className="timestamp">[{log.time}]</span>
                             <span className="message">{log.message}</span>
