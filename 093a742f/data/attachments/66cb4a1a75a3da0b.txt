@@ -1,0 +1,80 @@
+CRASH START: 04-17 23:08:38.129 22905 22905 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+04-17 23:08:38.136  5612  5661 I AlarmManager: set [name: SystemMemoryCache type: 2 triggerAtMillis: 316310532526 windowMillis: -1 intervalMillis: 0]
+04-17 23:08:38.224  5612  5612 I SystemMemoryMap: [geofence] starting initialization [CONTEXT service_id=6 ]
+04-17 23:08:38.226  5612  5612 I SystemMemoryMap: (REDACTED) [geofence] recovering %d entries
+04-17 23:08:38.226  5612  5612 I SystemMemoryMap: [geofence] initialization complete [CONTEXT service_id=6 ]
+04-17 23:08:38.228  5612  5640 D nativeloader: Load /data/app/~~BQ-s42Jzt-ue422RTC1zTg==/com.google.android.gms-1-0BgQBqommKFc5hTCPYhg==/base.apk!/lib/arm64-v8a/libleveldbjni.so using class loader ns clns-10 (caller=/data/app/~~BQ-s42Jzt-ue422RTC1zTg==/com.google.android.gms-1-0BgQBqommKFc5hTCPYhg==/base.apk): ok
+04-17 23:08:38.228  5612  5657 W Settings: Setting airplane_mode_on has moved from android.provider.Settings.System to android.provider.Settings.Global, returning read-only value.
+04-17 23:08:38.229  5612  5612 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.clearcut.service.START dat=chimera-action:/... xflg=0x4 cmp=com.google.android.gms/.chimera.PersistentDirectBootAwareApiService }
+04-17 23:08:38.230  5612  5612 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.clearcut.service.START dat=chimera-action:/... xflg=0x4 cmp=com.google.android.gms/.chimera.PersistentDirectBootAwareApiService }
+04-17 23:08:38.232  5612  5657 W SystemServiceRegistry: No service published for: wifirtt
+04-17 23:08:38.255  5612  5703 I BluePixel: (REDACTED) Created Null for %s
+04-17 23:08:38.257  5612  5612 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.usagereporting.service.START dat=chimera-action:/... xflg=0x4 cmp=com.google.android.gms/.chimera.PersistentDirectBootAwareApiService }
+04-17 23:08:38.257  5612  5612 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.usagereporting.service.START dat=chimera-action:/... xflg=0x4 cmp=com.google.android.gms/.chimera.PersistentDirectBootAwareApiService }
+04-17 23:08:38.268  5612  5653 I SystemMemoryMap: [flp] starting initialization [CONTEXT service_id=6 ]
+04-17 23:08:38.270  5612  5612 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.libs.gmscorelogger.service.START dat=chimera-action:/... xflg=0x4 cmp=com.google.android.gms/.chimera.PersistentDirectBootAwareApiService }
+04-17 23:08:38.270  5612  5612 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.libs.gmscorelogger.service.START dat=chimera-action:/... xflg=0x4 cmp=com.google.android.gms/.chimera.PersistentDirectBootAwareApiService }
+04-17 23:08:38.272  5612  5653 I SystemMemoryMap: (REDACTED) [flp] recovering %d entries
+04-17 23:08:38.273  5612  5653 I SystemMemoryMap: [flp] initialization complete [CONTEXT service_id=6 ]
+04-17 23:08:38.279  5612  5612 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.time.trustedtime.service.START dat=chimera-action:/... xflg=0x4 cmp=com.google.android.gms/.chimera.PersistentDirectBootAwareApiService }
+04-17 23:08:38.279  5612  5612 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.time.trustedtime.service.START dat=chimera-action:/... xflg=0x4 cmp=com.google.android.gms/.chimera.PersistentDirectBootAwareApiService }
+04-17 23:08:38.314  5612  5612 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.nearby.presence.service.START xflg=0x4 cmp=com.google.android.gms/.chimera.PersistentApiServiceNoInstantApps }
+04-17 23:08:38.318  5612  5612 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.nearby.presence.service.START xflg=0x4 cmp=com.google.android.gms/.chimera.PersistentApiServiceNoInstantApps }
+04-17 23:08:38.346  5612  5612 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.multidevice.apis.featuresettingsapi.FeatureSettingsApiService.START dat=chimera-action:/... xflg=0x4 cmp=com.google.android.gms/.chimera.PersistentApiService }
+04-17 23:08:38.346  5612  5612 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.multidevice.apis.featuresettingsapi.FeatureSettingsApiService.START dat=chimera-action:/... xflg=0x4 cmp=com.google.android.gms/.chimera.PersistentApiService }
+04-17 23:08:38.354  5612  5612 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.scheduler.ACTION_PROXY_SCHEDULE dat=chimera-action:/... xflg=0x4 cmp=com.google.android.gms/.chimera.PersistentDirectBootAwareApiService }
+04-17 23:08:38.354  5612  5612 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.scheduler.ACTION_PROXY_SCHEDULE dat=chimera-action:/... xflg=0x4 cmp=com.google.android.gms/.chimera.PersistentDirectBootAwareApiService }
+04-17 23:08:38.355  5612  5653 I BluePixel: (REDACTED) Created Null for %s
+04-17 23:08:38.364 29981 29981 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.time.trustedtime.singleuserapi.service.START dat=chimera-action:/... xflg=0x4 cmp=com.google.android.gms/.chimera.PersistentSingleUserInternalApiService }
+04-17 23:08:38.364 29981 29981 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.time.trustedtime.singleuserapi.service.START dat=chimera-action:/... xflg=0x4 cmp=com.google.android.gms/.chimera.PersistentSingleUserInternalApiService }
+04-17 23:08:38.365  5612  5632 I Multidevice: (REDACTED) [FeatureSettingsApiService] onGetService called from: %s
+04-17 23:08:38.366  5612  5612 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.pseudonymous.service.START dat=chimera-action:/... xflg=0x4 cmp=com.google.android.gms/.chimera.PersistentApiService }
+04-17 23:08:38.366  5612  5612 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.pseudonymous.service.START dat=chimera-action:/... xflg=0x4 cmp=com.google.android.gms/.chimera.PersistentApiService }
+04-17 23:08:38.377  5612  5632 D nativeloader: Load /data/app/~~BQ-s42Jzt-ue422RTC1zTg==/com.google.android.gms-1-0BgQBqommKFc5hTCPYhg==/base.apk!/lib/arm64-v8a/libdatastore_shared_counter.so using class loader ns clns-10 (caller=/data/app/~~BQ-s42Jzt-ue422RTC1zTg==/com.google.android.gms-1-0BgQBqommKFc5hTCPYhg==/base.apk): ok
+04-17 23:08:38.378  5612  5657 W Settings: Setting airplane_mode_on has moved from android.provider.Settings.System to android.provider.Settings.Global, returning read-only value.
+04-17 23:08:38.392  5612  5612 W ctxmgr  : [ContextManagerPersistentService]Unable to start system_memory_cache. [CONTEXT service_id=47 ]
+04-17 23:08:38.409  5612  5657 W SystemServiceRegistry: No service published for: wifirtt
+04-17 23:08:38.409  5612  5612 D WearableService: Creating wearable service asynchronously.
+04-17 23:08:38.459  5612  5640 I NearbyPresence: (REDACTED) the count of deprecated key alias %s is %s
+04-17 23:08:38.464  5612  5640 I NearbyPresence: (REDACTED) the count of deprecated key alias %s is %s
+04-17 23:08:38.475  5612  5640 I NearbyPresence: (REDACTED) the count of deprecated key alias %s is %s
+04-17 23:08:38.556 29981 29981 I NearbyDiscovery: (REDACTED) FastPairDisplayObserver: %s -> %s
+04-17 23:08:38.573  5612  5637 I Wear_Controller: Wearable module requires a companion app to be installed.
+04-17 23:08:38.573  5612  5637 I WearableService: onCreate: Wearable Services not starting. Wear is not available on this device.
+04-17 23:08:38.587  5612  5665 I FrewleLevelDb: (REDACTED) Initialized LevelDB, usingInMemoryImpl=%s
+04-17 23:08:38.588  5612  5658 I Multidevice: (REDACTED) [dgtl] accountsFlow.collect : it = %s
+04-17 23:08:38.593  5612  5640 I NearbyPresence: (REDACTED) %s: Start BleAdvertiseBluetoothProvider.
+04-17 23:08:38.640  5612  5679 I Multidevice: (REDACTED) [dgvx] Device Name Updated to: %s
+04-17 23:08:38.651  5612  5734 I Multidevice: [dgxz] presenceClient.sync( [CONTEXT service_id=348 ]
+04-17 23:08:38.651  5612  5734 I Multidevice: (REDACTED) [dgxz]     multideviceEnabled: %s
+04-17 23:08:38.653  5612  5734 I Multidevice: (REDACTED) [dgxz]     deviceName: %s
+04-17 23:08:38.654  5612  5734 I Multidevice: (REDACTED) [dgxz]     accountListForSync: %s
+04-17 23:08:38.655  5612  5734 I Multidevice: [dgxz] ) [CONTEXT service_id=348 ]
+04-17 23:08:38.665  5612  5632 I Multidevice: [FeatureSettingsApiService] Created API Stub. [CONTEXT service_id=348 ]
+04-17 23:08:38.670  5612  5730 W ctxmgr  : [FencePendingIntentCache]Sending CONTEXT_MANAGER_RESTARTED broadcast to com.google.android.apps.wellbeing [CONTEXT service_id=47 ]
+04-17 23:08:38.678  5612  5733 I Multidevice: (REDACTED) [dgxz] settingsState.collect(): %s
+04-17 23:08:38.678  5612  5733 I Multidevice: (REDACTED) [dgxz] settingsState.collect(): %s
+04-17 23:08:38.697  5612  5640 I NearbyPresence: (REDACTED) %s verified [!=] new request %s does not equal to the old request %s
+04-17 23:08:38.698  5612  5640 I NearbyPresence: (REDACTED) %s verified [!=] new request %s does not equal to the old request %s
+04-17 23:08:38.699  5612  5629 I gixr    : (REDACTED) Shared storage file not found for %s
+04-17 23:08:38.700  5612  5680 I Multidevice: (REDACTED) [dgxz] settingsState.collect(): %s
+04-17 23:08:38.700  5612  5640 I NearbyPresence: (REDACTED) %s verified [!=] new request %s does not equal to the old request %s
+04-17 23:08:38.703  5612  5640 I NearbyPresence: MdnsServerProviderController is not enabled or requested [CONTEXT service_id=317 ]
+04-17 23:08:38.703  5612  5640 I NearbyPresence: (REDACTED) BleAdvertiseProviderController: request.isRequested() %s
+04-17 23:08:38.703  5612  5640 I NearbyPresence: (REDACTED) %s: Overriding the broadcastV1 request to : %s
+04-17 23:08:38.704  5612  5640 I NearbyPresence: (REDACTED) %s: Enabling engine.
+04-17 23:08:38.715  5612  5730 I AlarmManager: set [name: SystemMemoryCache type: 2 triggerAtMillis: 316310533105 windowMillis: -1 intervalMillis: 0]
+04-17 23:08:38.717  5612  5646 I FrewleTileCacheManagerV: (REDACTED) Fetched %d AP models from cache
+04-17 23:08:38.723  5612  5612 W ChimeraUtils: Module com.google.android.gms.location_base missing resource location_module_display_name(0)
+04-17 23:08:38.727  5612  5612 W ChimeraUtils: Module com.google.android.gms.location_base missing resource location_module_display_name(0)
+04-17 23:08:38.728  5612  5640 I NearbyPresence: (REDACTED) %s: Charging state changed: %b
+04-17 23:08:38.728  5612  5640 I NearbyPresence: (REDACTED) %s verified [==] new request %s equals to the old request
+04-17 23:08:38.732  5612  5612 I DrivingDndInitializer: Starting Driving Mode logger service for heartbeat
+04-17 23:08:38.732  5612  5612 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.nearby.presence.service.START dat=chimera-action:/... xflg=0x4 cmp=com.google.android.gms/.chimera.PersistentApiServiceNoInstantApps }
+04-17 23:08:38.733  5612  5612 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.nearby.presence.service.START dat=chimera-action:/... xflg=0x4 cmp=com.google.android.gms/.chimera.PersistentApiServiceNoInstantApps }
+04-17 23:08:38.733  5612  5640 W NearbyPresence: TidepoolIdentityProvider: Main Tidepool status toggle not enabled! Returned empty broadcast credentials. [CONTEXT service_id=317 ]
+04-17 23:08:38.733  5612  5640 W NearbyPresence: TidepoolIdentityProvider: Main Tidepool status toggle not enabled! Returned empty shared credentials. [CONTEXT service_id=317 ]
+04-17 23:08:38.733  5612  5640 I NearbyPresence: (REDACTED) %s: register with identity provider name %s broadcast size %s discover size %s
+04-17 23:08:38.756  5612  5640 I NearbyPresence: NetworkMonitorImpl started. [CONTEXT service_id=317 ]
+04-17 23:08:38.762  5612  5705 I NearbyPresence: (REDACTED) NetworkMonitorImpl onAvailable %s
+04-17 23:08:38.765  5612  5705 I NearbyPresence: (REDACTED) NetworkMonitorImpl onLinkPropertiesChanged %s
