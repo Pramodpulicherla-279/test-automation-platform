@@ -1,4 +1,3 @@
 "DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"","0","Verify user can login with valid credentials","tests.test_cases.regular_farmer_test_cases","2026-04-17","broken","2026-04-17","TestLogin","test_login_pytest","",""
-"","0","add farm","tests.test_cases.regular_farmer_test_cases","2026-04-17","broken","2026-04-17","TestOnboarding","TestOnboarding","",""
-"","0","Onboarding the farms and crops","tests.test_cases.regular_farmer_test_cases","2026-04-17","broken","2026-04-17","TestOnboarding","TestOnboarding","",""
+"","9439","add farm","tests.test_cases.regular_farmer_test_cases","2026-04-17","passed","2026-04-17","TestOnboarding","TestOnboarding","",""
+"","34094","Verify user can login with valid credentials","tests.test_cases.regular_farmer_test_cases","2026-04-17","passed","2026-04-17","TestLogin","test_login_pytest","",""
