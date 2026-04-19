@@ -1,0 +1,1 @@
+{"a030bb4e965b3580b4112e865ebbc118":{"statistic":{"failed":1,"broken":0,"skipped":0,"passed":0,"unknown":0,"total":1},"items":[{"uid":"1f86851d2bbebdce","status":"failed","statusDetails":"Failed: Message: Stop video button did not appear after starting video recording. | Last exception: None","time":{"start":1776615335966,"stop":1776615384948,"duration":48982}}]}}
