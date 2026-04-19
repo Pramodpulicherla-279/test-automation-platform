@@ -6,7 +6,7 @@ router = APIRouter()
 
 
 # You must import your existing manager
-from core.websocket import manager   # temporary (we'll move later)
+from new_backend.core.websocket import manager   # temporary (we'll move later)
 
 @router.post("/log-step")
 async def log_step(msg: LogMessage):

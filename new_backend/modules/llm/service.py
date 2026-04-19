@@ -4,9 +4,9 @@ import subprocess
 import sys
 import json
 from fastapi import HTTPException
-from core.logger import logger
-from core.utils import latest_run_id
-from core.constants import UI_SCREENSHOTS_BASE
+from new_backend.core.logger import logger
+from new_backend.core.utils import latest_run_id
+from new_backend.core.constants import UI_SCREENSHOTS_BASE
 from .generate_jira_desc import generate_jira_description, generate_jira_title
 
 

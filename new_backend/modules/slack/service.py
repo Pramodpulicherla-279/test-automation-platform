@@ -17,11 +17,11 @@ sys.path.insert(0, PROJECT_ROOT)
 from tests.test_runner import (
     run_tests_and_get_suggestions,
 )
-from core.state import runs, is_appium_running, APPIUM_PORT, PROCESSED_EVENTS, appium_proc, latest_run_id
-from core.utils import start_allure_server
-from core.websocket import manager
-from modules.test_runner.gdrive_loader import get_apk_info
-from core.constants import SLACK_BOT_TOKEN, SLACK_NOTIFY_CHANNEL, ALLURE_CMD
+from new_backend.core.state import runs, is_appium_running, APPIUM_PORT, PROCESSED_EVENTS, appium_proc, latest_run_id
+from new_backend.core.utils import start_allure_server
+from new_backend.core.websocket import manager
+from new_backend.modules.test_runner.gdrive_loader import get_apk_info
+from new_backend.core.constants import SLACK_BOT_TOKEN, SLACK_NOTIFY_CHANNEL, ALLURE_CMD
 from .config import APP_CONFIG, PACKAGE_VARIANT_MAP, APP_VARIANTS, APP_DEVELOPER_MAP
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../"))
