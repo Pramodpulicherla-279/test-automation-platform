@@ -1,8 +1,8 @@
-from core.state import test_steps_store, pending_payloads, dismissed_keys, PAYLOAD_PREFIXES, jira_history, jira_comments, dismissed_history
-from core.utils import resolve_steps_for_test, make_dismiss_key, extract_steps_from_numbered_list, format_description_with_steps, strip_embedded_steps_from_description
-from core.logger import logger
-from core.websocket import manager
-from core.events import broadcast_async
+from new_backend.core.state import test_steps_store, pending_payloads, dismissed_keys, PAYLOAD_PREFIXES, jira_history, jira_comments, dismissed_history
+from new_backend.core.utils import resolve_steps_for_test, make_dismiss_key, extract_steps_from_numbered_list, format_description_with_steps, strip_embedded_steps_from_description
+from new_backend.core.logger import logger
+from new_backend.core.websocket import manager
+from new_backend.core.events import broadcast_async
 import datetime
 import os
 import subprocess
