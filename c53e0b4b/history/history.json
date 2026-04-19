@@ -1,0 +1,1 @@
+{"a030bb4e965b3580b4112e865ebbc118":{"statistic":{"failed":0,"broken":1,"skipped":0,"passed":0,"unknown":0,"total":1},"items":[{"uid":"72b9983a4cf7f43e","status":"broken","statusDetails":"AttributeError: type object 'TestOnboarding' has no attribute 'navigation_save_b'","time":{"start":1776606485385,"stop":1776606485385,"duration":0}}]}}
