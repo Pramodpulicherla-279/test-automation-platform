@@ -1,0 +1,80 @@
+CRASH START: 04-19 12:51:10.212 20335 20335 I AndroidRuntime: VM exiting with result code 0.
+04-19 12:51:10.212  2334  2334 I TextToSpeechManagerPerUserService: Failed running callback method: android.os.DeadObjectException
+04-19 12:51:10.212  2334  2334 W ServiceConnector.Impl: mayInterruptIfRunning not supported - ignoring
+04-19 12:51:10.212  2334  2334 W Looper  : Slow dispatch took 479ms main h=android.os.Handler c=com.android.internal.infra.ServiceConnector$Impl$$ExternalSyntheticLambda0@4251389 m=0
+04-19 12:51:10.213 31402 31402 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.appset.service.START dat=chimera-action:/... cmp=com.google.android.gms/.chimera.GmsApiService mCallingUid=10355 }
+04-19 12:51:10.213  2334  2334 W Looper  : Slow delivery took 474ms main h=android.os.Handler c=com.android.server.notification.OplusNotificationManagerServiceExtImpl$NotificationUidObserver$$ExternalSyntheticLambda0@4b33f8e m=0
+04-19 12:51:10.213  2334  2696 W ActivityManager: Slow operation: 123ms so far, now at startProcess: done updating battery stats
+04-19 12:51:10.213  2334  2696 W ActivityManager: Slow operation: 123ms so far, now at startProcess: building log message
+04-19 12:51:10.213  2334  2696 I ActivityManager: Start proc 22520:com.krishivaas/u0a755 for top-activity {com.krishivaas/com.krishivaas.MainActivity}
+04-19 12:51:10.213  2334  2696 W ActivityManager: Slow operation: 123ms so far, now at startProcess: starting to update pids map
+04-19 12:51:10.214  2334  2696 W ActivityManager: Slow operation: 124ms so far, now at startProcess: done updating pids map
+04-19 12:51:10.214  2334  2696 D OplusAppStartupManager: Now Begin Monitor App StartInfo's Time == 173834148
+04-19 12:51:10.215 22520 22520 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+04-19 12:51:10.217  2334  3566 I ActivityManager: Process com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0 (pid 16532) has died: prcl BFGS
+04-19 12:51:10.220  4775  6968 D OplusAtlas.OplusAtlasEventDispatch: setEvent:atlas_event_on_process_died info:pid:16532,uid:10350
+04-19 12:51:10.221 22520 22520 D OplusActivityThreadExtImpl: java.lang.NoSuchMethodException: dalvik.system.VMRuntime.SupressionGC [int, int]
+04-19 12:51:10.221 22520 22520 W libc    : Access denied finding property "persist.vendor.sys.activitylog"
+04-19 12:51:10.221 22520 22520 I OneTrace: Mark active for pid=22520? true
+04-19 12:51:10.222 22520 22520 D cutils-dev: otrace_set_tracing_enabled? true tag:0
+04-19 12:51:10.223  4775  7358 D OplusAtlas.OplusMessageHandler: handleMessage: Msg { when=-1ms what=1 obj=com.oplus.atlas.OplusAtlasEvent@ddce78a target=com.oplus.atlas.OplusMessageHandler$MyHandler }
+04-19 12:51:10.223  2334  2705 E libprocessgroup: Failed to open /sys/fs/cgroup/uid_99308/pid_16532/cgroup.procs: No such file or directory
+04-19 12:51:10.223  3719  4098 I ProcessManager: onProcessDied pid:16532, uid:10350
+04-19 12:51:10.223  3719  4098 D AppSceneEventManager: handleMessage: 101
+04-19 12:51:10.223  3719  4098 I DispatcherPolicy: onBaseEvent EventId=22	INPUT_PROCESS_DIED	TimeStamp =1776583270223	Intent =null	Content =null	Pid =16532	PkgName =com.crrepa.band.dafit
+04-19 12:51:10.223  3719  4098 I GamingScene: onInputEvent : INPUT_PROCESS_DIED
+04-19 12:51:10.225 22520 22520 D cutils-dev: properties changed in otrace_seq_number_changed!
+04-19 12:51:10.225  4775  7604 D OplusAtlas.OplusMessageHandler: handleMessage: Msg { when=-2ms what=1 obj=com.oplus.atlas.OplusAtlasEvent@ddce78a target=com.oplus.atlas.OplusMessageHandler$MyHandler }
+04-19 12:51:10.226  3383  6663 I PluginSeedling--Base: SeedlingPluginService-->onStateChange: Bundle[{pkgName=com.crrepa.band.dafit, pid=16532, uid=10350, state=onProcessDied}]
+04-19 12:51:10.230  2334  3566 I ActivityManager: Process com.crrepa.band.dafit (pid 16439) has died: prcl BFGS
+04-19 12:51:10.237  2334  2593 D DisplayManagerService: Drop pending events for gone uid 99308
+04-19 12:51:10.237  3719 27776 E PackageUidManager: pkgs is empty for uid 99308
+04-19 12:51:10.241  2334  2705 E libprocessgroup: Failed to open /sys/fs/cgroup/uid_10350/pid_16439/cgroup.procs: No such file or directory
+04-19 12:51:10.245  2334  2593 D DisplayManagerService: Drop pending events for gone uid 10350
+04-19 12:51:10.245  2334  4137 I OplusHansManager : onUidGone(), 10350 com.crrepa.band.dafit exit SM
+04-19 12:51:10.245  2334  4137 I OplusHansManager : onUidGone(),  keep: 10350 com.crrepa.band.dafit alarm
+04-19 12:51:10.246  1175  5936 I WifiHAL : event received NL80211_CMD_VENDOR, vendor_id = 0x1374, subcmd = 0xd
+04-19 12:51:10.246  1162  9499 D vendor.qti.bluetooth@1.0-wake_lock: Release wakelock is released 
+04-19 12:51:10.247  2334  3717 I OplusHansManager : uid=10350, pkg=com.crrepa.band.dafit R exit SM
+04-19 12:51:10.247  2334  3717 I OplusHansManager : uid=10350, pkg=com.crrepa.band.dafit R exit(), R stay=274
+04-19 12:51:10.250  2334  3184 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+04-19 12:51:10.252  2334  3184 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+04-19 12:51:10.252  2334  3184 D InetDiagMessage: Destroyed live tcp sockets for uids={10350} in 4ms
+04-19 12:51:10.259  2334  2334 D OplusSplitScreenManagerService: OplusSplitScreenManagerService onStateChanged mMinimized = false,mExitingMiniziedToHome=true
+04-19 12:51:10.259  2334  2596 W ActivityManager: setHasOverlayUi called on unknown pid: 21790
+04-19 12:51:10.261  4775  6968 D OplusAtlas.OplusAtlasEventDispatch: setEvent:atlas_event_on_process_died info:pid:16439,uid:10350
+04-19 12:51:10.261  2334  2334 D OplusSplitScreenManagerService: onDockedStackMinimizedChanged: minimized = false mSplitLaunchState: NONE mPendingAppLaunchInfo =null
+04-19 12:51:10.261  2334  2334 D OplusSplitScreenManagerService: OplusSplitScreenManagerService onStateChanged isInSplitScreenMode = false,mSplitRatio=0.5,mMinimized = false
+04-19 12:51:10.261  2334  2334 V NotificationListeners: 0 notification listener connection lost: ComponentInfo{com.crrepa.band.dafit/com.crrepa.band.my.device.pushmessage.notify.service.NotificationCollectorService}
+04-19 12:51:10.262  3383  6663 I PluginSeedling--Base: SeedlingPluginService-->onStateChange: Bundle[{pkgName=com.crrepa.band.dafit, pid=16439, uid=10350, state=onProcessDied}]
+04-19 12:51:10.262  3719  4098 I ProcessManager: onProcessDied pid:16439, uid:10350
+04-19 12:51:10.262  3719  4098 D AppSceneEventManager: handleMessage: 101
+04-19 12:51:10.262  3719  4098 I DispatcherPolicy: onBaseEvent EventId=22	INPUT_PROCESS_DIED	TimeStamp =1776583270262	Intent =null	Content =null	Pid =16439	PkgName =com.crrepa.band.dafit
+04-19 12:51:10.262  3719  4098 I GamingScene: onInputEvent : INPUT_PROCESS_DIED
+04-19 12:51:10.263  4775  7358 D OplusAtlas.OplusMessageHandler: handleMessage: Msg { when=0 what=1 obj=com.oplus.atlas.OplusAtlasEvent@456d1fb target=com.oplus.atlas.OplusMessageHandler$MyHandler }
+04-19 12:51:10.263  4775  7604 D OplusAtlas.OplusMessageHandler: handleMessage: Msg { when=0 what=1 obj=com.oplus.atlas.OplusAtlasEvent@456d1fb target=com.oplus.atlas.OplusMessageHandler$MyHandler }
+04-19 12:51:10.264  2334  3184 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+04-19 12:51:10.265  2334  2334 W Looper  : Drained
+04-19 12:51:10.265  2334  2334 D BatterySaverPolicy: accessibility changed to false, updating policy.
+04-19 12:51:10.267  2334  3184 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+04-19 12:51:10.267  2334  3184 D InetDiagMessage: Destroyed live tcp sockets for uids={20350} in 14ms
+04-19 12:51:10.268  7316  7316 V DeepThinker: BroadcastReceiverWrapper: onReceive, start dispatch android.media.ACTION_AUDIO_PLAYBACK_STATE_CHANGED
+04-19 12:51:10.268  7316  7316 V DeepThinker: BroadcastReceiverWrapper: onReceive, finish dispatch android.media.ACTION_AUDIO_PLAYBACK_STATE_CHANGED  category : null  Time consuming : 0 ms
+04-19 12:51:10.270  2334  3289 I OplusWifiSarManager: Received action: android.media.ACTION_AUDIO_DEVICE_ROUTE_CHANGED
+04-19 12:51:10.271  2334  3567 I ActivityManager: Process com.google.android.apps.chromecast.app (pid 16333) has died: prcl IMPF
+04-19 12:51:10.271  2334  2705 E libprocessgroup: Failed to open /sys/fs/cgroup/uid_10312/pid_16333/cgroup.procs: No such file or directory
+04-19 12:51:10.271 31402 31402 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.ads.service.CACHE pkg=com.google.android.gms mCallingUid=10355 }
+04-19 12:51:10.273 31402 31402 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.mobstore.service.START pkg=com.google.android.gms mCallingUid=10312 }
+04-19 12:51:10.278  4775  6968 D OplusAtlas.OplusAtlasEventDispatch: setEvent:atlas_event_on_process_died info:pid:16333,uid:10312
+04-19 12:51:10.279  3719  4098 I ProcessManager: onProcessDied pid:16333, uid:10312
+04-19 12:51:10.279  3719  4098 D AppSceneEventManager: handleMessage: 101
+04-19 12:51:10.279  3719  4098 I DispatcherPolicy: onBaseEvent EventId=22	INPUT_PROCESS_DIED	TimeStamp =1776583270279	Intent =null	Content =null	Pid =16333	PkgName =com.google.android.apps.chromecast.app
+04-19 12:51:10.279  3719  4098 I GamingScene: onInputEvent : INPUT_PROCESS_DIED
+04-19 12:51:10.280  4775  7604 D OplusAtlas.OplusMessageHandler: handleMessage: Msg { when=-1ms what=1 obj=com.oplus.atlas.OplusAtlasEvent@141218 target=com.oplus.atlas.OplusMessageHandler$MyHandler }
+04-19 12:51:10.281  4775  7358 D OplusAtlas.OplusMessageHandler: handleMessage: Msg { when=-2ms what=1 obj=com.oplus.atlas.OplusAtlasEvent@141218 target=com.oplus.atlas.OplusMessageHandler$MyHandler }
+04-19 12:51:10.281  2334  4137 I OplusHansManager : onUidGone(), 10312 com.google.android.apps.chromecast.app exit SM
+04-19 12:51:10.282  2334  4137 I OplusHansManager : onUidGone(),  keep: 10312 com.google.android.apps.chromecast.app alarm
+04-19 12:51:10.282  2334  3717 I OplusHansManager : uid=10312, pkg=com.google.android.apps.chromecast.app F exit SM
+04-19 12:51:10.282  2334  3717 I OplusHansManager : uid=10312, pkg=com.google.android.apps.chromecast.app F exit(), F stay=273, reason=UidGone
+04-19 12:51:10.280  1162  9529 I vendor.qti.bluetooth@1.0-ibs_handler: ProcessIbsCmd: Received IBS_WAKE_IND: 0xFD
+04-19 12:51:10.284  1162  9529 D vendor.qti.bluetooth@1.0-ibs_handler: SerialClockVote: vote for UART CLK ON
