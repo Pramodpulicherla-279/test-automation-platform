@@ -1,0 +1,80 @@
+CRASH START: 04-19 14:02:22.879 19220 19220 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+04-19 14:02:22.885 19220 19220 I AndroidRuntime: Using default boot image
+04-19 14:02:22.885 19220 19220 I AndroidRuntime: Leaving lock profiling enabled
+04-19 14:02:22.888 19220 19220 I app_process64: Using CollectorTypeCC GC.
+04-19 14:02:22.893 19264 19264 E Parcel  : Attempt to read from protected data in Parcel 0x7fee629440
+04-19 14:02:22.894 19264 19264 E Parcel  : Attempt to read from protected data in Parcel 0x7fee629440
+04-19 14:02:22.894 19264 19264 E Parcel  : Attempt to read from protected data in Parcel 0x7fee629440
+04-19 14:02:22.894 19264 19264 E Parcel  : Attempt to read from protected data in Parcel 0x7fee629440
+04-19 14:02:22.894 19264 19264 E Parcel  : Attempt to read from protected data in Parcel 0x7fee629440
+04-19 14:02:22.894 17617 17728 E AppFeatureProviderUtils: getString: getStringForFeature return null
+04-19 14:02:22.911 17617 17728 E AppFeatureProviderUtils: getString: getStringForFeature return null
+04-19 14:02:22.923 17617 17728 E AppFeatureProviderUtils: getString: getStringForFeature return null
+04-19 14:02:22.932  1204  1204 D vendor.oplus.hardware.charger-V6-service: get_ui_charge_icon_type 0 0 0 0 0
+04-19 14:02:22.934  1204  1204 D vendor.oplus.hardware.charger-V6-service: oplus_chg_get_cpa_power 2500 charge_online 1 retention_topic 0
+04-19 14:02:22.938 17617 17728 E AppFeatureProviderUtils: getString: getStringForFeature return null
+04-19 14:02:22.945   647   647 E lowmemorykiller: device memory 503540 free 44229 file 457914
+04-19 14:02:22.952 17160 17177 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~xV8CbQRbnb12h2em1am8_w==/com.ubercab-4hJUijlF5xvpqYnDtlUikQ==/oat/arm64/base.odex) is kOatUpToDate with filter 'speed-profile' executable 'false'
+04-19 14:02:22.956  3383  3383 I SystemUi--Statusbar: BatteryControllerExt-->updateBatteryChangeIntent():broadcast=android.intent.action.BATTERY_CHANGED,level=56,scale=100
+04-19 14:02:22.956  3383  3383 I SystemUi--Statusbar: BatteryRepository-->level: 56 -- isSavingMode: false
+04-19 14:02:22.957  2334  2752 D OplusDisplayBrightnessBroadcastReceiver: onReceive action = android.intent.action.BATTERY_CHANGED , listeners = [com.android.server.display.OplusFeatureHDREnhanceBrightness$PhoneInfoReceiver@470b045, com.android.server.display.OplusFeatureEdrEnhanceBrightness$PhoneInfoReceiver@40e439a]
+04-19 14:02:22.957  3892  3892 D SubsysBroadcastManager: onReceive action:android.intent.action.BATTERY_CHANGED
+04-19 14:02:22.961  3713  3713 D DeviceStatisticsService: onReceive: action= android.intent.action.BATTERY_CHANGED
+04-19 14:02:22.964  6428  6491 E Battery : ChargeProtectionUtils: mCanlendarTmp.isEmpty()!
+04-19 14:02:22.965  8932  8932 D CustomLogManagerService: onReceive android.intent.action.BATTERY_CHANGED
+04-19 14:02:22.966  3713  3713 D DeviceInfoHidlClient: isRadioOn()=true
+04-19 14:02:22.966  3713  3713 I DeviceInfoHidlClient: isPowerInfoNeverSent=false batteryLevel=56 batteryLevelIndex=2 chargingMode=2 totalCapacity=4125000 powerSaveMode=false
+04-19 14:02:22.974 17617 17728 E AppFeatureProviderUtils: getString: getStringForFeature return null
+04-19 14:02:22.979 19220 19220 D nativeloader: InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+04-19 14:02:22.980 17160 17177 I artd    : GetBestInfo: dm (/data/app/~~xV8CbQRbnb12h2em1am8_w==/com.ubercab-4hJUijlF5xvpqYnDtlUikQ==/split_BarcodeScanner.dm) is kOatUpToDate with filter 'verify' executable 'false'
+04-19 14:02:22.983 19271 19271 E Parcel  : Attempt to read from protected data in Parcel 0x7fedeb9420
+04-19 14:02:22.983 19271 19271 E Parcel  : Attempt to read from protected data in Parcel 0x7fedeb9420
+04-19 14:02:22.983 19271 19271 E Parcel  : Attempt to read from protected data in Parcel 0x7fedeb9420
+04-19 14:02:22.983 19271 19271 E Parcel  : Attempt to read from protected data in Parcel 0x7fedeb9420
+04-19 14:02:22.983 19271 19271 E Parcel  : Attempt to read from protected data in Parcel 0x7fedeb9420
+04-19 14:02:22.986  1204  1204 D vendor.oplus.hardware.charger-V6-service: getChargerControl:sub_current=100
+04-19 14:02:22.986  1204  1204 D vendor.oplus.hardware.charger-V6-service: sub_voltage=3800
+04-19 14:02:22.986  1204  1204 D vendor.oplus.hardware.charger-V6-service: sub_soc=-1
+04-19 14:02:22.986  1204  1204 D vendor.oplus.hardware.charger-V6-service: sub_temperature=250
+04-19 14:02:22.986  1204  1204 D vendor.oplus.hardware.charger-V6-service: main_soc=54
+04-19 14:02:22.991 17617 17728 E AppFeatureProviderUtils: getString: getStringForFeature return null
+04-19 14:02:22.995 17160 17177 I artd    : GetBestInfo: dm (/data/app/~~xV8CbQRbnb12h2em1am8_w==/com.ubercab-4hJUijlF5xvpqYnDtlUikQ==/split_GooglePaySdk.dm) is kOatUpToDate with filter 'verify' executable 'false'
+04-19 14:02:23.004 17160 17177 I artd    : GetBestInfo: dm (/data/app/~~xV8CbQRbnb12h2em1am8_w==/com.ubercab-4hJUijlF5xvpqYnDtlUikQ==/split_VoipTwilio.dm) is kOatUpToDate with filter 'verify' executable 'false'
+04-19 14:02:23.006 19220 19220 D nativeloader: Load libicu_jni.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+04-19 14:02:23.007 19220 19220 D app_process64: u_setTimeZoneFilesDirectory("/apex/com.android.tzdata/etc/tz/versioned/8/icu") succeeded. 
+04-19 14:02:23.007 19220 19220 D app_process64: I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt75l.dat
+04-19 14:02:23.010  1162  9529 I vendor.qti.bluetooth@1.0-ibs_handler: ProcessIbsCmd: Received IBS_WAKE_IND: 0xFD
+04-19 14:02:23.010 17617 17728 E AppFeatureProviderUtils: getString: getStringForFeature return null
+04-19 14:02:23.010  1162  9529 D vendor.qti.bluetooth@1.0-ibs_handler: SerialClockVote: vote for UART CLK ON
+04-19 14:02:23.010 19220 19220 D nativeloader: Load libjavacore.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+04-19 14:02:23.011  1162  9529 D vendor.qti.bluetooth@1.0-wake_lock: Acquire wakelock is acquired 
+04-19 14:02:23.011  1162  9529 I vendor.qti.bluetooth@1.0-ibs_handler: ProcessIbsCmd: Writing IBS_WAKE_ACK
+04-19 14:02:23.012 19220 19220 D nativeloader: Load libopenjdk.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+04-19 14:02:23.015 19220 19220 I app_process64: Priority-to-niceness mapping: 19, 16, 13, 10, 0, -2, -4, -5, -6, -8
+04-19 14:02:23.025 17617 17728 E AppFeatureProviderUtils: getString: getStringForFeature return null
+04-19 14:02:23.029 19220 19220 D ExtLoader: DEFAULT_DEBUG_DUMMY=false, DEFAULT_DEBUG_CREATE=false
+04-19 14:02:23.037 17617 17728 E AppFeatureProviderUtils: getString: getStringForFeature return null
+04-19 14:02:23.044 19220 19220 D nativeloader: Load libonetrace_jni.so using system ns (caller=/system/framework/oplus-framework.jar): ok
+04-19 14:02:23.044 19220 19220 D OplusTrace: register_android_os_OplusTrace
+04-19 14:02:23.045 19220 19220 W libc    : Access denied finding property "ro.vendor.mtk.hbt_binfmt_misc_support"
+04-19 14:02:23.045 19220 19220 W libc    : Access denied finding property "ro.vendor.mtk.app32_boost_support"
+04-19 14:02:23.045 19220 19220 W libc    : Access denied finding property "ro.vendor.oplus.tango_binfmt_misc_support"
+04-19 14:02:23.045 19220 19220 W libc    : Access denied finding property "ro.vendor.oplus.otranslator_64only_chip"
+04-19 14:02:23.045 19220 19220 W libc    : Access denied finding property "ro.oplus.ocompiler.version"
+04-19 14:02:23.045 19220 19220 W libc    : Access denied finding property "ro.vendor.oplus.app32_boost_support"
+04-19 14:02:23.046 19220 19220 W libc    : Access denied finding property "ro.vendor.mtk.app32_boost_support"
+04-19 14:02:23.046   647   647 E lowmemorykiller: device memory 502547 free 40176 file 461164
+04-19 14:02:23.047 17617 17728 E AppFeatureProviderUtils: getString: getStringForFeature return null
+04-19 14:02:23.052  1162  9529 I vendor.qti.bluetooth@1.0-ibs_handler: ProcessIbsCmd: Received IBS_SLEEP_IND: 0xFE
+04-19 14:02:23.052  1162  9529 D vendor.qti.bluetooth@1.0-ibs_handler: SerialClockVote: vote for UART CLK OFF
+04-19 14:02:23.058 17617 17728 E AppFeatureProviderUtils: getString: getStringForFeature return null
+04-19 14:02:23.064 19220 19220 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+04-19 14:02:23.065 19220 19220 D AndroidRuntime: Calling main entry com.koushikdutta.vysor.ProtocolCheckMain
+04-19 14:02:23.066 19220 19220 I VysorControl: vysor-io-130
+04-19 14:02:23.066 19220 19220 I Vysor   : Starting daemon
+04-19 14:02:23.068 17160 17177 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~7Dz6pMvkBbPhBs8OhfkTAw==/com.google.ar.core-IEhqRiLO01Alg-D7eYLqlQ==/oat/arm64/base.odex) is kOatBootImageOutOfDate with filter 'speed-profile' executable 'false': Image checksum mismatch, expected i;20/717bdcf2:i;27/1bfc3240 to start with i;20/396fd841
+04-19 14:02:23.068 17160 17177 I artd    : GetBestInfo: vdex next to the dex file (/data/app/~~7Dz6pMvkBbPhBs8OhfkTAw==/com.google.ar.core-IEhqRiLO01Alg-D7eYLqlQ==/oat/arm64/base.vdex) is kOatUpToDate with filter 'verify' executable 'false'
+04-19 14:02:23.069 19283 19283 E Parcel  : Attempt to read from protected data in Parcel 0x7fe6b06b10
+04-19 14:02:23.069 19283 19283 E Parcel  : Attempt to read from protected data in Parcel 0x7fe6b06b10
+04-19 14:02:23.069 19283 19283 E Parcel  : Attempt to read from protected data in Parcel 0x7fe6b06b10
+04-19 14:02:23.069 19283 19283 E Parcel  : Attempt to read from protected data in Parcel 0x7fe6b06b10
