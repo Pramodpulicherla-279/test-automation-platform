@@ -1,0 +1,1 @@
+[{"uid":"ccc7b15a8b8dd5c","name":"add farm > add crop > pending farms > add boundary","time":{"start":1776571692603,"stop":1776571744261,"duration":51658},"status":"failed","severity":"normal"},{"uid":"8ba1979e0a3b9fee","name":"Verify user can login with valid credentials","time":{"start":1776571664499,"stop":1776571682540,"duration":18041},"status":"broken","severity":"normal"}]

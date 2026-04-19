@@ -1,0 +1,3 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","51658","add farm > add crop > pending farms > add boundary","tests.test_cases.regular_farmer_test_cases","2026-04-19","failed","2026-04-19","TestOnboarding","TestOnboarding","",""
+"","18041","Verify user can login with valid credentials","tests.test_cases.regular_farmer_test_cases","2026-04-19","broken","2026-04-19","TestLogin","test_login_pytest","",""
