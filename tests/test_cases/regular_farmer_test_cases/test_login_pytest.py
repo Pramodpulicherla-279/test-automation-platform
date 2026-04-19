@@ -4,12 +4,10 @@ import pytest
 from appium.webdriver.common.appiumby import AppiumBy
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from utils.wait_utils import smart_find_element, smart_click
-from utils.ocr_utils import extract_text_with_coordinates
+from utils.wait_utils import smart_click, wait_for_otp, wait_for_element, wait_and_click, wait_for_otp_filled
 import json
 import os
 from selenium.common.exceptions import WebDriverException
-from utils.wait_utils import find_and_click
 import sys
 sys.dont_write_bytecode = True
 
@@ -84,10 +82,9 @@ class TestLogin:
                 test_flow_steps.append({"step": "Click Next after entering phone number", "status": "Success"})
             
             with allure.step("8. Wait for OTP and verify"):
-                time.sleep(20)
-                if not smart_click(driver, "Verify (login)", verify_button_login_xpath, "Verify"):
-                    pytest.fail("Could not find or click the 'Verify' button.")
-                test_flow_steps.append({"step": "Click Verify OTP", "status": "Success"})
+                wait_for_otp_filled(driver, "//android.widget.EditText[contains(@resource-id,'otp_input')]", expected_length=4)
+                assert smart_click(driver, "Verify", verify_button_login_xpath, "Verify")
+                test_flow_steps.append({"step": "Verify OTP", "status": "Success"})
 
             # with allure.step("9. Verify Dashboard"):
             #    print("[INFO] Waiting for dashboard screen...")

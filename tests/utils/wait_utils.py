@@ -10,6 +10,7 @@ from selenium.common.exceptions import NoSuchElementException
 from appium.webdriver.common.appiumby import AppiumBy
 from selenium.webdriver.common.actions.action_builder import ActionBuilder
 import sys
+from selenium.webdriver.common.by import By
 sys.dont_write_bytecode = True
 
 
@@ -482,3 +483,46 @@ def scroll_and_tap_by_text(driver, text_to_find, max_swipes=5):
                 return False
                 
     return False
+
+def wait_for_otp(fetch_otp_func, timeout=30, poll_interval=2):
+    """
+    Waits dynamically for OTP using polling.
+    
+    fetch_otp_func → function that returns OTP or None
+    """
+    start_time = time.time()
+
+    while time.time() - start_time < timeout:
+        otp = fetch_otp_func()
+        if otp:
+            return otp
+        time.sleep(poll_interval)
+
+    raise TimeoutError("OTP not received within timeout")
+
+def wait_for_element(driver, xpath, timeout=20):
+    return WebDriverWait(driver, timeout).until(
+        EC.visibility_of_element_located((By.XPATH, xpath))
+    )
+
+
+def wait_and_click(driver, xpath, timeout=20):
+    element = wait_for_element(driver, xpath, timeout)
+    element.click()
+    return True
+
+def wait_for_otp_filled(driver, otp_xpath, expected_length=6, timeout=30):
+    def otp_ready(driver):
+        elements = driver.find_elements(By.XPATH, otp_xpath)
+
+        if not elements:
+            return False
+
+        otp = ""
+        for el in elements:
+            value = el.get_attribute("text") or el.get_attribute("content-desc") or ""
+            otp += value.strip()
+
+        return len(otp) == expected_length
+
+    return WebDriverWait(driver, timeout).until(otp_ready)
