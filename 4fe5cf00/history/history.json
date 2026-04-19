@@ -1,0 +1,1 @@
+{"a030bb4e965b3580b4112e865ebbc118":{"statistic":{"failed":1,"broken":0,"skipped":0,"passed":0,"unknown":0,"total":1},"items":[{"uid":"7c17ddc3c1a61ede","status":"failed","statusDetails":"Failed: Could not find or click the 'stop navigation video' button.","time":{"start":1776614871387,"stop":1776614925326,"duration":53939}}]}}
