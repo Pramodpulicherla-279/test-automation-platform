@@ -1,0 +1,1 @@
+{"a030bb4e965b3580b4112e865ebbc118":{"statistic":{"failed":0,"broken":1,"skipped":0,"passed":0,"unknown":0,"total":1},"items":[{"uid":"bbec61d952489476","status":"broken","statusDetails":"selenium.common.exceptions.TimeoutException: Message: Dynamic wait condition not met","time":{"start":1776607450384,"stop":1776607511189,"duration":60805}}]}}
