@@ -1,0 +1,80 @@
+CRASH START: 04-19 12:12:23.671  8850  8915 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+04-19 12:12:23.672 14963 14999 I appium  : [952958617 (success)] Synthesized: MotionEvent { action=ACTION_DOWN, actionButton=0, id[0]=0, x[0]=540.0, y[0]=1920.0, toolType[0]=TOOL_TYPE_FINGER, buttonState=0, classification=NONE, metaState=0, flags=0x0, edgeFlags=0x0, pointerCount=1, historySize=0, eventTime=952958617, downTime=952958616, deviceId=0, source=0x1002, displayId=0, eventId=-762719987 }
+04-19 12:12:23.674 30277 15728 I PhotosOptInNotification: Running PhotosOptInNotificationSubTask. [CONTEXT service_id=229 ]
+04-19 12:12:23.675 30277 15728 I BackupNotificationsDevi: (REDACTED) isAndroidBackupEnabled %s photosApkState %s photosBackupState %s gmsCoreNotificationState %s isPhotosOptInShownInSuw %s storageQuotaInfo %s
+04-19 12:12:23.675 30277 15728 I AndroidBackupEventsLogg: (REDACTED) Logging with sampling event %s
+04-19 12:12:23.678 30195 15588 I NetworkScheduler.Stats: (REDACTED) HousekeepingTask %s/%s finished executing. cause:%s result: %s elapsed_millis: %s uptime_millis: %s exec_start_elapsed_seconds: %s
+04-19 12:12:23.679 30277 30277 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.backup.settings.notifications.BackupNotificationsTask.ACTION_TASK_READY dat=chimera-action:/... cmp=com.google.android.gms/.chimera.GmsInternalBoundBrokerService }
+04-19 12:12:23.727 30195 15588 I NetworkScheduler.Stats: (REDACTED) Task %s/%s started execution. cause:%s exec_start_elapsed_seconds: %s
+04-19 12:12:23.732 14963 14999 I appium  : [952958677 (success)] Synthesized: MotionEvent { action=ACTION_MOVE, actionButton=0, id[0]=0, x[0]=540.0, y[0]=1920.0, toolType[0]=TOOL_TYPE_FINGER, buttonState=0, classification=NONE, metaState=0, flags=0x0, edgeFlags=0x0, pointerCount=1, historySize=0, eventTime=952958677, downTime=952958616, deviceId=0, source=0x1002, displayId=0, eventId=-226220643 }
+04-19 12:12:23.747 14963 14999 I appium  : [952958697 (success)] Synthesized: MotionEvent { action=ACTION_MOVE, actionButton=0, id[0]=0, x[0]=540.0, y[0]=1698.4619, toolType[0]=TOOL_TYPE_FINGER, buttonState=0, classification=NONE, metaState=0, flags=0x0, edgeFlags=0x0, pointerCount=1, historySize=0, eventTime=952958697, downTime=952958616, deviceId=0, source=0x1002, displayId=0, eventId=-672897659 }
+04-19 12:12:23.780 14963 14999 I appium  : [952958716 (success)] Synthesized: MotionEvent { action=ACTION_MOVE, actionButton=0, id[0]=0, x[0]=540.0, y[0]=1587.6924, toolType[0]=TOOL_TYPE_FINGER, buttonState=0, classification=NONE, metaState=0, flags=0x0, edgeFlags=0x0, pointerCount=1, historySize=0, eventTime=952958716, downTime=952958616, deviceId=0, source=0x1002, displayId=0, eventId=-155907272 }
+04-19 12:12:23.780 14963 14999 I appium  : The event has been delayed for 23ms
+04-19 12:12:23.793 20789 31142 E AuthPII : [RequestTokenManager] getToken() -> BAD_AUTHENTICATION. App: com.google.android.gms, Service: oauth2:https://www.googleapis.com/auth/plus.me
+04-19 12:12:23.793 20789 31142 E AuthPII : bhjm: Long live credential not available.
+04-19 12:12:23.793 20789 31142 E AuthPII : 	at agxc.a(:com.google.android.gms@261332029@26.13.32 (190400-895912391):1347)
+04-19 12:12:23.793 20789 31142 E AuthPII : 	at agxj.b(:com.google.android.gms@261332029@26.13.32 (190400-895912391):26)
+04-19 12:12:23.793 20789 31142 E AuthPII : 	at agxh.a(:com.google.android.gms@261332029@26.13.32 (190400-895912391):738)
+04-19 12:12:23.793 20789 31142 E AuthPII : 	at aghc.a(:com.google.android.gms@261332029@26.13.32 (190400-895912391):82)
+04-19 12:12:23.793 20789 31142 E AuthPII : 	at aamx.d(:com.google.android.gms@261332029@26.13.32 (190400-895912391):40)
+04-19 12:12:23.793 20789 31142 E AuthPII : 	at aamx.dispatchTransaction(:com.google.android.gms@261332029@26.13.32 (190400-895912391):153)
+04-19 12:12:23.793 20789 31142 E AuthPII : 	at bzsf.a(:com.google.android.gms@261332029@26.13.32 (190400-895912391):72)
+04-19 12:12:23.793 20789 31142 E AuthPII : 	at zsd.onTransact(:com.google.android.gms@261332029@26.13.32 (190400-895912391):23)
+04-19 12:12:23.793 20789 31142 E AuthPII : 	at android.os.Binder.transact(Binder.java:1249)
+04-19 12:12:23.793 20789 31142 E AuthPII : 	at clvg.onTransact(:com.google.android.gms@261332029@26.13.32 (190400-895912391):10)
+04-19 12:12:23.793 20789 31142 E AuthPII : 	at android.os.Binder.transact(Binder.java:1249)
+04-19 12:12:23.793 20789 31142 E AuthPII : 	at bzst.onTransact(:com.google.android.gms@261332029@26.13.32 (190400-895912391):161)
+04-19 12:12:23.793 20789 31142 E AuthPII : 	at android.os.Binder.execTransactInternal(Binder.java:1405)
+04-19 12:12:23.793 20789 31142 E AuthPII : 	at android.os.Binder.execTransact(Binder.java:1341)
+04-19 12:12:23.794 20789 31142 E AuthPII : Message is Long live credential not available.
+04-19 12:12:23.794 20789 31142 E AuthPII : bhjm: Long live credential not available.
+04-19 12:12:23.794 20789 31142 E AuthPII : 	at agxc.a(:com.google.android.gms@261332029@26.13.32 (190400-895912391):1347)
+04-19 12:12:23.794 20789 31142 E AuthPII : 	at agxj.b(:com.google.android.gms@261332029@26.13.32 (190400-895912391):26)
+04-19 12:12:23.794 20789 31142 E AuthPII : 	at agxh.a(:com.google.android.gms@261332029@26.13.32 (190400-895912391):738)
+04-19 12:12:23.794 20789 31142 E AuthPII : 	at aghc.a(:com.google.android.gms@261332029@26.13.32 (190400-895912391):82)
+04-19 12:12:23.794 20789 31142 E AuthPII : 	at aamx.d(:com.google.android.gms@261332029@26.13.32 (190400-895912391):40)
+04-19 12:12:23.794 20789 31142 E AuthPII : 	at aamx.dispatchTransaction(:com.google.android.gms@261332029@26.13.32 (190400-895912391):153)
+04-19 12:12:23.794 20789 31142 E AuthPII : 	at bzsf.a(:com.google.android.gms@261332029@26.13.32 (190400-895912391):72)
+04-19 12:12:23.794 20789 31142 E AuthPII : 	at zsd.onTransact(:com.google.android.gms@261332029@26.13.32 (190400-895912391):23)
+04-19 12:12:23.794 20789 31142 E AuthPII : 	at android.os.Binder.transact(Binder.java:1249)
+04-19 12:12:23.794 20789 31142 E AuthPII : 	at clvg.onTransact(:com.google.android.gms@261332029@26.13.32 (190400-895912391):10)
+04-19 12:12:23.794 20789 31142 E AuthPII : 	at android.os.Binder.transact(Binder.java:1249)
+04-19 12:12:23.794 20789 31142 E AuthPII : 	at bzst.onTransact(:com.google.android.gms@261332029@26.13.32 (190400-895912391):161)
+04-19 12:12:23.794 20789 31142 E AuthPII : 	at android.os.Binder.execTransactInternal(Binder.java:1405)
+04-19 12:12:23.794 20789 31142 E AuthPII : 	at android.os.Binder.execTransact(Binder.java:1341)
+04-19 12:12:23.794 20789 31142 I Auth    : (REDACTED) [AccountIdManager] Token response failed with status=%s
+04-19 12:12:23.797 14963 14999 I appium  : [952958739 (success)] Synthesized: MotionEvent { action=ACTION_MOVE, actionButton=0, id[0]=0, x[0]=540.0, y[0]=1476.9229, toolType[0]=TOOL_TYPE_FINGER, buttonState=0, classification=NONE, metaState=0, flags=0x0, edgeFlags=0x0, pointerCount=1, historySize=0, eventTime=952958739, downTime=952958616, deviceId=0, source=0x1002, displayId=0, eventId=-595190530 }
+04-19 12:12:23.799 20789 31142 E AuthPII : [RequestTokenManager] getToken() -> BAD_AUTHENTICATION. App: com.google.android.gms, Service: oauth2:https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/account.capabilities https://www.googleapis.com/auth/account.service_flags
+04-19 12:12:23.799 20789 31142 E AuthPII : bhjm: Long live credential not available.
+04-19 12:12:23.799 20789 31142 E AuthPII : 	at agxc.a(:com.google.android.gms@261332029@26.13.32 (190400-895912391):1347)
+04-19 12:12:23.799 20789 31142 E AuthPII : 	at agxj.b(:com.google.android.gms@261332029@26.13.32 (190400-895912391):26)
+04-19 12:12:23.799 20789 31142 E AuthPII : 	at agxh.a(:com.google.android.gms@261332029@26.13.32 (190400-895912391):738)
+04-19 12:12:23.799 20789 31142 E AuthPII : 	at aghi.a(:com.google.android.gms@261332029@26.13.32 (190400-895912391):55)
+04-19 12:12:23.799 20789 31142 E AuthPII : 	at aghi.h(:com.google.android.gms@261332029@26.13.32 (190400-895912391):108)
+04-19 12:12:23.799 20789 31142 E AuthPII : 	at aghi.b(:com.google.android.gms@261332029@26.13.32 (190400-895912391):817)
+04-19 12:12:23.799 20789 31142 E AuthPII : 	at aghi.c(:com.google.android.gms@261332029@26.13.32 (190400-895912391):5)
+04-19 12:12:23.799 20789 31142 E AuthPII : 	at aamx.d(:com.google.android.gms@261332029@26.13.32 (190400-895912391):65)
+04-19 12:12:23.799 20789 31142 E AuthPII : 	at aamx.dispatchTransaction(:com.google.android.gms@261332029@26.13.32 (190400-895912391):153)
+04-19 12:12:23.799 20789 31142 E AuthPII : 	at bzsf.a(:com.google.android.gms@261332029@26.13.32 (190400-895912391):72)
+04-19 12:12:23.799 20789 31142 E AuthPII : 	at zsd.onTransact(:com.google.android.gms@261332029@26.13.32 (190400-895912391):23)
+04-19 12:12:23.799 20789 31142 E AuthPII : 	at android.os.Binder.transact(Binder.java:1249)
+04-19 12:12:23.799 20789 31142 E AuthPII : 	at clvg.onTransact(:com.google.android.gms@261332029@26.13.32 (190400-895912391):10)
+04-19 12:12:23.799 20789 31142 E AuthPII : 	at android.os.Binder.transact(Binder.java:1249)
+04-19 12:12:23.799 20789 31142 E AuthPII : 	at bzst.onTransact(:com.google.android.gms@261332029@26.13.32 (190400-895912391):161)
+04-19 12:12:23.799 20789 31142 E AuthPII : 	at android.os.Binder.execTransactInternal(Binder.java:1405)
+04-19 12:12:23.799 20789 31142 E AuthPII : 	at android.os.Binder.execTransact(Binder.java:1341)
+04-19 12:12:23.800 20789 31142 E AuthPII : Message is Long live credential not available.
+04-19 12:12:23.800 20789 31142 E AuthPII : bhjm: Long live credential not available.
+04-19 12:12:23.800 20789 31142 E AuthPII : 	at agxc.a(:com.google.android.gms@261332029@26.13.32 (190400-895912391):1347)
+04-19 12:12:23.800 20789 31142 E AuthPII : 	at agxj.b(:com.google.android.gms@261332029@26.13.32 (190400-895912391):26)
+04-19 12:12:23.800 20789 31142 E AuthPII : 	at agxh.a(:com.google.android.gms@261332029@26.13.32 (190400-895912391):738)
+04-19 12:12:23.800 20789 31142 E AuthPII : 	at aghi.a(:com.google.android.gms@261332029@26.13.32 (190400-895912391):55)
+04-19 12:12:23.800 20789 31142 E AuthPII : 	at aghi.h(:com.google.android.gms@261332029@26.13.32 (190400-895912391):108)
+04-19 12:12:23.800 20789 31142 E AuthPII : 	at aghi.b(:com.google.android.gms@261332029@26.13.32 (190400-895912391):817)
+04-19 12:12:23.800 20789 31142 E AuthPII : 	at aghi.c(:com.google.android.gms@261332029@26.13.32 (190400-895912391):5)
+04-19 12:12:23.800 20789 31142 E AuthPII : 	at aamx.d(:com.google.android.gms@261332029@26.13.32 (190400-895912391):65)
+04-19 12:12:23.800 20789 31142 E AuthPII : 	at aamx.dispatchTransaction(:com.google.android.gms@261332029@26.13.32 (190400-895912391):153)
+04-19 12:12:23.800 20789 31142 E AuthPII : 	at bzsf.a(:com.google.android.gms@261332029@26.13.32 (190400-895912391):72)
+04-19 12:12:23.800 20789 31142 E AuthPII : 	at zsd.onTransact(:com.google.android.gms@261332029@26.13.32 (190400-895912391):23)
+04-19 12:12:23.800 20789 31142 E AuthPII : 	at android.os.Binder.transact(Binder.java:1249)
+04-19 12:12:23.800 20789 31142 E AuthPII : 	at clvg.onTransact(:com.google.android.gms@261332029@26.13.32 (190400-895912391):10)
