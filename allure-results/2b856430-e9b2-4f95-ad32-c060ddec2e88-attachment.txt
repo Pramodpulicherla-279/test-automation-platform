@@ -1,0 +1,80 @@
+CRASH START: 04-19 13:20:53.703  3533  3533 D AndroidRuntime: Shutting down VM
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: FATAL EXCEPTION: main
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: Process: com.krishivaas, PID: 3533
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: com.facebook.react.bridge.JSApplicationIllegalArgumentException: Error while updating property 'accessibilityState' of a view managed by: RCTView
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: 	at com.facebook.react.uimanager.ViewManagersPropertyCache$PropSetter.updateViewProp(ViewManagersPropertyCache.java:101)
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: 	at com.facebook.react.uimanager.ViewManagerPropertyUpdater$FallbackViewManagerSetter.setProperty(ViewManagerPropertyUpdater.java:136)
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: 	at com.facebook.react.uimanager.ViewManagerPropertyUpdater.updateProps(ViewManagerPropertyUpdater.java:56)
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: 	at com.facebook.react.uimanager.ViewManager.updateProperties(ViewManager.java:87)
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: 	at com.facebook.react.uimanager.NativeViewHierarchyManager.updateProperties(NativeViewHierarchyManager.java:138)
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: 	at com.facebook.react.uimanager.UIViewOperationQueue$UpdatePropertiesOperation.execute(UIViewOperationQueue.java:94)
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: 	at com.facebook.react.uimanager.UIViewOperationQueue$1.run(UIViewOperationQueue.java:851)
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: 	at com.facebook.react.uimanager.UIViewOperationQueue.flushPendingBatches(UIViewOperationQueue.java:964)
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: 	at com.facebook.react.uimanager.UIViewOperationQueue.-$$Nest$mflushPendingBatches(Unknown Source:0)
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: 	at com.facebook.react.uimanager.UIViewOperationQueue$DispatchUIFrameCallback.doFrameGuarded(UIViewOperationQueue.java:1024)
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: 	at com.facebook.react.uimanager.GuardedFrameCallback.doFrame(GuardedFrameCallback.kt:22)
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: 	at com.facebook.react.modules.core.ReactChoreographer$1.doFrame(ReactChoreographer.java:89)
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: 	at android.view.Choreographer$CallbackRecord.run(Choreographer.java:1758)
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: 	at android.view.Choreographer$CallbackRecord.run(Choreographer.java:1769)
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: 	at android.view.Choreographer.doCallbacks(Choreographer.java:1273)
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: 	at android.view.Choreographer.doFrame(Choreographer.java:1134)
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: 	at android.view.Choreographer$FrameDisplayEventReceiver.run(Choreographer.java:1743)
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: 	at android.os.Handler.handleCallback(Handler.java:1013)
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:101)
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:226)
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:328)
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: 	at android.app.ActivityThread.main(ActivityThread.java:9223)
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:594)
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1099)
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: Caused by: java.lang.reflect.InvocationTargetException
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: 	at com.facebook.react.uimanager.ViewManagersPropertyCache$PropSetter.updateViewProp(ViewManagersPropertyCache.java:93)
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: 	... 24 more
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: Caused by: com.facebook.react.bridge.UnexpectedNativeTypeException: Value for disabled cannot be cast from Double to boolean
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: 	at com.facebook.react.bridge.ReadableNativeMap.getBoolean(ReadableNativeMap.kt:200)
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: 	at com.facebook.react.uimanager.BaseViewManager.setViewState(BaseViewManager.java:343)
+04-19 13:20:53.703  3533  3533 E AndroidRuntime: 	... 26 more
+04-19 13:20:53.739  3533  3533 I Process : Sending signal. PID: 3533 SIG: 9
+04-19 13:20:54.452  4439  4439 W getenforce: type=1400 audit(0.0:3466673): avc:  denied  { read } for  name="enforce" dev="selinuxfs" ino=4 scontext=u:r:untrusted_app:s0:c102,c256,c512,c768 tcontext=u:object_r:selinuxfs:s0 tclass=file permissive=0
+04-19 13:20:54.452 18256 18256 W Thread-339: type=1400 audit(0.0:3466674): avc:  denied  { read } for  name="enforce" dev="selinuxfs" ino=4 scontext=u:r:untrusted_app:s0:c102,c256,c512,c768 tcontext=u:object_r:selinuxfs:s0 tclass=file permissive=0 app=com.google.android.apps.nbu.paisa.user
+04-19 13:20:53.937 30143 30143 I GoogleInputMethodService: GoogleInputMethodService.onFinishInput():2259 
+04-19 13:20:53.940 30143 30143 I Module  : DeviceLockedStatusModuleProvider$Module.updateDeviceLockedStatus():103 repeatCheckTimes = 0, locked = false
+04-19 13:20:53.940 30143 30143 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():1446 onStartInput(EditorInfo{EditorInfo{packageName=com.android.launcher3, inputType=0, inputTypeString=NULL, enableLearning=false, autoCorrection=false, autoComplete=false, imeOptions=0, privateImeOptions=null, actionName=UNSPECIFIED, actionLabel=null, initialSelStart=-1, initialSelEnd=-1, initialCapsMode=0, label=null, fieldId=0, fieldName=null, extras=null, hintText=null, hintLocales=[]}}, false)
+04-19 13:20:53.940 30143 30143 I AndroidIME: LatinIMEBase.updateInputViewCoverNavigation():322 Update input view padding, isNavbarOverInputWindow=false, bottom inset=0
+04-19 13:20:53.940 30143 30143 I Module  : DeviceLockedStatusModuleProvider$Module.updateDeviceLockedStatus():103 repeatCheckTimes = 1, locked = false
+04-19 13:20:53.940 30143 30143 I ShortcutsDataManager: AbstractContentDataManager.startImportContentTask():241 startImportContentTask()
+04-19 13:20:53.941 30143 30235 I ShortcutsDataManager: AbstractContentDataManager$ImportContentTask.doInBackground():257 doInBackground()
+04-19 13:20:53.941 30143 30235 I PersonalDictionaryDataHandler: PersonalDictionaryDataHandler.beginProcess():114 LanguageTags = [te-IN, hi-XT, en-US, te-XT, hi-XA]
+04-19 13:20:53.963 30143 30235 I ShortcutsDataManager: AbstractContentDataManager.importRecords():348 importRecords() : Success : Count = 0
+04-19 13:20:53.967 30143 30235 I ShortcutsDataManager: AbstractContentDataManager.importContentData():297 importContentData() : Ending import process
+04-19 13:20:53.974 30143 30235 I PersonalLanguageModelUpdater: PersonalLanguageModelUpdater$UpdateOperation.performInternal():165 run() : Added 1 words and 1 shortcuts
+04-19 13:20:53.974 30143 30235 I DynamicLanguageModelOperation: DynamicLanguageModelOperation.perform():43 perform() : 4 : exo : Completed
+04-19 13:20:53.978 30143 30235 I PersonalLanguageModelUpdater: PersonalLanguageModelUpdater$UpdateOperation.performInternal():165 run() : Added 1 words and 1 shortcuts
+04-19 13:20:53.978 30143 30235 I DynamicLanguageModelOperation: DynamicLanguageModelOperation.perform():43 perform() : 4 : exo : Completed
+04-19 13:20:53.983 30143 30235 I PersonalLanguageModelUpdater: PersonalLanguageModelUpdater$UpdateOperation.performInternal():165 run() : Added 1 words and 1 shortcuts
+04-19 13:20:53.983 30143 30235 I DynamicLanguageModelOperation: DynamicLanguageModelOperation.perform():43 perform() : 4 : exo : Completed
+04-19 13:20:53.984 30143 30248 I Delight5Decoder: Delight5DecoderWrapper.unloadLanguageModel():1011 unloadLanguageModel() : 4, version [n/a]
+04-19 13:20:53.998 30143 30248 I native  : I0000 00:00:1776585053.997991   30248 dynamic-lm-manager.cc:49] Dynamic LM has already been unloaded: /data/user/0/com.google.android.inputmethod.latin/files/personal/Personal.en_US.dict
+04-19 13:20:54.005 30143 30235 I PersonalLanguageModelUpdater: PersonalLanguageModelUpdater$UpdateOperation.performInternal():165 run() : Added 1 words and 1 shortcuts
+04-19 13:20:54.005 30143 30235 I DynamicLanguageModelOperation: DynamicLanguageModelOperation.perform():43 perform() : 4 : exo : Completed
+04-19 13:20:54.005 30143 30235 I Delight5Decoder: Delight5DecoderWrapper.asyncLoadLanguageModel():767 asyncLoadLanguageModel() : en
+04-19 13:20:54.006 30143 30248 I Delight5Decoder: Delight5DecoderWrapper.loadLanguageModel():798 loadLanguageModel() : 4, version [n/a]
+04-19 13:20:54.006 30143 30248 I Delight5Decoder: Delight5DecoderWrapper.loadLanguageModel():843 Loaded dynamic LM 4.en
+04-19 13:20:54.006 30143 30248 I Delight5Decoder: Delight5DecoderWrapper.unloadLanguageModel():1011 unloadLanguageModel() : 4, version [n/a]
+04-19 13:20:54.007 30143 30248 I native  : I0000 00:00:1776585054.007013   30248 dynamic-lm-manager.cc:49] Dynamic LM has already been unloaded: /data/user/0/com.google.android.inputmethod.latin/files/personal/Personal.hi_XA.dict
+04-19 13:20:54.017 30143 30235 I PersonalLanguageModelUpdater: PersonalLanguageModelUpdater$UpdateOperation.performInternal():165 run() : Added 1 words and 1 shortcuts
+04-19 13:20:54.017 30143 30235 I DynamicLanguageModelOperation: DynamicLanguageModelOperation.perform():43 perform() : 4 : exo : Completed
+04-19 13:20:54.017 30143 30235 I Delight5Decoder: Delight5DecoderWrapper.asyncLoadLanguageModel():767 asyncLoadLanguageModel() : hi
+04-19 13:20:54.017 30143 30248 I Delight5Decoder: Delight5DecoderWrapper.loadLanguageModel():798 loadLanguageModel() : 4, version [n/a]
+04-19 13:20:54.018 30143 30143 I ShortcutsDataManager: AbstractContentDataManager$ImportContentTask.onPostExecute():268 onPostExecute() : Result = [2,1]
+04-19 13:20:54.018 30143 30143 I ShortcutsDataManager: ShortcutsDataManager.onImportFinished():82 onImportFinished() : Result = 2 : Count = 1
+04-19 13:20:54.018 30143 30248 I Delight5Decoder: Delight5DecoderWrapper.loadLanguageModel():843 Loaded dynamic LM 4.hi
+04-19 13:20:54.028 29975 30509 I appium  : channel read: POST /session/e91187a6-78f4-40a9-b62d-cf3dfa5c0bed/back
+04-19 13:20:54.028 29975 30509 I appium  : PressBack command
+04-19 13:20:54.541 30277 30277 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.deviceperformance.service.START dat=chimera-action:/... cmp=com.google.android.gms/.chimera.GmsApiService }
+04-19 13:20:54.745 29975 30509 D UiDevice: Pressing back button.
+04-19 13:20:54.762 30277 30277 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.onboardingconsent.api.ConsentManagerApiService.START dat=chimera-action:/... cmp=com.google.android.gms/.chimera.GmsApiService }
+04-19 13:20:55.047 30143 30143 I ContactsDataManager: AbstractContentDataManager.startImportContentTask():241 startImportContentTask()
+04-19 13:20:55.048 30143 30235 I ContactsDataManager: AbstractContentDataManager$ImportContentTask.doInBackground():257 doInBackground()
+04-19 13:20:55.320 30143 30235 I ContactsDataManager: AbstractContentDataManager.importRecords():348 importRecords() : Success : Count = 7094
