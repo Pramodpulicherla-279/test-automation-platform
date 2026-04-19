@@ -1,3 +1,3 @@
 "DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"","35904","Verify user can login with valid credentials","tests.test_cases.regular_farmer_test_cases","2026-04-19","passed","2026-04-19","TestLogin","test_login_pytest","",""
-"","11801","add farm","tests.test_cases.regular_farmer_test_cases","2026-04-19","passed","2026-04-19","TestOnboarding","TestOnboarding","",""
+"","42446","Verify user can login with valid credentials","tests.test_cases.regular_farmer_test_cases","2026-04-19","passed","2026-04-19","TestLogin","test_login_pytest","",""
+"","7731","add farm","tests.test_cases.regular_farmer_test_cases","2026-04-19","passed","2026-04-19","TestOnboarding","TestOnboarding","",""
