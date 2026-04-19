@@ -539,6 +539,7 @@ async def post_run_notify(
                 app_name=app_name,
                 app_version=app_version,
                 developer_name=developer_name,
+                run_id=run_id
             ),
         )
         log_to_ui(f"[{run_id[:8]}] Step 1 done", "SUCCESS")

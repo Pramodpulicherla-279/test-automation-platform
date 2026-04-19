@@ -23,7 +23,7 @@ const MetricLabel = ({ title, tooltip }) => (
     </div>
 );
 
-const NetworkConfig = () => {
+const NetworkConfig = ({ setNetworkConfig }) => {
     const [enabled, setEnabled] = useState(false);
     // Initialized with your specific values
     const [networkType, setNetworkType] = useState("Custom");
@@ -41,16 +41,33 @@ const NetworkConfig = () => {
         setLatency(preset.latency);
     };
 
-    const handleApply = () => {
-        console.log({
+    const handleApply = async () => {
+        const config = {
             enabled,
             networkType,
-            download,
-            upload,
-            latency,
-            packetLoss,
-            jitter,
-        });
+            download: Number(download),
+            upload: Number(upload),
+            latency: Number(latency),
+            packetLoss: Number(packetLoss),
+            jitter: Number(jitter),
+        };
+        
+        setNetworkConfig(config);
+
+        try {
+            const res = await fetch("http://localhost:8000/network-simulate/apply", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(config),
+            });
+
+            const data = await res.json();
+            console.log("Backend Response:", data);
+        } catch (err) {
+            console.error("Error:", err);
+        }
     };
 
     return (
@@ -123,9 +140,9 @@ const NetworkConfig = () => {
                     <div className="advanced-content">
                         <div className="slider-group">
                             <div className="slider-header">
-                                <MetricLabel 
-                                    title="Download" 
-                                    tooltip="Speed at which data is received from the server." 
+                                <MetricLabel
+                                    title="Download"
+                                    tooltip="Speed at which data is received from the server."
                                 />
                                 <span>{download} Mbps</span>
                             </div>
@@ -134,9 +151,9 @@ const NetworkConfig = () => {
 
                         <div className="slider-group">
                             <div className="slider-header">
-                                <MetricLabel 
-                                    title="Upload" 
-                                    tooltip="Speed at which data is sent to the server." 
+                                <MetricLabel
+                                    title="Upload"
+                                    tooltip="Speed at which data is sent to the server."
                                 />
                                 <span>{upload} Mbps</span>
                             </div>
@@ -145,9 +162,9 @@ const NetworkConfig = () => {
 
                         <div className="slider-group">
                             <div className="slider-header">
-                                <MetricLabel 
-                                    title="Latency" 
-                                    tooltip="Delay before a transfer of data begins (ping)." 
+                                <MetricLabel
+                                    title="Latency"
+                                    tooltip="Delay before a transfer of data begins (ping)."
                                 />
                                 <span>{latency} ms</span>
                             </div>
@@ -156,9 +173,9 @@ const NetworkConfig = () => {
 
                         <div className="slider-group">
                             <div className="slider-header">
-                                <MetricLabel 
-                                    title="Packet Loss" 
-                                    tooltip="Percentage of data packets that fail to arrive." 
+                                <MetricLabel
+                                    title="Packet Loss"
+                                    tooltip="Percentage of data packets that fail to arrive."
                                 />
                                 <span>{packetLoss}%</span>
                             </div>
@@ -167,9 +184,9 @@ const NetworkConfig = () => {
 
                         <div className="slider-group">
                             <div className="slider-header">
-                                <MetricLabel 
-                                    title="Jitter" 
-                                    tooltip="The variation in the delay of received packets." 
+                                <MetricLabel
+                                    title="Jitter"
+                                    tooltip="The variation in the delay of received packets."
                                 />
                                 <span>{jitter} ms</span>
                             </div>

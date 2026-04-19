@@ -201,9 +201,15 @@ async def module_status_flow(data: dict):
 async def start_test_flow(request, background_tasks, manager):
     reset_run_state()
     global DOWNLOAD_PROCESS_OBJ, latest_run_id
-
+    
     run_id        = new_run()
     latest_run_id = run_id
+
+    # store network config
+    network_config = getattr(request, "network_config", None)
+    
+    runs[run_id] = runs.get(run_id, {})
+    runs[run_id]["network_config"] = network_config
 
     try:
         await manager.broadcast({
@@ -309,6 +315,12 @@ async def start_test_existing_flow(request, background_tasks, manager):
 
     run_id        = new_run()
     latest_run_id = run_id
+
+    # store network config
+    network_config = getattr(request, "network_config", None)
+    
+    runs[run_id] = runs.get(run_id, {})
+    runs[run_id]["network_config"] = network_config
 
     reset_run_state()
 

@@ -188,27 +188,27 @@ const LogConsole = ({ logs, statusMode = 'idle' }) => {
     const currentLogs = activeTab === 'test' ? logs : apiLogs;
 
     useEffect(() => {
-    if (activeTab !== 'api') return;
+        if (activeTab !== 'api') return;
 
-    const interval = setInterval(async () => {
-        try {
-            const res = await fetch("http://localhost:8000/api-testing/logs");
-            const data = await res.json();
+        const interval = setInterval(async () => {
+            try {
+                const res = await fetch("http://localhost:8000/api-testing/logs");
+                const data = await res.json();
 
-            const formatted = data.map(log => ({
-                time: log.timestamp,
-                type: log.status >= 400 ? "error" : "info",
-                message: `${log.method} ${log.endpoint} - ${log.status} (${log.response_time_ms} ms)`
-            }));
+                const formatted = data.map(log => ({
+                    time: log.timestamp,
+                    type: log.status >= 400 ? "error" : "info",
+                    message: `${log.method} ${log.endpoint} - ${log.status} (${log.response_time_ms} ms)`
+                }));
 
-            setApiLogs(formatted.reverse());
-        } catch (e) {
-            console.error("API log fetch error", e);
-        }
-    }, 2000);
+                setApiLogs(formatted.reverse());
+            } catch (e) {
+                console.error("API log fetch error", e);
+            }
+        }, 2000);
 
-    return () => clearInterval(interval);
-}, [activeTab]);
+        return () => clearInterval(interval);
+    }, [activeTab]);
 
     return (
         <div className={`log-console ${isFullScreen ? 'full-screen' : ''}`}>
@@ -285,13 +285,13 @@ const LogConsole = ({ logs, statusMode = 'idle' }) => {
             </div>
             {/* Tabs Row */}
             <div className="log-tabs">
-                <button 
+                <button
                     className={`log-tab-btn ${activeTab === 'test' ? 'active' : ''}`}
                     onClick={() => setActiveTab('test')}
                 >
                     Test Logs
                 </button>
-                <button 
+                <button
                     className={`log-tab-btn ${activeTab === 'api' ? 'active' : ''}`}
                     onClick={() => setActiveTab('api')}
                 >
@@ -299,7 +299,7 @@ const LogConsole = ({ logs, statusMode = 'idle' }) => {
                 </button>
             </div>
             <div className="console-body">
-                 {currentLogs.map((log, i) => {
+                {currentLogs.map((log, i) => {
                     const isMatch = matchesSearch(log);
                     return (
                         <div
@@ -350,6 +350,8 @@ function TestScreen({ onHistoryUpdate }) {
     const [existingApks, setExistingApks] = useState([]);
     const [selectedApk, setSelectedApk] = useState(() => loadState('selectedApk', ''));
     const [hasOpenedReport, setHasOpenedReport] = useState(false);
+    const [networkConfig, setNetworkConfig] = useState(null);
+
 
     const prevAppKeyRef = useRef(selectedAppKey);
 
@@ -462,7 +464,36 @@ function TestScreen({ onHistoryUpdate }) {
         handleIncomingData({ type: 'LOG', payload: { message: `Initializing ${APP_VARIANTS[selectedAppKey].label} test with ${testsToRun.length} modules...`, status: 'INFO' } });
 
         try {
-            const payload = { tests_to_run: testsToRun, app_type: APP_VARIANTS[selectedAppKey].id };
+            const runId = crypto.randomUUID();
+
+            // Save network config against this run_id BEFORE starting tests
+            // if (networkConfig?.enabled) {
+            //     try {
+            //         await fetch(`${API_URL}/network-simulate/apply`, {
+            //             method: 'POST',
+            //             headers: { 'Content-Type': 'application/json' },
+            //             body: JSON.stringify({ ...networkConfig, run_id: runId }),
+            //         });
+
+            //         // ✅ Log confirmation to the console
+            //         handleIncomingData({
+            //             type: 'LOG',
+            //             payload: {
+            //                 message: `📡 Network Simulation Applied → ${networkConfig.networkType} | ${networkConfig.download}Mbps ↓ | ${networkConfig.upload}Mbps ↑ | ${networkConfig.latency}ms latency | ${networkConfig.packetLoss}% loss`,
+            //                 status: 'INFO'
+            //             }
+            //         });
+
+            //     } catch (err) {
+            //         console.warn("Network config apply failed:", err);
+            //         handleIncomingData({
+            //             type: 'LOG',
+            //             payload: { message: `⚠️ Network config apply failed: ${err.message}`, status: 'FAILED' }
+            //         });
+            //     }
+            // }
+
+            const payload = { tests_to_run: testsToRun, app_type: APP_VARIANTS[selectedAppKey].id, run_id: runId };
             const endpoint = selectedApk ? '/test/start-test-existing' : '/test/start-test';
             const body = selectedApk ? { ...payload, apk_name: selectedApk } : { ...payload, url: apkUrl };
 
@@ -550,6 +581,7 @@ function TestScreen({ onHistoryUpdate }) {
     /* ── Render ─────────────────────────────────────────────────────────────── */
     return (
         <div>
+
             <Header
                 appIcon={appIcon} appTitle={appTitle}
                 isDeviceConnected={isDeviceConnected} readyState={readyState}
@@ -655,7 +687,7 @@ function TestScreen({ onHistoryUpdate }) {
                     </div>
                 </div>
                 <div>
-                    <NetworkConfigPanel />
+                    <NetworkConfigPanel setNetworkConfig={setNetworkConfig} />
                 </div>
                 <div className="grid-item-chart">
                     <MetricsChart data={metrics} />

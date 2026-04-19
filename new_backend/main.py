@@ -9,6 +9,7 @@ from modules.llm.routes import router as llm_router
 from modules.api_testing.routes import router as api_testing_router
 from core.websocket import router as websocket_router
 from modules.slack.routes import router as slack_router
+from modules.network_simulate.routes import router as network_simulate_router
 
 app = FastAPI()
 
@@ -26,6 +27,7 @@ app.include_router(jira_router, prefix="/jira")
 app.include_router(llm_router, prefix="/llm")
 app.include_router(slack_router, prefix="/slack")
 app.include_router(api_testing_router, prefix="/api-testing")
+app.include_router(network_simulate_router, prefix="/network-simulate")
 
 # ── Windows asyncio subprocess fix ──────────────────────────────────────────
 if os.name == "nt":
