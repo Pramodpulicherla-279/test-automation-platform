@@ -1,0 +1,27 @@
+{
+  "ticket_id": "RUN-20260419-161241",
+  "issue_id": "ISS-001",
+  "app_name": "Krishivaas Farmer",
+  "app_version": "1.3.96",
+  "module": "Onboarding",
+  "feature": "Authentication",
+  "issue_summary": "Automation Failure: test_addfarm",
+  "title": "Automation Failure: test_addfarm",
+  "test_name": "test_addfarm",
+  "steps_executed": [
+    "Click on crop health",
+    "crop health navigation",
+    "Start  audio"
+  ],
+  "developer_name": "@Anuj",
+  "description": "selenium.common.exceptions.TimeoutException: Message: Audio did not start playing within expected time.\npytest.fail(str(e))\nFailed: Message: Audio did not start playing within expected time.\n\nSteps Executed:\n1. Click on crop health\n2. crop health navigation\n3. Start  audio",
+  "start_date": "2026-04-19T16:12:42.362842",
+  "end_date": "2026-04-19T16:13:56.237525",
+  "sprint": "Automation",
+  "fix_version": [
+    "Production"
+  ],
+  "affects_version": [
+    "Krishivaas Farmer"
+  ]
+}
