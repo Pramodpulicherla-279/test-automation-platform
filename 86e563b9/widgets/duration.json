@@ -1,0 +1,1 @@
+[{"uid":"fd24f80550c09e3","name":"Verify user can login with valid credentials","time":{"start":1776580588176,"stop":1776580604135,"duration":15959},"status":"broken","severity":"normal"},{"uid":"4347ffd6974ad865","name":"add farm","time":{"start":1776580620673,"stop":1776580620701,"duration":28},"status":"broken","severity":"normal"}]
