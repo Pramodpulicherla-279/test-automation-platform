@@ -1,0 +1,29 @@
+{
+  "ticket_id": "RUN-20260419-215414",
+  "issue_id": "ISS-001",
+  "app_name": "Krishivaas Farmer",
+  "app_version": "1.3.96",
+  "module": "Onboarding",
+  "feature": "Authentication",
+  "issue_summary": "Automation Failure: test_addfarm",
+  "title": "Automation Failure: test_addfarm",
+  "test_name": "test_addfarm",
+  "steps_executed": [
+    "Click on crop health",
+    "crop health navigation",
+    "Start navigation audio recording",
+    "Stop navigation audio recording",
+    "Start  video"
+  ],
+  "developer_name": "@Anuj",
+  "description": "selenium.common.exceptions.TimeoutException: Message: Video recording did not start (timer not visible) | Last exception: Message: An element could not be located on the page using the given search parameters.; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#nosuchelementexception\nStacktrace:\nNoSuchElementError: An element could not be located on the page using the given search parameters.\nat AndroidUiautomator2Driver.findElOrEls (C:\\Users\\ABDUL SAMAD\\node_modules\\appium-uiautomator2-driver\\node_modules\\appium-android-driver\\build\\lib\\commands\\find.js:62:15)\nat process.processTicksAndRejections (node:internal/process/task_queues:105:5)\nat async AndroidUiautomator2Driver.findElOrElsWithProcessing (C:\\Users\\ABDUL SAMAD\\node_modules\\appium-uiautomator2-driver\\node_modules\\@appium\\base-driver\\build\\lib\\basedriver\\commands\\find.js:12:16)\nat async AndroidUiautomator2Driver.findElement (C:\\Users\\ABDUL SAMAD\\node_modules\\appium-uiautomator2-driver\\node_modules\\@appium\\base-driver\\build\\lib\\basedriver\\commands\\find.js:27:16)\npytest.fail(str(e))\nFailed: Message: Video recording did not start (timer not visible) | Last exception: Message: An element could not be located on the page using the given search parameters.; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#nosuchelementexception\n\nSteps Executed:\n1. Click on crop health\n2. crop health navigation\n3. Start navigation audio recording\n4. Stop navigation audio recording\n5. Start  video",
+  "start_date": "2026-04-19T21:54:16.454876",
+  "end_date": "2026-04-19T21:55:22.599997",
+  "sprint": "Automation",
+  "fix_version": [
+    "Production"
+  ],
+  "affects_version": [
+    "Krishivaas Farmer"
+  ]
+}
