@@ -1,0 +1,29 @@
+{
+  "ticket_id": "RUN-20260419-205959",
+  "issue_id": "ISS-001",
+  "app_name": "Krishivaas Farmer",
+  "app_version": "1.3.96",
+  "module": "Onboarding",
+  "feature": "Authentication",
+  "issue_summary": "Automation Failure: test_addfarm",
+  "title": "Automation Failure: test_addfarm",
+  "test_name": "test_addfarm",
+  "steps_executed": [
+    "Click on crop health",
+    "crop health navigation",
+    "Start  audio",
+    "Stop audio",
+    "Start  video"
+  ],
+  "developer_name": "@Anuj",
+  "description": "pytest.fail(\"Could not find or click the 'stop navigation video' button.\")\nFailed: Could not find or click the 'stop navigation video' button.\n\nSteps Executed:\n1. Click on crop health\n2. crop health navigation\n3. Start  audio\n4. Stop audio\n5. Start  video",
+  "start_date": "2026-04-19T21:00:00.573569",
+  "end_date": "2026-04-19T21:01:23.687539",
+  "sprint": "Automation",
+  "fix_version": [
+    "Production"
+  ],
+  "affects_version": [
+    "Krishivaas Farmer"
+  ]
+}
