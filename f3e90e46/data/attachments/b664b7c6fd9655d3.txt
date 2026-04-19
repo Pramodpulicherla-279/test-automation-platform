@@ -1,0 +1,80 @@
+CRASH START: 04-19 10:48:04.637  9098  9098 I AndroidRuntime: VM exiting with result code 0.
+04-19 10:48:04.639  3719  3719 D SysBroadcastReceiver: android.media.ACTION_AUDIO_PLAYBACK_STATE_CHANGED
+04-19 10:48:04.639  3719  3719 D SysBroadcastReceiver: EventId=1010003	ID_AUDIO_PLAYBACK_STATE_CHANGED	TimeStamp =1776575884639	Intent =Intent { act=android.media.ACTION_AUDIO_PLAYBACK_STATE_CHANGED flg=0x4000010 (has extras) }	Content =null	Pid =0	PkgName =null
+04-19 10:48:04.640  3719  4098 D AppSceneEventManager: handleMessage: 101
+04-19 10:48:04.640  3719  4098 I DispatcherPolicy: onBaseEvent EventId=1010003	ID_AUDIO_PLAYBACK_STATE_CHANGED	TimeStamp =1776575884639	Intent =Intent { act=android.media.ACTION_AUDIO_PLAYBACK_STATE_CHANGED flg=0x4000010 (has extras) }	Content =null	Pid =0	PkgName =null
+04-19 10:48:04.640  3719  4098 D SystemState: audio out stop. remove pid = 3624
+04-19 10:48:04.640  3719  4098 D SystemState: state is 0
+04-19 10:48:04.640  3719  4098 I VideoScene: onInputEvent : ID_AUDIO_PLAYBACK_STATE_CHANGED
+04-19 10:48:04.640  3719  4098 I VideoScene: audio stop : pid = 3624, exitUid = 10211
+04-19 10:48:04.640  3719  4098 I ConferenceScene: event.eventId: 1010003
+04-19 10:48:04.642  1184  1184 I [UAH_CLIENT]: UahPlatformResAcquire
+04-19 10:48:04.642  1184  1184 I [UAH_CLIENT]: UahEventAcquire, cmdid:-3, pkg:1179 1828, identity:qcom-perfd
+04-19 10:48:04.644  1184  1400 E ANDR-PERF-RESOURCEQS: Resource with major=15, minor=0 not supported
+04-19 10:48:04.644  1184  1400 E ANDR-PERF-RESOURCEQS: Resource with major=15, minor=1 not supported
+04-19 10:48:04.645  1184 10694 I [UAH_CLIENT]: UahRelease, handle:150007
+04-19 10:48:04.651  4775  6968 D OplusAtlas.OplusAtlasEventDispatch: setEvent:atlas_event_on_process_died info:pid:7763,uid:10165
+04-19 10:48:04.652  4775  7358 D OplusAtlas.OplusMessageHandler: handleMessage: Msg { when=0 what=1 obj=com.oplus.atlas.OplusAtlasEvent@278d3fb target=com.oplus.atlas.OplusMessageHandler$MyHandler }
+04-19 10:48:04.652  4775  7604 D OplusAtlas.OplusMessageHandler: handleMessage: Msg { when=0 what=1 obj=com.oplus.atlas.OplusAtlasEvent@278d3fb target=com.oplus.atlas.OplusMessageHandler$MyHandler }
+04-19 10:48:04.652  3383  3921 I PluginSeedling--Base: SeedlingPluginService-->onStateChange: Bundle[{pkgName=com.oplus.cosa, pid=7763, uid=10165, state=onProcessDied}]
+04-19 10:48:04.653  4775  6968 D OplusAtlas.OplusAtlasEventDispatch: setEvent:atlas_event_on_process_died info:pid:8627,uid:10324
+04-19 10:48:04.654  4775  7358 D OplusAtlas.OplusMessageHandler: handleMessage: Msg { when=0 what=1 obj=com.oplus.atlas.OplusAtlasEvent@d2aec18 target=com.oplus.atlas.OplusMessageHandler$MyHandler }
+04-19 10:48:04.654  4775  7604 D OplusAtlas.OplusMessageHandler: handleMessage: Msg { when=0 what=1 obj=com.oplus.atlas.OplusAtlasEvent@d2aec18 target=com.oplus.atlas.OplusMessageHandler$MyHandler }
+04-19 10:48:04.655  3719  4098 I ProcessManager: onProcessDied pid:7763, uid:10165
+04-19 10:48:04.655  3719  4098 D AppSceneEventManager: handleMessage: 101
+04-19 10:48:04.655  3719  4098 I DispatcherPolicy: onBaseEvent EventId=22	INPUT_PROCESS_DIED	TimeStamp =1776575884655	Intent =null	Content =null	Pid =7763	PkgName =com.oplus.cosa
+04-19 10:48:04.655  3719  4098 I GamingScene: onInputEvent : INPUT_PROCESS_DIED
+04-19 10:48:04.655  3383  3921 I PluginSeedling--Base: SeedlingPluginService-->onStateChange: Bundle[{pkgName=org.telegram.messenger, pid=8627, uid=10324, state=onProcessDied}]
+04-19 10:48:04.656  1184 10696 I [UAH_CLIENT]: UahRelease, handle:150008
+04-19 10:48:04.657  3719  4098 I ProcessManager: onProcessDied pid:8627, uid:10324
+04-19 10:48:04.657  3719  4098 D AppSceneEventManager: handleMessage: 101
+04-19 10:48:04.657  3719  4098 I DispatcherPolicy: onBaseEvent EventId=22	INPUT_PROCESS_DIED	TimeStamp =1776575884657	Intent =null	Content =null	Pid =8627	PkgName =org.telegram.messenger
+04-19 10:48:04.657  3719  4098 I GamingScene: onInputEvent : INPUT_PROCESS_DIED
+04-19 10:48:04.658  4775  6968 D OplusAtlas.OplusAtlasEventDispatch: setEvent:atlas_event_on_process_died info:pid:9598,uid:10350
+04-19 10:48:04.658  3383 26480 I PluginSeedling--Base: SeedlingPluginService-->onStateChange: Bundle[{pkgName=com.crrepa.band.dafit, pid=9598, uid=10350, state=onProcessDied}]
+04-19 10:48:04.658  4775  7358 D OplusAtlas.OplusMessageHandler: handleMessage: Msg { when=0 what=1 obj=com.oplus.atlas.OplusAtlasEvent@1c60671 target=com.oplus.atlas.OplusMessageHandler$MyHandler }
+04-19 10:48:04.658  4775  7604 D OplusAtlas.OplusMessageHandler: handleMessage: Msg { when=0 what=1 obj=com.oplus.atlas.OplusAtlasEvent@1c60671 target=com.oplus.atlas.OplusMessageHandler$MyHandler }
+04-19 10:48:04.661  3719  4098 I ProcessManager: onProcessDied pid:9598, uid:10350
+04-19 10:48:04.661  3719  4098 D RunningProcessManager: genEmptyProcessInfo from pid = 9598
+04-19 10:48:04.662  3719  4098 D AppSceneEventManager: handleMessage: 101
+04-19 10:48:04.662  3719  4098 I DispatcherPolicy: onBaseEvent EventId=22	INPUT_PROCESS_DIED	TimeStamp =1776575884661	Intent =null	Content =null	Pid =9598	PkgName =null
+04-19 10:48:04.662  3719  4098 I GamingScene: onInputEvent : INPUT_PROCESS_DIED
+04-19 10:48:04.663  1184  1184 I [UAH_CLIENT]: UahPlatformResAcquire
+04-19 10:48:04.663  1184  1184 I [UAH_CLIENT]: UahEventAcquire, cmdid:-3, pkg:1179 1825, identity:qcom-perfd
+04-19 10:48:04.664  1184  1400 E ANDR-PERF-RESOURCEQS: Resource with major=15, minor=0 not supported
+04-19 10:48:04.665  1184  1400 E ANDR-PERF-RESOURCEQS: Resource with major=15, minor=1 not supported
+04-19 10:48:04.666  2334  3147 D PowerManagerService: userActivityNoUpdateLocked: groupId=0, eventTime=65696944, event=touch, flags=0x0, uid=1000
+04-19 10:48:04.667  2334  4137 I OplusHansManager : onUidGone(), 10537 io.appium.uiautomator2.server exit SM
+04-19 10:48:04.667  2334  3717 I OplusHansManager : uid=10537, pkg=io.appium.uiautomator2.server R exit SM
+04-19 10:48:04.667  2334  4137 I OplusHansManager : onUidGone(),  keep: 10537 io.appium.uiautomator2.server alarm
+04-19 10:48:04.667  2334  3717 I OplusHansManager : uid=10537, pkg=io.appium.uiautomator2.server R exit(), R stay=60
+04-19 10:48:04.669  2334  2727 D KernelCpuUidUserSysTimeReader: Removing uids 99284-99284
+04-19 10:48:04.671  3719 16216 E PackageUidManager: pkgs is empty for uid 99291
+04-19 10:48:04.671  2334  2334 W TextToSpeechManagerPerUserService: Disconnected from TTS engine
+04-19 10:48:04.671  2334  2334 W ActivityManager: pid 2334 system sent binder code 2 with flags 1 to frozen apps and got error -32
+04-19 10:48:04.671  2334  2334 D ActivityManager: Too many transaction errors, throttling freezer binder callback.
+04-19 10:48:04.672  2334  2334 I TextToSpeechManagerPerUserService: Failed running callback method: android.os.DeadObjectException
+04-19 10:48:04.672  2334  2334 W ServiceConnector.Impl: mayInterruptIfRunning not supported - ignoring
+04-19 10:48:04.672  2334  2334 W Looper  : Slow dispatch took 616ms main h=android.os.Handler c=com.android.internal.infra.ServiceConnector$Impl$$ExternalSyntheticLambda0@2446c5e m=0
+04-19 10:48:04.672  2334  2334 W Looper  : Slow delivery took 561ms main h=com.android.server.accessibility.AbstractAccessibilityServiceConnection$1 c=null m=2048
+04-19 10:48:04.672  2334  2593 D DisplayManagerService: Drop pending events for gone uid 99291
+04-19 10:48:04.672  2334  2593 D DisplayManagerService: Drop pending events for gone uid 10537
+04-19 10:48:04.673  1016  1016 D Zygote  : Forked child process 10702
+04-19 10:48:04.675  2334  2334 D OplusSplitScreenManagerService: OplusSplitScreenManagerService onStateChanged mMinimized = false,mExitingMiniziedToHome=true
+04-19 10:48:04.675  2334  2334 D OplusSplitScreenManagerService: onDockedStackMinimizedChanged: minimized = false mSplitLaunchState: NONE mPendingAppLaunchInfo =null
+04-19 10:48:04.675  2334  2334 D OplusSplitScreenManagerService: OplusSplitScreenManagerService onStateChanged isInSplitScreenMode = false,mSplitRatio=0.5,mMinimized = false
+04-19 10:48:04.676  1184  1184 I [UAH_CLIENT]: UahPlatformResAcquire
+04-19 10:48:04.676  1184  1184 I [UAH_CLIENT]: UahEventAcquire, cmdid:-3, pkg:1179 1826, identity:qcom-perfd
+04-19 10:48:04.677  1184  1400 E ANDR-PERF-RESOURCEQS: Resource with major=15, minor=0 not supported
+04-19 10:48:04.677  1184  1400 E ANDR-PERF-RESOURCEQS: Resource with major=15, minor=1 not supported
+04-19 10:48:04.677  2334  3329 D NotificationListeners: Removing active service ComponentInfo{com.crrepa.band.dafit/com.crrepa.band.my.device.pushmessage.notify.service.NotificationCollectorService}
+04-19 10:48:04.678  2334  3184 D ConnectivityService: releasing NetworkRequest [ REQUEST id=12520, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10350 RequestorUid: 10350 RequestorPkg: com.crrepa.band.dafit UnderlyingNetworks: Null] ] (release request)
+04-19 10:48:04.679  2334  7665 I ActivityManager: Death received, pid = 9478, processName = com.crrepa.band.dafit for thread android.os.BinderProxy@1bb928e
+04-19 10:48:04.680  2334  3184 D ConnectivityService: releasing NetworkRequest [ REQUEST id=12518, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10350 RequestorUid: 10350 RequestorPkg: com.crrepa.band.dafit UnderlyingNetworks: Null] ] (release request)
+04-19 10:48:04.681  2334  3184 D ConnectivityService: releasing NetworkRequest [ REQUEST id=12533, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10350 RequestorUid: 10350 RequestorPkg: com.crrepa.band.dafit UnderlyingNetworks: Null] ] (release request)
+04-19 10:48:04.681  2334  3566 I ActivityManager: Process com.crrepa.band.dafit (pid 9478) has died: prcl BFGS
+04-19 10:48:04.682  9403  9737 D bt_btif_gattc: [btif_gatt_client.cc:320] btif_gattc_unregister_app: 
+04-19 10:48:04.683  9403  9488 I gatt_api: [gatt_api.cc:1687] GATT_Disconnect: conn_id=0
+04-19 10:48:04.683  9403  9488 W gatt_api: [gatt_api.cc:1692] GATT_Disconnect: Cannot find TCB for connection 0
+04-19 10:48:04.683  9403  9488 D bt_bta_gattc: [bta_gattc_act.cc:725] bta_gattc_close: Local close event client_if:7 conn_id:0 reason:GATT_CONN_TERMINATE_LOCAL_HOST
+04-19 10:48:04.683  9403  9488 I gatt_api: [gatt_api.cc:1332] GATT_Deregister: gatt_if=7
