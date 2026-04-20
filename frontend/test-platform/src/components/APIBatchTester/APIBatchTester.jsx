@@ -17,9 +17,12 @@ export default function APIBatchTester() {
   const [summary, setSummary] = useState(null);
   const [logs, setLogs] = useState([]);
   const [running, setRunning] = useState(false);
-  const [currentView, setCurrentView] = useState('upload'); // upload, preview, results
+  const [currentView, setCurrentView] = useState('upload'); // upload, preview, results, monitoring
   const [fileSelected, setFileSelected] = useState(null);
   const [timeout, setTimeout] = useState(10000);
+  const [iframeUrl, setIframeUrl] = useState('http://localhost:8000/static/grafana.html');
+  const [showIframeSettings, setShowIframeSettings] = useState(false);
+  const [tempIframeUrl, setTempIframeUrl] = useState('http://localhost:8000/static/grafana.html');
   const logEndRef = useRef(null);
   const wsRef = useRef(null);
 
@@ -357,6 +360,66 @@ export default function APIBatchTester() {
     </div>
   );
 
+  const renderMonitoringView = () => (
+    <div className="batch-tester-panel monitoring-view">
+      <div className="monitoring-header">
+        <h3>Monitoring Dashboard</h3>
+        <button 
+          onClick={() => setShowIframeSettings(!showIframeSettings)}
+          className="btn-icon"
+          title="Configure Dashboard URL"
+        >
+          ⚙️
+        </button>
+      </div>
+
+      {showIframeSettings && (
+        <div className="iframe-settings">
+          <div className="settings-group">
+            <label>Dashboard URL:</label>
+            <input
+              type="text"
+              value={tempIframeUrl}
+              onChange={(e) => setTempIframeUrl(e.target.value)}
+              placeholder="https://your-dashboard.com"
+              className="url-input"
+            />
+          </div>
+          <div className="settings-actions">
+            <button
+              onClick={() => {
+                setIframeUrl(tempIframeUrl);
+                setShowIframeSettings(false);
+                appendLog('INFO', 'Dashboard URL updated successfully');
+              }}
+              className="btn-primary"
+            >
+              Apply
+            </button>
+            <button
+              onClick={() => {
+                setTempIframeUrl(iframeUrl);
+                setShowIframeSettings(false);
+              }}
+              className="btn-secondary"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      <div className="iframe-container">
+        <iframe
+          src={iframeUrl}
+          title="Monitoring Dashboard"
+          className="dashboard-iframe"
+          sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+        />
+      </div>
+    </div>
+  );
+
   const renderLogs = () => (
     <div className="logs-panel">
       <h4>Execution Logs</h4>
@@ -381,6 +444,27 @@ export default function APIBatchTester() {
       <div className="batch-header">
         <h2>API Batch Tester</h2>
         <p>Test multiple APIs using Excel configuration</p>
+        <div className="view-tabs">
+          <button
+            className={`view-tab ${currentView === 'upload' ? 'active' : ''}`}
+            onClick={() => setCurrentView('upload')}
+          >
+            Upload
+          </button>
+          <button
+            className={`view-tab ${currentView === 'results' ? 'active' : ''}`}
+            onClick={() => setCurrentView('results')}
+            disabled={!results.length}
+          >
+            Results
+          </button>
+          <button
+            className={`view-tab ${currentView === 'monitoring' ? 'active' : ''}`}
+            onClick={() => setCurrentView('monitoring')}
+          >
+            📊 Monitoring
+          </button>
+        </div>
       </div>
 
       <div className="batch-container">
@@ -388,6 +472,7 @@ export default function APIBatchTester() {
           {currentView === 'upload' && renderUploadView()}
           {currentView === 'preview' && renderPreviewView()}
           {currentView === 'results' && renderResultsView()}
+          {currentView === 'monitoring' && renderMonitoringView()}
         </div>
 
         <div className="batch-sidebar">
