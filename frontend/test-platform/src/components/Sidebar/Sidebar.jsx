@@ -1,12 +1,22 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Play, History, ChevronLeft, ChevronRight, LayoutDashboard } from 'lucide-react';
+import { Play, History, ChevronLeft, ChevronRight, LayoutDashboard, Zap, FileJson } from 'lucide-react';
 
 const NAV_ITEMS = [
     {
         label: 'Run Tests',
         to: '/',
         icon: <Play size={20} />,
+    },
+    {
+        label: 'API Matrix',
+        to: '/api-matrix',
+        icon: <Zap size={20} />,
+    },
+    {
+        label: 'API Batch',
+        to: '/api-batch',
+        icon: <FileJson size={20} />,
     },
     {
         label: 'Jira History',

@@ -12,6 +12,8 @@ from dotenv import load_dotenv
 from typing import Optional, List, Dict
 import threading
 import queue
+from datetime import datetime
+import json
 sys.dont_write_bytecode = True
 import threading
 import queue
@@ -221,6 +223,7 @@ def run_tests_and_get_suggestions(
     """
     Runs all tests in a single session to keep the app open,
     while tracking individual module statuses in real-time.
+    Captures API test results and sends them to matrix API.
     """
     global STOP_FLAG
     STOP_FLAG = False

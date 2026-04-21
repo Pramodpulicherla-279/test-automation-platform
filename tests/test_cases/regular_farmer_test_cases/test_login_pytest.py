@@ -15,6 +15,12 @@ sys.dont_write_bytecode = True
 @allure.feature("Authentication")
 class TestLogin:
 
+    @pytest.fixture(autouse=True)
+    def setup(self):
+        """Initialize API validator for this test class"""
+        self.api = APIValidator(base_url="http://localhost:8000")
+        yield
+
     @allure.story("Successful Login")
     @allure.title("Verify user can login with valid credentials")
     def test_login_success(self, driver):
