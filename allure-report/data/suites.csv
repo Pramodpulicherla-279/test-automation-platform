@@ -1,4 +1,4 @@
 "DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"","45350","Onboarding the farms and crops","tests.test_cases.regular_farmer_test_cases","Sun Apr 26 22:33:52 IST 2026","broken","Sun Apr 26 22:34:38 IST 2026","TestOnboarding","TestOnboarding","",""
-"","0","add farm","tests.test_cases.regular_farmer_test_cases","Sun Apr 26 22:30:26 IST 2026","broken","Sun Apr 26 22:30:26 IST 2026","TestOnboarding","TestOnboarding","",""
-"","59351","Verify user can login with valid credentials","tests.test_cases.regular_farmer_test_cases","Sun Apr 26 22:31:29 IST 2026","failed","Sun Apr 26 22:32:28 IST 2026","TestLogin","test_login_pytest","",""
+"","0","Verify user can login with valid credentials","tests.test_cases.regular_farmer_test_cases","Sun Apr 26 22:53:02 IST 2026","broken","Sun Apr 26 22:53:02 IST 2026","TestLogin","test_login_pytest","",""
+"","0","add farm","tests.test_cases.regular_farmer_test_cases","Sun Apr 26 22:53:02 IST 2026","broken","Sun Apr 26 22:53:02 IST 2026","TestOnboarding","TestOnboarding","",""
+"","0","Onboarding the farms and crops","tests.test_cases.regular_farmer_test_cases","Sun Apr 26 22:53:05 IST 2026","broken","Sun Apr 26 22:53:05 IST 2026","TestOnboarding","TestOnboarding","",""
