@@ -1,0 +1,80 @@
+CRASH START: 04-24 00:56:10.690  7159  7159 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+04-24 00:56:10.864  2567  7183 I Icing   : Indexing com.google.android.gms-apps from com.google.android.gms
+04-24 00:56:10.914  7159  7159 I AndroidRuntime: Using default boot image
+04-24 00:56:10.914  7159  7159 I AndroidRuntime: Leaving lock profiling enabled
+04-24 00:56:11.036  7159  7159 I app_process: Using CollectorTypeCMC GC.
+04-24 00:56:11.182   502   502 E adbd    : failed to connect to socket 'tcp:6790': Connection refused
+04-24 00:56:12.216   502   502 E adbd    : failed to connect to socket 'tcp:6790': Connection refused
+04-24 00:56:12.225   700   763 W MobileRadioPowerStatsCollector: error reading modem stats:ERROR_PHONE_NOT_AVAILABLE
+04-24 00:56:12.841   201  7135 I keystore2: system/security/keystore2/watchdog/src/lib.rs:377 - Watchdog thread idle -> terminating. Have a great day.
+04-24 00:56:13.251   502   502 E adbd    : failed to connect to socket 'tcp:6790': Connection refused
+04-24 00:56:14.648   502   502 E adbd    : failed to connect to socket 'tcp:6790': Connection refused
+04-24 00:56:14.999   700   739 W Looper  : Slow dispatch took 175ms android.ui app=system_server main=false group=TOP_APP h=com.android.server.am.ActivityManagerService$UiHandler c=com.android.server.am.UidObserverController$$ExternalSyntheticLambda0@9b95640 m=0
+04-24 00:56:15.003   700   995 W Looper  : Slow dispatch took 364ms android.perm app=system_server main=false group=FOREGROUND h=android.os.Handler c=com.android.internal.infra.ServiceConnector$Impl$$ExternalSyntheticLambda0@85d8506 m=0
+04-24 00:56:15.049  2567  7183 I Icing   : Indexing com.google.android.gms-internal.3p:MobileApplication from com.google.android.gms
+04-24 00:56:15.383  2567  7183 I Icing   : Indexing done com.google.android.gms-apps
+04-24 00:56:15.687   502   502 E adbd    : failed to connect to socket 'tcp:6790': Connection refused
+04-24 00:56:15.692   700  1118 W ContentProviderHelper: Slow operation: 173ms so far, now at getContentProviderImpl: before checkContentProviderPermission
+04-24 00:56:15.692   700  1118 W ContentProviderHelper: Slow operation: 174ms so far, now at getContentProviderImpl: after checkContentProviderPermission
+04-24 00:56:15.692   700  1118 W ContentProviderHelper: Slow operation: 174ms so far, now at getContentProviderImpl: incProviderCountLocked
+04-24 00:56:15.692   700  1118 W ContentProviderHelper: Slow operation: 174ms so far, now at getContentProviderImpl: before updateOomAdj
+04-24 00:56:15.693   700  1118 W ContentProviderHelper: Slow operation: 174ms so far, now at getContentProviderImpl: after updateOomAdj
+04-24 00:56:15.694   700  1118 W ContentProviderHelper: Slow operation: 175ms so far, now at getContentProviderImpl: done!
+04-24 00:56:16.380  2567  7183 I Icing   : Indexing done com.google.android.gms-internal.3p:MobileApplication
+04-24 00:56:16.403  2567  7183 I Icing   : Indexing com.google.android.gms-apps from com.google.android.gms
+04-24 00:56:16.414  7159  7159 D nativeloader: InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+04-24 00:56:16.423  5407  5467 I .apps.wellbeing: Waiting for a blocking GC ProfileSaver
+04-24 00:56:16.427  2567  7183 I Icing   : Indexing done com.google.android.gms-apps
+04-24 00:56:16.434  5512  6140 I SQLiteConnection: Long db operation: /data/user/0/com.google.android.gms/databases/phenotype.db
+04-24 00:56:16.729   502   502 E adbd    : failed to connect to socket 'tcp:6790': Connection refused
+04-24 00:56:17.046  5407  5412 W .apps.wellbeing: Suspending all threads took: 72.837ms
+04-24 00:56:17.762   502   502 E adbd    : failed to connect to socket 'tcp:6790': Connection refused
+04-24 00:56:18.001   700   841 D ActivityManager: freezing 3746 com.google.android.packageinstaller
+04-24 00:56:18.031  7159  7159 D nativeloader: Load libicu_jni.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+04-24 00:56:18.040  7159  7159 D app_process: u_setTimeZoneFilesDirectory("/apex/com.android.tzdata/etc/tz/versioned/9/icu") succeeded. 
+04-24 00:56:18.051  7159  7159 D app_process: I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt76l.dat
+04-24 00:56:18.233  7159  7159 D nativeloader: Load libjavacore.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+04-24 00:56:18.276  7159  7159 D nativeloader: Load libopenjdk.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+04-24 00:56:18.292  5407  5412 I .apps.wellbeing: Background concurrent mark compact GC freed 5682KB AllocSpace bytes, 0(0B) LOS objects, 49% free, 5483KB/10MB, paused 75.402ms,548.682ms total 2.348s
+04-24 00:56:18.294  5407  5467 I .apps.wellbeing: WaitForGcToComplete blocked ProfileSaver on Background for 1.872s
+04-24 00:56:18.364  7159  7159 W app_process: Unexpected CPU variant for x86: x86_64.
+04-24 00:56:18.364  7159  7159 W app_process: Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, alderlake, default
+04-24 00:56:18.784   502   502 E adbd    : failed to connect to socket 'tcp:6790': Connection refused
+04-24 00:56:18.979   700   841 D ActivityManager: freezing 3993 com.android.vending:background
+04-24 00:56:19.214   700   723 I system_server: Background concurrent mark compact GC freed 20MB AllocSpace bytes, 61(1552KB) LOS objects, 44% free, 29MB/53MB, paused 7.397ms,62.080ms total 17.502s
+04-24 00:56:19.223   700   841 D ActivityManager: freezing 4097 com.android.vending
+04-24 00:56:19.330   700   725 W System  : A resource failed to call close. 
+04-24 00:56:19.365   700   905 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+04-24 00:56:19.370   700   905 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+04-24 00:56:19.372   700   905 D InetDiagMessage: Destroyed live tcp sockets for uids={10102} in 32ms
+04-24 00:56:19.563   700   905 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+04-24 00:56:19.570   700   905 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+04-24 00:56:19.570   700   905 D InetDiagMessage: Destroyed live tcp sockets for uids={10142} in 14ms
+04-24 00:56:19.640  7159  7159 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+04-24 00:56:19.655  7159  7159 D AndroidRuntime: Calling main entry com.android.commands.am.Am
+04-24 00:56:19.758  5407  5482 I .apps.wellbeing: AssetManager2(0x7e02cad13b58) locale list changing from [] to [en-US]
+04-24 00:56:19.788  7159  7159 D UiAutomationConnection: Created on user UserHandle{0}
+04-24 00:56:19.800  5407  5482 I .apps.wellbeing: AssetManager2(0x7e02cad0fcd8) locale list changing from [] to [en-US]
+04-24 00:56:19.829   502   502 E adbd    : failed to connect to socket 'tcp:6790': Connection refused
+04-24 00:56:19.852  5407  5482 I .apps.wellbeing: AssetManager2(0x7e02cad10958) locale list changing from [] to [en-US]
+04-24 00:56:19.859  5407  5482 I .apps.wellbeing: AssetManager2(0x7e02cad13518) locale list changing from [] to [en-US]
+04-24 00:56:19.948  5407  5482 I .apps.wellbeing: AssetManager2(0x7e02cad17078) locale list changing from [] to [en-US]
+04-24 00:56:19.961   700  1118 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10213 user=0: start instr
+04-24 00:56:19.989  5407  5482 I .apps.wellbeing: AssetManager2(0x7e02cad17398) locale list changing from [] to [en-US]
+04-24 00:56:19.992   700  1118 W IPCThreadState: Sending oneway calls to frozen process.
+04-24 00:56:19.997   700  1118 W IPCThreadState: Sending oneway calls to frozen process.
+04-24 00:56:19.999   700  1118 W IPCThreadState: Sending oneway calls to frozen process.
+04-24 00:56:20.001   700  1118 W IPCThreadState: Sending oneway calls to frozen process.
+04-24 00:56:20.006   700  1118 W IPCThreadState: Sending oneway calls to frozen process.
+04-24 00:56:20.007   700  1118 W IPCThreadState: Sending oneway calls to frozen process.
+04-24 00:56:20.009   700  1118 W IPCThreadState: Sending oneway calls to frozen process.
+04-24 00:56:20.010   700  1118 W IPCThreadState: Sending oneway calls to frozen process.
+04-24 00:56:20.011   700  1118 W IPCThreadState: Sending oneway calls to frozen process.
+04-24 00:56:20.015   700  1118 W IPCThreadState: Sending oneway calls to frozen process.
+04-24 00:56:20.016  5407  5482 I .apps.wellbeing: AssetManager2(0x7e02cad179d8) locale list changing from [] to [en-US]
+04-24 00:56:20.018   700  1118 W IPCThreadState: Sending oneway calls to frozen process.
+04-24 00:56:20.019   700  1118 W IPCThreadState: Sending oneway calls to frozen process.
+04-24 00:56:20.021   700  1118 W IPCThreadState: Sending oneway calls to frozen process.
+04-24 00:56:20.023   700  1118 W IPCThreadState: Sending oneway calls to frozen process.
+04-24 00:56:20.027   700  1118 W IPCThreadState: Sending oneway calls to frozen process.
+04-24 00:56:20.031   700  1118 W IPCThreadState: Sending oneway calls to frozen process.
