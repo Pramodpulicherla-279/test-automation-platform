@@ -7,7 +7,7 @@ import time
 import subprocess
 from pathlib import Path
 from fastapi import HTTPException
-from aiohttp_retry import List, Optional, Dict, Any
+from typing import List, Optional, Dict, Any
 from new_backend.core.websocket import manager
 from new_backend.core.state import test_steps_store, allure_proc
 from new_backend.core.constants import UI_SCREENSHOTS_BASE, allure_start_lock, ALLURE_CMD, BASE_DIR, ALLURE_REPORT_DIR

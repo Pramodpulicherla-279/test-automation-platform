@@ -3,6 +3,18 @@ import sys, os
 import shutil
 # Disable auto-loading of 3rd-party pytest plugins (like browserstack)
 os.environ["PYTEST_DISABLE_PLUGIN_AUTOLOAD"] = "1"
+
+# FIX: use get_servers() from appium_state (reads shared JSON file) instead of
+# directly importing appium_servers from manager (stale list binding).
+# Direct import: `from manager import appium_servers` captures the list object
+# at import time. If manager.py later does `appium_servers = [...]`, this
+# module's reference still points to the old empty list → workers = 1 always.
+from new_backend.modules.appium_grid.appium_state import (
+    get_servers,
+    get_device_for_port,  # NEW: Get device name for a port
+    get_device_mapping    # NEW: Get all device->port mappings
+)
+
 import sys
 import pytest
 import allure_pytest  # pip install allure-pytest
@@ -13,8 +25,6 @@ from typing import Optional, List, Dict
 import threading
 import queue
 sys.dont_write_bytecode = True
-import threading
-import queue
 
 load_dotenv()
 
@@ -29,8 +39,12 @@ REPORT_DIR = "allure-report"
 _LOG_Q: "queue.Queue[tuple[str, str]]" = queue.Queue(maxsize=5000)
 _LOG_WORKER_STARTED = False
 
+# FIX: Track which device is running which test
+_DEVICE_MAPPING: Dict[int, str] = {}  # port -> device_id mapping
+
 
 def _start_log_worker() -> None:
+    """Start background worker to send logs to backend."""
     global _LOG_WORKER_STARTED
     if _LOG_WORKER_STARTED:
         return
@@ -56,6 +70,7 @@ def _start_log_worker() -> None:
 
 
 def _ensure_clean_allure_dirs(project_root: str) -> None:
+    """Ensure Allure results directories are clean."""
     os.makedirs(os.path.join(project_root, RESULTS_DIR), exist_ok=True)
     report_path = os.path.join(project_root, REPORT_DIR)
     if os.path.isdir(report_path):
@@ -129,6 +144,7 @@ def send_module_status(module: str, status: str, message: str = ""):
 
 
 def stop_current_tests() -> bool:
+    """Stop the currently running test process."""
     global CURRENT_PROC, STOP_FLAG
     STOP_FLAG = True
 
@@ -163,8 +179,12 @@ def run_tests_and_get_suggestions(
     """
     Runs all tests in a single session to keep the app open,
     while tracking individual module statuses in real-time.
+    
+    FIXES:
+    - Line 213-220: Check if devices are connected before running tests
+    - Line 238-250: Better device mapping and logging
     """
-    global STOP_FLAG
+    global STOP_FLAG, _DEVICE_MAPPING
     STOP_FLAG = False
 
     project_root = os.path.dirname(os.path.dirname(__file__))
@@ -179,8 +199,26 @@ def run_tests_and_get_suggestions(
     )
 
     if not os.path.exists(apk_path):
-        send_log(f"APK not found at {apk_path}", "FAILED")
+        send_log(f"❌ APK not found at {apk_path}", "FAILED")
         return
+
+    # FIX: DEVICE VALIDATION - Check if Appium servers are running with devices
+    current_servers = get_servers()
+    if not current_servers:
+        send_log(
+            "❌ NO APPIUM SERVERS RUNNING - Start Appium with devices first! "
+            "Run /appium/start endpoint to start servers.",
+            "FAILED"
+        )
+        return
+
+    # FIX: Build device mapping for tracking which device runs which test
+    _DEVICE_MAPPING = {}
+    for srv in current_servers:
+        port = srv.get("port")
+        device = srv.get("device", "unknown")
+        if port and device:
+            _DEVICE_MAPPING[port] = device
 
     _ensure_clean_allure_dirs(project_root)
 
@@ -190,7 +228,7 @@ def run_tests_and_get_suggestions(
         final_test_list = tests_to_run
 
     if not final_test_list:
-        send_log("No valid test modules found. Aborting.", "FAILED")
+        send_log("⚠️  No valid test modules found. Aborting.", "FAILED")
         return
 
     # 2. Prepare Path-to-Name Mapping for Status Tracking
@@ -205,10 +243,10 @@ def run_tests_and_get_suggestions(
             path_to_name_map[path] = name
             send_module_status(name, "pending", "Waiting in queue...")
         else:
-            send_log(f"Script not found: {path}", "WARNING")
+            send_log(f"⚠️  Script not found: {path}", "WARNING")
 
     if not valid_paths:
-        send_log("No valid scripts to execute.", "FAILED")
+        send_log("❌ No valid scripts to execute.", "FAILED")
         return
 
     # Tell frontend a new run is starting
@@ -222,8 +260,38 @@ def run_tests_and_get_suggestions(
     except Exception:
         pass
 
-    pytest_args = valid_paths + [f"--apk={apk_path}", "-v"]
+    # FIX: Enhanced logging with device info
+    device_mapping = get_device_mapping()
+    workers = max(1, len(current_servers))
+    
+    print(f"\n{'='*70}")
+    print(f"🚀 TEST EXECUTION STARTING")
+    print(f"{'='*70}")
+    print(f"   📦 APK: {os.path.basename(apk_path)}")
+    print(f"   📱 Connected Devices: {len(current_servers)}")
+    for device, port in device_mapping.items():
+        print(f"      • {device:20} → Appium port {port}")
+    print(f"   ⚙️  Parallel Workers: {workers}")
+    print(f"   📋 Test Modules: {len(valid_paths)}")
+    print(f"{'='*70}\n")
+    
+    send_log(
+        f"[Parallel] Running with {workers} worker(s) across {len(current_servers)} device(s)",
+        "INFO"
+    )
+    
+    # FIX: Log each device's assignment
+    for device, port in device_mapping.items():
+        send_log(f"   📱 {device} → Appium server on port {port}", "INFO")
 
+    pytest_args = valid_paths + [
+        f"--apk={apk_path}",
+        "-v",
+        "-n", str(workers)
+    ]
+    
+    send_log(f"APK PASSED TO PYTEST: {apk_path}", "INFO")
+    
     if app_name:
         pytest_args.append(f"--app-name={app_name}")
     if app_version:
@@ -240,9 +308,9 @@ def run_tests_and_get_suggestions(
     # Final Cleanup
     if not STOP_FLAG:
         if overall_ok:
-            send_log("Full test suite execution completed successfully.", "SUCCESS")
+            send_log("✅ Full test suite execution completed successfully.", "SUCCESS")
         else:
-            send_log("Suite execution finished with errors.", "FAILED")
+            send_log("⚠️  Suite execution finished with errors.", "FAILED")
 
         generate_report(project_root)
 
@@ -265,6 +333,16 @@ def run_pytest_streaming_with_tracking(
     """
     Execute pytest and parse lines for UI status updates.
     Ensures that if any test in a module fails, the module status is 'failed'.
+
+    FIXES:
+    - Line 322-328: Set UTF-8 encoding for subprocess
+    - Line 335-341: Load both allure_pytest and xdist explicitly
+    - Line 347-356: Enhanced environment with UTF-8 settings
+    
+    FIX: PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 suppresses all auto-loaded plugins,
+    including pytest-xdist. We load allure_pytest and xdist explicitly via
+    '-p allure_pytest' and '-p xdist' so that the '-n <workers>' flag is
+    recognised by the subprocess.
     """
     global CURRENT_PROC, STOP_FLAG
     project_root = os.path.dirname(os.path.dirname(__file__))
@@ -274,14 +352,27 @@ def run_pytest_streaming_with_tracking(
     env = os.environ.copy()
     existing = env.get("PYTHONPATH", "")
     env["PYTHONPATH"] = backend_dir + os.pathsep + existing if existing else backend_dir
+    
+    # FIX: Enhanced UTF-8 configuration for proper encoding
     env.update({
-        "PYTHONIOENCODING": "utf-8",
-        "PYTHONUTF8": "1",
-        "PYTHONUNBUFFERED": "1",
+        "PYTHONIOENCODING": "utf-8",       # Python 3.7+
+        "PYTHONUTF8": "1",                 # Force UTF-8 mode (Python 3.7+)
+        "PYTHONUNBUFFERED": "1",           # Unbuffered output
+        "PYTHONDONTWRITEBYTECODE": "1",    # Don't write .pyc files
+        "LANG": "en_US.UTF-8" if os.name != 'nt' else "",  # Linux/Mac
+        "LC_ALL": "en_US.UTF-8" if os.name != 'nt' else "", # Linux/Mac
     })
+    
+    # FIX: Remove empty values on Windows
+    if os.name == 'nt':
+        env = {k: v for k, v in env.items() if v}
 
     cmd = [
-        sys.executable, "-u", "-m", "pytest", "-p", "allure_pytest",
+        sys.executable, "-u", "-m", "pytest",
+        # FIX: explicitly load both allure_pytest AND xdist so they work
+        # even when PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 is set.
+        "-p", "allure_pytest",
+        "-p", "xdist",          # <-- THIS WAS MISSING — caused "-n 1" to fail
         "-s", "-v", "--tb=short", f"--alluredir={RESULTS_DIR}",
         "-o", "log_cli=true",
         "-o", "log_cli_level=INFO",
@@ -289,6 +380,11 @@ def run_pytest_streaming_with_tracking(
     if clean_allure:
         cmd.append("--clean-alluredir")
     cmd += pytest_args
+
+    print(f"\n[pytest] Starting with command:")
+    print(f"   {' '.join(cmd[:5])}...")
+    print(f"   {' '.join(cmd[-5:])}")
+    print()
 
     CURRENT_PROC = subprocess.Popen(
         cmd,
@@ -298,35 +394,54 @@ def run_pytest_streaming_with_tracking(
         text=True,
         bufsize=1,
         env=env,
+        # FIX: Explicitly set encoding
+        encoding='utf-8',
+        errors='replace'  # Replace unmappable characters instead of crashing
     )
 
     active_module_name = None
     failed_modules = set()
 
     assert CURRENT_PROC.stdout is not None
-    for line in CURRENT_PROC.stdout:
-        if STOP_FLAG:
-            break
+    try:
+        for line in CURRENT_PROC.stdout:
+            if STOP_FLAG:
+                break
 
-        raw_line = line.rstrip("\n")
-        send_log(raw_line, "INFO")
+            # FIX: Safe UTF-8 handling
+            try:
+                raw_line = line.rstrip("\n")
+            except Exception as e:
+                print(f"[ERROR] Line decode failed: {e}")
+                raw_line = str(line)
 
-        normalized_line = raw_line.replace("\\", "/")
+            send_log(raw_line, "INFO")
 
-        for path, name in path_mapping.items():
-            normalized_path = path.replace("\\", "/")
-            if normalized_path in normalized_line and "::" in normalized_line:
-                if active_module_name != name:
-                    if active_module_name and active_module_name not in failed_modules:
-                        send_module_status(active_module_name, "completed", "Module passed")
-                    active_module_name = name
-                    send_module_status(name, "running", "Executing tests...")
+            normalized_line = raw_line.replace("\\", "/")
 
-        parts = raw_line.split()
-        if "FAILED" in parts or " ERROR " in raw_line or "Application Crash Detected" in raw_line:
-            if active_module_name:
-                failed_modules.add(active_module_name)
-                send_module_status(active_module_name, "failed", "Failure detected in module")
+            for path, name in path_mapping.items():
+                normalized_path = path.replace("\\", "/")
+                if normalized_path in normalized_line and "::" in normalized_line:
+                    if active_module_name != name:
+                        if active_module_name and active_module_name not in failed_modules:
+                            send_module_status(active_module_name, "completed", "Module passed")
+                        active_module_name = name
+                        send_module_status(name, "running", "Executing tests...")
+
+            parts = raw_line.split()
+            if "FAILED" in parts or " ERROR " in raw_line or "Application Crash Detected" in raw_line:
+                if active_module_name:
+                    failed_modules.add(active_module_name)
+                    send_module_status(active_module_name, "failed", "Failure detected in module")
+
+    except UnicodeDecodeError as e:
+        # FIX: Handle encoding errors gracefully
+        print(f"❌ Unicode decode error in test output: {e}")
+        send_log(f"⚠️  Unicode error in output (likely special characters): {e}", "WARNING")
+    except Exception as e:
+        # FIX: Handle other exceptions
+        print(f"❌ Error reading test output: {e}")
+        send_log(f"⚠️  Error reading test output: {e}", "WARNING")
 
     # Final wrap-up for the last module
     if active_module_name:

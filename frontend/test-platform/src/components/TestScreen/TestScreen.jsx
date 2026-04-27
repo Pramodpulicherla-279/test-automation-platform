@@ -445,17 +445,52 @@ function TestScreen({ onHistoryUpdate }) {
     };
 
     const checkAppiumStatus = async () => {
-        try { const r = await fetch(`${API_URL}/test/appium/status`); setAppiumStatus((await r.json()).status); }
-        catch { setAppiumStatus('stopped'); }
+        try {
+            const res = await fetch(`${API_URL}/appium/status`);
+            const data = await res.json();
+
+            console.log("Appium Status API:", data); // 🔍 debug
+
+            // ✅ FIX: Normalize status to lowercase for case-consistent comparison
+            setAppiumStatus((data.status || 'stopped').toLowerCase());
+
+        } catch (err) {
+            console.error("Status error:", err);
+            setAppiumStatus('stopped');
+        }
     };
 
     const toggleAppium = async () => {
-        try {
-            await fetch(`${API_URL}/test/appium/${appiumStatus === 'running' ? 'stop' : 'start'}`, { method: 'POST' });
-            handleIncomingData({ type: 'LOG', payload: { message: `${appiumStatus === 'running' ? 'Stopping' : 'Starting'} Appium Server...`, status: 'INFO' } });
-            setTimeout(checkAppiumStatus, 1000);
-        } catch { }
-    };
+    console.log("🔥 Start button clicked");
+
+    if (appiumStatus === 'running') {
+        console.log("⚠️ Already running");
+        return;
+    }
+
+    try {
+        console.log("👉 Calling API:", `${API_URL}/appium/start`);
+
+        const res = await fetch(`${API_URL}/appium/start`, {
+            method: 'POST'
+        });
+
+        console.log("✅ Response:", res);
+
+        handleIncomingData({
+            type: 'LOG',
+            payload: {
+                message: 'Starting Appium Server...',
+                status: 'INFO'
+            }
+        });
+
+        setTimeout(checkAppiumStatus, 2000);
+
+    } catch (err) {
+        console.error("❌ Appium start error:", err);
+    }
+};
 
     useEffect(() => {
         const checkDevice = async () => {
@@ -527,6 +562,7 @@ function TestScreen({ onHistoryUpdate }) {
                             <span className="input-label" style={{ marginBottom: 0 }}>Appium Server</span>
                         </div>
                         <button onClick={toggleAppium}
+                            disabled={appiumStatus === 'running'}
                             style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid #CBD5E1', backgroundColor: appiumStatus === 'running' ? '#1e293b' : '#0f172a', color: appiumStatus === 'running' ? '#ef4444' : '#4ade80', cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600', transition: 'all 0.2s' }}>
                             {appiumStatus === 'running' ? 'Stop Server' : 'Start Server'}
                         </button>

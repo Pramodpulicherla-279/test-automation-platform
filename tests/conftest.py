@@ -26,14 +26,30 @@ Step capture — four-layer strategy (most reliable first):
 ─── JIRA DATES FIX ────────────────────────────────────────────────────────────
   Root cause:  Dates and sprint captured locally but not sent to JIRA API.
   Fix:  Include start_date, end_date, sprint in payload to backend.
+
+─── APPIUM STATE FIX (CRITICAL) ───────────────────────────────────────────────
+  Root cause:  `from manager import appium_servers` binds to the list object
+               at import time. When manager.py rebinds `appium_servers = servers`
+               the conftest reference goes stale (still points to the old list).
+               Worse: pytest runs in a SUBPROCESS — in-memory state from the
+               parent FastAPI process is never visible to the child.
+  Fix:  appium_state.py now writes server list to a temp JSON file via
+        set_servers(). get_servers() reads from that file at fixture time,
+        so any subprocess always sees the current state.
+
+─── DRIVER FIXTURE FIX ─────────────────────────────────────────────────────────
+  Root cause:  Placeholder appPackage/appActivity ("com.your.app") never
+               replaced with real values. `app` capability missing → Appium
+               can't install the APK. udid not set → wrong device on parallel run.
+  Fix:  Use UiAutomator2Options. Set `app` from --apk CLI arg so Appium
+        installs the APK automatically. Set `udid` per worker for parallel runs.
 ────────────────────────────────────────────────────────────────────────────────
 """
 
 # ── MUST be the very first executable lines ───────────────────────────────────
 import sys
-sys.dont_write_bytecode = True          # Prevent Python writing NEW .pyc files
-import sys, os
-
+sys.dont_write_bytecode = True
+sys.stdout.reconfigure(encoding='utf-8')         # Prevent Python writing NEW .pyc files
 import os
 os.environ["PYTHONDONTWRITEBYTECODE"] = "1"   # Propagate to child processes
 
@@ -52,6 +68,18 @@ import allure
 from appium import webdriver
 from appium.options.android import UiAutomator2Options
 
+# FIX: get_servers() reads from a temp JSON file written by the main process,
+# so this subprocess always sees the current Appium server list.
+from new_backend.modules.appium_grid.appium_state import get_servers
+print("✅ conftest loaded")
+# ✅ PARALLEL DEVICE CONFIG (fallback if appium_state file is missing)
+DEVICES = [
+    {"device": "emulator-5554", "port": 4723},
+    {"device": "emulator-5556", "port": 4725},
+]
+
+WORKER_ID = os.getenv("PYTEST_XDIST_WORKER", "gw0")
+
 RUN_ID_CACHE = None
 print("conftest loaded")
 _THIS_DIR     = os.path.dirname(os.path.abspath(__file__))
@@ -61,6 +89,7 @@ if _PROJECT_ROOT not in sys.path:
 
 from new_backend.modules.jira.jira_attachment import attach_screenshot
 from new_backend.modules.jira.jira_config import config
+from new_backend.modules.appium_grid.manager import get_connected_devices
 
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
 
@@ -77,23 +106,14 @@ current_test_name: str  = ""
 
 # ════════════════════════════════════════════════════════════════════════════
 #  STEP EXTRACTION — expanded pattern set
-#
-#  FIX: Added [STEP], [ACTION], [TAP], [PRESSED], [TAPPED], ✅ markers so
-#  that any test-side logging convention is captured, not just [FOUND].
 # ════════════════════════════════════════════════════════════════════════════
 
-# Each tuple: (compiled pattern, group index that holds the step label)
 _STEP_PATTERNS: List[tuple] = [
-    # [FOUND] name='Foo'  or  [FOUND] name="Foo"
     (re.compile(r"\[FOUND\]\s+name='([^']+)'",   re.IGNORECASE), 1),
     (re.compile(r'\[FOUND\]\s+name="([^"]+)"',   re.IGNORECASE), 1),
-    # [CLICK] label  /  [TAP] label  /  [PRESSED] label  /  [TAPPED] label
     (re.compile(r'\[(?:CLICK|TAP|PRESSED|TAPPED)\]\s+(.+)', re.IGNORECASE), 1),
-    # [STEP] Step description
     (re.compile(r'\[STEP\]\s+(.+)',   re.IGNORECASE), 1),
-    # [ACTION] did something
     (re.compile(r'\[ACTION\]\s+(.+)', re.IGNORECASE), 1),
-    # ✅ Step name  (emitted by helper wrappers)
     (re.compile(r'✅\s+(?:Step\s+)?[–—-]?\s*(.+)', re.IGNORECASE), 1),
 ]
 
@@ -102,10 +122,6 @@ _STEP_PATTERNS: List[tuple] = [
 #  PYCACHE CLEANUP
 # ════════════════════════════════════════════════════════════════════════════
 def _clean_pycache(root: str = ".") -> None:
-    """
-    Recursively delete every __pycache__ dir and *.pyc / *.pyo file under root.
-    Called from pytest_configure — runs BEFORE any module is imported for tests.
-    """
     removed_dirs = removed_files = 0
     for p in Path(root).rglob("__pycache__"):
         try:
@@ -130,12 +146,6 @@ def _clean_pycache(root: str = ".") -> None:
 #  LOCAL BUFFER PLUGIN — captures steps live from pytest stdout
 # ════════════════════════════════════════════════════════════════════════════
 class _StepCapturingPlugin:
-    """
-    Registered as a pytest plugin in pytest_configure.
-    After each test call phase it reads capstdout and feeds any
-    recognised step lines into _local_step_buffer[test_name].
-    """
-
     def pytest_runtest_logreport(self, report):
         if report.when != "call":
             return
@@ -158,10 +168,6 @@ class _StepCapturingPlugin:
 #  STEP EXTRACTION HELPERS
 # ════════════════════════════════════════════════════════════════════════════
 def _extract_steps_from_text(text: str) -> list:
-    """
-    Parse step markers from any text blob using all patterns in _STEP_PATTERNS.
-    Deduplicates consecutive identical steps.
-    """
     if not text:
         return []
     raw = []
@@ -173,8 +179,7 @@ def _extract_steps_from_text(text: str) -> list:
                 step = m.group(group).strip()
                 if step:
                     raw.append(step)
-                break  # first matching pattern wins per line
-    # dedup consecutive
+                break
     deduped = []
     for step in raw:
         if not deduped or step != deduped[-1]:
@@ -183,11 +188,8 @@ def _extract_steps_from_text(text: str) -> list:
 
 
 def _query_steps_endpoint(key: str) -> list:
-    """GET /jira/steps/{key} → list, or [] on any error."""
     try:
-        resp = http_requests.get(
-            f"{BACKEND_URL}/jira/steps/{key}", timeout=4
-        )
+        resp = http_requests.get(f"{BACKEND_URL}/jira/steps/{key}", timeout=4)
         if resp.status_code == 200:
             return resp.json().get("steps", [])
     except Exception as e:
@@ -195,41 +197,44 @@ def _query_steps_endpoint(key: str) -> list:
     return []
 
 
+def create_driver_with_retry(url, options, retries=5):
+    for i in range(retries):
+        try:
+            print(f"🔄 Attempt {i+1} connecting to {url}")
+            driver = webdriver.Remote(url, options=options, keep_alive=False)
+            print(f"🚀 DRIVER STARTED on {url}")
+            return driver
+        except Exception as e:
+            print(f"⚠️ Retry {i+1} failed: {e}")
+            time.sleep(5)
+
+    raise Exception(f"❌ Failed to connect to Appium after {retries} retries → {url}")
+
+
 def _get_steps_from_server(test_name: str) -> list:
-    """
-    Layer 1: server query.
-    Order: exact key → default bucket → retry both after 1s.
-    """
     if not test_name:
         return []
-
     steps = _query_steps_endpoint(test_name)
     if steps:
         print(f"[STEPS] Server exact → {len(steps)} step(s) for {test_name}")
         return steps
-
     steps = _query_steps_endpoint("default")
     if steps:
         print(f"[STEPS] Server default → {len(steps)} step(s) for {test_name}")
         return steps
-
     time.sleep(1)
-
     steps = _query_steps_endpoint(test_name)
     if steps:
         print(f"[STEPS] Server exact (retry) → {len(steps)} step(s) for {test_name}")
         return steps
-
     steps = _query_steps_endpoint("default")
     if steps:
         print(f"[STEPS] Server default (retry) → {len(steps)} step(s) for {test_name}")
         return steps
-
     return []
 
 
 def _get_steps_from_local_buffer(test_name: str) -> list:
-    """Layer 2: in-process buffer populated by _StepCapturingPlugin."""
     steps = _local_step_buffer.get(test_name, [])
     if steps:
         print(f"[STEPS] Local buffer → {len(steps)} step(s) for {test_name}")
@@ -237,9 +242,6 @@ def _get_steps_from_local_buffer(test_name: str) -> list:
 
 
 def _get_steps_from_logcat(driver_obj) -> list:
-    """
-    Layer 3: scrape device logcat for step markers at failure time.
-    """
     if not driver_obj:
         return []
     try:
@@ -255,7 +257,6 @@ def _get_steps_from_logcat(driver_obj) -> list:
 
 
 def _get_steps_from_sections(report) -> list:
-    """Layer 4: pytest captured stdout sections."""
     for header, content in getattr(report, "sections", []):
         if "stdout" in header.lower() and content:
             steps = _extract_steps_from_text(content)
@@ -272,26 +273,19 @@ def _get_steps_from_sections(report) -> list:
 
 
 def _get_steps(item, report, test_name: str) -> list:
-    """
-    Full pipeline — tries all layers in order, returns first non-empty result.
-    """
     steps = _get_steps_from_server(test_name)
     if steps:
         return steps
-
     steps = _get_steps_from_local_buffer(test_name)
     if steps:
         return steps
-
     driver_obj = item.funcargs.get("driver")
     steps = _get_steps_from_logcat(driver_obj)
     if steps:
         return steps
-
     steps = _get_steps_from_sections(report)
     if steps:
         return steps
-
     print(f"[WARN] No steps captured for {test_name}")
     return []
 
@@ -337,11 +331,6 @@ def _fetch_developer_name_from_jira() -> str:
 #  PYTEST HOOKS
 # ════════════════════════════════════════════════════════════════════════════
 def pytest_configure(config):
-    """
-    Earliest pytest hook — before collection, before any test module is imported.
-    1. Wipe stale pycache
-    2. Register the live step-buffer plugin
-    """
     _clean_pycache(_PROJECT_ROOT)
     print("[PYCACHE] sys.dont_write_bytecode =", sys.dont_write_bytecode)
     print("[PYCACHE] PYTHONDONTWRITEBYTECODE  =",
@@ -358,7 +347,7 @@ def pytest_addoption(parser):
 
 def pytest_sessionstart(session):
     global _ticket_id, _issue_counter, _developer_name
-    _ticket_id     = _make_ticket_id()
+    _ticket_id = f"{WORKER_ID}-" + _make_ticket_id()
     _issue_counter = 0
     print(f"\n[TICKET] Session ticket_id: {_ticket_id}")
     _developer_name = _fetch_developer_name_from_jira()
@@ -367,14 +356,9 @@ def pytest_sessionstart(session):
 
 
 def pytest_runtest_setup(item):
-    """
-    Signal the server which test is starting so it buckets steps
-    under the correct key (not 'default').
-    Also pre-initialise the local buffer slot for this test.
-    """
     global current_test_name, _test_start_time
     current_test_name = item.name
-    _test_start_time = datetime.datetime.now()
+    _test_start_time  = datetime.datetime.now()
     _local_step_buffer.setdefault(item.name, [])
 
     try:
@@ -388,32 +372,60 @@ def pytest_runtest_setup(item):
 
 
 # ── Driver fixture ────────────────────────────────────────────────────────────
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def driver(request):
-    apk_path = request.config.getoption("--apk")
-    if not apk_path:
-        pytest.fail("No APK path provided!")
-    if not os.path.exists(apk_path):
-        pytest.fail(f"APK file not found at: {apk_path}")
 
-    print(f"Initializing Appium with APK: {apk_path}")
+    worker_id = os.environ.get("PYTEST_XDIST_WORKER", "gw0")
+    worker_index = int(worker_id.replace("gw", ""))
+
+    print(f"\n🧵 WORKER → {worker_id}")
+
+    appium_servers = get_servers()
+
+    if not appium_servers:
+        print("⚠️ Using fallback DEVICES list")
+        appium_servers = DEVICES
+
+    print(f"📱 SERVERS → {appium_servers}")
+
+    device = appium_servers[worker_index % len(appium_servers)]
+    port = device["port"]
+
+    print(f"🔥 DEVICE → {device['device']} | PORT → {port}")
+
+    apk_path = request.config.getoption("--apk")
+
+    if not apk_path or not os.path.exists(apk_path):
+        raise Exception(f"❌ APK NOT FOUND: {apk_path}")
+
     options = UiAutomator2Options()
     options.platform_name = "Android"
-    options.device_name   = "AndroidDevice"
-    options.app           = apk_path
-    options.set_capability("appium:ignoreHiddenApiPolicyError", True)
-    options.set_capability("appium:uiautomator2ServerLaunchTimeout", 60000)
-    options.set_capability("appium:adbExecTimeout",                  50000)
-    options.set_capability("appium:newCommandTimeout",                300)
-    options.set_capability("appium:autoGrantPermissions",             False)
+    options.device_name = device["device"]
+    options.udid = device["device"]
+    options.automation_name = "UiAutomator2"
 
-    drv = webdriver.Remote("http://127.0.0.1:4723", options=options)
+    options.app = apk_path
+    options.no_reset = False
+    options.auto_grant_permissions = True
+
+    options.set_capability("systemPort", 8200 + worker_index)
+
+    appium_url = f"http://127.0.0.1:{port}"
+
+    print(f"🌐 Connecting to Appium → {appium_url}")
+    print(f"📱 Device → {device['device']}")
+    print(f"📦 APK → {apk_path}")
+    
+    driver = create_driver_with_retry(appium_url, options)
+    
+    print(f"✅ DRIVER CONNECTED → {device['device']}")
+
+    yield driver
+
     try:
-        drv.get_log("logcat")
-    except Exception:
+        driver.quit()
+    except:
         pass
-    yield drv
-    drv.quit()
 
 
 # ── Metadata helpers ──────────────────────────────────────────────────────────
@@ -551,7 +563,7 @@ def pytest_runtest_makereport(item, call):
     # 2. Screenshot
     try:
         os.makedirs("screenshots", exist_ok=True)
-        screenshot_path = f"screenshots/{item.name}.png"
+        screenshot_path = f"screenshots/{WORKER_ID}_{item.name}.png"
         driver.save_screenshot(screenshot_path)
         allure.attach.file(screenshot_path, name="Failure Screenshot",
                            attachment_type=allure.attachment_type.PNG)
@@ -574,7 +586,7 @@ def pytest_runtest_makereport(item, call):
 
     issue_summary = f"Automation Failure: {test_name}"
 
-    # 4. Step collection (4-layer pipeline — now uses expanded patterns)
+    # 4. Step collection
     steps_executed = _get_steps(item, report, test_name)
 
     # 5. Error text
