@@ -15,6 +15,8 @@ import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom
 import TestScreen   from "./components/TestScreen/TestScreen";
 import JiraHistory  from "./components/JiraHistory/JiraHistory";
 import Sidebar      from "./components/Sidebar/Sidebar";
+import APIMatrixTester from "./components/APIMatrixTester/APIMatrixTester";
+import APIBatchTester from "./components/APIBatchTester/APIBatchTester";
 import "./App.css";
 
 /* ─── Shared Jira History Context ─────────────────────────────────────────── */
@@ -93,6 +95,8 @@ function App() {
           <Route element={<Layout />}>
             <Route path="/"             element={<TestScreenWithHistory />} />
             <Route path="/jira-history" element={<JiraHistoryWithContext />} />
+            <Route path="/api-matrix"   element={<APIMatrixTester />} />
+            <Route path="/api-batch"    element={<APIBatchTester />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

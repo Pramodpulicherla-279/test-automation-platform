@@ -1,0 +1,27 @@
+services:
+
+  influxdb:
+    image: influxdb:1.8
+    ports:
+      - "8086:8086"
+    environment:
+      INFLUXDB_DB: k6        # Create the k6 database automatically
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin123
+      GF_SECURITY_ALLOW_EMBEDDING: "true"
+
+  k6:
+    image: grafana/k6
+    working_dir: /scripts
+    volumes:
+      - .:/scripts
+    environment:
+      K6_OUT: influxdb=http://influxdb:8086/k6   # 👈 This is the key line
+    depends_on:
+      - influxdb
