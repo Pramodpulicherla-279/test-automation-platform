@@ -234,20 +234,57 @@ def run_tests_and_get_suggestions(
     # 2. Prepare Path-to-Name Mapping for Status Tracking
     valid_paths = []
     path_to_name_map = {}
-
+    
+    from pathlib import Path
+    
+    # FIX: project_root must be the actual project root.
+    # __file__ is tests/test_runner.py → dirname x1 = tests/ → dirname x2 = project_root/
+    # This is already correct; reassert it explicitly here for clarity.
+    BASE_DIR = Path(project_root).resolve()
+    
+    print("\n📂 TEST PATH DEBUG")
+    print(f"Project root: {BASE_DIR}")
+    print(f"Current working dir: {os.getcwd()}\n")
+    
     for t in final_test_list:
         path = t.get("path")
         name = t.get("name", path)
-        if path and os.path.exists(os.path.join(project_root, path)):
-            valid_paths.append(path)
-            path_to_name_map[path] = name
+    
+        if not path:
+            continue
+    
+        # Handle both absolute paths (already resolved by service.py) and
+        # relative paths (relative to project root). If path is already
+        # absolute and exists, use it directly.
+        p = Path(path)
+        if p.is_absolute():
+            full_path = p.resolve()
+        else:
+            full_path = (BASE_DIR / path).resolve()
+    
+        print(f"Checking path:")
+        print(f"   Input: {path}")
+        print(f"   Full : {full_path}")
+        print(f"   Exists: {full_path.exists()}\n")
+    
+        if full_path.exists():
+            valid_paths.append(str(full_path))   # ✅ IMPORTANT
+            path_to_name_map[str(full_path)] = name
             send_module_status(name, "pending", "Waiting in queue...")
         else:
-            send_log(f"⚠️  Script not found: {path}", "WARNING")
+            send_log(f"❌ Script not found: {path}", "FAILED")
 
+# ✅ IMPORTANT: this must be OUTSIDE the loop
     if not valid_paths:
-        send_log("❌ No valid scripts to execute.", "FAILED")
+        send_log("❌ No valid scripts to execute. Check that test file paths are correct.", "FAILED")
+        send_log(f"Working directory: {os.getcwd()}", "DEBUG")
+        send_log(f"Project root: {project_root}", "DEBUG")
         return
+#     send_log(f"Project root: {project_root}", "DEBUG")
+#     send_log(f"Received paths: {[t.get('path') for t in final_test_list]}", "DEBUG")
+#     return
+
+
 
     # Tell frontend a new run is starting
     try:
@@ -284,12 +321,23 @@ def run_tests_and_get_suggestions(
     for device, port in device_mapping.items():
         send_log(f"   📱 {device} → Appium server on port {port}", "INFO")
 
+    try:
+        import xdist  # check if installed
+        use_parallel = True
+    except ImportError:
+        use_parallel = False
+    
     pytest_args = valid_paths + [
         f"--apk={apk_path}",
-        "-v",
-        "-n", str(workers)
+        "-v"
     ]
     
+    if use_parallel and workers > 1:
+        pytest_args += ["-n", str(workers)]
+        send_log(f"🚀 Running in PARALLEL with {workers} workers", "INFO")
+    else:
+        send_log("⚠️ Running in SEQUENTIAL mode (xdist not installed)", "WARN")
+        
     send_log(f"APK PASSED TO PYTEST: {apk_path}", "INFO")
     
     if app_name:

@@ -197,7 +197,37 @@ def _query_steps_endpoint(key: str) -> list:
     return []
 
 
-def create_driver_with_retry(url, options, retries=5):
+def wait_for_appium(url, timeout=60):
+    import requests
+    start = time.time()
+
+    while time.time() - start < timeout:
+        try:
+            res = requests.get(f"{url}/status", timeout=3)
+            data = res.json()
+
+            # ✅ Check FULL readiness
+            if (
+                res.status_code == 200 and
+                data.get("value", {}).get("ready", False)
+            ):
+                print(f"✅ Appium FULLY ready → {url}")
+                return True
+
+        except Exception:
+            pass
+
+        print(f"⏳ Waiting for FULL Appium readiness → {url}")
+        time.sleep(3)
+
+    return False
+
+
+def create_driver_with_retry(url, options, retries=10):
+    # ✅ NEW: wait before retry loop
+    if not wait_for_appium(url):
+        raise Exception(f"❌ Appium not ready after wait → {url}")
+
     for i in range(retries):
         try:
             print(f"🔄 Attempt {i+1} connecting to {url}")
@@ -206,7 +236,7 @@ def create_driver_with_retry(url, options, retries=5):
             return driver
         except Exception as e:
             print(f"⚠️ Retry {i+1} failed: {e}")
-            time.sleep(5)
+            time.sleep(5 + i * 2)  # exponential backoff
 
     raise Exception(f"❌ Failed to connect to Appium after {retries} retries → {url}")
 
@@ -377,6 +407,8 @@ def driver(request):
 
     worker_id = os.environ.get("PYTEST_XDIST_WORKER", "gw0")
     worker_index = int(worker_id.replace("gw", ""))
+    # ✅ Prevent both workers hitting Appium at same time
+    time.sleep(worker_index * 10)
 
     print(f"\n🧵 WORKER → {worker_id}")
 
@@ -388,7 +420,10 @@ def driver(request):
 
     print(f"📱 SERVERS → {appium_servers}")
 
-    device = appium_servers[worker_index % len(appium_servers)]
+    if worker_index >= len(appium_servers):
+       raise Exception("❌ More workers than devices")
+
+    device = appium_servers[worker_index]
     port = device["port"]
 
     print(f"🔥 DEVICE → {device['device']} | PORT → {port}")
@@ -412,7 +447,12 @@ def driver(request):
 
     appium_url = f"http://127.0.0.1:{port}"
 
+    print("\n" + "="*50)
     print(f"🌐 Connecting to Appium → {appium_url}")
+    print(f"🧵 Worker → {worker_id}")
+    print(f"📱 Device → {device['device']}")
+    print(f"🔌 Port → {port}")
+    print("="*50 + "\n")
     print(f"📱 Device → {device['device']}")
     print(f"📦 APK → {apk_path}")
     

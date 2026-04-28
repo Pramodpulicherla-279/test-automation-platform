@@ -44,6 +44,8 @@ from .gdrive_loader import download_apk, extract_app_icon, get_apk_info
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+BAS_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 APKS_DIR = os.path.join(BASE_DIR, "backend", "temp_apks")
 os.makedirs(APKS_DIR, exist_ok=True)
 
@@ -117,7 +119,7 @@ async def run_tests_flow():
     if not current_servers:
         return {"error": "Start Appium first"}
 
-    workers = len(current_servers)
+    workers = max(1, len(current_servers))
     print(f"[TestRunner] Running with {workers} workers")
 
     args = [
@@ -144,13 +146,17 @@ async def device_status_flow():
 # ✅ ADD THIS FUNCTION (PLACE AFTER device_status_flow)
 
 async def validate_appium_ready():
-
     servers = get_servers()
 
     if not servers:
         return False, "❌ Appium NOT started", []
 
-    return True, f"✅ {len(servers)} device(s) connected", servers   
+    active_servers = [s for s in servers if s.get("device") and s.get("port")]
+
+    if not active_servers:
+        return False, "❌ No active Appium devices found", []
+
+    return True, f"✅ {len(active_servers)} device(s) connected", active_servers   
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -212,6 +218,7 @@ async def download_apk_from_url(url: str, manager):
 async def list_apks_flow():
     try:
         files = [name for name in os.listdir(APKS_DIR) if name.lower().endswith((".apk", ".apks"))]
+        print(f"📦 Found {len(files)} APK(s) in {APKS_DIR}")
         return {"apks": files}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -430,30 +437,60 @@ async def start_test_existing_flow(request, background_tasks, manager):
         # ============================================================
         # ✅ VALIDATE TEST FILES
         # ============================================================
-        if tests_to_run:
-            valid   = [t for t in tests_to_run if os.path.isfile(os.path.join(BASE_DIR, t["path"]))]
-            invalid = [t for t in tests_to_run if t not in valid]
+        from pathlib import Path
 
+        if tests_to_run:
+            valid = []
+            invalid = []
+        
+            BASE_PATH = Path(PROJECT_ROOT).resolve()
+        
+            print("\n🔍 BACKEND PATH DEBUG")
+            print(f"PROJECT ROOT (BASE_DIR): {BASE_PATH}")
+            print(f"CWD: {os.getcwd()}")
+            print(f"APKs DIR: {APKS_DIR}\n")
+        
+            for t in tests_to_run:
+                raw_path = t.get("path")
+        
+                if not raw_path:
+                    invalid.append(t)
+                    continue
+        
+                # 🔥 FIX: resolve absolute path
+                full_path = (BASE_PATH / raw_path).resolve()
+        
+                print(f"Checking:")
+                print(f"  Input: {raw_path}")
+                print(f"  Full : {full_path}")
+                print(f"  Exists: {full_path.exists()}\n")
+        
+                if full_path.exists():
+                    # ✅ IMPORTANT: send FULL PATH forward
+                    valid.append({
+                        "name": t.get("name"),
+                        "path": str(full_path)
+                    })
+                else:
+                    invalid.append(t)
+        
             if invalid:
                 bad_paths = [t["path"] for t in invalid]
-
+        
                 await manager.broadcast({
                     "type": "LOG",
                     "payload": {
-                        "message": (
-                            f"⚠️ {len(invalid)} invalid path(s) removed: {bad_paths}. "
-                            f"Falling back to APP_VARIANTS defaults for '{app_variant}'."
-                        ),
+                        "message": f"⚠️ Invalid paths removed: {bad_paths}",
                         "status": "WARN",
                     }
                 })
-
-                if not valid:
-                   raise HTTPException(
+        
+            if not valid:
+                raise HTTPException(
                     status_code=400,
                     detail=f"❌ No valid test files found. Invalid paths: {[t['path'] for t in tests_to_run]}"
                 )
-            
+        
             tests_to_run = valid
         else:
             tests_to_run = variant_tests

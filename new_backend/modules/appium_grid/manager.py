@@ -8,7 +8,7 @@ appium_servers = []
 _appium_processes = {}
 
 # 🔥 IMPORTANT: FULL PATH TO APPIUM
-APPIUM_PATH = r"C:\Users\ram\AppData\Roaming\npm\appium.cmd"
+APPIUM_PATH = "C:\\Users\\ABDUL SAMAD\\AppData\\Roaming\\npm\\appium.cmd"
 
 
 # ─────────────────────────────────────────────
@@ -101,15 +101,15 @@ def start_appium_servers():
 
         try:
             proc = subprocess.Popen(
-                [
-                    APPIUM_PATH,
-                    "-p", str(port),
-                    "--base-path", "/"
-                ],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True
-            )
+                 [
+                     APPIUM_PATH,
+                     "-p", str(port),
+                     "--base-path", "/"
+                 ],
+                 stdout=subprocess.PIPE,
+                 stderr=subprocess.PIPE,
+                 text=True
+             )
 
             print(f"🧠 PID → {proc.pid}")
 
