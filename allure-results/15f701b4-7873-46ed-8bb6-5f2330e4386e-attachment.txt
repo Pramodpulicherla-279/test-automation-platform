@@ -1,0 +1,80 @@
+CRASH START: 04-29 18:15:49.936 11524 11524 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+04-29 18:15:49.957  2571 11384 I LogUtils: [Places]: ?: Couldn't find platform key file. [CONTEXT service_id=253 ]
+04-29 18:15:49.972  2068  2095 W libprocessgroup: kill(-10666, 9) failed: No such process
+04-29 18:15:50.005  1863  1863 I Zygote  : Process 10666 exited due to signal (9)
+04-29 18:15:50.011  2068  2095 W libprocessgroup: kill(-10666, 9) failed: No such process
+04-29 18:15:50.011  2068  2095 I libprocessgroup: Successfully killed process cgroup uid 10034 pid 10666 in 854ms
+04-29 18:15:50.026  2765 11583 E memtrack: Couldn't load memtrack module
+04-29 18:15:50.027  2765 11583 W android.os.Debug: failed to get memory consumption info: -1
+04-29 18:15:50.084 11476 11526 W oid.documentsu: Long monitor contention with owner AsyncTask #2 (11560) at boolean android.os.BinderProxy.transactNative(int, android.os.Parcel, android.os.Parcel, int)(Binder.java:-2) waiters=0 in android.content.IContentProvider android.app.ActivityThread.acquireProvider(android.content.Context, java.lang.String, int, boolean) for 1.268s
+04-29 18:15:50.167  2571 11580 W .gms.persisten: Long monitor contention with owner lowpool[59] (11384) at java.lang.String bjma.a()(:com.google.android.gms@202414022@20.24.14 (040700-319035315):6) waiters=0 in java.lang.String bjma.a() for 347ms
+04-29 18:15:50.274  2571 11580 I LogUtils: [Places]: ?: Couldn't find platform key file. [CONTEXT service_id=253 ]
+04-29 18:15:50.314  2571 11579 W .gms.persisten: Long monitor contention with owner lowpool[59] (11384) at java.lang.String bjma.a()(:com.google.android.gms@202414022@20.24.14 (040700-319035315):6) waiters=1 in java.lang.String bjma.a() for 667ms
+04-29 18:15:50.315  2571 11579 I LogUtils: [Places]: ?: Couldn't find platform key file. [CONTEXT service_id=253 ]
+04-29 18:15:50.357  2068  2094 W ActivityManager: Slow operation: 52ms so far, now at startProcess: returned from zygote!
+04-29 18:15:50.357  2068  2094 W ActivityManager: Slow operation: 53ms so far, now at startProcess: done updating battery stats
+04-29 18:15:50.357  2068  2094 W ActivityManager: Slow operation: 53ms so far, now at startProcess: building log message
+04-29 18:15:50.357  2068  2094 I ActivityManager: Start proc 11587:android.process.media/u0a5 for content provider com.android.providers.downloads/.DownloadStorageProvider
+04-29 18:15:50.357  2068  2094 W ActivityManager: Slow operation: 53ms so far, now at startProcess: starting to update pids map
+04-29 18:15:50.357  2068  2094 W ActivityManager: Slow operation: 53ms so far, now at startProcess: done updating pids map
+04-29 18:15:50.419  2571 11579 I PlacesLogger: [PlaceInferenceEngine]: No beacon scan available - ignoring candidates. [CONTEXT service_id=253 ]
+04-29 18:15:50.419 11587 11587 W d.process.medi: Unexpected CPU variant for X86 using defaults: x86
+04-29 18:15:50.442  2571 11580 I LogUtils: [Places]: ?: Couldn't find platform key file. [CONTEXT service_id=253 ]
+04-29 18:15:50.450  2068  9314 I GnssLocationProvider: WakeLock acquired by sendMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@5a0df4e)
+04-29 18:15:50.452  2068  2091 I GnssLocationProvider: WakeLock released by handleMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@5a0df4e)
+04-29 18:15:50.883  2571 11301 W ctxmgr  : [WorkManager] Long workInfo: pkg=com.google.android.gms, lbl=SingletonLocationProducer_onLocationChanged, start=2026-04-29 18:15:49.214+0530, stop=2026-04-29 18:15:50.788+0530, durtn=1574ms [CONTEXT service_id=47 ]
+04-29 18:15:50.913  2381  2407 I m.android.phon: Background concurrent copying GC freed 13796(1557KB) AllocSpace objects, 0(0B) LOS objects, 50% free, 1665KB/3MB, paused 1.462ms total 1.410s
+04-29 18:15:50.952 11587 11587 I d.process.medi: The ClassLoaderContext is a special shared library.
+04-29 18:15:51.013  1665  1665 E adbd    : failed to connect to socket 'tcp:6790': Connection refused
+04-29 18:15:51.066  2571 11604 I Fitness : FitCleanupIntentOperation received Intent android.intent.action.PACKAGE_DATA_CLEARED [CONTEXT service_id=17 ]
+04-29 18:15:51.075 11587 11587 I d.process.medi: The ClassLoaderContext is a special shared library.
+04-29 18:15:51.235 11476 11521 I oid.documentsu: Waiting for a blocking GC ProfileSaver
+04-29 18:15:51.431 11476 11521 I oid.documentsu: WaitForGcToComplete blocked ProfileSaver on HeapTrim for 195.832ms
+04-29 18:15:51.452  2068  9314 I GnssLocationProvider: WakeLock acquired by sendMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@1b58a26)
+04-29 18:15:51.455  2068  2091 I GnssLocationProvider: WakeLock released by handleMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@1b58a26)
+04-29 18:15:51.512  2068  2096 E BatteryExternalStatsWorker: no controller energy info supplied for wifi
+04-29 18:15:51.604  2765 11377 I Icing   : doRemovePackageData com.krishivaas
+04-29 18:15:51.692 11476 11526 W oid.documentsu: Long monitor contention with owner AsyncTask #2 (11560) at boolean android.os.BinderProxy.transactNative(int, android.os.Parcel, android.os.Parcel, int)(Binder.java:-2) waiters=0 in android.content.IContentProvider android.app.ActivityThread.acquireProvider(android.content.Context, java.lang.String, int, boolean) for 1.253s
+04-29 18:15:51.747  2571  3629 W LogUtils: [Places]: ?: Failed to download inference model weights SLS
+04-29 18:15:51.747  2571  3629 W LogUtils: ckdr: NOT_FOUND: Requested entity was not found.
+04-29 18:15:51.747  2571  3629 W LogUtils: 	at ckdq.c(:com.google.android.gms@202414022@20.24.14 (040700-319035315):3)
+04-29 18:15:51.747  2571  3629 W LogUtils: 	at sjo.a(:com.google.android.gms@202414022@20.24.14 (040700-319035315):57)
+04-29 18:15:51.747  2571  3629 W LogUtils: 	at bjxj.call(:com.google.android.gms@202414022@20.24.14 (040700-319035315):0)
+04-29 18:15:51.747  2571  3629 W LogUtils: 	at bjvu.run(:com.google.android.gms@202414022@20.24.14 (040700-319035315):1)
+04-29 18:15:51.747  2571  3629 W LogUtils: 	at soy.b(:com.google.android.gms@202414022@20.24.14 (040700-319035315):12)
+04-29 18:15:51.747  2571  3629 W LogUtils: 	at soy.run(:com.google.android.gms@202414022@20.24.14 (040700-319035315):7)
+04-29 18:15:51.747  2571  3629 W LogUtils: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1167)
+04-29 18:15:51.747  2571  3629 W LogUtils: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:641)
+04-29 18:15:51.747  2571  3629 W LogUtils: 	at sux.run(:com.google.android.gms@202414022@20.24.14 (040700-319035315):0)
+04-29 18:15:51.747  2571  3629 W LogUtils: 	at java.lang.Thread.run(Thread.java:764)
+04-29 18:15:51.747  2571  3629 W LogUtils: 
+04-29 18:15:51.747  2571  3629 W LogUtils: [CONTEXT service_id=253 ]
+04-29 18:15:51.750  2571  3629 W PlacesLogger: [PlaceInferenceEngine]: Failed to download model weights. Status code: 7 [CONTEXT service_id=253 ]
+04-29 18:15:51.770  2571 11580 I LogUtils: [Places]: ?: Couldn't find platform key file. [CONTEXT service_id=253 ]
+04-29 18:15:51.802  2571 11580 I LogUtils: [Places]: ?: Couldn't find platform key file. [CONTEXT service_id=253 ]
+04-29 18:15:52.041  1665  1665 E adbd    : failed to connect to socket 'tcp:6790': Connection refused
+04-29 18:15:52.137  2571 11579 I PlacesLogger: [PlaceInferenceEngine]: No beacon scan available - ignoring candidates. [CONTEXT service_id=253 ]
+04-29 18:15:52.152  2571 11301 I LogUtils: [Places]: ?: Couldn't find platform key file. [CONTEXT service_id=253 ]
+04-29 18:15:52.392  2571 11579 I LogUtils: [Places]: ?: Couldn't find platform key file. [CONTEXT service_id=253 ]
+04-29 18:15:52.447 11524 11524 W app_process: Unexpected CPU variant for X86 using defaults: x86
+04-29 18:15:52.452  2068  9314 I GnssLocationProvider: WakeLock acquired by sendMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@3e022b2)
+04-29 18:15:52.474  2068  2091 I GnssLocationProvider: WakeLock released by handleMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@3e022b2)
+04-29 18:15:52.589 11524 11524 I app_process: The ClassLoaderContext is a special shared library.
+04-29 18:15:53.072 11476 11560 W oid.documentsu: Long monitor contention with owner AsyncTask #1 (11526) at java.util.Collection com.android.documentsui.roots.ProvidersCache.loadRootsForAuthority(android.content.ContentResolver, java.lang.String, boolean)(ProvidersCache.java:267) waiters=0 in java.util.Collection com.android.documentsui.roots.ProvidersCache.loadRootsForAuthority(android.content.ContentResolver, java.lang.String, boolean) for 602ms
+04-29 18:15:53.075  1665  1665 E adbd    : failed to connect to socket 'tcp:6790': Connection refused
+04-29 18:15:53.184  2068  2094 W ActivityManager: Slow operation: 117ms so far, now at startProcess: returned from zygote!
+04-29 18:15:53.184  2068  2094 W ActivityManager: Slow operation: 118ms so far, now at startProcess: done updating battery stats
+04-29 18:15:53.184  2068  2094 W ActivityManager: Slow operation: 118ms so far, now at startProcess: building log message
+04-29 18:15:53.185  2068  2094 I ActivityManager: Start proc 11632:com.google.android.apps.docs/u0a53 for content provider com.google.android.apps.docs/.storagebackend.StorageBackendContentProvider
+04-29 18:15:53.185  2068  2094 W ActivityManager: Slow operation: 119ms so far, now at startProcess: starting to update pids map
+04-29 18:15:53.185  2068  2094 W ActivityManager: Slow operation: 119ms so far, now at startProcess: done updating pids map
+04-29 18:15:53.201 11632 11632 W droid.apps.doc: Unexpected CPU variant for X86 using defaults: x86
+04-29 18:15:53.385 11524 11524 D AndroidRuntime: Calling main entry com.android.commands.am.Am
+04-29 18:15:53.453  2068  9314 I GnssLocationProvider: WakeLock acquired by sendMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@33b54f1)
+04-29 18:15:53.455  2068  2091 I GnssLocationProvider: WakeLock released by handleMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@33b54f1)
+04-29 18:15:53.473 11632 11632 I droid.apps.doc: The ClassLoaderContext is a special shared library.
+04-29 18:15:53.502  2068  2855 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10092 user=0: start instr
+04-29 18:15:53.583 11632 11632 I droid.apps.doc: The ClassLoaderContext is a special shared library.
+04-29 18:15:53.677 11653 11653 I tomator2.serve: Late-enabling -Xcheck:jni
+04-29 18:15:53.701  2068  2094 W ActivityManager: Slow operation: 194ms so far, now at startProcess: returned from zygote!
+04-29 18:15:53.702  2068  2094 W ActivityManager: Slow operation: 195ms so far, now at startProcess: done updating battery stats

@@ -1,0 +1,80 @@
+CRASH START: 04-29 18:13:06.484 31332 31332 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+04-29 18:13:06.604  2383  2383 I MicroDetectionWorker: #updateMicroDetector [detectionMode: [mDetectionMode: [1]]]
+04-29 18:13:06.605  2383  2383 I MicroDetectionWorker: #startMicroDetector [speakerMode: 0]
+04-29 18:13:06.606  2383  2383 I AudioController: Using mInputStreamFactoryBuilder
+04-29 18:13:06.608  2383  2383 I MicroDetectionWorker: onReady
+04-29 18:13:06.613  2383 30083 I MicroRecognitionRunner: Starting detection.
+04-29 18:13:06.614  2383 31097 I MicrophoneInputStream: mic_starting com.google.android.apps.gsa.staticplugins.aa.c@4775cfa
+04-29 18:13:06.630  1539 31337 I AudioFlinger: AudioFlinger's thread 0xb420e7c0 tid=31337 ready to run
+04-29 18:13:06.636  1539  1612 W ServiceManager: Permission failure: android.permission.RECORD_AUDIO from uid=10030 pid=-1
+04-29 18:13:06.636  1539  1612 E         : Request requires android.permission.RECORD_AUDIO
+04-29 18:13:06.636  1539  1612 E AudioFlinger: openRecord() permission denied: recording not allowed
+04-29 18:13:06.637  2383 31097 E AudioRecord: AudioFlinger could not create record track, status: -1
+04-29 18:13:06.642  2383 31097 E AudioRecord-JNI: Error creating AudioRecord instance: initialization check failed with status -1.
+04-29 18:13:06.642  2383 31097 E android.media.AudioRecord: Error code -20 when initializing native AudioRecord object.
+04-29 18:13:06.642  2383 31097 I MicrophoneInputStream: mic_started com.google.android.apps.gsa.staticplugins.aa.c@4775cfa
+04-29 18:13:06.644  2383  2383 I MicroDetectionWorker: onReady
+04-29 18:13:06.671  2383 30083 I MicroRecognitionRunner: Detection finished
+04-29 18:13:06.671  2383 31097 I MicrophoneInputStream: mic_close com.google.android.apps.gsa.staticplugins.aa.c@4775cfa
+04-29 18:13:06.671  2383 30083 W ErrorReporter: reportError [type: 211, code: 524300]: Error reading from input stream
+04-29 18:13:06.673  2383  2933 I MicroRecognitionRunner: Stopping hotword detection.
+04-29 18:13:06.674  2383 30083 W ErrorProcessor: onFatalError, processing error from engine(4)
+04-29 18:13:06.674  2383 30083 W ErrorProcessor: com.google.android.apps.gsa.shared.speech.b.g: Error reading from input stream
+04-29 18:13:06.674  2383 30083 W ErrorProcessor: 	at com.google.android.apps.gsa.staticplugins.recognizer.j.a.a(SourceFile:28)
+04-29 18:13:06.674  2383 30083 W ErrorProcessor: 	at com.google.android.apps.gsa.staticplugins.recognizer.j.b.run(SourceFile:15)
+04-29 18:13:06.674  2383 30083 W ErrorProcessor: 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:457)
+04-29 18:13:06.674  2383 30083 W ErrorProcessor: 	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+04-29 18:13:06.674  2383 30083 W ErrorProcessor: 	at com.google.android.apps.gsa.shared.util.concurrent.a.ax.run(SourceFile:14)
+04-29 18:13:06.674  2383 30083 W ErrorProcessor: 	at com.google.android.apps.gsa.shared.util.concurrent.a.bl.run(SourceFile:4)
+04-29 18:13:06.674  2383 30083 W ErrorProcessor: 	at com.google.android.apps.gsa.shared.util.concurrent.a.bl.run(SourceFile:4)
+04-29 18:13:06.674  2383 30083 W ErrorProcessor: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1162)
+04-29 18:13:06.674  2383 30083 W ErrorProcessor: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:636)
+04-29 18:13:06.674  2383 30083 W ErrorProcessor: 	at java.lang.Thread.run(Thread.java:764)
+04-29 18:13:06.674  2383 30083 W ErrorProcessor: 	at com.google.android.apps.gsa.shared.util.concurrent.a.ai.run(SourceFile:6)
+04-29 18:13:06.674  2383 30083 W ErrorProcessor: Caused by: com.google.android.apps.gsa.shared.exception.GsaIOException: Error code: 393238 | Buffer overflow, no available space.
+04-29 18:13:06.674  2383 30083 W ErrorProcessor: 	at com.google.android.apps.gsa.speech.audio.Tee.f(SourceFile:103)
+04-29 18:13:06.674  2383 30083 W ErrorProcessor: 	at com.google.android.apps.gsa.speech.audio.au.read(SourceFile:2)
+04-29 18:13:06.674  2383 30083 W ErrorProcessor: 	at java.io.InputStream.read(InputStream.java:101)
+04-29 18:13:06.674  2383 30083 W ErrorProcessor: 	at com.google.android.apps.gsa.speech.audio.ao.run(SourceFile:18)
+04-29 18:13:06.674  2383 30083 W ErrorProcessor: 	at com.google.android.apps.gsa.speech.audio.an.run(SourceFile:2)
+04-29 18:13:06.674  2383 30083 W ErrorProcessor: 	... 9 more
+04-29 18:13:06.674  2383 30083 I AudioController: internalShutdown
+04-29 18:13:06.677  2383  2383 I MicroDetector: Keeping mic open: false
+04-29 18:13:06.677  2383 30081 I DeviceStateChecker: DeviceStateChecker cancelled
+04-29 18:13:06.677  2383  2383 I MicroDetectionWorker: #onError(false)
+04-29 18:13:09.349 31332 31332 W app_process: Unexpected CPU variant for X86 using defaults: x86
+04-29 18:13:09.565  2106  6137 I Places  : Converted 1 out of 1 WiFi scans
+04-29 18:13:09.828  4999  4999 D LocationTracker: Got a location update from Play Services
+04-29 18:13:10.424 31332 31332 D AndroidRuntime: Calling main entry com.android.commands.pm.Pm
+04-29 18:13:10.499 31332 31332 I app_process: System.exit called, status: 0
+04-29 18:13:10.499 31332 31332 I AndroidRuntime: VM exiting with result code 0.
+04-29 18:13:10.522 31332 31347 W MessageQueue: Handler (android.os.Handler) {2615a81} sending message to a Handler on a dead thread
+04-29 18:13:10.522 31332 31347 W MessageQueue: java.lang.IllegalStateException: Handler (android.os.Handler) {2615a81} sending message to a Handler on a dead thread
+04-29 18:13:10.522 31332 31347 W MessageQueue: 	at android.os.MessageQueue.enqueueMessage(MessageQueue.java:545)
+04-29 18:13:10.522 31332 31347 W MessageQueue: 	at android.os.Handler.enqueueMessage(Handler.java:661)
+04-29 18:13:10.522 31332 31347 W MessageQueue: 	at android.os.Handler.sendMessageAtTime(Handler.java:630)
+04-29 18:13:10.522 31332 31347 W MessageQueue: 	at android.os.Handler.sendMessageDelayed(Handler.java:600)
+04-29 18:13:10.522 31332 31347 W MessageQueue: 	at android.os.Handler.post(Handler.java:356)
+04-29 18:13:10.522 31332 31347 W MessageQueue: 	at android.os.ResultReceiver$MyResultReceiver.send(ResultReceiver.java:57)
+04-29 18:13:10.522 31332 31347 W MessageQueue: 	at com.android.internal.os.IResultReceiver$Stub.onTransact(IResultReceiver.java:58)
+04-29 18:13:10.522 31332 31347 W MessageQueue: 	at android.os.Binder.execTransact(Binder.java:674)
+04-29 18:13:11.084  1441  1441 I boot-pipe: done populating /dev/random
+04-29 18:13:11.681  2383  2383 I MicroDetectionWorker: #updateMicroDetector [detectionMode: [mDetectionMode: [1]]]
+04-29 18:13:11.681  2383  2383 I MicroDetectionWorker: #startMicroDetector [speakerMode: 0]
+04-29 18:13:11.682  2383  2383 I AudioController: Using mInputStreamFactoryBuilder
+04-29 18:13:11.684  2383  2383 I MicroDetectionWorker: onReady
+04-29 18:13:11.702  2383 30082 I MicroRecognitionRunner: Starting detection.
+04-29 18:13:11.706  2383 31097 I MicrophoneInputStream: mic_starting com.google.android.apps.gsa.staticplugins.aa.c@a370520
+04-29 18:13:11.715  1539  1612 W ServiceManager: Permission failure: android.permission.RECORD_AUDIO from uid=10030 pid=-1
+04-29 18:13:11.715  1539  1612 E         : Request requires android.permission.RECORD_AUDIO
+04-29 18:13:11.715  1539  1612 E AudioFlinger: openRecord() permission denied: recording not allowed
+04-29 18:13:11.716  1539 31367 I AudioFlinger: AudioFlinger's thread 0xb420ed80 tid=31367 ready to run
+04-29 18:13:11.715  2383 31097 E AudioRecord: AudioFlinger could not create record track, status: -1
+04-29 18:13:11.732  2383 31097 E AudioRecord-JNI: Error creating AudioRecord instance: initialization check failed with status -1.
+04-29 18:13:11.732  2383 31097 E android.media.AudioRecord: Error code -20 when initializing native AudioRecord object.
+04-29 18:13:11.734  2383 31097 I MicrophoneInputStream: mic_started com.google.android.apps.gsa.staticplugins.aa.c@a370520
+04-29 18:13:11.738  2383  2383 I MicroDetectionWorker: onReady
+04-29 18:13:11.806  2383 31097 I MicrophoneInputStream: mic_close com.google.android.apps.gsa.staticplugins.aa.c@a370520
+04-29 18:13:11.812  2383 30082 I MicroRecognitionRunner: Detection finished
+04-29 18:13:11.812  2383 30082 W ErrorReporter: reportError [type: 211, code: 524300]: Error reading from input stream
+04-29 18:13:11.815  2383  2933 I MicroRecognitionRunner: Stopping hotword detection.
