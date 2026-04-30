@@ -45,3 +45,4 @@ artifacts/
 *.png
 .env
 .env.local
+k6_scripts/
