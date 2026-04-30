@@ -1,5 +1,5 @@
 {
-  "ticket_id": "gw1-RUN-20260429-181234",
+  "ticket_id": "gw1-RUN-20260430-071229",
   "issue_id": "ISS-002",
   "app_name": "Krishivaas Farmer",
   "app_version": "1.3.96",
@@ -14,8 +14,8 @@
   ],
   "developer_name": "@Anuj",
   "description": "pytest.fail(\"Could not find or click the 'add farm' button.\")\nFailed: Could not find or click the 'add farm' button.\n\nSteps Executed:\n1. Appium state module initialized (state file: C:\\Users\\ABDULS~1\\AppData\\Local\\Temp\\appium_grid_state.json)\n2. conftest loaded",
-  "start_date": "2026-04-29T18:18:11.687700",
-  "end_date": "2026-04-29T18:20:04.620304",
+  "start_date": "2026-04-30T07:15:50.572922",
+  "end_date": "2026-04-30T07:19:22.160549",
   "sprint": "Automation",
   "fix_version": [
     "Production"

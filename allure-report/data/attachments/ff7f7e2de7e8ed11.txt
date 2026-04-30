@@ -1,0 +1,80 @@
+CRASH START: 04-30 07:13:54.154  5442  5442 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+04-30 07:13:54.194  2035  2449 I GnssLocationProvider: WakeLock acquired by sendMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@2d7dda2)
+04-30 07:13:54.195  2035  2053 I GnssLocationProvider: WakeLock released by handleMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@2d7dda2)
+04-30 07:13:54.247  2035  2053 E memtrack: Couldn't load memtrack module
+04-30 07:13:54.247  2035  2053 W android.os.Debug: failed to get memory consumption info: -1
+04-30 07:13:54.306  5444  5464 I GAv4    : Google Analytics 11.9.10 is starting up. To enable debug logging on a device run:
+04-30 07:13:54.306  5444  5464 I GAv4    :   adb shell setprop log.tag.GAv4 DEBUG
+04-30 07:13:54.306  5444  5464 I GAv4    :   adb logcat -s GAv4
+04-30 07:13:54.411  1656  1656 E adbd    : failed to connect to socket 'tcp:6790': Connection refused
+04-30 07:13:54.436  5444  5467 W GAv4    : CampaignTrackingReceiver is not registered, not exported or is disabled. Installation campaign tracking is not possible. See http://goo.gl/8Rd3yj for instructions.
+04-30 07:13:54.450  5444  5444 W main-FieldDefinition: Ignoring isIndexed constraint as field also has uniqueness constraint (on just this field, and therefore SQLite will have to create an index on that. For field: com.google.android.apps.docs.database.common.FieldDefinition$a@5306ec2
+04-30 07:13:54.464  5444  5464 W TaskScheduler0-CoreComponentFactoryImpl: RetainedComponent will not be retained if  eec does not inherit FragmentActivity and fulfill lfi contract.
+04-30 07:13:55.192  2035  2449 I GnssLocationProvider: WakeLock acquired by sendMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@68686a1)
+04-30 07:13:55.202  2035  2053 I GnssLocationProvider: WakeLock released by handleMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@68686a1)
+04-30 07:13:55.247  5269  5269 I ProvidersCache: Updating roots due to change at content://com.google.android.apps.docs.storage/root
+04-30 07:13:55.304  5444  5457 W droid.apps.doc: Long monitor contention with owner Binder:5444_3 (5458) at hdy$a hdy.a()(PG:34) waiters=0 in hdy$a hdy.a() for 1.596s
+04-30 07:13:55.341  2522  2522 W SystemServiceRegistry: No service published for: persistent_data_block
+04-30 07:13:55.389  5269  5288 I ProvidersCache: Provider returned no roots. Possibly naughty: com.google.android.apps.docs.storage
+04-30 07:13:55.409  5269  5474 I ProvidersCache: Provider returned no roots. Possibly naughty: com.google.android.apps.docs.storage
+04-30 07:13:55.420  5269  5329 I ProvidersCache: Provider returned no roots. Possibly naughty: com.google.android.apps.docs.storage
+04-30 07:13:55.430  1656  1656 E adbd    : failed to connect to socket 'tcp:6790': Connection refused
+04-30 07:13:55.813  5442  5442 W app_process: Unexpected CPU variant for X86 using defaults: x86
+04-30 07:13:55.836  5442  5442 I app_process: The ClassLoaderContext is a special shared library.
+04-30 07:13:56.061  3221  3221 I MicroDetectionWorker: #startMicroDetector [speakerMode: 0]
+04-30 07:13:56.063  3221  3221 I AudioController: Using mInputStreamFactoryBuilder
+04-30 07:13:56.063  3221  3221 I AudioController: Created new AudioSource
+04-30 07:13:56.067  3221  3221 I MicroDetectionWorker: onReady
+04-30 07:13:56.137  3221  3838 I MicroRecognitionRunner: Starting detection.
+04-30 07:13:56.138  3221  3332 I MicrophoneInputStream: mic_starting  SR : 16000 CC : 16 SO : 6
+04-30 07:13:56.143  1646  3218 E         : Request requires android.permission.RECORD_AUDIO
+04-30 07:13:56.143  1646  3218 E AudioPolicyIntefaceImpl: getInputForAttr permission denied: recording not allowed for uid 10040 pid 3221
+04-30 07:13:56.143  1646  3218 E AudioFlinger: createRecord() checkRecordThread_l failed
+04-30 07:13:56.144  3221  3332 E IAudioFlinger: createRecord returned error -22
+04-30 07:13:56.144  3221  3332 E AudioRecord: AudioFlinger could not create record track, status: -22
+04-30 07:13:56.147  3221  3332 E AudioRecord-JNI: Error creating AudioRecord instance: initialization check failed with status -22.
+04-30 07:13:56.149  3221  3332 E android.media.AudioRecord: Error code -20 when initializing native AudioRecord object.
+04-30 07:13:56.149  3221  3332 I MicrophoneInputStream: mic_started  SR : 16000 CC : 16 SO : 6
+04-30 07:13:56.153  3221  3332 E ActivityThread: Failed to find provider info for com.google.android.apps.gsa.testing.ui.audio.recorded
+04-30 07:13:56.155  3221  3221 I MicroDetectionWorker: onReady
+04-30 07:13:56.199  2035  2449 I GnssLocationProvider: WakeLock acquired by sendMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@7493720)
+04-30 07:13:56.208  2035  2053 I GnssLocationProvider: WakeLock released by handleMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@7493720)
+04-30 07:13:56.261  3221  3332 I MicrophoneInputStream: mic_close  SR : 16000 CC : 16 SO : 6
+04-30 07:13:56.261  3221  3838 I MicroRecognitionRunner: Detection finished
+04-30 07:13:56.262  3221  3838 W ErrorReporter: reportError [type: 211, code: 524300]: Error reading from input stream
+04-30 07:13:56.263  3221  3838 W ErrorProcessor: onFatalError, processing error from engine(4)
+04-30 07:13:56.263  3221  3838 W ErrorProcessor: com.google.android.apps.gsa.shared.speech.b.g: Error reading from input stream
+04-30 07:13:56.263  3221  3838 W ErrorProcessor: 	at com.google.android.apps.gsa.staticplugins.microdetection.d.k.a(SourceFile:91)
+04-30 07:13:56.263  3221  3838 W ErrorProcessor: 	at com.google.android.apps.gsa.staticplugins.microdetection.d.l.run(Unknown Source:14)
+04-30 07:13:56.263  3221  3838 W ErrorProcessor: 	at com.google.android.libraries.gsa.runner.a.a.b(SourceFile:32)
+04-30 07:13:56.263  3221  3838 W ErrorProcessor: 	at com.google.android.libraries.gsa.runner.a.c.call(Unknown Source:4)
+04-30 07:13:56.263  3221  3838 W ErrorProcessor: 	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+04-30 07:13:56.263  3221  3838 W ErrorProcessor: 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:458)
+04-30 07:13:56.263  3221  3838 W ErrorProcessor: 	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+04-30 07:13:56.263  3221  3838 W ErrorProcessor: 	at com.google.android.apps.gsa.shared.util.concurrent.b.g.run(Unknown Source:4)
+04-30 07:13:56.263  3221  3838 W ErrorProcessor: 	at com.google.android.apps.gsa.shared.util.concurrent.b.aw.run(SourceFile:4)
+04-30 07:13:56.263  3221  3838 W ErrorProcessor: 	at com.google.android.apps.gsa.shared.util.concurrent.b.aw.run(SourceFile:4)
+04-30 07:13:56.263  3221  3838 W ErrorProcessor: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1167)
+04-30 07:13:56.263  3221  3838 W ErrorProcessor: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:641)
+04-30 07:13:56.263  3221  3838 W ErrorProcessor: 	at java.lang.Thread.run(Thread.java:764)
+04-30 07:13:56.263  3221  3838 W ErrorProcessor: 	at com.google.android.apps.gsa.shared.util.concurrent.b.i.run(SourceFile:6)
+04-30 07:13:56.263  3221  3838 W ErrorProcessor: Caused by: com.google.android.apps.gsa.shared.exception.GsaIOException: Error code: 393238 | Buffer overflow, no available space.
+04-30 07:13:56.263  3221  3838 W ErrorProcessor: 	at com.google.android.apps.gsa.speech.audio.Tee.j(SourceFile:103)
+04-30 07:13:56.263  3221  3838 W ErrorProcessor: 	at com.google.android.apps.gsa.speech.audio.au.read(SourceFile:2)
+04-30 07:13:56.263  3221  3838 W ErrorProcessor: 	at java.io.InputStream.read(InputStream.java:101)
+04-30 07:13:56.263  3221  3838 W ErrorProcessor: 	at com.google.android.apps.gsa.speech.audio.ao.run(SourceFile:17)
+04-30 07:13:56.263  3221  3838 W ErrorProcessor: 	at com.google.android.apps.gsa.speech.audio.an.run(SourceFile:2)
+04-30 07:13:56.263  3221  3838 W ErrorProcessor: 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:458)
+04-30 07:13:56.263  3221  3838 W ErrorProcessor: 	... 10 more
+04-30 07:13:56.263  3221  3441 I MicroRecognitionRunner: Stopping hotword detection.
+04-30 07:13:56.263  3221  3838 I AudioController: internalShutdown
+04-30 07:13:56.268  3221  3221 I MicroDetector: Keeping mic open: false
+04-30 07:13:56.269  3221  3221 I MicroDetectionWorker: #onError(false)
+04-30 07:13:56.269  3221  3444 I DeviceStateChecker: DeviceStateChecker cancelled
+04-30 07:13:56.292  5442  5442 D AndroidRuntime: Calling main entry com.android.commands.am.Am
+04-30 07:13:56.348  2035  2779 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10092 user=0: start instr
+04-30 07:13:56.388  5488  5488 I tomator2.serve: Late-enabling -Xcheck:jni
+04-30 07:13:56.454  2035  2056 W ActivityManager: Slow operation: 102ms so far, now at startProcess: returned from zygote!
+04-30 07:13:56.456  2035  2056 W ActivityManager: Slow operation: 104ms so far, now at startProcess: done updating battery stats
+04-30 07:13:56.456  2035  2056 W ActivityManager: Slow operation: 104ms so far, now at startProcess: building log message
+04-30 07:13:56.456  2035  2056 I ActivityManager: Start proc 5488:io.appium.uiautomator2.server/u0a92 for added application io.appium.uiautomator2.server
