@@ -10,5 +10,5 @@ launch_time_sum_duration 9747
 launch_time_start 1777517441273
 launch_time_stop 1777517518190
 launch_problems_test_defects 3
-launch_retries_retries 2
+launch_retries_retries 3
 launch_retries_run 3
