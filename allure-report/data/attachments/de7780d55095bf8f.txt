@@ -1,0 +1,80 @@
+CRASH START: 04-30 09:05:00.165 12996 12996 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+04-30 09:05:00.585  2473  2473 I MicroDetectionWorker: #updateMicroDetector [detectionMode: [mDetectionMode: [1]]]
+04-30 09:05:00.586  2473  2473 I MicroDetectionWorker: #startMicroDetector [speakerMode: 0]
+04-30 09:05:00.587  2473  2473 I AudioController: Using mInputStreamFactoryBuilder
+04-30 09:05:00.589  2473  2473 I MicroDetectionWorker: onReady
+04-30 09:05:00.678  2473  9731 I MicroRecognitionRunner: Starting detection.
+04-30 09:05:00.680  2473 11730 I MicrophoneInputStream: mic_starting com.google.android.apps.gsa.staticplugins.aa.c@558db09
+04-30 09:05:00.682  6195  6201 E /system/bin/webview_zygote32: Failed sending reply to debugger: Broken pipe
+04-30 09:05:00.685  6195  6201 I /system/bin/webview_zygote32: Debugger is no longer active
+04-30 09:05:00.721  1617 13001 I AudioFlinger: AudioFlinger's thread 0xad783000 tid=13001 ready to run
+04-30 09:05:00.730  1617  4473 W ServiceManager: Permission failure: android.permission.RECORD_AUDIO from uid=10030 pid=-1
+04-30 09:05:00.730  1617  4473 E         : Request requires android.permission.RECORD_AUDIO
+04-30 09:05:00.730  1617  4473 E AudioFlinger: openRecord() permission denied: recording not allowed
+04-30 09:05:00.731  2473 11730 E AudioRecord: AudioFlinger could not create record track, status: -1
+04-30 09:05:00.750  2473 11730 E AudioRecord-JNI: Error creating AudioRecord instance: initialization check failed with status -1.
+04-30 09:05:00.750  2473 11730 E android.media.AudioRecord: Error code -20 when initializing native AudioRecord object.
+04-30 09:05:00.750  2473 11730 I MicrophoneInputStream: mic_started com.google.android.apps.gsa.staticplugins.aa.c@558db09
+04-30 09:05:00.757  2473  2473 I MicroDetectionWorker: onReady
+04-30 09:05:00.772  1434  1464 D hwcomposer: hw_composer sent 3 syncs in 60s
+04-30 09:05:00.816  2473 11730 I MicrophoneInputStream: mic_close com.google.android.apps.gsa.staticplugins.aa.c@558db09
+04-30 09:05:00.820  2473  9731 I MicroRecognitionRunner: Detection finished
+04-30 09:05:00.820  2473  9731 W ErrorReporter: reportError [type: 211, code: 524300]: Error reading from input stream
+04-30 09:05:00.821  2473  3024 I MicroRecognitionRunner: Stopping hotword detection.
+04-30 09:05:00.821  2473  9731 W ErrorProcessor: onFatalError, processing error from engine(4)
+04-30 09:05:00.821  2473  9731 W ErrorProcessor: com.google.android.apps.gsa.shared.speech.b.g: Error reading from input stream
+04-30 09:05:00.821  2473  9731 W ErrorProcessor: 	at com.google.android.apps.gsa.staticplugins.recognizer.j.a.a(SourceFile:28)
+04-30 09:05:00.821  2473  9731 W ErrorProcessor: 	at com.google.android.apps.gsa.staticplugins.recognizer.j.b.run(SourceFile:15)
+04-30 09:05:00.821  2473  9731 W ErrorProcessor: 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:457)
+04-30 09:05:00.821  2473  9731 W ErrorProcessor: 	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+04-30 09:05:00.821  2473  9731 W ErrorProcessor: 	at com.google.android.apps.gsa.shared.util.concurrent.a.ax.run(SourceFile:14)
+04-30 09:05:00.821  2473  9731 W ErrorProcessor: 	at com.google.android.apps.gsa.shared.util.concurrent.a.bl.run(SourceFile:4)
+04-30 09:05:00.821  2473  9731 W ErrorProcessor: 	at com.google.android.apps.gsa.shared.util.concurrent.a.bl.run(SourceFile:4)
+04-30 09:05:00.821  2473  9731 W ErrorProcessor: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1162)
+04-30 09:05:00.821  2473  9731 W ErrorProcessor: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:636)
+04-30 09:05:00.821  2473  9731 W ErrorProcessor: 	at java.lang.Thread.run(Thread.java:764)
+04-30 09:05:00.821  2473  9731 W ErrorProcessor: 	at com.google.android.apps.gsa.shared.util.concurrent.a.ai.run(SourceFile:6)
+04-30 09:05:00.821  2473  9731 W ErrorProcessor: Caused by: com.google.android.apps.gsa.shared.exception.GsaIOException: Error code: 393238 | Buffer overflow, no available space.
+04-30 09:05:00.821  2473  9731 W ErrorProcessor: 	at com.google.android.apps.gsa.speech.audio.Tee.f(SourceFile:103)
+04-30 09:05:00.821  2473  9731 W ErrorProcessor: 	at com.google.android.apps.gsa.speech.audio.au.read(SourceFile:2)
+04-30 09:05:00.821  2473  9731 W ErrorProcessor: 	at java.io.InputStream.read(InputStream.java:101)
+04-30 09:05:00.821  2473  9731 W ErrorProcessor: 	at com.google.android.apps.gsa.speech.audio.ao.run(SourceFile:18)
+04-30 09:05:00.821  2473  9731 W ErrorProcessor: 	at com.google.android.apps.gsa.speech.audio.an.run(SourceFile:2)
+04-30 09:05:00.821  2473  9731 W ErrorProcessor: 	... 9 more
+04-30 09:05:00.821  2473  9731 I AudioController: internalShutdown
+04-30 09:05:00.852  2473  2473 I MicroDetector: Keeping mic open: false
+04-30 09:05:00.852  2473  5859 I DeviceStateChecker: DeviceStateChecker cancelled
+04-30 09:05:00.852  2473  2473 I MicroDetectionWorker: #onError(false)
+04-30 09:05:02.469 12996 12996 W app_process: Unexpected CPU variant for X86 using defaults: x86
+04-30 09:05:02.617  1785  1795 I zygote  : Background concurrent copying GC freed 14624(843KB) AllocSpace objects, 9(244KB) LOS objects, 38% free, 9MB/15MB, paused 56.916ms total 860.110ms
+04-30 09:05:02.884  6195  6201 I /system/bin/webview_zygote32: Debugger is no longer active
+04-30 09:04:55.515  2473 11730 I chatty  : uid=10030(u0_a30) UserFacing12 identical 2 lines
+04-30 09:05:00.756  2473 11730 E ActivityThread: Failed to find provider info for com.google.android.apps.gsa.testing.ui.audio.recorded
+04-30 09:05:02.965  1785  1805 E BatteryStatsService: modem info is invalid: ModemActivityInfo{ mTimestamp=0 mSleepTimeMs=0 mIdleTimeMs=0 mTxTimeMs[]=[0, 0, 0, 0, 0] mRxTimeMs=0 mEnergyUsed=0}
+04-30 09:05:03.173 12996 12996 D AndroidRuntime: Calling main entry com.android.commands.pm.Pm
+04-30 09:05:03.237 12996 12996 I app_process: System.exit called, status: 0
+04-30 09:05:03.237 12996 12996 I AndroidRuntime: VM exiting with result code 0.
+04-30 09:05:03.261 12996 13011 W MessageQueue: Handler (android.os.Handler) {ccb1b9b} sending message to a Handler on a dead thread
+04-30 09:05:03.261 12996 13011 W MessageQueue: java.lang.IllegalStateException: Handler (android.os.Handler) {ccb1b9b} sending message to a Handler on a dead thread
+04-30 09:05:03.261 12996 13011 W MessageQueue: 	at android.os.MessageQueue.enqueueMessage(MessageQueue.java:545)
+04-30 09:05:03.261 12996 13011 W MessageQueue: 	at android.os.Handler.enqueueMessage(Handler.java:661)
+04-30 09:05:03.261 12996 13011 W MessageQueue: 	at android.os.Handler.sendMessageAtTime(Handler.java:630)
+04-30 09:05:03.261 12996 13011 W MessageQueue: 	at android.os.Handler.sendMessageDelayed(Handler.java:600)
+04-30 09:05:03.261 12996 13011 W MessageQueue: 	at android.os.Handler.post(Handler.java:356)
+04-30 09:05:03.261 12996 13011 W MessageQueue: 	at android.os.ResultReceiver$MyResultReceiver.send(ResultReceiver.java:57)
+04-30 09:05:03.261 12996 13011 W MessageQueue: 	at com.android.internal.os.IResultReceiver$Stub.onTransact(IResultReceiver.java:58)
+04-30 09:05:03.261 12996 13011 W MessageQueue: 	at android.os.Binder.execTransact(Binder.java:674)
+04-30 09:05:03.898  1423  1423 E adbd    : failed to connect to socket 'tcp:6790': Connection refused
+04-30 09:05:04.083  1785  3476 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10084 user=0: from pid 13027
+04-30 09:05:04.098  1785  1796 I ActivityManager: Force stopping io.appium.uiautomator2.server.test appid=10083 user=0: from pid 13028
+04-30 09:05:04.189  1423  1423 E adbd    : failed to connect to socket 'tcp:6790': Connection refused
+04-30 09:05:04.222  2019  2019 D CarrierSvcBindHelper: No carrier app for: 0
+04-30 09:05:04.301  1785  3476 W ActivityManager: Permission Denial: Accessing service ComponentInfo{com.google.android.music/com.google.android.music.dial.DialMediaRouteProviderService} from pid=6156, uid=10053 that is not exported from uid 10064
+04-30 09:05:04.238  2019  2019 D CarrierSvcBindHelper: No carrier app for: 0
+04-30 09:05:04.439  1785  3476 D WificondControl: Scan result ready event
+04-30 09:05:04.448  6031  6031 I wpa_supplicant: nl80211: send_and_recv->nl_recvmsgs failed: -33
+04-30 09:05:04.548  3132  4842 W DatabaseProcessor: processLocalDevices: failed to get the network info with non-null bssid.
+04-30 09:05:04.697 13032 13032 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+04-30 09:05:04.935  6195  6201 I /system/bin/webview_zygote32: Debugger is no longer active
+04-30 09:05:05.071 13032 13032 W app_process: Unexpected CPU variant for X86 using defaults: x86
+04-30 09:05:05.127 13032 13032 D AndroidRuntime: Calling main entry com.android.commands.am.Am
