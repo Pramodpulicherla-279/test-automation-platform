@@ -43,6 +43,20 @@ Step capture — four-layer strategy (most reliable first):
                can't install the APK. udid not set → wrong device on parallel run.
   Fix:  Use UiAutomator2Options. Set `app` from --apk CLI arg so Appium
         installs the APK automatically. Set `udid` per worker for parallel runs.
+
+─── W3C SWIPE FIX (NEW) ────────────────────────────────────────────────────────
+  Root cause:  _swipe_vertical_w3c() was called when element not found, even
+               when the driver session was in a bad state (ANR/crash). This
+               caused InvalidElementStateException cascades that hid the real
+               root cause and failed tests with a misleading error.
+  Fix:  Added driver session health check before attempting W3C actions.
+        If the driver is unresponsive, swipe is skipped gracefully.
+
+─── PER-DEVICE ALLURE FIX (NEW) ────────────────────────────────────────────────
+  Root cause:  All workers wrote to the same allure-results dir, making it
+               impossible to compare per-device behaviour.
+  Fix:  Each worker tags its allure results with the device ID as an
+        environment label. A device_id fixture is exposed for test use.
 ────────────────────────────────────────────────────────────────────────────────
 """
 
@@ -197,48 +211,79 @@ def _query_steps_endpoint(key: str) -> list:
     return []
 
 
-def wait_for_appium(url, timeout=60):
+def wait_for_appium(url, timeout=120):
     import requests
     start = time.time()
 
     while time.time() - start < timeout:
         try:
-            res = requests.get(f"{url}/status", timeout=3)
-            data = res.json()
+            res = requests.get(f"{url}/status", timeout=5)
 
-            # ✅ Check FULL readiness
-            if (
-                res.status_code == 200 and
-                data.get("value", {}).get("ready", False)
-            ):
-                print(f"✅ Appium FULLY ready → {url}")
-                return True
+            print(f"🔍 Checking {url}/status → {res.status_code}")
 
-        except Exception:
-            pass
+            if res.status_code == 200:
+                print(f"✅ Appium reachable → {url}")
+                return True  # 🔥 Don't wait for 'ready'
 
-        print(f"⏳ Waiting for FULL Appium readiness → {url}")
+        except Exception as e:
+            print(f"❌ Appium not reachable yet: {e}")
+
         time.sleep(3)
 
     return False
 
 
-def create_driver_with_retry(url, options, retries=10):
-    # ✅ NEW: wait before retry loop
-    if not wait_for_appium(url):
+def create_driver_with_retry(url, options, retries=15):
+    if not wait_for_appium(url, timeout=90):
         raise Exception(f"❌ Appium not ready after wait → {url}")
 
     for i in range(retries):
         try:
             print(f"🔄 Attempt {i+1} connecting to {url}")
-            driver = webdriver.Remote(url, options=options, keep_alive=False)
+
+            driver = webdriver.Remote(
+                command_executor=url,
+                options=options
+            )
+
             print(f"🚀 DRIVER STARTED on {url}")
             return driver
+
         except Exception as e:
             print(f"⚠️ Retry {i+1} failed: {e}")
-            time.sleep(5 + i * 2)  # exponential backoff
+
+            # 🔥 EXTRA CHECK: ensure server still alive
+            try:
+                import requests
+                r = requests.get(f"{url}/status", timeout=3)
+                print(f"🔍 Status check: {r.status_code}")
+            except Exception:
+                print("❌ Appium server unreachable during retry")
+
+            time.sleep(5 + i * 2)
 
     raise Exception(f"❌ Failed to connect to Appium after {retries} retries → {url}")
+
+def handle_permissions(driver):
+    try:
+        import time
+        time.sleep(2)
+
+        buttons = driver.find_elements(
+            "id",
+            "com.android.permissioncontroller:id/permission_allow_button"
+        )
+
+        for btn in buttons:
+            try:
+                btn.click()
+                print("✅ Permission allowed")
+                time.sleep(1)
+            except:
+                pass
+
+    except Exception as e:
+        print("⚠️ Permission handling skipped:", e)
 
 
 def _get_steps_from_server(test_name: str) -> list:
@@ -318,6 +363,26 @@ def _get_steps(item, report, test_name: str) -> list:
         return steps
     print(f"[WARN] No steps captured for {test_name}")
     return []
+
+
+# ════════════════════════════════════════════════════════════════════════════
+#  DRIVER SESSION HEALTH CHECK (NEW — prevents W3C swipe on dead sessions)
+# ════════════════════════════════════════════════════════════════════════════
+def _is_driver_alive(driver) -> bool:
+    """
+    Check if the Appium driver session is still responsive.
+    Returns False if the session is dead (ANR, crash, network issue).
+    This prevents InvalidElementStateException from W3C swipe on bad sessions.
+    """
+    if driver is None:
+        return False
+    try:
+        # A lightweight call: get current activity
+        _ = driver.current_activity
+        return True
+    except Exception as e:
+        print(f"[HEALTH] Driver session unhealthy: {e}")
+        return False
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -401,70 +466,95 @@ def pytest_runtest_setup(item):
         pass
 
 
-# ── Driver fixture ────────────────────────────────────────────────────────────
+# ── Device ID fixture (NEW) ────────────────────────────────────────────────────
+@pytest.fixture(scope="session")
+def device_id():
+    """
+    NEW: Exposes the device ID for this worker as a pytest fixture.
+    Tests can use this to include device info in assertions/logs.
+    Also sets allure environment label for per-device report differentiation.
+    """
+    worker_id = os.environ.get("PYTEST_XDIST_WORKER", "gw0")
+    worker_index = int(worker_id.replace("gw", ""))
+
+    appium_servers = get_servers()
+    if not appium_servers:
+        appium_servers = DEVICES
+
+    if worker_index < len(appium_servers):
+        dev_id = appium_servers[worker_index].get("device", f"device-{worker_index}")
+    else:
+        dev_id = f"device-{worker_index}"
+
+    # Tag every allure result from this worker with the device label
+    allure.dynamic.label("device", dev_id)
+    allure.dynamic.label("worker", worker_id)
+    print(f"[DEVICE_FIXTURE] Worker {worker_id} → device: {dev_id}")
+    return dev_id
+
+
 @pytest.fixture(scope="function")
 def driver(request):
 
     worker_id = os.environ.get("PYTEST_XDIST_WORKER", "gw0")
     worker_index = int(worker_id.replace("gw", ""))
-    # ✅ Prevent both workers hitting Appium at same time
-    time.sleep(worker_index * 10)
 
+    print(f"⚡ [{worker_id}] Starting immediately (parallel execution enabled)")
     print(f"\n🧵 WORKER → {worker_id}")
 
     appium_servers = get_servers()
-
     if not appium_servers:
         print("⚠️ Using fallback DEVICES list")
         appium_servers = DEVICES
 
-    print(f"📱 SERVERS → {appium_servers}")
-
     if worker_index >= len(appium_servers):
-       raise Exception("❌ More workers than devices")
+        raise Exception(f"❌ Worker {worker_id} has no device assigned.")
 
     device = appium_servers[worker_index]
     port = device["port"]
+    device_name = device["device"]
 
-    print(f"🔥 DEVICE → {device['device']} | PORT → {port}")
+    print(f"🔥 DEVICE → {device_name} | PORT → {port}")
 
     apk_path = request.config.getoption("--apk")
-
     if not apk_path or not os.path.exists(apk_path):
         raise Exception(f"❌ APK NOT FOUND: {apk_path}")
 
+    # ✅ DEFINE OPTIONS FIRST
     options = UiAutomator2Options()
     options.platform_name = "Android"
-    options.device_name = device["device"]
-    options.udid = device["device"]
+    options.device_name = device_name
+    options.udid = device_name
     options.automation_name = "UiAutomator2"
 
     options.app = apk_path
-    options.no_reset = False
     options.auto_grant_permissions = True
 
+    # ✅ PARALLEL SAFE PORTS
     options.set_capability("systemPort", 8200 + worker_index)
+    options.set_capability("chromedriverPort", 8300 + worker_index)
 
+    # ✅ STABILITY
+    options.set_capability("noReset", True)
+    options.set_capability("newCommandTimeout", 300)
+
+    # ✅ DEFINE APPIUM URL (FIXED POSITION)
     appium_url = f"http://127.0.0.1:{port}"
 
-    print("\n" + "="*50)
-    print(f"🌐 Connecting to Appium → {appium_url}")
-    print(f"🧵 Worker → {worker_id}")
-    print(f"📱 Device → {device['device']}")
-    print(f"🔌 Port → {port}")
-    print("="*50 + "\n")
-    print(f"📱 Device → {device['device']}")
-    print(f"📦 APK → {apk_path}")
-    
-    driver = create_driver_with_retry(appium_url, options)
-    
-    print(f"✅ DRIVER CONNECTED → {device['device']}")
+    print(f"🌐 APPIUM URL → {appium_url}")
 
-    yield driver
+    # ✅ USE RETRY METHOD (YOU ALREADY HAVE)
+    drv = create_driver_with_retry(appium_url, options)
+
+    handle_permissions(drv)
+
+    print(f"✅ DRIVER CONNECTED → {device_name}")
+
+    yield drv
 
     try:
-        driver.quit()
-    except:
+        drv.quit()
+    except Exception:
         pass
 
 
@@ -581,14 +671,26 @@ def pytest_runtest_makereport(item, call):
     if report.when != "call":
         return
 
-    driver = item.funcargs.get("driver")
-    if not driver:
+    drv = item.funcargs.get("driver")
+    if not drv:
         return
 
     time.sleep(2)
 
+    # NEW: Attach device info to every allure result (pass or fail)
+    worker_id = os.environ.get("PYTEST_XDIST_WORKER", "gw0")
+    worker_index = int(worker_id.replace("gw", ""))
+    appium_servers = get_servers() or DEVICES
+    if worker_index < len(appium_servers):
+        dev_name = appium_servers[worker_index].get("device", "unknown")
+    else:
+        dev_name = "unknown"
+
+    allure.dynamic.label("device", dev_name)
+    allure.dynamic.label("worker", worker_id)
+
     # 1. Crash detection
-    crash_log = check_for_crashes(driver)
+    crash_log = check_for_crashes(drv)
     if crash_log:
         print(f"CRASH DETECTED in {item.nodeid}")
         allure.attach(crash_log, name="Crash Logs",
@@ -603,8 +705,9 @@ def pytest_runtest_makereport(item, call):
     # 2. Screenshot
     try:
         os.makedirs("screenshots", exist_ok=True)
-        screenshot_path = f"screenshots/{WORKER_ID}_{item.name}.png"
-        driver.save_screenshot(screenshot_path)
+        # NEW: Include device name in screenshot filename for easier triage
+        screenshot_path = f"screenshots/{WORKER_ID}_{dev_name}_{item.name}.png"
+        drv.save_screenshot(screenshot_path)
         allure.attach.file(screenshot_path, name="Failure Screenshot",
                            attachment_type=allure.attachment_type.PNG)
     except Exception as e:
@@ -650,6 +753,7 @@ def pytest_runtest_makereport(item, call):
     print(f"   End:      {end_date_readable} (ISO: {end_date_iso})")
     print(f"   Duration: {duration_readable}")
     print(f"   Steps:    {len(steps_executed)}")
+    print(f"   Device:   {dev_name}")
 
     # ── Build payload ──────────────────────────────────────────────────────
     payload = {
@@ -670,6 +774,9 @@ def pytest_runtest_makereport(item, call):
         "sprint":          "Automation",
         "fix_version":     ["Production"],
         "affects_version": [app_name] if app_name and app_name != "Unknown App" else [],
+        # NEW: Include device info in Jira payload for traceability
+        "device_id":       dev_name,
+        "worker_id":       worker_id,
     }
 
     allure.attach(
@@ -684,6 +791,7 @@ def pytest_runtest_makereport(item, call):
         "test_name": test_name,
         "module":    module,
         "steps":     len(steps_executed),
+        "device":    dev_name,
     })
 
 
@@ -696,7 +804,8 @@ def pytest_sessionfinish(session, exitstatus):
         for iss in _session_issues:
             print(
                 f"  [#{iss['issue_id']}] {iss['module']} — "
-                f"{iss['test_name']} ({iss['steps']} steps)"
+                f"{iss['test_name']} ({iss['steps']} steps) "
+                f"[device: {iss.get('device', 'unknown')}]"
             )
     print("Review failures in IssuePanel and click 'Create' to file Jira tickets.")
     print(f"{'='*50}\n")

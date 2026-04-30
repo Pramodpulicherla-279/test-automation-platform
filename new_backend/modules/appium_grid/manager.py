@@ -100,16 +100,20 @@ def start_appium_servers():
             time.sleep(2)
 
         try:
+            log_file = open(f"appium_{port}.log", "w")
+            
             proc = subprocess.Popen(
-                 [
-                     APPIUM_PATH,
-                     "-p", str(port),
-                     "--base-path", "/"
-                 ],
-                 stdout=subprocess.PIPE,
-                 stderr=subprocess.PIPE,
-                 text=True
-             )
+            [
+                APPIUM_PATH,
+                "-p", str(port),
+                "--base-path", "/",
+                "--session-override",
+                "--log-level", "error"
+            ],
+                stdout=log_file,
+                stderr=log_file,
+                creationflags=subprocess.CREATE_NEW_CONSOLE  # 🔥 important for Windows
+            )
 
             print(f"🧠 PID → {proc.pid}")
 

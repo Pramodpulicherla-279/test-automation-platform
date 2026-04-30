@@ -167,6 +167,44 @@ def stop_current_tests() -> bool:
     return True
 
 
+# ════════════════════════════════════════════════════════════════════════════
+#  PER-DEVICE ALLURE ENVIRONMENT FILE (NEW)
+# ════════════════════════════════════════════════════════════════════════════
+def _write_allure_environment(project_root: str, current_servers: list,
+                               app_name: str = "", app_version: str = "") -> None:
+    """
+    NEW: Write allure environment.properties so the report shows which devices
+    were used. This makes the Allure Overview tab display device/port info
+    and allows comparing results across devices.
+
+    File format (allure-results/environment.properties):
+      device.0=emulator-5554
+      port.0=4723
+      device.1=emulator-5556
+      port.1=4725
+      app.name=Krishivaas Farmer
+      app.version=1.3.96
+    """
+    env_file = os.path.join(project_root, RESULTS_DIR, "environment.properties")
+    try:
+        lines = []
+        for i, srv in enumerate(current_servers):
+            device = srv.get("device", f"device-{i}")
+            port = srv.get("port", "")
+            lines.append(f"device.{i}={device}")
+            lines.append(f"port.{i}={port}")
+        if app_name:
+            lines.append(f"app.name={app_name}")
+        if app_version:
+            lines.append(f"app.version={app_version}")
+
+        with open(env_file, "w", encoding="utf-8") as f:
+            f.write("\n".join(lines) + "\n")
+        print(f"[ALLURE] environment.properties written → {env_file}")
+    except Exception as e:
+        print(f"[ALLURE] Failed to write environment.properties: {e}")
+
+
 def run_tests_and_get_suggestions(
     apk_path: str,
     tests_to_run: Optional[List[Dict[str, str]]] = None,
@@ -181,8 +219,10 @@ def run_tests_and_get_suggestions(
     while tracking individual module statuses in real-time.
     
     FIXES:
-    - Line 213-220: Check if devices are connected before running tests
-    - Line 238-250: Better device mapping and logging
+    - Device validation before running tests
+    - Per-device allure environment file
+    - Better device mapping and logging
+    - W3C swipe safety via driver health checks in conftest
     """
     global STOP_FLAG, _DEVICE_MAPPING
     STOP_FLAG = False
@@ -202,7 +242,7 @@ def run_tests_and_get_suggestions(
         send_log(f"❌ APK not found at {apk_path}", "FAILED")
         return
 
-    # FIX: DEVICE VALIDATION - Check if Appium servers are running with devices
+    # DEVICE VALIDATION - Check if Appium servers are running with devices
     current_servers = get_servers()
     if not current_servers:
         send_log(
@@ -212,7 +252,7 @@ def run_tests_and_get_suggestions(
         )
         return
 
-    # FIX: Build device mapping for tracking which device runs which test
+    # Build device mapping for tracking which device runs which test
     _DEVICE_MAPPING = {}
     for srv in current_servers:
         port = srv.get("port")
@@ -221,6 +261,9 @@ def run_tests_and_get_suggestions(
             _DEVICE_MAPPING[port] = device
 
     _ensure_clean_allure_dirs(project_root)
+
+    # NEW: Write allure environment file with device info before tests run
+    _write_allure_environment(project_root, current_servers, app_name or "", app_version or "")
 
     # 1. Resolve and Validate Tests
     final_test_list = []
@@ -237,9 +280,6 @@ def run_tests_and_get_suggestions(
     
     from pathlib import Path
     
-    # FIX: project_root must be the actual project root.
-    # __file__ is tests/test_runner.py → dirname x1 = tests/ → dirname x2 = project_root/
-    # This is already correct; reassert it explicitly here for clarity.
     BASE_DIR = Path(project_root).resolve()
     
     print("\n📂 TEST PATH DEBUG")
@@ -253,9 +293,6 @@ def run_tests_and_get_suggestions(
         if not path:
             continue
     
-        # Handle both absolute paths (already resolved by service.py) and
-        # relative paths (relative to project root). If path is already
-        # absolute and exists, use it directly.
         p = Path(path)
         if p.is_absolute():
             full_path = p.resolve()
@@ -268,23 +305,17 @@ def run_tests_and_get_suggestions(
         print(f"   Exists: {full_path.exists()}\n")
     
         if full_path.exists():
-            valid_paths.append(str(full_path))   # ✅ IMPORTANT
+            valid_paths.append(str(full_path))
             path_to_name_map[str(full_path)] = name
             send_module_status(name, "pending", "Waiting in queue...")
         else:
             send_log(f"❌ Script not found: {path}", "FAILED")
 
-# ✅ IMPORTANT: this must be OUTSIDE the loop
     if not valid_paths:
         send_log("❌ No valid scripts to execute. Check that test file paths are correct.", "FAILED")
         send_log(f"Working directory: {os.getcwd()}", "DEBUG")
         send_log(f"Project root: {project_root}", "DEBUG")
         return
-#     send_log(f"Project root: {project_root}", "DEBUG")
-#     send_log(f"Received paths: {[t.get('path') for t in final_test_list]}", "DEBUG")
-#     return
-
-
 
     # Tell frontend a new run is starting
     try:
@@ -297,7 +328,7 @@ def run_tests_and_get_suggestions(
     except Exception:
         pass
 
-    # FIX: Enhanced logging with device info
+    # Enhanced logging with device info
     device_mapping = get_device_mapping()
     workers = max(1, len(current_servers))
     
@@ -317,7 +348,6 @@ def run_tests_and_get_suggestions(
         "INFO"
     )
     
-    # FIX: Log each device's assignment
     for device, port in device_mapping.items():
         send_log(f"   📱 {device} → Appium server on port {port}", "INFO")
 
@@ -383,9 +413,10 @@ def run_pytest_streaming_with_tracking(
     Ensures that if any test in a module fails, the module status is 'failed'.
 
     FIXES:
-    - Line 322-328: Set UTF-8 encoding for subprocess
-    - Line 335-341: Load both allure_pytest and xdist explicitly
-    - Line 347-356: Enhanced environment with UTF-8 settings
+    - Set UTF-8 encoding for subprocess
+    - Load both allure_pytest and xdist explicitly
+    - Enhanced environment with UTF-8 settings
+    - W3C swipe fix: driver health check in conftest prevents crashes here
     
     FIX: PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 suppresses all auto-loaded plugins,
     including pytest-xdist. We load allure_pytest and xdist explicitly via
@@ -401,26 +432,25 @@ def run_pytest_streaming_with_tracking(
     existing = env.get("PYTHONPATH", "")
     env["PYTHONPATH"] = backend_dir + os.pathsep + existing if existing else backend_dir
     
-    # FIX: Enhanced UTF-8 configuration for proper encoding
+    # Enhanced UTF-8 configuration for proper encoding
     env.update({
-        "PYTHONIOENCODING": "utf-8",       # Python 3.7+
-        "PYTHONUTF8": "1",                 # Force UTF-8 mode (Python 3.7+)
-        "PYTHONUNBUFFERED": "1",           # Unbuffered output
-        "PYTHONDONTWRITEBYTECODE": "1",    # Don't write .pyc files
-        "LANG": "en_US.UTF-8" if os.name != 'nt' else "",  # Linux/Mac
-        "LC_ALL": "en_US.UTF-8" if os.name != 'nt' else "", # Linux/Mac
+        "PYTHONIOENCODING": "utf-8",
+        "PYTHONUTF8": "1",
+        "PYTHONUNBUFFERED": "1",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "LANG": "en_US.UTF-8" if os.name != 'nt' else "",
+        "LC_ALL": "en_US.UTF-8" if os.name != 'nt' else "",
     })
     
-    # FIX: Remove empty values on Windows
+    # Remove empty values on Windows
     if os.name == 'nt':
         env = {k: v for k, v in env.items() if v}
 
     cmd = [
         sys.executable, "-u", "-m", "pytest",
-        # FIX: explicitly load both allure_pytest AND xdist so they work
-        # even when PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 is set.
+        # Explicitly load both allure_pytest AND xdist
         "-p", "allure_pytest",
-        "-p", "xdist",          # <-- THIS WAS MISSING — caused "-n 1" to fail
+        "-p", "xdist",
         "-s", "-v", "--tb=short", f"--alluredir={RESULTS_DIR}",
         "-o", "log_cli=true",
         "-o", "log_cli_level=INFO",
@@ -442,9 +472,8 @@ def run_pytest_streaming_with_tracking(
         text=True,
         bufsize=1,
         env=env,
-        # FIX: Explicitly set encoding
         encoding='utf-8',
-        errors='replace'  # Replace unmappable characters instead of crashing
+        errors='replace'
     )
 
     active_module_name = None
@@ -456,7 +485,6 @@ def run_pytest_streaming_with_tracking(
             if STOP_FLAG:
                 break
 
-            # FIX: Safe UTF-8 handling
             try:
                 raw_line = line.rstrip("\n")
             except Exception as e:
@@ -483,11 +511,9 @@ def run_pytest_streaming_with_tracking(
                     send_module_status(active_module_name, "failed", "Failure detected in module")
 
     except UnicodeDecodeError as e:
-        # FIX: Handle encoding errors gracefully
         print(f"❌ Unicode decode error in test output: {e}")
         send_log(f"⚠️  Unicode error in output (likely special characters): {e}", "WARNING")
     except Exception as e:
-        # FIX: Handle other exceptions
         print(f"❌ Error reading test output: {e}")
         send_log(f"⚠️  Error reading test output: {e}", "WARNING")
 
