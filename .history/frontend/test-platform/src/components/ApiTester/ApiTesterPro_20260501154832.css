@@ -1,0 +1,118 @@
+.api-root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #0f1115;
+  color: #e6e6e6;
+  font-family: Inter, sans-serif;
+}
+
+/* TOP BAR */
+.topbar {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  background: #161a20;
+  border-bottom: 1px solid #2a2f36;
+}
+
+.topbar select,
+.topbar input {
+  background: #0f1115;
+  border: 1px solid #333;
+  color: white;
+  padding: 6px;
+  border-radius: 6px;
+}
+
+.topbar input {
+  flex: 1;
+}
+
+.topbar button {
+  background: #ff6c37;
+  border: none;
+  padding: 6px 16px;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* TABS */
+.tabs {
+  display: flex;
+  gap: 20px;
+  padding: 10px;
+  background: #0f1115;
+  border-bottom: 1px solid #2a2f36;
+}
+
+.tabs button {
+  background: none;
+  border: none;
+  color: #aaa;
+  cursor: pointer;
+}
+
+.tabs .active {
+  color: white;
+  border-bottom: 2px solid #ff6c37;
+}
+
+/* TAB CONTENT */
+.tab-content {
+  padding: 10px;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.row input {
+  flex: 1;
+  padding: 6px;
+  background: #161a20;
+  border: 1px solid #333;
+  color: white;
+  border-radius: 6px;
+}
+
+.add-btn {
+  margin-top: 5px;
+  background: #222831;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* BODY */
+textarea {
+  width: 100%;
+  height: 160px;
+  background: #161a20;
+  border: 1px solid #333;
+  color: white;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+/* RESPONSE */
+.response-meta {
+  display: flex;
+  gap: 20px;
+  padding: 8px 10px;
+  font-size: 13px;
+  color: #aaa;
+}
+
+.response {
+  flex: 1;
+  overflow: auto;
+  padding: 10px;
+  background: #0f1115;
+  border-top: 1px solid #2a2f36;
+}

@@ -9,10 +9,10 @@ const NAV_ITEMS = [
         icon: <Play size={20} />,
     },
     {
-        label: 'API Matrix',
-        to: '/api-matrix',
+        label: 'API Tester',
+        to: '/api-tester',
         icon: <Zap size={20} />,
-    },
+   },
     {
         label: 'API Batch',
         to: '/api-batch',

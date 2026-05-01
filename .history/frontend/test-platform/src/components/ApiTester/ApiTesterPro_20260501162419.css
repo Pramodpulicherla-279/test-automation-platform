@@ -1,0 +1,263 @@
+/* ===== GLOBAL ===== */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  background: #0f1115;
+  color: #e6edf3;
+}
+
+/* ===== LAYOUT ===== */
+.full-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.api-root {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #0f1115;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar-panel {
+  width: 260px;
+  background: #15181d;
+  border-right: 1px solid #23272e;
+  padding: 14px;
+  overflow-y: auto;
+}
+
+.sidebar-panel h3 {
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: #9aa4af;
+}
+
+.collection-item {
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: #1c2128;
+  margin-bottom: 6px;
+  cursor: pointer;
+  color: #fff;
+}
+
+.collection-item:hover {
+  background: #2a2f36;
+}
+
+/* ===== TAB BAR ===== */
+.tab-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px;
+  background: #161a20;
+  border-bottom: 1px solid #23272e;
+}
+
+.tab {
+  padding: 6px 12px;
+  background: #22272e;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #c9d1d9;
+}
+
+.tab.active {
+  background: #ff6c37;
+  color: #fff;
+}
+
+.tab:hover {
+  background: #30363d;
+}
+
+.tab-bar button {
+  background: #2a2f36;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.tab-bar button:hover {
+  background: #3a3f46;
+}
+
+/* ===== TOP BAR ===== */
+.topbar {
+  display: flex;
+  gap: 10px;
+  padding: 12px;
+  border-bottom: 1px solid #23272e;
+}
+
+.topbar select {
+  background: #1c2128;
+  color: white;
+  border: 1px solid #2a2f36;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.topbar input {
+  flex: 1;
+  background: #1c2128;
+  border: 1px solid #2a2f36;
+  padding: 8px 10px;
+  border-radius: 6px;
+  color: white;
+}
+
+.topbar button {
+  background: #ff6c37;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.topbar button:hover {
+  background: #ff7f4d;
+}
+
+/* ===== AUTH PANEL ===== */
+.auth {
+  display: flex;
+  gap: 10px;
+  padding: 10px 12px;
+  border-bottom: 1px solid #23272e;
+}
+
+.auth select,
+.auth input {
+  background: #1c2128;
+  border: 1px solid #2a2f36;
+  padding: 8px;
+  border-radius: 6px;
+  color: white;
+}
+
+/* ===== PARAM / HEADER / BODY TABS ===== */
+.tabs {
+  display: flex;
+  gap: 10px;
+  padding: 10px 12px;
+  border-bottom: 1px solid #23272e;
+}
+
+.tabs button {
+  background: transparent;
+  border: none;
+  color: #9aa4af;
+  font-size: 13px;
+  cursor: pointer;
+  padding-bottom: 4px;
+}
+
+.tabs button.active {
+  color: #ff6c37;
+  border-bottom: 2px solid #ff6c37;
+}
+
+/* ===== CONTENT ===== */
+.tab-content {
+  padding: 12px;
+}
+
+/* ===== ROW INPUTS ===== */
+.row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.row input {
+  flex: 1;
+  background: #1c2128;
+  border: 1px solid #2a2f36;
+  padding: 8px;
+  border-radius: 6px;
+  color: white;
+}
+
+.add-btn {
+  margin-top: 8px;
+  background: #2a2f36;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+}
+
+.add-btn:hover {
+  background: #3a3f46;
+}
+
+/* ===== TEXTAREA ===== */
+textarea {
+  width: 100%;
+  height: 120px;
+  background: #1c2128;
+  border: 1px solid #2a2f36;
+  border-radius: 6px;
+  padding: 10px;
+  color: white;
+}
+
+/* ===== RESPONSE ===== */
+.response {
+  flex: 1;
+  padding: 12px;
+  border-top: 1px solid #23272e;
+  overflow: auto;
+}
+
+.response-meta {
+  margin-bottom: 10px;
+  font-size: 13px;
+  color: #9aa4af;
+}
+
+.response pre {
+  background: #0d1117;
+  padding: 12px;
+  border-radius: 6px;
+  color: #e6edf3;
+  overflow-x: auto;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2a2f36;
+  border-radius: 4px;
+}
+
+/* ===== HOVER UX ===== */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: #ff6c37;
+}
+
+/* ===== SMALL IMPROVEMENTS ===== */
+button {
+  transition: 0.2s ease;
+}

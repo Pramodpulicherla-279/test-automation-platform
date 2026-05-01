@@ -1,0 +1,80 @@
+.api-root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #0f1115;
+  color: white;
+}
+
+/* ===== TAB BAR ===== */
+.tab-bar {
+  display: flex;
+  background: #161a20;
+  padding: 6px;
+  gap: 6px;
+}
+
+.tab {
+  padding: 6px 12px;
+  background: #222;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.tab.active {
+  background: #ff6c37;
+}
+
+/* ===== TOP BAR ===== */
+.topbar {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+}
+
+.topbar input,
+.topbar select {
+  padding: 8px;
+  background: #161a20;
+  border: 1px solid #333;
+  color: white;
+}
+
+.topbar input {
+  flex: 1;
+}
+
+.topbar button {
+  background: #ff6c37;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+/* ===== AUTH ===== */
+.auth {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  border-top: 1px solid #2a2f36;
+}
+
+.auth input,
+.auth select {
+  padding: 8px;
+  background: #161a20;
+  border: 1px solid #333;
+  color: white;
+}
+
+/* ===== RESPONSE ===== */
+.response {
+  flex: 1;
+  padding: 12px;
+  overflow: auto;
+}
+
+.response-meta {
+  margin-bottom: 10px;
+  color: #aaa;
+}

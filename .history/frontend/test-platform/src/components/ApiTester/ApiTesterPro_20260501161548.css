@@ -1,0 +1,141 @@
+/* ===== LAYOUT ===== */
+.full-layout {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  background: #0f1115;
+}
+
+/* ===== SIDEBAR ===== */
+.sidepanel {
+  width: 260px;
+  background: #161a20;
+  padding: 12px;
+  border-right: 1px solid #2a2f36;
+  overflow-y: auto;
+  color: white;
+}
+
+.collection {
+  margin-bottom: 16px;
+}
+
+.item-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px;
+}
+
+.item-text {
+  color: white;
+  cursor: pointer;
+}
+
+/* ===== MAIN ===== */
+.api-root {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  color: white;
+}
+
+/* ===== TOPBAR ===== */
+.topbar {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  background: #161a20;
+  border-bottom: 1px solid #2a2f36;
+}
+
+.topbar input,
+.topbar select {
+  padding: 8px;
+  background: #0f1115;
+  border: 1px solid #333;
+  color: white;
+  border-radius: 6px;
+}
+
+.topbar input {
+  flex: 1;
+}
+
+.topbar button {
+  background: #ff6c37;
+  border: none;
+  padding: 8px 14px;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* ===== TABS ===== */
+.tabs {
+  display: flex;
+  gap: 20px;
+  padding: 10px;
+  border-bottom: 1px solid #2a2f36;
+}
+
+.tabs button {
+  background: none;
+  border: none;
+  color: #888;
+  cursor: pointer;
+}
+
+.tabs .active {
+  color: white;
+  border-bottom: 2px solid #ff6c37;
+}
+
+/* ===== CONTENT ===== */
+.tab-content {
+  padding: 12px;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.row input {
+  flex: 1;
+  padding: 8px;
+  background: #161a20;
+  border: 1px solid #333;
+  color: white;
+  border-radius: 6px;
+}
+
+textarea {
+  width: 100%;
+  height: 160px;
+  background: #161a20;
+  border: 1px solid #333;
+  color: white;
+  padding: 10px;
+}
+
+/* ===== BUTTON ===== */
+.add-btn {
+  margin-top: 10px;
+  background: #222831;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+}
+
+/* ===== RESPONSE ===== */
+.response {
+  flex: 1;
+  padding: 12px;
+  overflow: auto;
+  border-top: 1px solid #2a2f36;
+}
+
+.response pre {
+  color: #ddd;
+}

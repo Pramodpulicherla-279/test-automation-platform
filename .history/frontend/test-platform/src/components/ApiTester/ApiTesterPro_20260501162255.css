@@ -1,0 +1,30 @@
+.tab-bar {
+  display: flex;
+  background: #161a20;
+  padding: 6px;
+  gap: 6px;
+}
+
+.tab {
+  padding: 6px 12px;
+  background: #222;
+  cursor: pointer;
+  border-radius: 6px;
+  color: white;
+}
+
+.tab.active {
+  background: #ff6c37;
+}
+
+.auth {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  border-bottom: 1px solid #2a2f36;
+}
+
+.response-meta {
+  margin-bottom: 8px;
+  color: #aaa;
+}

@@ -1,0 +1,107 @@
+.api-root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #0f1115;
+  color: #e6e6e6;
+  font-family: Inter, sans-serif;
+}
+
+.topbar {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  background: #161a20;
+}
+
+.topbar select,
+.topbar input {
+  background: #0f1115;
+  border: 1px solid #333;
+  color: white;
+  padding: 6px;
+  border-radius: 6px;
+}
+
+.topbar input {
+  flex: 1;
+}
+
+.topbar button {
+  background: #ff6c37;
+  border: none;
+  padding: 6px 16px;
+  color: white;
+  border-radius: 6px;
+}
+
+.tabs {
+  display: flex;
+  gap: 20px;
+  padding: 10px;
+}
+
+.tabs button {
+  background: none;
+  border: none;
+  color: #aaa;
+}
+
+.tabs .active {
+  color: white;
+  border-bottom: 2px solid #ff6c37;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.row input {
+  flex: 1;
+  padding: 6px;
+  background: #161a20;
+  border: 1px solid #333;
+  color: white;
+}
+
+.add-btn {
+  margin-top: 5px;
+  background: #222831;
+  padding: 6px 10px;
+  border: none;
+  color: white;
+}
+
+textarea {
+  width: 100%;
+  height: 150px;
+  background: #161a20;
+  color: white;
+  border: 1px solid #333;
+  padding: 10px;
+}
+
+.response-meta {
+  display: flex;
+  gap: 20px;
+  padding: 8px 10px;
+  font-size: 13px;
+  color: #aaa;
+}
+
+.view-switch {
+  padding: 5px 10px;
+}
+
+.view-switch button {
+  margin-right: 10px;
+}
+
+.response {
+  flex: 1;
+  overflow: auto;
+  padding: 10px;
+  background: #0f1115;
+}
