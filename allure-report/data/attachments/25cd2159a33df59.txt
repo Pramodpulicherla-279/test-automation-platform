@@ -1,0 +1,80 @@
+CRASH START: 05-03 12:52:28.704 21932 21932 D AndroidRuntime: Shutting down VM
+05-03 12:52:28.726  1895  1913 W libprocessgroup: kill(-21942, 9) failed: No such process
+05-03 12:52:28.747  1741  1741 I Zygote  : Process 21942 exited due to signal (9)
+05-03 12:52:28.766  1895  1913 W libprocessgroup: kill(-21942, 9) failed: No such process
+05-03 12:52:28.766  1895  1913 I libprocessgroup: Successfully killed process cgroup uid 10088 pid 21942 in 78ms
+05-03 12:52:28.855  1895  4143 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10088 user=0: from pid 22171
+05-03 12:52:28.863  1895  2817 I ActivityManager: Force stopping io.appium.uiautomator2.server.test appid=10087 user=0: from pid 22172
+05-03 12:52:28.867  2138  2138 D CarrierSvcBindHelper: No carrier app for: 0
+05-03 12:52:28.923  1895  2817 I ActivityManager: Force stopping com.krishivaas appid=10089 user=0: from pid 22177
+05-03 12:52:28.923  1895  2817 I ActivityManager: Killing 21989:com.krishivaas/u0a89 (adj 0): stop com.krishivaas
+05-03 12:52:28.876  2138  2138 D CarrierSvcBindHelper: No carrier app for: 0
+05-03 12:52:28.924  1895  1913 W libprocessgroup: kill(-21989, 9) failed: No such process
+05-03 12:52:28.925  1895  2817 W ActivityManager: Force removing ActivityRecord{4679e38 u0 com.krishivaas/.MainActivity t26}: app died, no saved state
+05-03 12:52:28.931  1740  1963 W SurfaceFlinger: Attempting to destroy on removed layer: AppWindowToken{6f9ab76 token=Token{9a39e11 ActivityRecord{4679e38 u0 com.krishivaas/.MainActivity t26}}}#0
+05-03 12:52:28.949  2138  2138 D CarrierSvcBindHelper: No carrier app for: 0
+05-03 12:52:28.966  1895  1913 W libprocessgroup: kill(-21989, 9) failed: No such process
+05-03 12:52:28.968  1638  2927 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 10371072
+05-03 12:52:28.972  1638  1680 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 10371072
+05-03 12:52:28.992  1638  1681 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 10371072
+05-03 12:52:28.998  1638  2927 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 10371072
+05-03 12:52:28.998  1638  1680 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 10371072
+05-03 12:52:29.003  1638  2927 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 10371072
+05-03 12:52:29.030  1895  1913 W libprocessgroup: kill(-21989, 9) failed: No such process
+05-03 12:52:29.034  1895  1918 W ActivityManager: setHasOverlayUi called on unknown pid: 21989
+05-03 12:52:29.036  1741  1741 I Zygote  : Process 21989 exited due to signal (9)
+05-03 12:52:29.069  1895  2817 D ConnectivityService: ConnectivityService NetworkRequestInfo binderDied(NetworkRequest [ TRACK_DEFAULT id=131, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Unwanted:  Uid: 10089] ], android.os.BinderProxy@bf50b5c)
+05-03 12:52:29.070  1895  1983 D ConnectivityService: releasing NetworkRequest [ TRACK_DEFAULT id=131, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Unwanted:  Uid: 10089] ] (release request)
+05-03 12:52:29.075  1895  1913 W libprocessgroup: kill(-21989, 9) failed: No such process
+05-03 12:52:29.075  1895  1913 I libprocessgroup: Successfully killed process cgroup uid 10089 pid 21989 in 151ms
+05-03 12:52:29.075  6128  6128 I GoogleInputMethod: onFinishInput() : Dummy InputConnection bound
+05-03 12:52:29.076  1895  1950 I GnssLocationProvider: WakeLock acquired by sendMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@c6b173a)
+05-03 12:52:29.076  6128  6128 I GoogleInputMethod: onStartInput() : Dummy InputConnection bound
+05-03 12:52:29.076  9527  9527 I bqwu    : onStart
+05-03 12:52:29.081  1895  6918 D ConnectivityService: requestNetwork for uid/pid:10041/9527 NetworkRequest [ TRACK_DEFAULT id=132, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Unwanted:  Uid: 10041] ]
+05-03 12:52:29.081  1895  1909 I GnssLocationProvider: WakeLock released by handleMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@c6b173a)
+05-03 12:52:29.082  9527  9527 I bout    : (REDACTED) [%s] onStart()
+05-03 12:52:29.083  2621  2723 D EGL_emulation: eglMakeCurrent: 0xddf84780: ver 2 0 (tinfo 0xddf83860)
+05-03 12:52:29.083  9527  9527 I bqwu    : onResume
+05-03 12:52:29.084  1895  1980 D WIFI_UT : got request NetworkRequest [ TRACK_DEFAULT id=132, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Unwanted:  Uid: 10041] ] with score 60
+05-03 12:52:29.084  1895  1980 D WIFI    : got request NetworkRequest [ TRACK_DEFAULT id=132, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Unwanted:  Uid: 10041] ] with score 60
+05-03 12:52:29.084  1895  1914 E BatteryExternalStatsWorker: no controller energy info supplied for wifi
+05-03 12:52:29.085  9527  9567 D EGL_emulation: eglMakeCurrent: 0xddf84d80: ver 2 0 (tinfo 0xbaa46840)
+05-03 12:52:29.087  2138  2138 D PhoneSwitcherNetworkRequstListener: got request NetworkRequest [ TRACK_DEFAULT id=132, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Unwanted:  Uid: 10041] ] with score 60
+05-03 12:52:29.102  7696  7696 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.inappreach.service.START dat=chimera-action: cmp=com.google.android.gms/.chimera.GmsApiService }
+05-03 12:52:29.102  7696  7696 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.inappreach.service.START dat=chimera-action: cmp=com.google.android.gms/.chimera.GmsApiService }
+05-03 12:52:29.116  2021  2281 D EGL_emulation: eglMakeCurrent: 0xc7389120: ver 2 0 (tinfo 0xdc094470)
+05-03 12:52:29.123  1895  1895 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy_pre_p_apps
+05-03 12:52:29.144  1895  1895 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy_p_apps
+05-03 12:52:29.161  1895  1895 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy
+05-03 12:52:29.127  2021  2281 I chatty  : uid=10025(com.android.systemui) RenderThread identical 1 line
+05-03 12:52:29.144  2021  2281 D EGL_emulation: eglMakeCurrent: 0xc7389120: ver 2 0 (tinfo 0xdc094470)
+05-03 12:52:30.075  1895  1950 I GnssLocationProvider: WakeLock acquired by sendMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@bcb4163)
+05-03 12:52:30.076  1895  1909 I GnssLocationProvider: WakeLock released by handleMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@bcb4163)
+05-03 12:52:31.076  1895  1950 I GnssLocationProvider: WakeLock acquired by sendMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@9093160)
+05-03 12:52:31.076  1895  1909 I GnssLocationProvider: WakeLock released by handleMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@9093160)
+05-03 12:52:31.891  1895  1895 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy_pre_p_apps
+05-03 12:52:31.906  1895  1895 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy_p_apps
+05-03 12:52:31.918  1895  1895 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy
+05-03 12:52:31.973  1895  2003 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+05-03 12:52:32.077  1895  1950 I GnssLocationProvider: WakeLock acquired by sendMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@6357619)
+05-03 12:52:32.077  1895  1909 I GnssLocationProvider: WakeLock released by handleMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@6357619)
+05-03 12:52:32.759  7176 22179 I AlarmManager: setExactAndAllowWhileIdle [name: GCM_HB_ALARM type: 2 triggerAtMillis: 14500884]
+05-03 12:52:32.761  7176 22179 I AlarmManager: setExactAndAllowWhileIdle [name: GCM_HB_ALARM type: 2 triggerAtMillis: 14500886]
+05-03 12:52:32.957  1895  6918 I ActivityManager: Force stopping com.krishivaas appid=10089 user=0: from pid 22254
+05-03 12:52:32.962  2138  2138 D CarrierSvcBindHelper: No carrier app for: 0
+05-03 12:52:33.014  1895  4757 I ActivityManager: Force stopping com.krishivaas appid=10089 user=0: clear data
+05-03 12:52:33.016  1895  4757 I ConditionProviders: Disallowing condition provider com.krishivaas
+05-03 12:52:33.018  1895  2003 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+05-03 12:52:33.018  1895  1910 I ActivityManager: Force stopping com.krishivaas appid=10089 user=-1: clearApplicationUserData
+05-03 12:52:33.027  1746  1746 I keystore: clear_uid 10089
+05-03 12:52:33.047  2138  2138 D CarrierSvcBindHelper: No carrier app for: 0
+05-03 12:52:33.057  3555  3555 I CarrierServices: [2] RcsAutoStartReceiver.b: carrierServicesJibeServiceEnabled changed from true to true
+05-03 12:52:33.058  3555  3555 I CarrierServices: [2] RcsAutoStartReceiver.b: enableRcs changed from true to true
+05-03 12:52:33.064 15290 15480 I Finsky:background: [506] RECEIVER_ENGAGE_PACKAGE_CHANGED#logWorkEndAndFinishGoAsync: SUCCESS
+05-03 12:52:33.077  1895  1950 I GnssLocationProvider: WakeLock acquired by sendMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@d6723b6)
+05-03 12:52:33.084  1895  1909 I GnssLocationProvider: WakeLock released by handleMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@d6723b6)
+05-03 12:52:33.097  7696 22265 I Blockstore: [PackageIntentOperation] Checking the restore timespan. [CONTEXT service_id=258 ]
+05-03 12:52:33.099  7696 22263 I AppBackupStateCleanupIO: Backup state cleanup on uninstall is disabled. [CONTEXT service_id=229 ]
+05-03 12:52:33.102  7696  7696 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.backup.GMS_MODULE_RESTORE dat=chimera-action: cmp=com.google.android.gms/.chimera.GmsInternalBoundBrokerService }
+05-03 12:52:33.103  7176 22264 I Fitness : (REDACTED) FitCleanupIntentOperation received Intent %s

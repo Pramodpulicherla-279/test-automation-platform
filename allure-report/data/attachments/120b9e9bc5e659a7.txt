@@ -1,0 +1,80 @@
+CRASH START: --------- beginning of crash
+05-03 14:16:10.662 22243 22257 E AndroidRuntime: FATAL EXCEPTION: Instr: androidx.test.runner.AndroidJUnitRunner
+05-03 14:16:10.662 22243 22257 E AndroidRuntime: Process: io.appium.uiautomator2.server, PID: 22243
+05-03 14:16:10.662 22243 22257 E AndroidRuntime: java.lang.RuntimeException: Error while disconnecting UiAutomation@6cede09[id=-1, displayId=0, flags=0]
+05-03 14:16:10.662 22243 22257 E AndroidRuntime: 	at android.app.UiAutomation.disconnect(UiAutomation.java:456)
+05-03 14:16:10.662 22243 22257 E AndroidRuntime: 	at android.app.Instrumentation.finish(Instrumentation.java:296)
+05-03 14:16:10.662 22243 22257 E AndroidRuntime: 	at androidx.test.runner.MonitoringInstrumentation.finish(MonitoringInstrumentation.java:409)
+05-03 14:16:10.662 22243 22257 E AndroidRuntime: 	at androidx.test.runner.AndroidJUnitRunner.onStart(AndroidJUnitRunner.java:476)
+05-03 14:16:10.662 22243 22257 E AndroidRuntime: 	at android.app.Instrumentation$InstrumentationThread.run(Instrumentation.java:2597)
+05-03 14:16:10.662 22243 22257 E AndroidRuntime: Caused by: android.os.DeadObjectException
+05-03 14:16:10.662 22243 22257 E AndroidRuntime: 	at android.os.BinderProxy.transactNative(Native Method)
+05-03 14:16:10.662 22243 22257 E AndroidRuntime: 	at android.os.BinderProxy.transact(BinderProxy.java:592)
+05-03 14:16:10.662 22243 22257 E AndroidRuntime: 	at android.app.IUiAutomationConnection$Stub$Proxy.disconnect(IUiAutomationConnection.java:568)
+05-03 14:16:10.662 22243 22257 E AndroidRuntime: 	at android.app.UiAutomation.disconnect(UiAutomation.java:454)
+05-03 14:16:10.662 22243 22257 E AndroidRuntime: 	... 4 more
+05-03 14:16:10.683   721 22702 I DropBoxManagerService: add tag=data_app_crash isTagEnabled=true flags=0x2
+05-03 14:16:10.737 22243 22257 I Process : Sending signal. PID: 22243 SIG: 9
+05-03 14:16:10.787 22575 22575 W droid.apps.docs: Method void rjm.c(android.app.Activity) failed lock verification and will run slower.
+05-03 14:16:10.787 22575 22575 W droid.apps.docs: Common causes for lock verification issues are non-optimized dex code
+05-03 14:16:10.787 22575 22575 W droid.apps.docs: and incorrect proguard optimizations.
+05-03 14:16:10.814 22575 22705 D nativeloader: Load /data/app/~~l9kghlkmhYuJtkrQhK3B-A==/com.google.android.apps.docs-NsPWiT_dfot9sprdY1M23A==/split_config.x86_64.apk!/lib/x86_64/libnative_crash_handler_jni.so using class loader ns clns-9 (caller=/data/app/~~l9kghlkmhYuJtkrQhK3B-A==/com.google.android.apps.docs-NsPWiT_dfot9sprdY1M23A==/base.apk!classes2.dex): ok
+05-03 14:16:10.917   721  1881 I ActivityManager: Process io.appium.uiautomator2.server (pid 22243) has died: fg  FGS 
+05-03 14:16:10.937   560   560 I adbd    : Remote process closed the socket (on MSG_PEEK)
+05-03 14:16:10.949   721   776 I libprocessgroup: Removed cgroup /sys/fs/cgroup/apps/uid_10219/pid_22243
+05-03 14:16:10.949   478   478 I Zygote  : Process 22243 exited due to signal 9 (Killed)
+05-03 14:16:10.958 22575 22711 E DocsApplication: from onCreate Completable for sending summary about blocked SyncRequests
+05-03 14:16:10.958 22575 22711 E DocsApplication: java.lang.IllegalStateException
+05-03 14:16:10.958 22575 22711 E DocsApplication: 	at hno.h(PG:64)
+05-03 14:16:10.958 22575 22711 E DocsApplication: 	at jvz.a(PG:261)
+05-03 14:16:10.958 22575 22711 E DocsApplication: 	at gzy.lambda$onCreate$2(PG:9)
+05-03 14:16:10.958 22575 22711 E DocsApplication: 	at gzy.$r8$lambda$M-tqsz8QJK2QrqieVTlg-c3Lhbo(PG:1)
+05-03 14:16:10.958 22575 22711 E DocsApplication: 	at gzv.run(PG:264)
+05-03 14:16:10.958 22575 22711 E DocsApplication: 	at abiw.c(PG:13)
+05-03 14:16:10.958 22575 22711 E DocsApplication: 	at abgn.d(PG:3)
+05-03 14:16:10.958 22575 22711 E DocsApplication: 	at abje$a.run(PG:3)
+05-03 14:16:10.958 22575 22711 E DocsApplication: 	at abgx$a.run(PG:10)
+05-03 14:16:10.958 22575 22711 E DocsApplication: 	at abmn.run(PG:14)
+05-03 14:16:10.958 22575 22711 E DocsApplication: 	at abmn.call(PG:1)
+05-03 14:16:10.958 22575 22711 E DocsApplication: 	at java.util.concurrent.FutureTask.run(FutureTask.java:317)
+05-03 14:16:10.958 22575 22711 E DocsApplication: 	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:348)
+05-03 14:16:10.958 22575 22711 E DocsApplication: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1156)
+05-03 14:16:10.958 22575 22711 E DocsApplication: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:651)
+05-03 14:16:10.958 22575 22711 E DocsApplication: 	at java.lang.Thread.run(Thread.java:1119)
+05-03 14:16:10.962   721  1881 W ActivityManager: Crash of app io.appium.uiautomator2.server running instrumentation ComponentInfo{io.appium.uiautomator2.server.test/androidx.test.runner.AndroidJUnitRunner}
+05-03 14:16:10.968   721  1881 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10219 user=0: finished inst
+05-03 14:16:10.974   721   774 E IPCThreadState: Binder transaction failure. id: 2251084, BR_*: 29189, error: -22 (Invalid argument)
+05-03 14:16:10.974   721   774 W ActivityManager: pid 721 system sent binder code 18 with flags 1 to frozen apps and got error -32
+05-03 14:16:10.983   721 22719 E IPCThreadState: Binder transaction failure. id: 2251081, BR_*: 29189, error: -22 (Invalid argument)
+05-03 14:16:10.984   721 22719 W ActivityManager: pid 721 system sent binder code 2 with flags 0 to frozen apps and got error -32
+05-03 14:16:10.984   721 22719 D ActivityManager: Too many transaction errors, throttling freezer binder callback.
+05-03 14:16:10.985   721 22719 I ActivityManager: Failure reporting to instrumentation watcher: comp=ComponentInfo{io.appium.uiautomator2.server.test/androidx.test.runner.AndroidJUnitRunner} results=Bundle[{shortMsg=Process crashed.}]
+05-03 14:16:10.987   721   774 D ActivityManager: Too many transaction errors, throttling freezer binder callback.
+05-03 14:16:10.990   721   774 W ActivityManager: Error shutting down UiAutomationConnection
+05-03 14:16:10.995   721  1881 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:16:10.995   721  1881 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:16:10.996   721  1881 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:16:10.997   721  1881 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:16:10.999   721  1881 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:16:11.001   721  1881 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:16:11.003   721  1881 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:16:11.005   721  1881 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:16:11.007   721  1881 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:16:11.010   721  1881 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:16:11.012   721  1881 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:16:11.014   721  1881 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:16:11.017   721  1881 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:16:11.017   721  1881 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:16:11.019   721  1881 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:16:11.020   721  1881 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:16:11.021   721  1881 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:16:11.024   721  1881 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:16:11.027   721  1881 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:16:11.029   721  1881 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:16:11.030   721  1881 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:16:11.031   721  1881 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:16:11.041   721  1881 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:16:11.042   721  1881 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:16:11.047   721  1881 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:16:11.070   721  1773 I ActivityManager: Force stopping io.appium.uiautomator2.server.test appid=10218 user=0: from pid 22718
+05-03 14:16:11.078   721   972 D BackgroundInstallControlService: Package event received: 0

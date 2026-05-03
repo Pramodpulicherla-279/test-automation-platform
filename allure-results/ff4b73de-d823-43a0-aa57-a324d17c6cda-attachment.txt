@@ -1,0 +1,80 @@
+CRASH START: 05-03 12:54:26.424 22729 22729 D AndroidRuntime: Shutting down VM
+05-03 12:54:26.424  1895  1913 W libprocessgroup: kill(-22739, 9) failed: No such process
+05-03 12:54:26.466  1895  1913 W libprocessgroup: kill(-22739, 9) failed: No such process
+05-03 12:54:26.477  1741  1741 I Zygote  : Process 22739 exited due to signal (9)
+05-03 12:54:26.511  1895  1913 W libprocessgroup: kill(-22739, 9) failed: No such process
+05-03 12:54:26.511  1895  1913 I libprocessgroup: Successfully killed process cgroup uid 10088 pid 22739 in 86ms
+05-03 12:54:26.602  1895  6877 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10088 user=0: from pid 23090
+05-03 12:54:26.620  1895  7158 I ActivityManager: Force stopping io.appium.uiautomator2.server.test appid=10087 user=0: from pid 23094
+05-03 12:54:26.629  2138  2138 D CarrierSvcBindHelper: No carrier app for: 0
+05-03 12:54:26.683  1895  4143 I ActivityManager: Force stopping com.krishivaas appid=10089 user=0: from pid 23098
+05-03 12:54:26.683  1895  4143 I ActivityManager: Killing 22786:com.krishivaas/u0a89 (adj 0): stop com.krishivaas
+05-03 12:54:26.635  2138  2138 D CarrierSvcBindHelper: No carrier app for: 0
+05-03 12:54:26.684  1895  1913 W libprocessgroup: kill(-22786, 9) failed: No such process
+05-03 12:54:26.684  1895  4143 W ActivityManager: Force removing ActivityRecord{d0a3df2 u0 com.krishivaas/.MainActivity t28}: app died, no saved state
+05-03 12:54:26.707  1638  1680 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 10371072
+05-03 12:54:26.727  1895  1913 W libprocessgroup: kill(-22786, 9) failed: No such process
+05-03 12:54:26.733  1638  1680 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 10371072
+05-03 12:54:26.734  2138  2138 D CarrierSvcBindHelper: No carrier app for: 0
+05-03 12:54:26.762  1741  1741 I Zygote  : Process 22786 exited due to signal (9)
+05-03 12:54:26.767  1895  1913 W libprocessgroup: kill(-22786, 9) failed: No such process
+05-03 12:54:26.767  1895  1913 I libprocessgroup: Successfully killed process cgroup uid 10089 pid 22786 in 83ms
+05-03 12:54:26.773  1895  7158 D ConnectivityService: ConnectivityService NetworkRequestInfo binderDied(NetworkRequest [ TRACK_DEFAULT id=135, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Unwanted:  Uid: 10089] ], android.os.BinderProxy@b9a5f7b)
+05-03 12:54:26.774  1895  1983 D ConnectivityService: releasing NetworkRequest [ TRACK_DEFAULT id=135, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Unwanted:  Uid: 10089] ] (release request)
+05-03 12:54:26.775  1638  1680 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 10371072
+05-03 12:54:26.777  1895  1918 W ActivityManager: setHasOverlayUi called on unknown pid: 22786
+05-03 12:54:26.819  1740  1740 D SurfaceFlinger: duplicate layer name: changing com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity to com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity#1
+05-03 12:54:26.822  9527  9567 D EGL_emulation: eglMakeCurrent: 0xddf84d80: ver 2 0 (tinfo 0xbaa46840)
+05-03 12:54:26.828  1638  1680 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 10371072
+05-03 12:54:26.833  1638  2927 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 10371072
+05-03 12:54:26.838  9527  9527 I bqwu    : onStart
+05-03 12:54:26.841  1638  1680 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 10371072
+05-03 12:54:26.841  1895  4312 D ConnectivityService: requestNetwork for uid/pid:10041/9527 NetworkRequest [ TRACK_DEFAULT id=143, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Unwanted:  Uid: 10041] ]
+05-03 12:54:26.842  9527  9527 I bout    : (REDACTED) [%s] onStart()
+05-03 12:54:26.843  9527  9527 I bqwu    : onResume
+05-03 12:54:26.845  1895  1980 D WIFI_UT : got request NetworkRequest [ TRACK_DEFAULT id=143, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Unwanted:  Uid: 10041] ] with score 60
+05-03 12:54:26.845  2138  2138 D PhoneSwitcherNetworkRequstListener: got request NetworkRequest [ TRACK_DEFAULT id=143, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Unwanted:  Uid: 10041] ] with score 60
+05-03 12:54:26.845  1895  1980 D WIFI    : got request NetworkRequest [ TRACK_DEFAULT id=143, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Unwanted:  Uid: 10041] ] with score 60
+05-03 12:54:26.845  1895  1895 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy_pre_p_apps
+05-03 12:54:26.853  6128  6128 I GoogleInputMethod: onFinishInput() : Dummy InputConnection bound
+05-03 12:54:26.854  6128  6128 I GoogleInputMethod: onStartInput() : Dummy InputConnection bound
+05-03 12:54:26.858  7696  7696 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.inappreach.service.START dat=chimera-action: cmp=com.google.android.gms/.chimera.GmsApiService }
+05-03 12:54:26.858  7696  7696 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.inappreach.service.START dat=chimera-action: cmp=com.google.android.gms/.chimera.GmsApiService }
+05-03 12:54:26.868  2621  2723 D EGL_emulation: eglMakeCurrent: 0xddf84780: ver 2 0 (tinfo 0xddf83860)
+05-03 12:54:26.876  1895  1903 I system_server: Background concurrent copying GC freed 77990(5MB) AllocSpace objects, 22(952KB) LOS objects, 30% free, 13MB/19MB, paused 30.298ms total 146.516ms
+05-03 12:54:26.880  1895  1895 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy_p_apps
+05-03 12:54:26.902  1895  1895 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy
+05-03 12:54:26.911  2021  2281 D EGL_emulation: eglMakeCurrent: 0xc7389120: ver 2 0 (tinfo 0xdc094470)
+05-03 12:54:26.917  2021  2281 I chatty  : uid=10025(com.android.systemui) RenderThread identical 1 line
+05-03 12:54:26.936  2021  2281 D EGL_emulation: eglMakeCurrent: 0xc7389120: ver 2 0 (tinfo 0xdc094470)
+05-03 12:54:27.153  1895  1950 I GnssLocationProvider: WakeLock acquired by sendMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@1a11b4f)
+05-03 12:54:27.156  1895  1909 I GnssLocationProvider: WakeLock released by handleMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@1a11b4f)
+05-03 12:54:27.439  7696  7696 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.auth.service.START pkg=com.google.android.gms }
+05-03 12:54:28.105  7696  7696 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.potokens.service.START dat=chimera-action: cmp=com.google.android.gms/.chimera.GmsApiService }
+05-03 12:54:28.154  1895  1950 I GnssLocationProvider: WakeLock acquired by sendMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@604e2dc)
+05-03 12:54:28.155  1895  1909 I GnssLocationProvider: WakeLock released by handleMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@604e2dc)
+05-03 12:54:29.155  1895  1950 I GnssLocationProvider: WakeLock acquired by sendMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@f5bcfe5)
+05-03 12:54:29.156  1895  1909 I GnssLocationProvider: WakeLock released by handleMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@f5bcfe5)
+05-03 12:54:29.243  7176  7176 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.auth.aang.events.services.START dat=chimera-action: cmp=com.google.android.gms/.chimera.PersistentApiService }
+05-03 12:54:29.629  1895  1895 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy_pre_p_apps
+05-03 12:54:29.642  1895  1895 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy_p_apps
+05-03 12:54:29.656  1895  1895 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy
+05-03 12:54:29.733  1895  2003 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+05-03 12:54:30.156  1895  1950 I GnssLocationProvider: WakeLock acquired by sendMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@38d7aba)
+05-03 12:54:30.157  1895  1909 I GnssLocationProvider: WakeLock released by handleMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@38d7aba)
+05-03 12:54:30.880  1895  7158 I ActivityManager: Force stopping com.krishivaas appid=10089 user=0: from pid 23175
+05-03 12:54:30.887  2138  2138 D CarrierSvcBindHelper: No carrier app for: 0
+05-03 12:54:30.939  1895  6918 I ActivityManager: Force stopping com.krishivaas appid=10089 user=0: clear data
+05-03 12:54:30.940  1895  6918 I ConditionProviders: Disallowing condition provider com.krishivaas
+05-03 12:54:30.940  1895  2003 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+05-03 12:54:30.941  1895  1910 I ActivityManager: Force stopping com.krishivaas appid=10089 user=-1: clearApplicationUserData
+05-03 12:54:30.956  1746  1746 I keystore: clear_uid 10089
+05-03 12:54:30.983  3555  3555 I CarrierServices: [2] RcsAutoStartReceiver.b: carrierServicesJibeServiceEnabled changed from true to true
+05-03 12:54:30.984  2138  2138 D CarrierSvcBindHelper: No carrier app for: 0
+05-03 12:54:30.984  3555  3555 I CarrierServices: [2] RcsAutoStartReceiver.b: enableRcs changed from true to true
+05-03 12:54:30.998 15290 15481 I Finsky:background: [507] RECEIVER_ENGAGE_PACKAGE_CHANGED#logWorkEndAndFinishGoAsync: SUCCESS
+05-03 12:54:31.017  7696 23185 I Blockstore: [PackageIntentOperation] Checking the restore timespan. [CONTEXT service_id=258 ]
+05-03 12:54:31.020  7696 23189 I AppBackupStateCleanupIO: Backup state cleanup on uninstall is disabled. [CONTEXT service_id=229 ]
+05-03 12:54:31.023  7696  7696 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.backup.GMS_MODULE_RESTORE dat=chimera-action: cmp=com.google.android.gms/.chimera.GmsInternalBoundBrokerService }
+05-03 12:54:31.023  7696  7696 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.backup.GMS_MODULE_RESTORE dat=chimera-action: cmp=com.google.android.gms/.chimera.GmsInternalBoundBrokerService }
+05-03 12:54:31.029  7696 23189 I NearbyDiscovery: (REDACTED) processGrantSlicePermission: %s
