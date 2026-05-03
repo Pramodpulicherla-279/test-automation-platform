@@ -35,4 +35,8 @@ def is_appium_running() -> bool:
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         return s.connect_ex(("127.0.0.1", APPIUM_PORT)) == 0
 
+class AppState:
+    db_connected = False
+    active_test_runs = {}
 
+state = AppState()

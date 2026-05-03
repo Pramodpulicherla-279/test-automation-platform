@@ -172,6 +172,17 @@ export default function APIBatchTester() {
   const wsRef = useRef(null);
   const fileInputRef = useRef(null);
   const scriptRef = useRef(null);
+  const [savedScripts, setSavedScripts] = useState([]);
+  const [selectedScriptId, setSelectedScriptId] = useState(null);
+
+  const [runHistory, setRunHistory] = useState([]);
+  const [selectedRun, setSelectedRun] = useState(null);
+
+  const [runLogs, setRunLogs] = useState([]);
+  const [runMetrics, setRunMetrics] = useState([]);
+
+  const [scriptName, setScriptName] = useState('');
+  const [scriptDescription, setScriptDescription] = useState('');
 
   const buildIframeUrl = (isRunning) => {
     return `http://localhost:3000/d/YOUR_DASHBOARD_ID/YOUR_DASHBOARD_NAME?orgId=1&refresh=${isRunning ? '2s' : '10s'}&from=now-5m&to=now&kiosk&_t=${Date.now()}`;
@@ -293,27 +304,73 @@ export default function APIBatchTester() {
 
   // ── Run tests ─────────────────────────────────────────────────────────────
   const handleRunTests = async () => {
-    // If in script mode, sync to builder first
-    if (scenarioMode === 'script' && scriptDirty) applyScriptToBuilder();
-    const active = endpoints.filter(e => e.enabled && e.path.trim());
-    if (!active.length) { appendLog('FAILED', 'No enabled endpoints with a path'); return; }
-    if (!baseUrl.trim()) { appendLog('FAILED', 'Base URL is required'); return; }
-    setRunning(true); setResults([]); setSummary(null);
-    appendLog('INFO', `Launching — ${active.length} endpoints, ${stages.length} stages`);
+
+    if (!selectedScriptId) {
+
+      appendLog(
+        "FAILED",
+        "Please select or save a script first"
+      );
+
+      return;
+    }
+
     try {
-      const res = await fetch(`${API_URL}/api-testing/api-testing-run`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          base_url: baseUrl,
-          apis: active.map(e => ({ method: e.method, endpoint: e.path, api_name: e.name, expected_status: e.expectedStatus })),
-          timeout: requestTimeout,
-          stages: stages.map(s => ({ type: s.type, duration: s.duration, target: s.target })),
-          script: scenarioMode === 'script' ? script : undefined,
-        }),
-      });
-      if (!res.ok) throw new Error(await res.text());
-    } catch (err) { appendLog('FAILED', `Launch failed: ${err.message}`); setRunning(false); }
+
+      setRunning(true);
+
+      appendLog(
+        "INFO",
+        `Starting test: ${scriptName}`
+      );
+
+      const res = await fetch(
+        `${API_URL}/api-testing/runs/start`,
+        {
+
+          method: 'POST',
+
+          headers: {
+            'Content-Type': 'application/json'
+          },
+
+          body: JSON.stringify({
+
+            scriptId: selectedScriptId,
+
+            scriptName: scriptName
+
+          })
+        }
+      );
+
+      if (!res.ok) {
+
+        throw new Error(
+          await res.text()
+        );
+      }
+
+      const data = await res.json();
+
+      appendLog(
+        "SUCCESS",
+        "Test execution started"
+      );
+
+      console.log(data);
+
+    } catch (err) {
+
+      appendLog(
+        "FAILED",
+        err.message
+      );
+
+    } finally {
+
+      setRunning(false);
+    }
   };
 
   const handleDownloadSample = async () => {
@@ -372,6 +429,84 @@ export default function APIBatchTester() {
     { id: 'monitoring', label: 'Monitoring', icon: <Zap size={13} /> },
   ];
 
+  const handleSaveScript = async () => {
+    try {
+
+      const payload = {
+        name: scriptName,
+        // description: scriptDescription,
+
+        script: script,
+
+        config: {
+          baseUrl,
+          stages,
+          endpoints,
+          requestTimeout
+        }
+      };
+
+      const res = await fetch(
+        `${API_URL}/api-testing/scripts/create`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        }
+      );
+
+      const data = await res.json();
+
+      appendLog("SUCCESS", `Script saved`);
+
+      loadScripts();
+
+    } catch (err) {
+
+      appendLog(
+        "FAILED",
+        `Save failed: ${err.message}`
+      );
+    }
+  };
+
+  const loadScripts = async () => {
+    const res = await fetch(
+      `${API_URL}/api-testing/scripts`
+    );
+    const data = await res.json();
+    console.log(data)
+
+    setSavedScripts(data.scripts || []);
+  };
+
+  const loadScript = async (id) => {
+    const res = await fetch(
+      `${API_URL}/api-testing/scripts/${id}`
+    );
+    const data = await res.json();
+    setSelectedScriptId(id);
+    setScript(data.script);
+    setBaseUrl(data.config.baseUrl);
+    setStages(data.config.stages);
+    setEndpoints(data.config.endpoints);
+    setScriptName(data.name);
+    setRequestTimeout(
+      data.config.requestTimeout
+    );
+
+    appendLog(
+      "INFO",
+      `Loaded script: ${data.name}`
+    );
+  };
+
+  useEffect(() => {
+    loadScripts();
+  }, []);
+
   // ═══════════════════════════════════════════════════════════════════════════
   return (
     <div style={S.root}>
@@ -392,6 +527,39 @@ export default function APIBatchTester() {
           </div>
         </div>
         <div style={S.headerRight}>
+          <select
+            value={selectedScriptId || ''}
+            onChange={(e) => {
+
+              const id = e.target.value;
+
+              setSelectedScriptId(id);
+              console.log("Selected ID:", id);
+
+              if (id) {
+                loadScript(id);
+              }
+            }}
+
+            style={{
+              padding: '8px',
+              borderRadius: '8px',
+              border: '1px solid #ccc',
+              minWidth: '220px'
+            }}
+          >
+            <option value="">
+              Select Saved Script
+            </option>
+            {savedScripts.map(script => (
+              <option
+                key={script.id}
+                value={script.id}
+              >
+                {script.name}
+              </option>
+            ))}
+          </select>
           <div style={S.urlBar}>
             <Globe size={13} color="#94a3b8" />
             <input style={S.urlInput} value={baseUrl}
@@ -448,6 +616,24 @@ export default function APIBatchTester() {
                   </button>
                 </div>
               )}
+              <input
+                type="text"
+                placeholder="Script Name"
+                value={scriptName}
+                onChange={(e) =>
+                  setScriptName(e.target.value)
+                }
+
+                style={{
+                  padding: '8px 12px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '8px',
+                  minWidth: '220px'
+                }}
+              />
+              <button onClick={handleSaveScript}>
+                Save Script
+              </button>
               {scenarioMode === 'builder' && (
                 <span style={{ color: '#94a3b8', fontSize: 11 }}>
                   Configure visually — script auto-updates as you edit
@@ -847,7 +1033,7 @@ export default function APIBatchTester() {
               >
                 <iframe
                   title="P95 Response Time"
-                  src="http://localhost:3000/d-solo/adlxqpf/dashboard-1?orgId=1&from=1777338034691&to=1777338355562&timezone=browser&panelId=panel-5"
+                  src="http://localhost:3000/d-solo/adlxqpf/dashboard-1?orgId=1&from=1777746600000&to=1777832999000&timezone=browser&panelId=panel-5"
                   style={{
                     flex: 1,
                     height: "120px",
@@ -858,7 +1044,7 @@ export default function APIBatchTester() {
 
                 <iframe
                   title="Peak RPS"
-                  src="http://localhost:3000/d-solo/adlxqpf/dashboard-1?orgId=1&from=1777338034691&to=1777338355562&timezone=browser&panelId=panel-4"
+                  src="http://localhost:3000/d-solo/adlxqpf/dashboard-1?orgId=1&from=1777746600000&to=1777832999000&timezone=browser&panelId=panel-4"
                   style={{
                     flex: 1,
                     height: "120px",
@@ -869,7 +1055,7 @@ export default function APIBatchTester() {
 
                 <iframe
                   title="Total Requests"
-                  src="http://localhost:3000/d-solo/adlxqpf/dashboard-1?orgId=1&from=1777338034691&to=1777338355562&timezone=browser&panelId=panel-2"
+                  src="http://localhost:3000/d-solo/adlxqpf/dashboard-1?orgId=1&from=1777746600000&to=1777832999000&timezone=browser&panelId=panel-2"
                   style={{
                     flex: 1,
                     height: "120px",
@@ -880,7 +1066,7 @@ export default function APIBatchTester() {
 
                 <iframe
                   title="HTTP Failures"
-                  src="http://localhost:3000/d-solo/adlxqpf/dashboard-1?orgId=1&from=1777338034691&to=1777338355562&timezone=browser&panelId=panel-3"
+                  src="http://localhost:3000/d-solo/adlxqpf/dashboard-1?orgId=1&from=1777746600000&to=1777832999000&timezone=browser&panelId=panel-3"
                   style={{
                     flex: 1,
                     height: "120px",
@@ -888,8 +1074,8 @@ export default function APIBatchTester() {
                     // borderRadius: "10px",
                   }}
                 />
-              </div>              
-              <iframe src="http://localhost:3000/d-solo/adlxqpf/dashboard-1?orgId=1&from=1777338033674&to=1777338396170&timezone=browser&panelId=panel-1" width="100%" height="100%" frameborder="0"></iframe>
+              </div>
+              <iframe src="http://localhost:3000/d-solo/adlxqpf/dashboard-1?orgId=1&from=1777746600000&to=1777832999000&timezone=browser&panelId=panel-1" width="100%" height="100%" frameborder="0"></iframe>
             </div>
 
             {/* Execution Log — only here */}

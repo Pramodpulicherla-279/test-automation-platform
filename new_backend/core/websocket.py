@@ -60,3 +60,23 @@ async def websocket_endpoint(websocket: WebSocket):
         await manager.disconnect(websocket)
 
 print("WebSocket manager initialized")
+
+class TestRunManager:
+
+    def __init__(self):
+        self.running_tests = {}
+
+    def start_test(self, run_id, process):
+        self.running_tests[run_id] = process
+
+    def stop_test(self, run_id):
+        if run_id in self.running_tests:
+            process = self.running_tests[run_id]
+            process.kill()
+            del self.running_tests[run_id]
+
+    def get_active_runs(self):
+        return list(self.running_tests.keys())
+
+
+test_manager = TestRunManager()
