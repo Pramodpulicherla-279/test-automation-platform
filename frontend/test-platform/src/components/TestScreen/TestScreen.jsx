@@ -351,6 +351,7 @@ function TestScreen({ onHistoryUpdate }) {
     const [selectedApk, setSelectedApk] = useState(() => loadState('selectedApk', ''));
     const [hasOpenedReport, setHasOpenedReport] = useState(false);
     const [networkConfig, setNetworkConfig] = useState(null);
+    const [showNewTestButton, setShowNewTestButton] = useState(false);
 
 
     const prevAppKeyRef = useRef(selectedAppKey);
@@ -446,6 +447,7 @@ function TestScreen({ onHistoryUpdate }) {
             }
         } else if (data.type === 'RUN_COMPLETE') {
             setIsRunning(false);
+            setShowNewTestButton(true);
         }
     };
 
@@ -458,6 +460,7 @@ function TestScreen({ onHistoryUpdate }) {
         setHasOpenedReport(false);
         setModules(prev => prev.map(m => ({ ...m, status: 'pending' })));
         setIsRunning(true);
+        setShowNewTestButton(false);
         setIsDownloading(!!apkUrl);
         setLogs([]);
 
@@ -522,8 +525,15 @@ function TestScreen({ onHistoryUpdate }) {
     };
 
     const handleStopTest = async () => {
-        try { await fetch(`${API_URL}/test/stop-test`, { method: 'POST' }); } catch { }
-        setIsRunning(false); setIsDownloading(false);
+        try { 
+            await fetch(`${API_URL}/test/stop-test`, { 
+                method: 'POST' 
+            });
+         } catch { }
+
+        setIsRunning(false); 
+        setIsDownloading(false);
+        setShowNewTestButton(true);
         handleIncomingData({ type: 'LOG', payload: { message: 'Test stopped by user.', status: 'FAILED' } });
         setShowStopPopup(true);
     };
@@ -533,13 +543,55 @@ function TestScreen({ onHistoryUpdate }) {
         try { await fetch(`${API_URL}/test/generate-report`, { method: 'POST' }); } catch { }
         handleIncomingData({ type: 'LOG', payload: { message: 'Generating partial report...', status: 'INFO' } });
     };
+    const handleReset = async () => {
 
-    const handleReset = () => {
-        setIsRunning(false); setApkUrl(''); setSelectedApk(''); setLogs([]);
-        setModules(prev => prev.map(m => ({ ...m, status: 'pending' })));
-        ['apkUrl', 'selectedApk', 'logs', 'modules', 'isRunning', 'jiraIssues'].forEach(k => sessionStorage.removeItem(k));
+        setShowNewTestButton(false);
+
+        // Clear UI states
+        setIsRunning(false);
+        setIsDownloading(false);
+
+        // Clear APK selections
+        setApkUrl('');
+        setSelectedApk('');
+
+        // Clear app details
+        setAppIcon(null);
+        setAppTitle('');
+
+        // Clear logs completely
+        setLogs([]);
+
+        // Reset module statuses
+        setModules(
+            APP_VARIANTS[selectedAppKey].modules.map(m => ({
+                ...m,
+                status: 'pending',
+                isSelected: true
+            }))
+        );
+
+        // Clear session storage
+        [
+            'apkUrl',
+            'selectedApk',
+            'logs',
+            'modules',
+            'isRunning',
+            'jiraIssues'
+        ].forEach(k => sessionStorage.removeItem(k));
+
+        // Re-fetch fresh statuses
+        await checkAppiumStatus();
+
+        handleIncomingData({
+            type: 'LOG',
+            payload: {
+                message: 'Ready for new test execution.',
+                status: 'INFO'
+            }
+        });
     };
-
     const analyzeUiScreenshots = async () => {
         setUiAnalysisStatus('loading'); setUiAnalysisError('');
         try {
@@ -558,7 +610,14 @@ function TestScreen({ onHistoryUpdate }) {
     const toggleAppium = async () => {
         try {
             await fetch(`${API_URL}/test/appium/${appiumStatus === 'running' ? 'stop' : 'start'}`, { method: 'POST' });
-            handleIncomingData({ type: 'LOG', payload: { message: `${appiumStatus === 'running' ? 'Stopping' : 'Starting'} Appium Server...`, status: 'INFO' } });
+            setLogs(prev => [
+                ...prev,
+                {
+                    time: new Date().toLocaleTimeString(),
+                    message: `Appium server ${appiumStatus === 'running' ? 'stopping' : 'starting'}...`,
+                    type: 'SYSTEM'
+                }
+            ]);
             setTimeout(checkAppiumStatus, 1000);
         } catch { }
     };
@@ -672,7 +731,7 @@ function TestScreen({ onHistoryUpdate }) {
                             {isRunning && (
                                 <button onClick={handleStopTest} className="run-button stop-button ml-2">Stop</button>
                             )}
-                            {!isRunning && logs.length > 0 && (
+                            {showNewTestButton && (
                                 <button onClick={handleReset} className="run-button ml-2"
                                     style={{ backgroundColor: '#334155', color: '#e2e8f0', border: '1px solid #475569' }}>
                                     Start New Test

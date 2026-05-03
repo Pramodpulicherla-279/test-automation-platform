@@ -198,118 +198,254 @@ async def module_status_flow(data: dict):
         }})
     return {"status": "ok"}
 
+# async def start_test_flow(request, background_tasks, manager):
+#     reset_run_state()
+#     global DOWNLOAD_PROCESS_OBJ, latest_run_id
+    
+#     run_id = new_run()
+#     latest_run_id = run_id
+
+#     # store network config
+#     network_config = getattr(request, "network_config", None)
+    
+#     runs[run_id] = runs.get(run_id, {})
+#     runs[run_id]["network_config"] = network_config
+
+#     try:
+#         await manager.broadcast({
+#             "type": "LOG",
+#             "payload": {
+#                 "message": "Starting APK download...", 
+#                 "status": "INFO"
+#             }
+#         })
+
+#         await manager.broadcast({"type": "LOG", "payload": {"message": "Starting APK download...", "status": "INFO"}})
+#         script_path = os.path.join(os.path.dirname(__file__), "gdrive_loader.py")
+#         apk_path = None
+#         env = os.environ.copy()
+#         env["PYTHONIOENCODING"] = "utf-8"
+        
+#         DOWNLOAD_PROCESS_OBJ = await asyncio.create_subprocess_exec(
+#             sys.executable, "-u", script_path, request.url,
+#             stdout=asyncio.subprocess.PIPE, 
+#             stderr=asyncio.subprocess.PIPE, 
+#             env=env
+#         )
+
+#         async for line in DOWNLOAD_PROCESS_OBJ.stdout:
+#             decoded_line = line.decode("utf-8").strip()
+#             if decoded_line.startswith("PROGRESS:"):
+#                 await manager.broadcast({"type": "LOG", "payload": {
+#                     "message": decoded_line.replace("PROGRESS:",""), "status": "PROGRESS"
+#                 }})
+#             elif decoded_line.startswith("RESULT:"):
+#                 apk_path = decoded_line.replace("RESULT:","").strip()
+#             elif decoded_line:
+#                 await manager.broadcast({"type": "LOG", "payload": {"message": decoded_line, "status": "INFO"}})
+        
+#         await DOWNLOAD_PROCESS_OBJ.wait()
+#         if DOWNLOAD_PROCESS_OBJ.returncode != 0:
+#             stderr_data = await DOWNLOAD_PROCESS_OBJ.stderr.read()
+#             raise Exception(f"Script Error: {stderr_data.decode('utf-8').strip() or 'Unknown error'}")
+#         if not apk_path:
+#             raise Exception("Download script finished but returned no path.")
+        
+#         DOWNLOAD_PROCESS_OBJ = None
+
+#         icon_url      = extract_app_icon(apk_path)
+#         full_icon_url = f"http://localhost:8000{icon_url}" if icon_url else None
+
+#         info         = get_apk_info(apk_path) or {}
+#         app_name     = info.get("app_name")
+#         app_version  = info["app_version"]
+#         package_name = info.get("package_name")
+#         app_variant  = detect_app_variant.get(package_name, app_name)
+#         tests_to_run = request.tests_to_run or APP_VARIANTS.get(app_variant, [])
+        
+#          # ── Store into run state immediately so conftest can fetch it ─────────
+#         developer_name = APP_DEVELOPER_MAP.get(app_variant, "Unknown Developer")
+#         if run_id in runs:
+#             runs[run_id]["app_name"]       = app_name       or ""
+#             runs[run_id]["app_version"]    = app_version     or ""
+#             runs[run_id]["package_name"]   = package_name   or ""
+#             runs[run_id]["app_variant"]    = app_variant     or ""
+#             runs[run_id]["developer_name"] = developer_name or ""
+#         await manager.broadcast({
+#             "type": "LOG",
+#             "payload": {
+#                 "message": f"Detected app variant: {app_variant}", "status": "INFO"
+#             },
+#         })
+
+#         background_tasks.add_task(
+#             run_post_notify,
+#             run_id=run_id,
+#             apk_path=apk_path,
+#             tests_to_run   = tests_to_run,
+#             app_name       = info.get("app_name"),
+#             app_version    = info.get("app_version"),
+#             developer_name = info.get("developer_name"),
+#             # developer_name=APP_DEVELOPER_MAP.get(app_variant, "Unknown Developer"),
+#             channel_id=SLACK_NOTIFY_CHANNEL,
+#         )
+
+#         return {
+#             "status": "success", 
+#             "message": "APK Downloaded. Test Starting...",
+#             "run_id": run_id,
+#             "app_icon": full_icon_url, 
+#             "apk_path": apk_path, 
+#             **info,
+#             "status": "success",
+#             "message": "APK Downloaded. Test Starting...",
+#             "app_icon": full_icon_url,
+#             "app_name": app_name,
+#             "package_name": package_name,
+#             "apk_path": apk_path,
+#             "app_variant": app_variant,
+#             "app_version": app_version,
+#         }
+
+#     except Exception as e:
+#         DOWNLOAD_PROCESS_OBJ = None
+#         await manager.broadcast({"type": "LOG", "payload": {
+#             "message": f"Download interrupted: {str(e)}", "status": "FAILED",
+#         }})
+#         raise HTTPException(status_code=400, detail=f"Download Failed: {str(e)}")
+
 async def start_test_flow(request, background_tasks, manager):
     reset_run_state()
+
     global DOWNLOAD_PROCESS_OBJ, latest_run_id
-    
-    run_id        = new_run()
+
+    run_id = new_run()
     latest_run_id = run_id
 
     # store network config
     network_config = getattr(request, "network_config", None)
-    
+
     runs[run_id] = runs.get(run_id, {})
     runs[run_id]["network_config"] = network_config
 
     try:
         await manager.broadcast({
             "type": "LOG",
-            "payload": {"message": "Starting APK download...", "status": "INFO"}
+            "payload": {
+                "message": "Starting APK download...",
+                "status": "INFO"
+            }
         })
-        await manager.broadcast({"type": "LOG", "payload": {"message": "Starting APK download...", "status": "INFO"}})
-        script_path = os.path.join(os.path.dirname(__file__), "gdrive_loader.py")
-        apk_path = None
-        env = os.environ.copy()
-        env["PYTHONIOENCODING"] = "utf-8"
-        
-        DOWNLOAD_PROCESS_OBJ = await asyncio.create_subprocess_exec(
-            sys.executable, "-u", script_path, request.url,
-            stdout=asyncio.subprocess.PIPE, 
-            stderr=asyncio.subprocess.PIPE, 
-            env=env
+
+        # Run download directly in thread pool instead of subprocess
+        # because subprocess may use wrong Python environment
+        loop = asyncio.get_event_loop()
+
+        def progress_callback(msg):
+            clean = msg.replace('\r', '').strip()
+
+            if clean:
+                asyncio.run_coroutine_threadsafe(
+                    manager.broadcast({
+                        "type": "LOG",
+                        "payload": {
+                            "message": clean,
+                            "status": "PROGRESS"
+                        }
+                    }),
+                    loop
+                )
+
+        apk_path = await loop.run_in_executor(
+            None,
+            lambda: download_apk(request.url, progress_callback)
         )
 
-        async for line in DOWNLOAD_PROCESS_OBJ.stdout:
-            decoded_line = line.decode("utf-8").strip()
-            if decoded_line.startswith("PROGRESS:"):
-                await manager.broadcast({"type": "LOG", "payload": {
-                    "message": decoded_line.replace("PROGRESS:",""), "status": "PROGRESS"
-                }})
-            elif decoded_line.startswith("RESULT:"):
-                apk_path = decoded_line.replace("RESULT:","").strip()
-            elif decoded_line:
-                await manager.broadcast({"type": "LOG", "payload": {"message": decoded_line, "status": "INFO"}})
-        
-        await DOWNLOAD_PROCESS_OBJ.wait()
-        if DOWNLOAD_PROCESS_OBJ.returncode != 0:
-            stderr_data = await DOWNLOAD_PROCESS_OBJ.stderr.read()
-            raise Exception(f"Script Error: {stderr_data.decode('utf-8').strip() or 'Unknown error'}")
-        if not apk_path:
-            raise Exception("Download script finished but returned no path.")
-        
         DOWNLOAD_PROCESS_OBJ = None
 
-        icon_url      = extract_app_icon(apk_path)
+        if not apk_path:
+            raise Exception("Download failed: APK path not returned")
+
+        # Extract app icon
+        icon_url = extract_app_icon(apk_path)
         full_icon_url = f"http://localhost:8000{icon_url}" if icon_url else None
 
-        info         = get_apk_info(apk_path) or {}
-        app_name     = info.get("app_name")
-        app_version  = info["app_version"]
+        # Get APK info
+        info = get_apk_info(apk_path) or {}
+
+        app_name = info.get("app_name")
+        app_version = info.get("app_version")
         package_name = info.get("package_name")
-        app_variant  = detect_app_variant.get(package_name, app_name)
-        tests_to_run = request.tests_to_run or APP_VARIANTS.get(app_variant, [])
-        
-         # ── Store into run state immediately so conftest can fetch it ─────────
-        developer_name = APP_DEVELOPER_MAP.get(app_variant, "Unknown Developer")
+
+        app_variant = detect_app_variant(package_name, app_name)
+
+        tests_to_run = request.tests_to_run or APP_VARIANTS.get(
+            app_variant,
+            []
+        )
+
+        # Store run metadata
+        developer_name = APP_DEVELOPER_MAP.get(
+            app_variant,
+            "Unknown Developer"
+        )
+
         if run_id in runs:
-            runs[run_id]["app_name"]       = app_name       or ""
-            runs[run_id]["app_version"]    = app_version     or ""
-            runs[run_id]["package_name"]   = package_name   or ""
-            runs[run_id]["app_variant"]    = app_variant     or ""
+            runs[run_id]["app_name"] = app_name or ""
+            runs[run_id]["app_version"] = app_version or ""
+            runs[run_id]["package_name"] = package_name or ""
+            runs[run_id]["app_variant"] = app_variant or ""
             runs[run_id]["developer_name"] = developer_name or ""
+
         await manager.broadcast({
             "type": "LOG",
             "payload": {
-                "message": f"Detected app variant: {app_variant}", "status": "INFO"
-            },
+                "message": f"Detected app variant: {app_variant}",
+                "status": "INFO"
+            }
         })
 
+        # Start tests in background
         background_tasks.add_task(
             run_post_notify,
             run_id=run_id,
             apk_path=apk_path,
-            tests_to_run   = tests_to_run,
-            app_name       = info.get("app_name"),
-            app_version    = info.get("app_version"),
-            developer_name = info.get("developer_name"),
-            # developer_name=APP_DEVELOPER_MAP.get(app_variant, "Unknown Developer"),
+            tests_to_run=tests_to_run,
+            app_name=info.get("app_name"),
+            app_version=info.get("app_version"),
+            developer_name=developer_name,
             channel_id=SLACK_NOTIFY_CHANNEL,
         )
 
         return {
-            "status": "success", 
-            "message": "APK Downloaded. Test Starting...",
-            "run_id": run_id,
-            "app_icon": full_icon_url, 
-            "apk_path": apk_path, 
-            **info,
             "status": "success",
             "message": "APK Downloaded. Test Starting...",
+            "run_id": run_id,
             "app_icon": full_icon_url,
+            "apk_path": apk_path,
+            **info,
             "app_name": app_name,
             "package_name": package_name,
-            "apk_path": apk_path,
             "app_variant": app_variant,
             "app_version": app_version,
         }
 
     except Exception as e:
         DOWNLOAD_PROCESS_OBJ = None
-        await manager.broadcast({"type": "LOG", "payload": {
-            "message": f"Download interrupted: {str(e)}", "status": "FAILED",
-        }})
-        raise HTTPException(status_code=400, detail=f"Download Failed: {str(e)}")
 
+        await manager.broadcast({
+            "type": "LOG",
+            "payload": {
+                "message": f"Download interrupted: {str(e)}",
+                "status": "FAILED"
+            }
+        })
+
+        raise HTTPException(
+            status_code=400,
+            detail=f"Download Failed: {str(e)}"
+        )
+    
 async def start_test_existing_flow(request, background_tasks, manager):
     global latest_run_id
 
