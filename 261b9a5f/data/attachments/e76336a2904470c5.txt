@@ -1,0 +1,80 @@
+CRASH START: 05-03 14:33:05.563 25981 25981 I AndroidRuntime: VM exiting with result code 0.
+05-03 14:33:05.575   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.575   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.577   721   830 E ActivityManager: Unable to freeze binder for 25993: -11
+05-03 14:33:05.590  2829  3074 I AiAiEcho: EchoTargets: 
+05-03 14:33:05.590  2829  3074 I AiAiEcho: Filtered by AiAi flag check: 
+05-03 14:33:05.590  2829  3074 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+05-03 14:33:05.611   721   830 I ActivityManager: Killing 25993:io.appium.uiautomator2.server/u0a219 (adj 0): stop io.appium.uiautomator2.server due to finished inst
+05-03 14:33:05.695   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.698   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.703   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.705   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.710   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.717   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.722   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.733   721   721 D BatterySaverPolicy: accessibility changed to false, updating policy.
+05-03 14:33:05.740  2829  3074 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+05-03 14:33:05.747   721   830 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.747  2829  3074 I AiAiEcho: Predicting[0]:  [CONTEXT sampling_count=5 ]
+05-03 14:33:05.747  2829  3074 I AiAiEcho: EchoTargets: 
+05-03 14:33:05.747  2829  3074 I AiAiEcho: Filtered by AiAi flag check: 
+05-03 14:33:05.747  2829  3074 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+05-03 14:33:05.747   721   830 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.747   721   830 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.747   721   830 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.748  2829  3074 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+05-03 14:33:05.748   721   830 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.748   721   830 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.748   721   830 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.748   721   830 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.748   721   830 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.748   721   830 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.748  2829  3074 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+05-03 14:33:05.748   721   830 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.749   721   830 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.749   721   830 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.749   721   830 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.749   721   830 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.749   721   830 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.749   721   830 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.749   721   830 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.750   721   830 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.750   721   830 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.750   721   830 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.761   721   830 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.761   721   830 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.764   721   830 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.765  1165  1165 D SsBaseTemplateCard: No text view can be set up
+05-03 14:33:05.766  1165  1165 D SsBaseTemplateCard: Passed-in item info is null
+05-03 14:33:05.766  1165  1165 D SsBaseTemplateCard: Passed-in item info is null
+05-03 14:33:05.766  1165  1165 D SsBaseTemplateCard: Passed-in item info is null
+05-03 14:33:05.766  1165  1165 I SsBaseTemplateCard: Secondary card pane is null
+05-03 14:33:05.767   721   830 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.768   721   830 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.770   721   830 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.770   721   830 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.770   721   830 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.772   721   830 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.774   721   830 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:33:05.790   721   830 W ProcessStats: Tracking association SourceState{26889ae system/1000 BFgs #8620} whose proc state 4 is better than process ProcessState{3f9cf76 com.google.android.tts/10152 pkg=com.google.android.tts} proc state 14 (6 skipped)
+05-03 14:33:05.798  2829  3074 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+05-03 14:33:05.807  1031  1031 W PageIndicator: Total number of pages invalid: 0. Assuming 1 page.
+05-03 14:33:05.847   721   830 V ActivityManager: Got obituary of 25993:io.appium.uiautomator2.server
+05-03 14:33:05.855   721   776 I libprocessgroup: Removed cgroup /sys/fs/cgroup/apps/uid_10219/pid_25993
+05-03 14:33:05.857   478   478 I Zygote  : Process 25993 exited due to signal 9 (Killed)
+05-03 14:33:05.875   560   560 I adbd    : Remote process closed the socket (on MSG_PEEK)
+05-03 14:33:05.915   721   830 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10219 user=0: from pid 26247
+05-03 14:33:05.918   721   830 I AppsFilter: interaction: PackageSetting{3af283c com.example.myapplication/10220} -> PackageSetting{4d19e45 io.appium.uiautomator2.server/10219} BLOCKED
+05-03 14:33:05.918   721   830 I AppsFilter: interaction: PackageSetting{2dfaf1a com.android.microdroid.empty_payload/10203} -> PackageSetting{4d19e45 io.appium.uiautomator2.server/10219} BLOCKED
+05-03 14:33:05.919   721   830 I AppsFilter: interaction: PackageSetting{3648c28 io.appium.settings/10217} -> PackageSetting{4d19e45 io.appium.uiautomator2.server/10219} BLOCKED
+05-03 14:33:05.926   721   830 I ActivityManager: Force stopping io.appium.uiautomator2.server.test appid=10218 user=0: from pid 26248
+05-03 14:33:05.938   721   830 I AppsFilter: interaction: PackageSetting{3af283c com.example.myapplication/10220} -> PackageSetting{8b3aa4b io.appium.uiautomator2.server.test/10218} BLOCKED
+05-03 14:33:05.938   721   830 I AppsFilter: interaction: PackageSetting{2dfaf1a com.android.microdroid.empty_payload/10203} -> PackageSetting{8b3aa4b io.appium.uiautomator2.server.test/10218} BLOCKED
+05-03 14:33:05.938   721   830 I AppsFilter: interaction: PackageSetting{3648c28 io.appium.settings/10217} -> PackageSetting{8b3aa4b io.appium.uiautomator2.server.test/10218} BLOCKED
+05-03 14:33:05.970  4087  4087 D CarrierSvcBindHelper: onHandleForceStop: [io.appium.uiautomator2.server]
+05-03 14:33:05.985  4087  4087 D CarrierSvcBindHelper: No carrier app for: 0
+05-03 14:33:05.993  4087  4087 D CarrierSvcBindHelper: onHandleForceStop: [io.appium.uiautomator2.server.test]
+05-03 14:33:05.994  4087  4087 D CarrierSvcBindHelper: No carrier app for: 0
+05-03 14:33:06.025 26253 26253 W dumpsys : Thread Pool max thread count is 0. Cannot cache binder as linkToDeath cannot be implemented. serviceName: activity
+05-03 14:33:06.034  4087  4398 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
