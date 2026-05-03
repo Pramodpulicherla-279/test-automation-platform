@@ -1,0 +1,80 @@
+CRASH START: 05-03 14:55:02.689 31179 31179 I AndroidRuntime: VM exiting with result code 0.
+05-03 14:55:02.698   721  1804 E ActivityManager: Unable to freeze binder for 31191: -11
+05-03 14:55:02.702   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.703   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.712  2829  3074 I AiAiEcho: EchoTargets: 
+05-03 14:55:02.712  2829  3074 I AiAiEcho: Filtered by AiAi flag check: 
+05-03 14:55:02.712  2829  3074 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+05-03 14:55:02.712  2829  3074 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+05-03 14:55:02.713   721  1804 I ActivityManager: Killing 31191:io.appium.uiautomator2.server/u0a219 (adj 0): stop io.appium.uiautomator2.server due to finished inst
+05-03 14:55:02.718   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.727   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.729  2829  3074 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+05-03 14:55:02.733   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.737   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.745   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.750  2829  3074 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+05-03 14:55:02.750   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.751   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.767   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.775   721  1804 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.782   721  1804 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.782   721  1804 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.783   721  1804 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.783   721  1804 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.783   721  1804 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.785   721  1804 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.786   721  1804 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.786   721  1804 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.786   721  1804 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.786   721  1804 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.786   721  1804 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.787   721  1804 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.787   721  1804 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.789   721  1804 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.789   721  1804 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.789   721  1804 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.790   721  1804 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.790   721  1804 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.790   721  1804 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.790   721  1804 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.791   721  1804 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.794   721  1804 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.795   721  1804 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.801   721  1804 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.805   560   560 I adbd    : Remote process closed the socket (on MSG_PEEK)
+05-03 14:55:02.810   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.814   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.814   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.815   478   478 I Zygote  : Process 31191 exited due to signal 9 (Killed)
+05-03 14:55:02.821   721   776 I libprocessgroup: Removed cgroup /sys/fs/cgroup/apps/uid_10219/pid_31191
+05-03 14:55:02.824   721  1804 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.841   721   765 W Looper  : Slow dispatch took 102ms android.ui app=system_server main=false group=TOP_APP h=com.android.server.am.ActivityManagerService$UiHandler c=com.android.server.am.UidObserverController$$ExternalSyntheticLambda0@b566d9 m=0
+05-03 14:55:02.845   721   721 W Looper  : Slow dispatch took 100ms main app=system_server main=true group=FOREGROUND h=com.android.server.accessibility.AccessibilityManagerService$MainHandler c=com.android.server.accessibility.AccessibilityManagerService$$ExternalSyntheticLambda4@8779aff m=0
+05-03 14:55:02.845  1165  1165 D SsBaseTemplateCard: No text view can be set up
+05-03 14:55:02.846  1165  1165 D SsBaseTemplateCard: Passed-in item info is null
+05-03 14:55:02.846  1165  1165 D SsBaseTemplateCard: Passed-in item info is null
+05-03 14:55:02.847  1165  1165 D SsBaseTemplateCard: Passed-in item info is null
+05-03 14:55:02.847   721  1804 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.847  1165  1165 I SsBaseTemplateCard: Secondary card pane is null
+05-03 14:55:02.850   721   721 D BatterySaverPolicy: accessibility changed to false, updating policy.
+05-03 14:55:02.851   721  1804 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.854   721  1804 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.897   721  1804 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.901   721  1804 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.912   721  1804 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:55:02.914   721  1804 W ProcessStats: Tracking association SourceState{26889ae system/1000 BFgs #9905} whose proc state 4 is better than process ProcessState{3f9cf76 com.google.android.tts/10152 pkg=com.google.android.tts} proc state 14 (5 skipped)
+05-03 14:55:02.913  1031  1031 W PageIndicator: Total number of pages invalid: 0. Assuming 1 page.
+05-03 14:55:02.947   721   757 V ActivityManager: Got obituary of 31191:io.appium.uiautomator2.server
+05-03 14:55:02.978   721   757 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10219 user=0: from pid 31415
+05-03 14:55:02.982   721   757 I AppsFilter: interaction: PackageSetting{3af283c com.example.myapplication/10220} -> PackageSetting{3afeaf7 io.appium.uiautomator2.server/10219} BLOCKED
+05-03 14:55:02.982   721   757 I AppsFilter: interaction: PackageSetting{2dfaf1a com.android.microdroid.empty_payload/10203} -> PackageSetting{3afeaf7 io.appium.uiautomator2.server/10219} BLOCKED
+05-03 14:55:02.982   721   757 I AppsFilter: interaction: PackageSetting{3648c28 io.appium.settings/10217} -> PackageSetting{3afeaf7 io.appium.uiautomator2.server/10219} BLOCKED
+05-03 14:55:02.984   721  1804 I ActivityManager: Force stopping io.appium.uiautomator2.server.test appid=10218 user=0: from pid 31416
+05-03 14:55:02.992   721  1804 I AppsFilter: interaction: PackageSetting{3af283c com.example.myapplication/10220} -> PackageSetting{8b3aa4b io.appium.uiautomator2.server.test/10218} BLOCKED
+05-03 14:55:02.992   721  1804 I AppsFilter: interaction: PackageSetting{2dfaf1a com.android.microdroid.empty_payload/10203} -> PackageSetting{8b3aa4b io.appium.uiautomator2.server.test/10218} BLOCKED
+05-03 14:55:02.993   721  1804 I AppsFilter: interaction: PackageSetting{3648c28 io.appium.settings/10217} -> PackageSetting{8b3aa4b io.appium.uiautomator2.server.test/10218} BLOCKED
+05-03 14:55:03.021  4087  4087 D CarrierSvcBindHelper: onHandleForceStop: [io.appium.uiautomator2.server]
+05-03 14:55:03.051  4087  4087 D CarrierSvcBindHelper: No carrier app for: 0
+05-03 14:55:03.067  4087  4087 D CarrierSvcBindHelper: onHandleForceStop: [io.appium.uiautomator2.server.test]
+05-03 14:55:03.075  4087  4087 D CarrierSvcBindHelper: No carrier app for: 0

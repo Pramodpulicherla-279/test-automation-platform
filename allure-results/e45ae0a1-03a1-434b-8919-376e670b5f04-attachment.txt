@@ -1,0 +1,80 @@
+CRASH START: 05-03 14:56:14.840 31632 31632 I AndroidRuntime: VM exiting with result code 0.
+05-03 14:56:14.842   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.842   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.845   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.848   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.853   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.866  1165  1165 D SsBaseTemplateCard: No text view can be set up
+05-03 14:56:14.867   721  1088 E ActivityManager: Unable to freeze binder for 31647: -11
+05-03 14:56:14.870  1031  1031 W PageIndicator: Total number of pages invalid: 0. Assuming 1 page.
+05-03 14:56:14.873   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.873   721  1088 I ActivityManager: Killing 31647:io.appium.uiautomator2.server/u0a219 (adj 0): stop io.appium.uiautomator2.server due to finished inst
+05-03 14:56:14.874  1165  1165 D SsBaseTemplateCard: Passed-in item info is null
+05-03 14:56:14.874  1165  1165 D SsBaseTemplateCard: Passed-in item info is null
+05-03 14:56:14.874  1165  1165 D SsBaseTemplateCard: Passed-in item info is null
+05-03 14:56:14.874  1165  1165 I SsBaseTemplateCard: Secondary card pane is null
+05-03 14:56:14.875   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.877   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.878   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.882   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.882   721  1088 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.890   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.891   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.893   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.897   721   721 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.898   721   721 D BatterySaverPolicy: accessibility changed to false, updating policy.
+05-03 14:56:14.913   721  1088 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.923   721  1088 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.927   721  1088 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.935   721  1088 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.935   721  1088 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.935   721  1088 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.942   721  1088 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.942   721  1088 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.943   721  1088 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.943   721  1088 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.954   721  1088 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.957   721  1088 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.958   721  1088 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.959   721  1088 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.959   721  1088 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.959   721  1088 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.959   721  1088 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.960   721  1088 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.960   721  1088 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.960   721  1088 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.960   721  1088 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.960   721  1088 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.960   721  1088 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.966   721  1088 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.970   721  1088 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.973   721  1088 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.973   721  1088 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.974   721  1088 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.975   721  1088 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.977   721  1088 W IPCThreadState: Sending oneway calls to frozen process.
+05-03 14:56:14.994   721  1088 W ProcessStats: Tracking association SourceState{26889ae system/1000 BFgs #10012} whose proc state 4 is better than process ProcessState{3f9cf76 com.google.android.tts/10152 pkg=com.google.android.tts} proc state 14 (5 skipped)
+05-03 14:56:15.026   721  1302 V ActivityManager: Got obituary of 31647:io.appium.uiautomator2.server
+05-03 14:56:15.039   478   478 I Zygote  : Process 31647 exited due to signal 9 (Killed)
+05-03 14:56:15.041   721   776 I libprocessgroup: Removed cgroup /sys/fs/cgroup/apps/uid_10219/pid_31647
+05-03 14:56:15.046   560   560 I adbd    : Remote process closed the socket (on MSG_PEEK)
+05-03 14:56:15.162   721  1881 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10219 user=0: from pid 31871
+05-03 14:56:15.170   721  1881 I AppsFilter: interaction: PackageSetting{3af283c com.example.myapplication/10220} -> PackageSetting{1e76af3 io.appium.uiautomator2.server/10219} BLOCKED
+05-03 14:56:15.171   721  1881 I AppsFilter: interaction: PackageSetting{2dfaf1a com.android.microdroid.empty_payload/10203} -> PackageSetting{1e76af3 io.appium.uiautomator2.server/10219} BLOCKED
+05-03 14:56:15.171   721  1881 I AppsFilter: interaction: PackageSetting{3648c28 io.appium.settings/10217} -> PackageSetting{1e76af3 io.appium.uiautomator2.server/10219} BLOCKED
+05-03 14:56:15.177   721  1304 I ActivityManager: Force stopping io.appium.uiautomator2.server.test appid=10218 user=0: from pid 31870
+05-03 14:56:15.188   721  1304 I AppsFilter: interaction: PackageSetting{3af283c com.example.myapplication/10220} -> PackageSetting{8b3aa4b io.appium.uiautomator2.server.test/10218} BLOCKED
+05-03 14:56:15.189   721  1304 I AppsFilter: interaction: PackageSetting{2dfaf1a com.android.microdroid.empty_payload/10203} -> PackageSetting{8b3aa4b io.appium.uiautomator2.server.test/10218} BLOCKED
+05-03 14:56:15.189   721  1304 I AppsFilter: interaction: PackageSetting{3648c28 io.appium.settings/10217} -> PackageSetting{8b3aa4b io.appium.uiautomator2.server.test/10218} BLOCKED
+05-03 14:56:15.204  4087  4087 D CarrierSvcBindHelper: onHandleForceStop: [io.appium.uiautomator2.server]
+05-03 14:56:15.228  4087  4087 D CarrierSvcBindHelper: No carrier app for: 0
+05-03 14:56:15.241  4087  4087 D CarrierSvcBindHelper: onHandleForceStop: [io.appium.uiautomator2.server.test]
+05-03 14:56:15.245  4087  4087 D CarrierSvcBindHelper: No carrier app for: 0
+05-03 14:56:15.246   721   875 I system_server: AssetManager2(0x790f1feab998) locale list changing from [] to [en-US]
+05-03 14:56:15.294 31876 31876 W dumpsys : Thread Pool max thread count is 0. Cannot cache binder as linkToDeath cannot be implemented. serviceName: activity
+05-03 14:56:15.311   721   875 I system_server: AssetManager2(0x790f1fedd998) locale list changing from [] to [en-US]
+05-03 14:56:15.317   721  1304 I ActivityManager: Force stopping com.krishivaas appid=10222 user=0: from pid 31880
+05-03 14:56:15.322   721  1304 I ActivityManager: Killing 31684:com.krishivaas/u0a222 (adj 0): stop com.krishivaas due to from pid 31880
+05-03 14:56:15.327   721  1304 D CompatChangeReporter: Compat change id reported: 151861875; UID 10222; state: ENABLED
+05-03 14:56:15.332   721   875 I system_server: AssetManager2(0x790f1ff45b38) locale list changing from [] to [en-US]
+05-03 14:56:15.336   721  1304 W ActivityTaskManager: Force removing ActivityRecord{202695343 u0 com.krishivaas/.MainActivity t108 f}}: app died, no saved state
