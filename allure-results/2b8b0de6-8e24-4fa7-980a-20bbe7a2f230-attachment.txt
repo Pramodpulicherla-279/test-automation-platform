@@ -1,0 +1,80 @@
+CRASH START: 05-03 10:51:48.132 10944 10944 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+05-03 10:51:48.376 10944 10944 W app_process: Unexpected CPU variant for X86 using defaults: x86
+05-03 10:51:48.386 10944 10944 I app_process: The ClassLoaderContext is a special shared library.
+05-03 10:51:48.424  2429  2429 E adbd    : failed to connect to socket 'tcp:6790': Connection refused
+05-03 10:51:48.516 10944 10944 D AndroidRuntime: Calling main entry com.android.commands.am.Am
+05-03 10:51:48.539  1895  5151 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10088 user=0: start instr
+05-03 10:51:48.551 10955 10955 I chatty  : uid=10088(io.appium.uiautomator2.server) expire 28 lines
+05-03 10:51:48.555  1895  1912 I ActivityManager: Start proc 10955:io.appium.uiautomator2.server/u0a88 for added application io.appium.uiautomator2.server
+05-03 10:51:48.864  1895  1950 I GnssLocationProvider: WakeLock acquired by sendMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@888d0ec)
+05-03 10:51:48.865  1895  1909 I GnssLocationProvider: WakeLock released by handleMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@888d0ec)
+05-03 10:51:49.438  2429  2429 E adbd    : failed to connect to socket 'tcp:6790': Connection refused
+05-03 10:51:49.478 10955 10979 I chatty  : uid=10088(io.appium.uiautomator2.server) expire 16 lines
+05-03 10:51:49.642  1895  1895 V SettingsProvider: Notifying for 0: content://settings/secure/accessibility_enabled
+05-03 10:51:49.714 10955 10983 I chatty  : uid=10088(io.appium.uiautomator2.server) expire 1 line
+05-03 10:51:49.741 10955 10984 I chatty  : uid=10088(io.appium.uiautomator2.server) expire 134 lines
+05-03 10:51:49.864  1895  1950 I GnssLocationProvider: WakeLock acquired by sendMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@d028616)
+05-03 10:51:49.865  1895  1909 I GnssLocationProvider: WakeLock released by handleMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@d028616)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at void io.netty.channel.socket.nio.NioServerSocketChannel.<init>(java.nio.channels.spi.SelectorProvider, io.netty.channel.socket.SocketProtocolFamily) (NioServerSocketChannel.java:98)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at void io.netty.channel.socket.nio.NioServerSocketChannel.<init>(java.nio.channels.spi.SelectorProvider) (NioServerSocketChannel.java:81)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at void io.netty.channel.socket.nio.NioServerSocketChannel.<init>() (NioServerSocketChannel.java:74)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at java.lang.Object java.lang.reflect.Constructor.newInstance0(java.lang.Object[]) (Constructor.java:-2)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at java.lang.Object java.lang.reflect.Constructor.newInstance(java.lang.Object[]) (Constructor.java:343)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at io.netty.channel.Channel io.netty.channel.ReflectiveChannelFactory.newChannel() (ReflectiveChannelFactory.java:44)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at io.netty.channel.ChannelFuture io.netty.bootstrap.AbstractBootstrap.initAndRegister() (AbstractBootstrap.java:330)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at io.netty.channel.ChannelFuture io.netty.bootstrap.AbstractBootstrap.doBind(java.net.SocketAddress) (AbstractBootstrap.java:292)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at io.netty.channel.ChannelFuture io.netty.bootstrap.AbstractBootstrap.bind(java.net.SocketAddress) (AbstractBootstrap.java:288)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at io.netty.channel.ChannelFuture io.netty.bootstrap.AbstractBootstrap.bind(int) (AbstractBootstrap.java:266)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at void io.appium.uiautomator2.http.HttpServer$1.run() (HttpServer.java:61)
+05-03 10:51:50.002 10955 10984 I tomator2.serve: Caused by: java.lang.ClassNotFoundException: io.netty.buffer.AbstractAllocatorEvent
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at java.lang.Class java.lang.VMClassLoader.findLoadedClass(java.lang.ClassLoader, java.lang.String) (VMClassLoader.java:-2)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at java.lang.Class java.lang.ClassLoader.findLoadedClass(java.lang.String) (ClassLoader.java:738)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at java.lang.Class java.lang.ClassLoader.loadClass(java.lang.String, boolean) (ClassLoader.java:363)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at java.lang.Class java.lang.ClassLoader.loadClass(java.lang.String) (ClassLoader.java:312)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at void io.netty.buffer.AdaptivePoolingAllocator$Magazine.<clinit>() (AdaptivePoolingAllocator.java:815)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at void io.netty.buffer.AdaptivePoolingAllocator$MagazineGroup.<init>(io.netty.buffer.AdaptivePoolingAllocator, io.netty.buffer.AdaptivePoolingAllocator$ChunkAllocator, io.netty.buffer.AdaptivePoolingAllocator$ChunkControllerFactory, boolean) (AdaptivePoolingAllocator.java:387)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at io.netty.buffer.AdaptivePoolingAllocator$MagazineGroup[] io.netty.buffer.AdaptivePoolingAllocator.createMagazineGroupSizeClasses(io.netty.buffer.AdaptivePoolingAllocator, boolean) (AdaptivePoolingAllocator.java:222)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at void io.netty.buffer.AdaptivePoolingAllocator.<init>(io.netty.buffer.AdaptivePoolingAllocator$ChunkAllocator, boolean) (AdaptivePoolingAllocator.java:192)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at void io.netty.buffer.AdaptiveByteBufAllocator.<init>(boolean, boolean) (AdaptiveByteBufAllocator.java:56)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at void io.netty.buffer.AdaptiveByteBufAllocator.<init>(boolean) (AdaptiveByteBufAllocator.java:51)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at void io.netty.buffer.AdaptiveByteBufAllocator.<init>() (AdaptiveByteBufAllocator.java:47)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at void io.netty.buffer.ByteBufUtil.<clinit>() (ByteBufUtil.java:90)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at void io.netty.buffer.ByteBufAllocator.<clinit>() (ByteBufAllocator.java:24)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at void io.netty.channel.DefaultChannelConfig.<init>(io.netty.channel.Channel, io.netty.channel.RecvByteBufAllocator) (DefaultChannelConfig.java:60)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at void io.netty.channel.socket.DefaultServerSocketChannelConfig.<init>(io.netty.channel.socket.ServerSocketChannel, java.net.ServerSocket) (DefaultServerSocketChannelConfig.java:51)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at void io.netty.channel.socket.nio.NioServerSocketChannel$NioServerSocketChannelConfig.<init>(io.netty.channel.socket.nio.NioServerSocketChannel, io.netty.channel.socket.nio.NioServerSocketChannel, java.net.ServerSocket) (NioServerSocketChannel.java:212)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at void io.netty.channel.socket.nio.NioServerSocketChannel$NioServerSocketChannelConfig.<init>(io.netty.channel.socket.nio.NioServerSocketChannel, io.netty.channel.socket.nio.NioServerSocketChannel, java.net.ServerSocket, io.netty.channel.socket.nio.NioServerSocketChannel$1) (NioServerSocketChannel.java:210)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at void io.netty.channel.socket.nio.NioServerSocketChannel.<init>(java.nio.channels.ServerSocketChannel) (NioServerSocketChannel.java:106)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at void io.netty.channel.socket.nio.NioServerSocketChannel.<init>(java.nio.channels.spi.SelectorProvider, io.netty.channel.socket.SocketProtocolFamily) (NioServerSocketChannel.java:98)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at void io.netty.channel.socket.nio.NioServerSocketChannel.<init>(java.nio.channels.spi.SelectorProvider) (NioServerSocketChannel.java:81)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at void io.netty.channel.socket.nio.NioServerSocketChannel.<init>() (NioServerSocketChannel.java:74)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at java.lang.Object java.lang.reflect.Constructor.newInstance0(java.lang.Object[]) (Constructor.java:-2)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at java.lang.Object java.lang.reflect.Constructor.newInstance(java.lang.Object[]) (Constructor.java:343)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at io.netty.channel.Channel io.netty.channel.ReflectiveChannelFactory.newChannel() (ReflectiveChannelFactory.java:44)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at io.netty.channel.ChannelFuture io.netty.bootstrap.AbstractBootstrap.initAndRegister() (AbstractBootstrap.java:330)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at io.netty.channel.ChannelFuture io.netty.bootstrap.AbstractBootstrap.doBind(java.net.SocketAddress) (AbstractBootstrap.java:292)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at io.netty.channel.ChannelFuture io.netty.bootstrap.AbstractBootstrap.bind(java.net.SocketAddress) (AbstractBootstrap.java:288)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at io.netty.channel.ChannelFuture io.netty.bootstrap.AbstractBootstrap.bind(int) (AbstractBootstrap.java:266)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at void io.appium.uiautomator2.http.HttpServer$1.run() (HttpServer.java:61)
+05-03 10:51:50.002 10955 10984 I tomator2.serve: 
+05-03 10:51:50.002 10955 10984 I tomator2.serve: Rejecting re-init on previously-failed class java.lang.Class<io.netty.buffer.AllocateChunkEvent>: java.lang.NoClassDefFoundError: Failed resolution of: Lio/netty/buffer/AbstractChunkEvent;
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at void io.netty.buffer.AdaptivePoolingAllocator$Magazine.<clinit>() (AdaptivePoolingAllocator.java:815)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at void io.netty.buffer.AdaptivePoolingAllocator$MagazineGroup.<init>(io.netty.buffer.AdaptivePoolingAllocator, io.netty.buffer.AdaptivePoolingAllocator$ChunkAllocator, io.netty.buffer.AdaptivePoolingAllocator$ChunkControllerFactory, boolean) (AdaptivePoolingAllocator.java:387)
+05-03 10:51:50.002 10955 10984 I tomator2.serve:   at io.netty.buffer.AdaptivePoolingAllocator$MagazineGroup[] io.netty.buffer.AdaptivePoolingAllocator.createMagazineGroupSizeClasses(io.netty.buffer.AdaptivePoolingAllocator, boolean) (AdaptivePoolingAllocator.java:222)
+05-03 10:51:50.003 10955 10984 I tomator2.serve:   at void io.netty.buffer.AdaptivePoolingAllocator.<init>(io.netty.buffer.AdaptivePoolingAllocator$ChunkAllocator, boolean) (AdaptivePoolingAllocator.java:192)
+05-03 10:51:50.003 10955 10984 I tomator2.serve:   at void io.netty.buffer.AdaptiveByteBufAllocator.<init>(boolean, boolean) (AdaptiveByteBufAllocator.java:56)
+05-03 10:51:50.003 10955 10984 I tomator2.serve:   at void io.netty.buffer.AdaptiveByteBufAllocator.<init>(boolean) (AdaptiveByteBufAllocator.java:51)
+05-03 10:51:50.003 10955 10984 I tomator2.serve:   at void io.netty.buffer.AdaptiveByteBufAllocator.<init>() (AdaptiveByteBufAllocator.java:47)
+05-03 10:51:50.003 10955 10984 I tomator2.serve:   at void io.netty.buffer.ByteBufUtil.<clinit>() (ByteBufUtil.java:90)
+05-03 10:51:50.003 10955 10984 I tomator2.serve:   at void io.netty.buffer.ByteBufAllocator.<clinit>() (ByteBufAllocator.java:24)
+05-03 10:51:50.003 10955 10984 I tomator2.serve:   at void io.netty.channel.DefaultChannelConfig.<init>(io.netty.channel.Channel, io.netty.channel.RecvByteBufAllocator) (DefaultChannelConfig.java:60)
+05-03 10:51:50.003 10955 10984 I tomator2.serve:   at void io.netty.channel.socket.DefaultServerSocketChannelConfig.<init>(io.netty.channel.socket.ServerSocketChannel, java.net.ServerSocket) (DefaultServerSocketChannelConfig.java:51)
+05-03 10:51:50.003 10955 10984 I tomator2.serve:   at void io.netty.channel.socket.nio.NioServerSocketChannel$NioServerSocketChannelConfig.<init>(io.netty.channel.socket.nio.NioServerSocketChannel, io.netty.channel.socket.nio.NioServerSocketChannel, java.net.ServerSocket) (NioServerSocketChannel.java:212)
+05-03 10:51:50.003 10955 10984 I tomator2.serve:   at void io.netty.channel.socket.nio.NioServerSocketChannel$NioServerSocketChannelConfig.<init>(io.netty.channel.socket.nio.NioServerSocketChannel, io.netty.channel.socket.nio.NioServerSocketChannel, java.net.ServerSocket, io.netty.channel.socket.nio.NioServerSocketChannel$1) (NioServerSocketChannel.java:210)
+05-03 10:51:50.003 10955 10984 I tomator2.serve:   at void io.netty.channel.socket.nio.NioServerSocketChannel.<init>(java.nio.channels.ServerSocketChannel) (NioServerSocketChannel.java:106)
+05-03 10:51:50.003 10955 10984 I tomator2.serve:   at void io.netty.channel.socket.nio.NioServerSocketChannel.<init>(java.nio.channels.spi.SelectorProvider, io.netty.channel.socket.SocketProtocolFamily) (NioServerSocketChannel.java:98)
+05-03 10:51:50.003 10955 10984 I tomator2.serve:   at void io.netty.channel.socket.nio.NioServerSocketChannel.<init>(java.nio.channels.spi.SelectorProvider) (NioServerSocketChannel.java:81)
+05-03 10:51:50.003 10955 10984 I tomator2.serve:   at void io.netty.channel.socket.nio.NioServerSocketChannel.<init>() (NioServerSocketChannel.java:74)
+05-03 10:51:50.003 10955 10984 I tomator2.serve:   at java.lang.Object java.lang.reflect.Constructor.newInstance0(java.lang.Object[]) (Constructor.java:-2)
+05-03 10:51:50.003 10955 10984 I tomator2.serve:   at java.lang.Object java.lang.reflect.Constructor.newInstance(java.lang.Object[]) (Constructor.java:343)
+05-03 10:51:50.003 10955 10984 I tomator2.serve:   at io.netty.channel.Channel io.netty.channel.ReflectiveChannelFactory.newChannel() (ReflectiveChannelFactory.java:44)
