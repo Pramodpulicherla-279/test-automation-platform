@@ -1,0 +1,80 @@
+CRASH START: 05-03 09:08:15.835  4918  4918 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+05-03 09:08:15.866  2300  2872 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+05-03 09:08:15.866  2300  2872 W Conscrypt: 	at com.google.android.gms.org.conscrypt.Platform.setSocketWriteTimeout(:com.google.android.gms@16089022@16.0.89 (040700-239467275):2)
+05-03 09:08:15.866  2300  2872 W Conscrypt: 	at com.google.android.gms.org.conscrypt.ConscryptFileDescriptorSocket.setSoWriteTimeout(:com.google.android.gms@16089022@16.0.89 (040700-239467275):2)
+05-03 09:08:15.910  1750  4893 I NuPlayerDecoder: [audio] saw output EOS
+05-03 09:08:15.911  1750  4892 D AudioTrack: stop() called with 82980 frames delivered
+05-03 09:08:15.953  2300  4233 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+05-03 09:08:15.953  2300  4233 W Conscrypt: 	at com.google.android.gms.org.conscrypt.Platform.setSocketWriteTimeout(:com.google.android.gms@16089022@16.0.89 (040700-239467275):2)
+05-03 09:08:15.953  2300  4233 W Conscrypt: 	at com.google.android.gms.org.conscrypt.ConscryptFileDescriptorSocket.setSoWriteTimeout(:com.google.android.gms@16089022@16.0.89 (040700-239467275):2)
+05-03 09:08:16.013  2300  2872 E Volley  : [91] BasicNetwork.performRequest: Unexpected response code 404 for https://mobilenetworkscoring-pa.googleapis.com/v1/GetWifiQuality?key=AIzaSyBrlVtd67QvwS_Wz0Do4ZIdOeA6ThtVczU
+05-03 09:08:16.026  2300  4795 W NetRec  : [260] aivq.a: Unexpected exception com.android.volley.ClientError while waiting for score updates (com.android.volley.ClientError). Returning 1.
+05-03 09:08:16.040  2300  4795 I NetRec  : [260] aivq.a: Still entries pending update, scheduling new rapid_refresh_scores_task refresh.
+05-03 09:08:16.065  2300  4795 I NetRec  : [260] aivq.a: Completed rapid_refresh_scores_task score refresh task in 452 ms, returning 1
+05-03 09:08:16.070  2300  4233 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+05-03 09:08:16.081  4918  4918 W app_process: Unexpected CPU variant for X86 using defaults: x86
+05-03 09:08:16.082  2300  4233 W Conscrypt: 	at com.google.android.gms.org.conscrypt.Platform.setSocketWriteTimeout(:com.google.android.gms@16089022@16.0.89 (040700-239467275):2)
+05-03 09:08:16.083  2300  4233 W Conscrypt: 	at com.google.android.gms.org.conscrypt.ConscryptFileDescriptorSocket.setSoWriteTimeout(:com.google.android.gms@16089022@16.0.89 (040700-239467275):2)
+05-03 09:08:16.097  4918  4918 I app_process: The ClassLoaderContext is a special shared library.
+05-03 09:08:16.219  2429  2429 E adbd    : failed to connect to socket 'tcp:6790': Connection refused
+05-03 09:08:16.221  4918  4918 D AndroidRuntime: Calling main entry com.android.commands.am.Am
+05-03 09:08:16.222  3211  3857 I Finsky:background: [197] DSC::L: Update all listeners for download <19:RUNNING:18%[18%]> in group com.google.android.youtube:Wf2eM0bxR6uEFQdtdi06_g
+05-03 09:08:16.225  3211  3857 I Finsky:background: [197] DSC::L: Updating listener DownloadServiceManagerListener::anlt@a80183b for download <19:RUNNING:18%[18%]>
+05-03 09:08:16.228  3211  3857 I Finsky:background: [197] DS: Received onProgress request_id=19
+05-03 09:08:16.228  3211  3857 I Finsky:background: [197] RM: receive resource status onProgress download_request_id=19, group_id=com.google.android.youtube.apk reason: rapid_auto_update isid: Wf2eM0bxR6uEFQdtdi06_g, status_code=RESOURCE_STATUS_IN_PROGRESS, legacy_status_code=192, size: 4987077/27676371
+05-03 09:08:16.231  3211  3857 I Finsky:background: [197] DSC::L: Updating listener DownloadServiceManagerListener::smd@ed06440 for download <19:RUNNING:18%[18%]>
+05-03 09:08:16.231  3211  3857 I Finsky:background: [197] DSC::L: Updating listener urd@6c65f79 for download <19:RUNNING:18%[18%]>
+05-03 09:08:16.231  3211  3857 I Finsky:background: [197] DS::IDC: updateWith: <19:RUNNING:18%[18%]>
+05-03 09:08:16.234  3211  3302 I Finsky:background: [172] RM: getStatus resourceRequestId=0585b032-0392-44a0-bf9f-ea6590aa870a requestId=19 package=com.google.android.youtube artifact=com.google.android.youtube.apk isid=Wf2eM0bxR6uEFQdtdi06_g
+05-03 09:08:16.234  3211  3302 I Finsky:background: [172] DSC: reviveDownload(19)
+05-03 09:08:16.235  3211  3293 I Finsky:background: [169] DS: reviveDownload(request_id=19)
+05-03 09:08:16.239  3211  3857 I Finsky:background: [197] DS: DS: onReviveDownload(request_id=19, files_to_download=[com.google.android.youtube.apk(size:27676371)], context[group_id=com.google.android.youtube:Wf2eM0bxR6uEFQdtdi06_g], display_data[invisible=true, title=Required app update], network_restrictions=ANY_NETWORK status=running, bytes_downloaded=4987077, total_bytes=27676371, retry[count=0, next_retry=n/a])
+05-03 09:08:16.244  3211  3211 I Finsky:background: [2] RF: onProgress request_id=19 isid=Wf2eM0bxR6uEFQdtdi06_g
+05-03 09:08:16.244  3211  3211 I Finsky:background: [2] RF: resourceStatus for request_id=19 group=com.google.android.youtube artifact=com.google.android.youtube.apk collectedBytes= 4987077 / 27676371
+05-03 09:08:16.244  3211  3211 I Finsky:background: [2] RF: Group=com.google.android.youtube totalBytesDownloaded= 11770129 / 56585775 for 5 artifacts
+05-03 09:08:16.249  3211  3211 I Finsky:background: [2] RF: Preventing total bytes update to listeners
+05-03 09:08:16.255  1895  2222 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10088 user=0: start instr
+05-03 09:08:16.274  4930  4930 I tomator2.serve: Late-enabling -Xcheck:jni
+05-03 09:08:16.281  1895  1912 I ActivityManager: Start proc 4930:io.appium.uiautomator2.server/u0a88 for added application io.appium.uiautomator2.server
+05-03 09:08:16.297  4930  4930 W tomator2.serve: Unexpected CPU variant for X86 using defaults: x86
+05-03 09:08:16.363  1750  4871 D NuPlayerDriver: notifyListener_l(0xe9d19400), (2, 0, 0, -1), loop setting(0, 0)
+05-03 09:08:16.363  1750  4871 D NuPlayerDriver: notifyListener_l(0xe9d19400), (211, 0, 0, 20), loop setting(0, 0)
+05-03 09:08:16.368  1895  2222 I MediaFocusControl: abandonAudioFocus() from uid/pid 10025/2021 clientId=android.media.AudioManager@fb80527
+05-03 09:08:16.386  4930  4930 I tomator2.serve: The ClassLoaderContext is a special shared library.
+05-03 09:08:16.395  1895  1950 I GnssLocationProvider: WakeLock acquired by sendMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@152361)
+05-03 09:08:16.396  1895  1909 I GnssLocationProvider: WakeLock released by handleMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@152361)
+05-03 09:08:16.400  4930  4930 I tomator2.serve: The ClassLoaderContext is a special shared library.
+05-03 09:08:16.620  3211  3857 I Finsky:background: [197] DSC::L: Update all listeners for download <22:RUNNING:21%[21%]> in group com.google.android.youtube:Wf2eM0bxR6uEFQdtdi06_g
+05-03 09:08:16.620  3211  3857 I Finsky:background: [197] DSC::L: Updating listener DownloadServiceManagerListener::anlt@a80183b for download <22:RUNNING:21%[21%]>
+05-03 09:08:16.620  3211  3857 I Finsky:background: [197] DS: Received onProgress request_id=22
+05-03 09:08:16.621  3211  3857 I Finsky:background: [197] RM: receive resource status onProgress download_request_id=22, group_id=config.x86 reason: rapid_auto_update isid: Wf2eM0bxR6uEFQdtdi06_g, status_code=RESOURCE_STATUS_IN_PROGRESS, legacy_status_code=192, size: 5617960/26561299
+05-03 09:08:16.621  3211  3857 I Finsky:background: [197] DSC::L: Updating listener DownloadServiceManagerListener::smd@ed06440 for download <22:RUNNING:21%[21%]>
+05-03 09:08:16.621  3211  3857 I Finsky:background: [197] DSC::L: Updating listener urd@6c65f79 for download <22:RUNNING:21%[21%]>
+05-03 09:08:16.621  3211  3857 I Finsky:background: [197] DS::IDC: updateWith: <22:RUNNING:21%[21%]>
+05-03 09:08:16.627  3211  3311 I Finsky:background: [177] RM: getStatus resourceRequestId=b3e483a1-9038-4ecc-a4f6-8a703de3557c requestId=22 package=com.google.android.youtube artifact=config.x86 isid=Wf2eM0bxR6uEFQdtdi06_g
+05-03 09:08:16.627  3211  3311 I Finsky:background: [177] DSC: reviveDownload(22)
+05-03 09:08:16.629  3211  3302 I Finsky:background: [172] DS: reviveDownload(request_id=22)
+05-03 09:08:16.645  3211  3857 I Finsky:background: [197] DS: DS: onReviveDownload(request_id=22, files_to_download=[config.x86(size:26561299)], context[group_id=com.google.android.youtube:Wf2eM0bxR6uEFQdtdi06_g], display_data[invisible=true, title=Required app update], network_restrictions=ANY_NETWORK status=running, bytes_downloaded=5617960, total_bytes=26561299, retry[count=0, next_retry=n/a])
+05-03 09:08:16.672  3211  3211 I Finsky:background: [2] RF: onProgress request_id=22 isid=Wf2eM0bxR6uEFQdtdi06_g
+05-03 09:08:16.673  3211  3211 I Finsky:background: [2] RF: resourceStatus for request_id=22 group=com.google.android.youtube artifact=config.x86 collectedBytes= 5617960 / 26561299
+05-03 09:08:16.674  3211  3211 I Finsky:background: [2] RF: Group=com.google.android.youtube totalBytesDownloaded= 12953142 / 56585775 for 5 artifacts
+05-03 09:08:16.678  3211  3211 I Finsky:background: [2] RF: Preventing total bytes update to listeners
+05-03 09:08:16.733  1628  3210 W audio_hw_generic: Not supplying enough data to HAL, expected position 352813 , only wrote 352080
+05-03 09:08:16.734  1628  3210 W audio_hw_generic: Not supplying enough data to HAL, expected position 352141 , only wrote 352080
+05-03 09:08:16.761  1628  3210 W audio_hw_generic: Not supplying enough data to HAL, expected position 353386 , only wrote 352800
+05-03 09:08:16.824  1628  3210 W audio_hw_generic: Not supplying enough data to HAL, expected position 355788 , only wrote 355680
+05-03 09:08:16.826  1628  3210 W audio_hw_generic: Not supplying enough data to HAL, expected position 355811 , only wrote 355680
+05-03 09:08:16.851  1628  3210 W audio_hw_generic: Not supplying enough data to HAL, expected position 356878 , only wrote 356400
+05-03 09:08:16.859  1628  3210 W audio_hw_generic: Not supplying enough data to HAL, expected position 356774 , only wrote 356400
+05-03 09:08:16.878  1628  3210 W audio_hw_generic: Not supplying enough data to HAL, expected position 357295 , only wrote 357120
+05-03 09:08:16.893  1628  3210 W audio_hw_generic: Not supplying enough data to HAL, expected position 357864 , only wrote 357840
+05-03 09:08:16.894  1628  3210 W audio_hw_generic: Not supplying enough data to HAL, expected position 357887 , only wrote 357840
+05-03 09:08:16.896  2300  4795 I NetRec  : [260] aivq.a: Refreshing scores for 2 networks.
+05-03 09:08:16.904  1895  4143 I ActivityManager: Killing 4213:com.android.cellbroadcastreceiver/u0a39 (adj 906): empty #17
+05-03 09:08:16.906  1895  1913 W libprocessgroup: kill(-4213, 9) failed: No such process
+05-03 09:08:16.909  1628  3210 W audio_hw_generic: Not supplying enough data to HAL, expected position 358563 , only wrote 358560
+05-03 09:08:16.945  1895  1913 W libprocessgroup: kill(-4213, 9) failed: No such process
+05-03 09:08:16.965  1741  1741 I Zygote  : Process 4213 exited due to signal (9)
+05-03 09:08:16.989  1895  1913 W libprocessgroup: kill(-4213, 9) failed: No such process
+05-03 09:08:16.989  1895  1913 I libprocessgroup: Successfully killed process cgroup uid 10039 pid 4213 in 83ms
+05-03 09:08:17.041  2300  2871 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
