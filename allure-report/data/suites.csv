@@ -1,4 +1,0 @@
-"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"","34983","test_login_success [emulator-5556]","emulator-5556","2026-05-03","failed","2026-05-03","TestLogin","Login","",""
-"","29626","test_addfarm_addcrop_success [emulator-5556]","emulator-5556","2026-05-03","failed","2026-05-03","TestOnboarding","Onboarding","",""
-"","25526","test_addfarm [emulator-5556]","emulator-5556","2026-05-03","failed","2026-05-03","TestOnboarding","Onboarding","",""
