@@ -1,0 +1,80 @@
+CRASH START: 05-04 17:29:42.440  5066  5066 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+05-04 17:29:42.450  1291  2964 I FontLog : Pulling font file for id = 2, cache size = 2 [CONTEXT service_id=132 ]
+05-04 17:29:42.454  1367  4012 I Icing   : IndexChimeraService.getServiceInterface callingPackage=com.google.android.gms componentName=null serviceId=30
+05-04 17:29:42.459  5066  5066 I AndroidRuntime: Using default boot image
+05-04 17:29:42.460  5066  5066 I AndroidRuntime: Leaving lock profiling enabled
+05-04 17:29:42.460  5066  5066 W libc    : Access denied finding property "odsign.verification.success"
+05-04 17:29:42.464  5066  5066 W app_process: ART APEX data files are untrusted.
+05-04 17:29:42.464  5066  5066 I app_process: Core platform API reporting enabled, enforcing=false
+05-04 17:29:42.459  5066  5066 W app_process: type=1400 audit(0.0:69): avc: denied { read } for name="u:object_r:odsign_prop:s0" dev="tmpfs" ino=206 scontext=u:r:shell:s0 tcontext=u:object_r:odsign_prop:s0 tclass=file permissive=0
+05-04 17:29:42.468  5073  5073 I AlarmClock: AlarmInitReceiver android.intent.action.BOOT_COMPLETED
+05-04 17:29:42.474  5073  5100 I PrimesTesting: GserviceFlagsSupplier.get()
+05-04 17:29:42.484  1367  4975 I Icing   : Usage reports ok 1, Failed Usage reports 0, indexed 0, rejected 0
+05-04 17:29:42.490   587   623 D CompatibilityChangeReporter: Compat change id reported: 135634846; UID 10122; state: DISABLED
+05-04 17:29:42.491   587   623 I ActivityManager: Killing 4306:com.google.android.apps.maps/u0a111 (adj 945): empty #17
+05-04 17:29:42.494   587   647 D CompatibilityChangeReporter: Compat change id reported: 143937733; UID 10122; state: ENABLED
+05-04 17:29:42.495  1367  4975 W Icing   : No valid account for uploading user actions
+05-04 17:29:42.498   356   356 D Zygote  : Forked child process 5109
+05-04 17:29:42.509   587   648 I libprocessgroup: Successfully killed process cgroup uid 10111 pid 4306 in 0ms
+05-04 17:29:42.518   587   647 I ActivityManager: Start proc 5109:com.google.android.gm/u0a122 for broadcast {com.google.android.gm/com.google.android.gm.GoogleMailDeviceStartupReceiver}
+05-04 17:29:42.521  5109  5109 W ogle.android.g: Unexpected CPU variant for X86 using defaults: x86_64
+05-04 17:29:42.532   356   356 I Zygote  : Process 4306 exited due to signal 9 (Killed)
+05-04 17:29:42.535   587  1412 D ConnectivityService: ConnectivityService NetworkRequestInfo binderDied(uid/pid:10111/4306, android.os.BinderProxy@8a3389a)
+05-04 17:29:42.538   587  2172 D ConnectivityService: ConnectivityService NetworkRequestInfo binderDied(uid/pid:10111/4306, android.os.BinderProxy@9da35cb)
+05-04 17:29:42.553   587   889 D ConnectivityService: releasing NetworkRequest [ REQUEST id=77, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10111 RequestorUid: 10111 RequestorPkg: com.google.android.apps.maps] ] (release request)
+05-04 17:29:42.579   457   470 I adbd    : jdwp connection from 5109
+05-04 17:29:42.604  1367  4975 I Icing   : Usage reports ok 0, Failed Usage reports 0, indexed 0, rejected 0
+05-04 17:29:42.608  5109  5109 D CompatibilityChangeReporter: Compat change id reported: 171979766; UID 10122; state: DISABLED
+05-04 17:29:42.649   457   457 E adbd    : failed to connect to socket 'tcp:6790': Connection refused
+05-04 17:29:42.654  5066  5066 D app_process: Time zone APEX ICU file found: /apex/com.android.tzdata/etc/icu/icu_tzdata.dat
+05-04 17:29:42.654  5066  5066 D app_process: I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt68l.dat
+05-04 17:29:42.678  5109  5109 D nativeloader: classloader namespace configured for unbundled product apk. library_path=/product/app/PrebuiltGmail/lib/x86_64:/product/app/PrebuiltGmail/PrebuiltGmail.apk!/lib/x86_64:/product/lib64:/system/product/lib64
+05-04 17:29:42.684  1715  1841 W MediaProvider: getVolumePath for unknown volume: internal
+05-04 17:29:42.686  1715  1841 W MediaProvider: getVolumePath for unknown volume: internal
+05-04 17:29:42.690  1715  1841 W MediaProvider: getVolumePath for unknown volume: internal
+05-04 17:29:42.693  5066  5066 W app_process: Unexpected CPU variant for X86 using defaults: x86_64
+05-04 17:29:42.694  1715  1841 W MediaProvider: getVolumePath for unknown volume: internal
+05-04 17:29:42.697  1715  1841 W MediaProvider: getVolumePath for unknown volume: internal
+05-04 17:29:42.701  1715  1841 W MediaProvider: getVolumePath for unknown volume: internal
+05-04 17:29:42.705  1715  1841 W MediaProvider: getVolumePath for unknown volume: internal
+05-04 17:29:42.714  5109  5109 V GraphicsEnvironment: ANGLE Developer option for 'com.google.android.gm' set to: 'default'
+05-04 17:29:42.714  5109  5109 V GraphicsEnvironment: Neither updatable production driver nor prerelease driver is supported.
+05-04 17:29:42.718  5109  5109 D NetworkSecurityConfig: Using Network Security Config from resource network_security_config debugBuild: false
+05-04 17:29:42.719  1715  1841 W MediaProvider: getVolumePath for unknown volume: internal
+05-04 17:29:42.720  5109  5109 D NetworkSecurityConfig: Using Network Security Config from resource network_security_config debugBuild: false
+05-04 17:29:42.727  1715  1841 W MediaProvider: getVolumePath for unknown volume: internal
+05-04 17:29:42.733   981  1149 W Role    : Cannot get ApplicationInfo for default holder: com.google.android.as
+05-04 17:29:42.733  1715  1841 W MediaProvider: getVolumePath for unknown volume: internal
+05-04 17:29:42.739  1715  1841 W MediaProvider: getVolumePath for unknown volume: internal
+05-04 17:29:42.740   981  1149 W Role    : Cannot get ApplicationInfo for default holder: com.google.android.as
+05-04 17:29:42.746  1715  1841 W MediaProvider: getVolumePath for unknown volume: internal
+05-04 17:29:42.753  1715  1841 W MediaProvider: getVolumePath for unknown volume: internal
+05-04 17:29:42.763  1715  1841 W MediaProvider: getVolumePath for unknown volume: internal
+05-04 17:29:42.764  1715  1841 W MediaProvider: getVolumePath for unknown volume: internal
+05-04 17:29:42.764   981  1149 W Role    : Cannot get ApplicationInfo for default holder: com.google.android.contacts
+05-04 17:29:42.765  5066  5066 D AndroidRuntime: Calling main entry com.android.commands.am.Am
+05-04 17:29:42.765  1715  1841 W MediaProvider: getVolumePath for unknown volume: internal
+05-04 17:29:42.766   981  1149 W Role    : Cannot get ApplicationInfo for default holder: com.google.android.as
+05-04 17:29:42.778  1715  1841 W MediaProvider: getVolumePath for unknown volume: internal
+05-04 17:29:42.790   587   623 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10147 user=0: start instr
+05-04 17:29:42.793  1715  1841 W MediaProvider: getVolumePath for unknown volume: internal
+05-04 17:29:42.796  1715  1841 W MediaProvider: getVolumePath for unknown volume: internal
+05-04 17:29:42.796  1715  1841 W MediaProvider: getVolumePath for unknown volume: internal
+05-04 17:29:42.797  1715  1841 W MediaProvider: getVolumePath for unknown volume: internal
+05-04 17:29:42.800  1715  1841 W MediaProvider: getVolumePath for unknown volume: internal
+05-04 17:29:42.804  1715  1841 W MediaProvider: getVolumePath for unknown volume: internal
+05-04 17:29:42.806  1715  1841 W MediaProvider: getVolumePath for unknown volume: internal
+05-04 17:29:42.807   587   623 D CompatibilityChangeReporter: Compat change id reported: 135634846; UID 10147; state: DISABLED
+05-04 17:29:42.808   587   623 D CompatibilityChangeReporter: Compat change id reported: 177438394; UID 10147; state: DISABLED
+05-04 17:29:42.809   587   623 D CompatibilityChangeReporter: Compat change id reported: 135772972; UID 10147; state: DISABLED
+05-04 17:29:42.810   587   623 D CompatibilityChangeReporter: Compat change id reported: 135754954; UID 10147; state: ENABLED
+05-04 17:29:42.817   587   647 D CompatibilityChangeReporter: Compat change id reported: 143937733; UID 10147; state: ENABLED
+05-04 17:29:42.828   356   356 D Zygote  : Forked child process 5138
+05-04 17:29:42.830   587   647 I ActivityManager: Start proc 5138:io.appium.uiautomator2.server/u0a147 for added application io.appium.uiautomator2.server
+05-04 17:29:42.838  5138  5138 I tomator2.serve: Late-enabling -Xcheck:jni
+05-04 17:29:42.855  5138  5138 W tomator2.serve: Unexpected CPU variant for X86 using defaults: x86_64
+05-04 17:29:42.873   457   470 I adbd    : jdwp connection from 5138
+05-04 17:29:42.884   981  1149 W Role    : Cannot get ApplicationInfo for default holder: com.google.android.as
+05-04 17:29:42.890   981  1149 W Role    : Cannot get ApplicationInfo for default holder: com.google.android.as
+05-04 17:29:42.955  5138  5138 D CompatibilityChangeReporter: Compat change id reported: 171979766; UID 10147; state: ENABLED
+05-04 17:29:43.045  5138  5138 W tomator2.serve: ClassLoaderContext classpath size mismatch. expected=0, found=1 (PCL[] | PCL[/system/framework/android.test.runner.jar*1585996318])

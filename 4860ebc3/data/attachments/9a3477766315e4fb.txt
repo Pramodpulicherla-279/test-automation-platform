@@ -1,0 +1,80 @@
+CRASH START: 05-04 17:30:52.431  5066  5066 I AndroidRuntime: VM exiting with result code 0.
+05-04 17:30:52.434  6178  6670 I PhenotypeBackgroundRecv: Successfully stored update snapshot for com.google.android.gms.icing.mdd#com.google.android.apps.messaging
+05-04 17:30:52.438  1291  6641 W ChimeraUtils: Module com.google.android.gms.nearby_en has empty metadata display_name_string_id
+05-04 17:30:52.453  1959  1959 I BgTaskExecutorImpl: Starting EXCLUSIVE background task UPDATE_HOTWORD_MODELS.
+05-04 17:30:52.455   587  1805 I ActivityManager: Killing 5138:io.appium.uiautomator2.server/u0a147 (adj 0): stop io.appium.uiautomator2.server due to finished inst
+05-04 17:30:52.464  1959  2228 I ModelDownloadController: requestHotwordModelUpdate modelType-2 modelLocale-en-US
+05-04 17:30:52.465  1959  2228 I ModelDownloadController: #maybeDownloadHotwordModelWithMDD with locale: en-US, modelType: 2.
+05-04 17:30:52.465  1959  2228 I ModelDownloadController: Skipping MDD query because model was already downloaded for locale
+05-04 17:30:52.471   587   648 I libprocessgroup: Successfully killed process cgroup uid 10147 pid 5138 in 0ms
+05-04 17:30:52.516  6178  6442 E MDD     : DownloadProgressMonitor: Can't find file group for uri: android://com.google.android.apps.messaging/files/datadownload/shared/public/datadownloadfile_1777896027853
+05-04 17:30:51.890     0     0 I binder  : release 5138:5217 transaction 611403 out, still active
+05-04 17:30:51.893     0     0 I binder  : undelivered TRANSACTION_COMPLETE
+05-04 17:30:52.531   356   356 I Zygote  : Process 5138 exited due to signal 9 (Killed)
+05-04 17:30:51.963     0     0 I binder  : 587:1805 transaction failed 29189/0, size 4-0 line 3064
+05-04 17:30:51.969     0     0 I binder  : send failed reply for transaction 611403, target dead
+05-04 17:30:52.620  6178  6709 D asog    : Starting download: https://www.gstatic.com/messages/smarts/smart_actions_grammars/model_based_providers_configs_pumpkin_sticker.pb
+05-04 17:30:52.621  6178  6709 V asog    : Is http uri, downloading (uri: https://www.gstatic.com/messages/smarts/smart_actions_grammars/model_based_providers_configs_pumpkin_sticker.pb)
+05-04 17:30:52.664   587  2059 V ActivityManager: Got obituary of 5138:io.appium.uiautomator2.server
+05-04 17:30:52.677  6178  6178 W ConfigurationUpdatedRec: Received update for unknown package com.google.android.gms.icing.mdd#com.google.android.apps.messaging; known packages [com.google.android.apps.messaging#com.google.android.apps.messaging]
+05-04 17:30:52.714  1569  1569 I AppBase : AppBase.onTrimMemory():782 onTrimMemory(): 5
+05-04 17:30:52.726  1569  1569 I GoogleInputMethodService: GoogleInputMethodService.onTrimMemory():4623 onTrimMemory(): 5
+05-04 17:30:52.739  6178  6709 E MDD     : DownloadProgressMonitor: Can't find file group for uri: android://com.google.android.apps.messaging/files/datadownload/shared/public/datadownloadfile_1777896027854
+05-04 17:30:52.788  5381  5381 I GoogleTTSServiceImpl: Cache disabled: false
+05-04 17:30:52.848  6178  6442 D asog    : Starting download: https://www.gstatic.com/messages/smarts/smart_actions_emotive_models/emotion_complete_model_replicate_extended.tflite
+05-04 17:30:52.849  6178  6442 V asog    : Is http uri, downloading (uri: https://www.gstatic.com/messages/smarts/smart_actions_emotive_models/emotion_complete_model_replicate_extended.tflite)
+05-04 17:30:52.936  6178  6709 D asog    : Starting download: https://www.gstatic.com/messages/smarts/smart_actions_emotive_models/emotion_complete_model_replicate_winter.tflite
+05-04 17:30:52.937  6178  6709 V asog    : Is http uri, downloading (uri: https://www.gstatic.com/messages/smarts/smart_actions_emotive_models/emotion_complete_model_replicate_winter.tflite)
+05-04 17:30:52.942  1291  6642 W ChimeraUtils: Module com.google.android.gms.nearby_en has empty metadata display_name_string_id
+05-04 17:30:52.969  6178  6442 E MDD     : DownloadProgressMonitor: Can't find file group for uri: android://com.google.android.apps.messaging/files/datadownload/shared/public/datadownloadfile_1777896027855
+05-04 17:30:52.985  5328  5366 D EGL_emulation: app_time_stats: avg=1183.80ms min=1183.80ms max=1183.80ms count=1
+05-04 17:30:53.020  1291  6642 W ChimeraUtils: Module com.google.android.gms.nearby_en has empty metadata display_name_string_id
+05-04 17:30:53.036  1291  6642 W ChimeraUtils: Module com.google.android.gms.nearby_en has empty metadata display_name_string_id
+05-04 17:30:53.044  5328  5382 I ReactNativeJNI: Memory warning (pressure level: TRIM_MEMORY_RUNNING_MODERATE) received by JS VM, ignoring because it's non-severe
+05-04 17:30:53.050   587   706 I ActivityManager: Force stopping io.appium.uiautomator2.server.test appid=10146 user=0: from pid 7051
+05-04 17:30:53.074  4536  4602 I PhenotypeBackgroundRecv: Successfully stored update snapshot for com.google.android.apps.wellbeing.device
+05-04 17:30:53.076   587  1487 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10147 user=0: from pid 7054
+05-04 17:30:53.078  1172  1172 D CarrierSvcBindHelper: No carrier app for: 0
+05-04 17:30:53.149  1172  1172 D CarrierSvcBindHelper: No carrier app for: 0
+05-04 17:30:53.232   587  1805 I ActivityManager: Force stopping com.krishivaas appid=10148 user=0: from pid 7061
+05-04 17:30:53.253   587  1805 I ActivityManager: Killing 5328:com.krishivaas/u0a148 (adj 0): stop com.krishivaas due to from pid 7061
+05-04 17:30:53.262  4536  4731 W ProcessReaper: Scheduling killing of process to refresh configuration
+05-04 17:30:53.279   587  1805 W ActivityTaskManager: Force removing ActivityRecord{3c5fc86 u0 com.krishivaas/.MainActivity t14 f}}: app died, no saved state
+05-04 17:30:53.300   587   648 I libprocessgroup: Successfully killed process cgroup uid 10148 pid 5328 in 45ms
+05-04 17:30:53.370  1291  2885 W ChimeraUtils: Module com.google.android.gms.nearby_en has empty metadata display_name_string_id
+05-04 17:30:53.389   587  1805 W InputManager-JNI: Input channel object '9d88dd4 com.krishivaas/com.krishivaas.MainActivity (client)' was disposed without first being removed with the input manager!
+05-04 17:30:52.816     0     0 I binder  : undelivered transaction 612592, process died.
+05-04 17:30:52.818     0     0 I binder  : undelivered transaction 612596, process died.
+05-04 17:30:52.832     0     0 I binder  : undelivered transaction 612591, process died.
+05-04 17:30:53.464   356   356 I Zygote  : Process 5328 exited due to signal 9 (Killed)
+05-04 17:30:53.468   587   623 D ConnectivityService: ConnectivityService NetworkRequestInfo binderDied(uid/pid:10148/5328, android.os.BinderProxy@6fcf9d4)
+05-04 17:30:53.474   960  1005 W Looper  : Slow dispatch took 39ms wmshell.main h=android.os.Handler c=com.android.wm.shell.common.DisplayImeController$PerDisplay$DisplayWindowInsetsControllerImpl$$ExternalSyntheticLambda3@e8ccf7d m=0
+05-04 17:30:53.508   518   560 D BufferPoolConnection: connection 2226570955148 closed on death
+05-04 17:30:53.526   440   440 E BpTransactionCompletedListener: Failed to transact (-32)
+05-04 17:30:53.533   587   889 D ConnectivityService: releasing NetworkRequest [ REQUEST id=107, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10148 RequestorUid: 10148 RequestorPkg: com.krishivaas] ] (release request)
+05-04 17:30:53.541   505   552 E mediaserver: unlinkToDeath: removed reference to death recipient but unlink failed.
+05-04 17:30:53.543   505   552 E IPCThreadState: attemptIncStrongHandle(4): Not supported
+05-04 17:30:53.551   587  2069 D TextToSpeechManagerPerUserService: Unbinding TTS engine: com.google.android.tts. Reason: client process death is reported
+05-04 17:30:53.553   587   587 W TextToSpeechManagerPerUserService: Disconnected from TTS engine
+05-04 17:30:53.557  6178  6709 E MDD     : DownloadProgressMonitor: Can't find file group for uri: android://com.google.android.apps.messaging/files/datadownload/shared/public/datadownloadfile_1777896027856
+05-04 17:30:53.559   518   518 V C2Store : in ~ComponentModule
+05-04 17:30:53.559   518   518 V C2Store : unloading dll
+05-04 17:30:53.596   587   587 I TextToSpeechManagerPerUserService: Failed running callback method: android.os.DeadObjectException
+05-04 17:30:53.605   518   518 D BufferPoolAccessor2.0: Destruction - bufferpool2 0x72842e43b038 cached: 0/0M, 0/0% in use; allocs: 49, 98% recycled; transfers: 49, 98% unfetched
+05-04 17:30:53.649   587  1805 W ActivityTaskManager: Can't find TaskDisplayArea to determine support for multi window. Task id=14 attached=false
+05-04 17:30:53.649   587  1805 W ActivityTaskManager: Can't find TaskDisplayArea to determine support for multi window. Task id=14 attached=false
+05-04 17:30:53.682   587  2059 W system_server: Long monitor contention with owner Binder:587_E (1805) at android.app.ApplicationExitInfo com.android.server.am.AppExitInfoTracker.obtainRawRecord(com.android.server.am.ProcessRecord, long)(AppExitInfoTracker.java:1010) waiters=0 in boolean com.android.server.am.ActivityManagerService.isUidActive(int, java.lang.String) for 439ms
+05-04 17:30:53.688   587   637 W system_server: Long monitor contention with owner Binder:587_E (1805) at void com.android.server.wm.ActivityTaskManagerService$LocalService.handleAppDied(com.android.server.wm.WindowProcessController, boolean, java.lang.Runnable)(ActivityTaskManagerService.java:5772) waiters=0 in void com.android.server.wm.WindowAnimator.lambda$new$1$WindowAnimator(long) for 363ms
+05-04 17:30:53.705   587  1829 W system_server: Long monitor contention with owner Binder:587_E (1805) at void com.android.server.am.ActivityManagerService.forceStopPackage(java.lang.String, int)(ActivityManagerService.java:3737) waiters=0 in android.content.ComponentName com.android.server.am.ActivityManagerService.startService(android.app.IApplicationThread, android.content.Intent, java.lang.String, boolean, java.lang.String, java.lang.String, int) for 478ms
+05-04 17:30:53.713   587   637 D CompatibilityChangeReporter: Compat change id reported: 158002302; UID 10102; state: ENABLED
+05-04 17:30:53.719   587   706 W system_server: Long monitor contention with owner Binder:587_E (1805) at void com.android.server.am.ActivityManagerService.forceStopPackage(java.lang.String, int)(ActivityManagerService.java:3737) waiters=1 in android.content.ComponentName com.android.server.am.ActivityManagerService.startService(android.app.IApplicationThread, android.content.Intent, java.lang.String, boolean, java.lang.String, java.lang.String, int) for 490ms
+05-04 17:30:53.753   587   587 W ServiceConnector.Impl: mayInterruptIfRunning not supported - ignoring
+05-04 17:30:53.772   372   426 D goldfish-address-space: claimShared: Ask to claim region [0x3f4000000 0x3f49e4000]
+05-04 17:30:53.772   587   587 W Looper  : Slow dispatch took 219ms main h=android.os.Handler c=com.android.internal.infra.ServiceConnector$Impl$$ExternalSyntheticLambda1@1dec935 m=0
+05-04 17:30:53.789  1172  1172 D CarrierSvcBindHelper: No carrier app for: 0
+05-04 17:30:53.796   372   426 D goldfish-address-space: claimShared: Ask to claim region [0x3f5791000 0x3f6175000]
+05-04 17:30:53.810   372   426 D goldfish-address-space: claimShared: Ask to claim region [0x3f6175000 0x3f6b59000]
+05-04 17:30:53.816   587   634 W Looper  : Slow dispatch took 108ms android.ui h=com.android.server.am.ActivityManagerService$UiHandler c=com.android.server.am.UidObserverController$$ExternalSyntheticLambda0@42c5658 m=0
+05-04 17:30:53.823   372   426 D goldfish-address-space: claimShared: Ask to claim region [0x3f6b59000 0x3f753d000]
+05-04 17:30:53.832   372   372 D goldfish-address-space: claimShared: Ask to claim region [0x3f753d000 0x3f7f21000]
+05-04 17:30:53.843   372   372 D goldfish-address-space: claimShared: Ask to claim region [0x3faa3d000 0x3fb421000]
