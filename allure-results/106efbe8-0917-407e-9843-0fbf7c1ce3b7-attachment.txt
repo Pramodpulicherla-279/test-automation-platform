@@ -1,0 +1,80 @@
+CRASH START: 05-04 21:19:06.625 12750 12750 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+05-04 21:19:06.631  2684 11609 I AndroidBackupEventsLogg: (REDACTED) Logging without sampling %s
+05-04 21:19:06.636  2684 12764 I Blockstore: [PackageIntentOperation] Received broadcast before a restore was started. [CONTEXT service_id=258 ]
+05-04 21:19:06.636  2551  2571 I .gms.persisten: Waiting for a blocking GC ProfileSaver
+05-04 21:19:06.639  2684 11440 I Icing   : doRemovePackageData com.krishivaas
+05-04 21:19:06.651 12750 12750 E libc    : Access denied finding property "persist.device_config.runtime_native_boot.enable_apex_image"
+05-04 21:19:06.651 12750 12750 I AndroidRuntime: Using default boot image
+05-04 21:19:06.652 12750 12750 E libc    : Access denied finding property "persist.device_config.runtime_native_boot.disable_lock_profiling"
+05-04 21:19:06.652 12750 12750 I AndroidRuntime: Leaving lock profiling enabled
+05-04 21:19:06.652 12750 12750 E libc    : Access denied finding property "persist.device_config.runtime_native_boot.enable_generational_cc"
+05-04 21:19:06.641 12750 12750 W app_process: type=1400 audit(0.0:67): avc: denied { read } for name="u:object_r:device_config_runtime_native_boot_prop:s0" dev="tmpfs" ino=6895 scontext=u:r:shell:s0 tcontext=u:object_r:device_config_runtime_native_boot_prop:s0 tclass=file permissive=0
+05-04 21:19:06.641 12750 12750 W app_process: type=1400 audit(0.0:68): avc: denied { read } for name="u:object_r:device_config_runtime_native_boot_prop:s0" dev="tmpfs" ino=6895 scontext=u:r:shell:s0 tcontext=u:object_r:device_config_runtime_native_boot_prop:s0 tclass=file permissive=0
+05-04 21:19:06.641 12750 12750 W app_process: type=1400 audit(0.0:69): avc: denied { read } for name="u:object_r:device_config_runtime_native_boot_prop:s0" dev="tmpfs" ino=6895 scontext=u:r:shell:s0 tcontext=u:object_r:device_config_runtime_native_boot_prop:s0 tclass=file permissive=0
+05-04 21:19:06.699  2551  2571 I .gms.persisten: WaitForGcToComplete blocked ProfileSaver on HeapTrim for 62.898ms
+05-04 21:19:07.004 12750 12750 D ICU     : Time zone APEX file found: /apex/com.android.tzdata/etc/icu/icu_tzdata.dat
+05-04 21:19:07.017 12750 12750 W app_process: Unexpected CPU variant for X86 using defaults: x86
+05-04 21:19:07.026 12750 12750 I app_process: The ClassLoaderContext is a special shared library.
+05-04 21:19:07.045 12750 12750 W app_process: JNI RegisterNativeMethods: attempt to register 0 native methods for android.media.AudioAttributes
+05-04 21:19:07.049 12750 12750 D AndroidRuntime: Calling main entry com.android.commands.am.Am
+05-04 21:19:07.058  2004  3366 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10149 user=0: start instr
+05-04 21:19:07.070  1746  1746 D Zygote  : Forked child process 12790
+05-04 21:19:07.073 12790 12790 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 30 lines
+05-04 21:19:07.077  2004  2034 I ActivityManager: Start proc 12790:io.appium.uiautomator2.server/u0a149 for added application io.appium.uiautomator2.server
+05-04 21:19:07.252  1818  1818 E adbd    : failed to connect to socket 'tcp:6790': Connection refused
+05-04 21:19:07.753 12790 12811 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 16 lines
+05-04 21:19:07.900  2004  2004 V SettingsProvider: Notifying for 0: content://settings/secure/accessibility_enabled
+05-04 21:19:07.989 12790 12816 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 2 lines
+05-04 21:19:08.062 12790 12817 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 39 lines
+05-04 21:19:08.266  1818  1818 E adbd    : failed to connect to socket 'tcp:6790': Connection refused
+05-04 21:19:09.422  7771  7906 I PlayCommon: [517] Preparing logs for uploading
+05-04 21:19:09.425  7771  7906 W PlayCommon: [517] No account for auth token provided
+05-04 21:19:09.454 12790 12822 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 11 lines
+05-04 21:19:09.461  7771  7906 I PlayCommon: [517] Connecting to server: https://play.googleapis.com/play/log?format=raw&proto_v2=true
+05-04 21:19:09.602 12790 12826 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 3 lines
+05-04 21:19:09.605 12790 12828 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 47 lines
+05-04 21:19:09.611 12790 12827 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 4 lines
+05-04 21:19:09.627  7771  7906 I PlayCommon: [517] Successfully uploaded logs.
+05-04 21:19:09.714  2004  3475 I ActivityManager: Force stopping com.krishivaas appid=10150 user=0: from pid 12837
+05-04 21:19:09.721  2278  2278 D CarrierSvcBindHelper: No carrier app for: 0
+05-04 21:19:09.967  2004  3475 I ActivityTaskManager: START u0 {act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=com.krishivaas/.MainActivity} from uid 2000
+05-04 21:19:10.038  1746  1746 D Zygote  : Forked child process 12840
+05-04 21:19:10.044 12840 12840 I chatty  : uid=10150(com.krishivaas) expire 22 lines
+05-04 21:19:10.048  2004  2034 I ActivityManager: Start proc 12840:com.krishivaas/u0a150 for activity {com.krishivaas/com.krishivaas.MainActivity}
+05-04 21:19:10.096  2004  3481 W InputReader: Device has associated, but no associated display id.
+05-04 21:19:10.096  2004  3481 I chatty  : uid=1000(system) Binder:2004_1C identical 8 lines
+05-04 21:19:10.096  2004  3481 W InputReader: Device has associated, but no associated display id.
+05-04 21:19:10.102 11358 11358 I bqwu    : onPause
+05-04 21:19:10.439 11358 11383 V ClearcutMetricXmitter: Transmission is done.
+05-04 21:19:10.536 12840 12876 I chatty  : uid=10150(com.krishivaas) expire 1 line
+05-04 21:19:10.869  1801  1893 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+05-04 21:19:10.870  1801  1893 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+05-04 21:19:10.874 12840 12887 I chatty  : uid=10150(com.krishivaas) expire 5 lines
+05-04 21:19:11.238 12840 12885 I chatty  : uid=10150(com.krishivaas) expire 15 lines
+05-04 21:19:11.247  1837  1837 I keystore: del USRPKEY__androidx_security_master_key_ 10150
+05-04 21:19:11.247  1837  1837 I keystore: del USRSKEY__androidx_security_master_key_ 10150
+05-04 21:19:11.247  1837  1837 I keystore: del USRCERT__androidx_security_master_key_ 10150
+05-04 21:19:11.248  1837  1837 I keystore: del CACERT__androidx_security_master_key_ 10150
+05-04 21:19:11.290 12840 12891 I chatty  : uid=10150(com.krishivaas) expire 1 line
+05-04 21:19:11.333  1776  1776 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-04 21:19:11.334  1837 12894 D DropBoxManager: About to call service->add()
+05-04 21:19:11.334  2004  2825 I DropBoxManagerService: add tag=keymaster isTagEnabled=true flags=0x0
+05-04 21:19:11.338  1650  1650 I hwservicemanager: getTransport: Cannot find entry android.hardware.graphics.mapper@3.0::IMapper/default in either framework or device manifest.
+05-04 21:19:11.340  1837 12894 D DropBoxManager: service->add returned No error
+05-04 21:19:11.366  1776  1776 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-04 21:19:11.369  1776  1776 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-04 21:19:11.458 12840 12888 I chatty  : uid=10150(com.krishivaas) expire 5 lines
+05-04 21:19:11.602 12932 12932 W gle.android.tt: Unexpected CPU variant for X86 using defaults: x86
+05-04 21:19:11.603  1746  1746 D Zygote  : Forked child process 12932
+05-04 21:19:11.607 12932 12932 E gle.android.tt: Not starting debugger since process cannot load the jdwp agent.
+05-04 21:19:11.615  2004  2034 I ActivityManager: Start proc 12932:com.google.android.tts/u0a133 for service {com.google.android.tts/com.google.android.tts.service.GoogleTTSService}
+05-04 21:19:11.648 12932 12932 D ApplicationLoaders: Returning zygote-cached class loader: /system/framework/android.hidl.base-V1.0-java.jar
+05-04 21:19:11.648 12932 12932 D ApplicationLoaders: Returning zygote-cached class loader: /system/framework/android.hidl.manager-V1.0-java.jar
+05-04 21:19:11.650 12932 12932 D ApplicationLoaders: Returning zygote-cached class loader: /system/framework/android.hidl.base-V1.0-java.jar
+05-04 21:19:11.676 12932 12932 I gle.android.tt: The ClassLoaderContext is a special shared library.
+05-04 21:19:11.736 12932 12932 I MultiDex: VM with version 2.1.0 has multidex support
+05-04 21:19:11.736 12932 12932 I MultiDex: install
+05-04 21:19:11.736 12932 12932 I MultiDex: VM has multidex support, MultiDex support library is disabled.
+05-04 21:19:11.758  1776  1776 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-04 21:19:11.763  1776  1776 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-04 21:19:11.822  2551  2564 I .gms.persisten: Background concurrent copying GC freed 125390(5586KB) AllocSpace objects, 11(2368KB) LOS objects, 41% free, 8646KB/14MB, paused 536us total 137.012ms

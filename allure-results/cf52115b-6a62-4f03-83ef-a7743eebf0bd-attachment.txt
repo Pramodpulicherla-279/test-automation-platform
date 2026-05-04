@@ -1,0 +1,80 @@
+CRASH START: 05-04 21:23:06.496 11485 11485 I AndroidRuntime: VM exiting with result code 0.
+05-04 21:23:06.519   551  1918 I ActivityManager: Killing 11500:io.appium.uiautomator2.server/u0a147 (adj 0): stop io.appium.uiautomator2.server due to finished inst
+05-04 21:23:06.535   731   825 W Looper  : Slow delivery took 37ms wmshell.main h=android.view.ViewRootImpl$ViewRootHandler c=android.view.accessibility.AccessibilityManager$$ExternalSyntheticLambda0@b77beb0 m=0
+05-04 21:23:06.535   731   825 W Looper  : Drained
+05-04 21:23:06.546   551  1918 W ProcessStats: Tracking association SourceState{87a8f17 system/1000 BTopFgs #6481} whose proc state 2 is better than process ProcessState{6921f04 io.appium.settings/10145 pkg=io.appium.settings} proc state 3 (2 skipped)
+05-04 21:23:06.598   551  1918 V ActivityManager: Got obituary of 11500:io.appium.uiautomator2.server
+05-04 21:23:06.605   343   343 I Zygote  : Process 11500 exited due to signal 9 (Killed)
+05-04 21:23:06.575     0     0 I binder  : undelivered TRANSACTION_COMPLETE
+05-04 21:23:06.576     0     0 I binder  : undelivered transaction 410236, process died.
+05-04 21:23:06.610   551   591 I libprocessgroup: Successfully killed process cgroup uid 10147 pid 11500 in 42ms
+05-04 21:23:06.635   497 11672 D BufferPoolAccessor2.0: bufferpool2 0x7177043970c8 : 1(524288 size) total buffers - 1(524288 size) used buffers - 38/39 (recycle/alloc) - 1/38 (fetch/transfer)
+05-04 21:23:06.929   551   973 I ActivityManager: Force stopping io.appium.uiautomator2.server.test appid=10146 user=0: from pid 11852
+05-04 21:23:07.073   551   973 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10147 user=0: from pid 11855
+05-04 21:23:07.145  2594  2594 D CarrierSvcBindHelper: No carrier app for: 0
+05-04 21:23:07.263  2594  2594 D CarrierSvcBindHelper: No carrier app for: 0
+05-04 21:23:07.429 11540 11578 D EGL_emulation: app_time_stats: avg=1039.44ms min=726.13ms max=1352.75ms count=2
+05-04 21:23:07.529   551  1427 I ActivityManager: Force stopping com.krishivaas appid=10148 user=0: from pid 11863
+05-04 21:23:07.531   551  1427 I ActivityManager: Killing 11540:com.krishivaas/u0a148 (adj 0): stop com.krishivaas due to from pid 11863
+05-04 21:23:07.549   551  1427 W ActivityTaskManager: Force removing ActivityRecord{8f133d u0 com.krishivaas/.MainActivity t45 f}}: app died, no saved state
+05-04 21:23:07.557   551   658 D CompatibilityChangeReporter: Compat change id reported: 171306433; UID 10148; state: ENABLED
+05-04 21:23:07.565   551  1427 W InputManager-JNI: Input channel object '9017d65 com.krishivaas/com.krishivaas.MainActivity (client)' was disposed without first being removed with the input manager!
+05-04 21:23:07.596   551  1427 W ActivityTaskManager: Can't find TaskDisplayArea to determine support for multi window. Task id=45 attached=false
+05-04 21:23:07.597   551  1427 W ActivityTaskManager: Can't find TaskDisplayArea to determine support for multi window. Task id=45 attached=false
+05-04 21:23:07.612  1505  1505 I A       : onApplyWindowInsets: systemWindowInsets=Insets{left=0, top=63, right=0, bottom=126}
+05-04 21:23:07.613  1505  1505 I A       : onApplyWindowInsets: systemWindowInsets=Insets{left=0, top=63, right=0, bottom=126}
+05-04 21:23:07.627   365   365 D goldfish-address-space: claimShared: Ask to claim region [0x3f0d28000 0x3f170c000]
+05-04 21:23:07.630   731   825 W Looper  : Slow delivery took 33ms wmshell.main h=android.os.Handler c=com.android.wm.shell.legacysplitscreen.LegacySplitScreenController$SplitScreenImpl$$ExternalSyntheticLambda1@a360129 m=0
+05-04 21:23:07.632   365   365 D goldfish-address-space: claimShared: Ask to claim region [0x3f170c000 0x3f20f0000]
+05-04 21:23:07.636   365   365 D goldfish-address-space: claimShared: Ask to claim region [0x3f20f0000 0x3f2ad4000]
+05-04 21:23:07.658  2594  2594 D CarrierSvcBindHelper: No carrier app for: 0
+05-04 21:23:07.670   365   365 D goldfish-address-space: claimShared: Ask to claim region [0x3f2ad4000 0x3f34b8000]
+05-04 21:23:07.678   365   365 D goldfish-address-space: claimShared: Ask to claim region [0x3f34b8000 0x3f3e9c000]
+05-04 21:23:07.682   365   365 D goldfish-address-space: claimShared: Ask to claim region [0x3f4000000 0x3f49e4000]
+05-04 21:23:07.712   551  1908 W ActivityManager: Unable to start service Intent { act=android.service.smartspace.SmartspaceService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiSmartspaceService } U=0: not found
+05-04 21:23:07.712   551  1908 W RemoteSmartspaceService: could not bind to Intent { act=android.service.smartspace.SmartspaceService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiSmartspaceService } using flags 67112961
+05-04 21:23:07.715  2104  2104 I GsaVoiceInteractionSrv: Handling ACTION_START_HOTWORD
+05-04 21:23:07.716  2104  2104 I GsaVoiceInteractionSrv: disregardVoiceMatch: false
+05-04 21:23:07.724  2104  2104 I GsaVoiceInteractionSrv: Cannot start hotword, hotword has been explicitly disabled.
+05-04 21:23:07.727   551   551 W ActivityManager: Unbind failed: could not find connection for android.app.LoadedApk$ServiceDispatcher$InnerConnection@26883b3
+05-04 21:23:07.729   731   825 W Looper  : Drained
+05-04 21:23:07.738   551  1427 W ActivityManager: Unable to start service Intent { act=android.service.smartspace.SmartspaceService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiSmartspaceService } U=0: not found
+05-04 21:23:07.738   551  1427 W RemoteSmartspaceService: could not bind to Intent { act=android.service.smartspace.SmartspaceService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiSmartspaceService } using flags 67112961
+05-04 21:23:07.739   551   551 W ActivityManager: Unbind failed: could not find connection for android.app.LoadedApk$ServiceDispatcher$InnerConnection@a07b96e
+05-04 21:23:07.765  1505  1534 I OpenGLRenderer: Davey! duration=191759ms; Flags=1, FrameTimelineVsyncId=27139, IntendedVsync=1530342276990, Vsync=1530358943656, InputEventId=0, HandleInputStart=1530363181600, AnimationStart=1530363217500, PerformTraversalsStart=1530363266600, DrawStart=1530664774900, FrameDeadline=1530375610322, FrameInterval=1530363145400, FrameStartTime=16666666, SyncQueued=1530667275800, SyncStart=1530669687500, IssueDrawCommandsStart=1530670959600, SwapBuffers=1530671722300, FrameCompleted=1722104686100, DequeueBufferDuration=766600, QueueBufferDuration=3625300, GpuCompleted=1722104686100, SwapBuffersCompleted=1530691733600, DisplayPresentTime=0, 
+05-04 21:23:07.766     0     0 I binder  : undelivered transaction 410431, process died.
+05-04 21:23:07.768     0     0 I binder  : undelivered transaction 410432, process died.
+05-04 21:23:07.785   497  1065 D BufferPoolConnection: connection 2136376654431 closed on death
+05-04 21:23:07.789   551  2346 V ActivityManager: Got obituary of 11540:com.krishivaas
+05-04 21:23:07.799   551   579 W Looper  : Slow dispatch took 190ms android.ui h=com.android.server.am.ActivityManagerService$UiHandler c=com.android.server.am.UidObserverController$$ExternalSyntheticLambda0@1099d3b m=0
+05-04 21:23:07.784     0     0 I binder  : undelivered transaction 410430, process died.
+05-04 21:23:07.812   343   343 I Zygote  : Process 11540 exited due to signal 9 (Killed)
+05-04 21:23:07.813   551   973 D TextToSpeechManagerPerUserService: Unbinding TTS engine: com.google.android.tts. Reason: client process death is reported
+05-04 21:23:07.814   551  1215 D ConnectivityService: ConnectivityService NetworkRequestInfo binderDied(uid/pid:10148/11540, android.os.BinderProxy@a2f509c)
+05-04 21:23:07.815   551   666 D ConnectivityService: releasing NetworkRequest [ REQUEST id=167, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10148 RequestorUid: 10148 RequestorPkg: com.krishivaas] ] (release request)
+05-04 21:23:07.819   551   551 W TextToSpeechManagerPerUserService: Disconnected from TTS engine
+05-04 21:23:07.848   551   591 I libprocessgroup: Successfully killed process cgroup uid 10148 pid 11540 in 316ms
+05-04 21:23:07.849   551   581 W ActivityManager: setHasOverlayUi called on unknown pid: 11540
+05-04 21:23:07.875   413   413 E BpTransactionCompletedListener: Failed to transact (-32)
+05-04 21:23:07.882   551   551 I TextToSpeechManagerPerUserService: Failed running callback method: android.os.DeadObjectException
+05-04 21:23:07.901  2647  2647 I GoogleInputMethodService: GoogleInputMethodService.onFinishInput():3420 
+05-04 21:23:07.902  2647  2647 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():2002 
+05-04 21:23:07.904  2647  2647 I DeviceUnlockedTag: DeviceUnlockedTag.notifyDeviceLockStatusChanged():31 Notify device unlocked.
+05-04 21:23:07.909   551   551 W ServiceConnector.Impl: mayInterruptIfRunning not supported - ignoring
+05-04 21:23:07.922   551   551 W Looper  : Slow dispatch took 103ms main h=android.os.Handler c=com.android.internal.infra.ServiceConnector$Impl$$ExternalSyntheticLambda1@82eda88 m=0
+05-04 21:23:07.934   491  8042 E mediaserver: unlinkToDeath: removed reference to death recipient but unlink failed.
+05-04 21:23:07.935   491  8042 E IPCThreadState: attemptIncStrongHandle(2): Not supported
+05-04 21:23:07.978   497  1065 V C2Store : in ~ComponentModule
+05-04 21:23:07.984   497  1065 V C2Store : unloading dll
+05-04 21:23:07.996   497  1065 D BufferPoolAccessor2.0: Destruction - bufferpool2 0x7177043970c8 cached: 0/0M, 0/0% in use; allocs: 39, 97% recycled; transfers: 39, 97% unfetched
+05-04 21:23:11.280   382   382 E android.hardware.power.stats@1.0-service-mock: Failed to getEnergyData
+05-04 21:23:12.678   200   200 I servicemanager: Since 'apexservice' could not be found, trying to start it as a lazy AIDL service
+05-04 21:23:12.662     0     0 I init    : starting service 'apexd'...
+05-04 21:23:12.687     0     0 I init    : Control message: Processed ctl.interface_start for 'aidl/apexservice' from pid: 200 (/system/bin/servicemanager)
+05-04 21:23:12.713     0     0 I apexd   : Scanning /system/apex for pre-installed ApexFiles
+05-04 21:23:12.714     0     0 I apexd   : Found pre-installed APEX /system/apex/com.android.i18n.apex
+05-04 21:23:12.716     0     0 I apexd   : Found pre-installed APEX /system/apex/com.android.vndk.current.apex
+05-04 21:23:12.719     0     0 I apexd   : Found pre-installed APEX /system/apex/com.google.android.art.apex
+05-04 21:23:12.735     0     0 I apexd   : Found pre-installed APEX /system/apex/com.google.android.media.swcodec.apex
+05-04 21:23:12.743     0     0 I apexd   : Found pre-installed APEX /system/apex/com.google.android.telephony.apex
+05-04 21:23:12.746     0     0 I apexd   : Found pre-installed APEX /system/apex/com.google.android.scheduling.apex

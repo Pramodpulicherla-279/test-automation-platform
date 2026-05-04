@@ -1,0 +1,80 @@
+CRASH START: 05-04 21:25:22.859 12773 12773 I AndroidRuntime: VM exiting with result code 0.
+05-04 21:25:22.862   551   551 D BatterySaverPolicy: accessibility changed to false, updating policy.
+05-04 21:25:22.877  1505  1840 I A       : NGA disabled due to not being eligible.
+05-04 21:25:22.881   551  1902 I ActivityManager: Killing 12788:io.appium.uiautomator2.server/u0a147 (adj 0): stop io.appium.uiautomator2.server due to finished inst
+05-04 21:25:22.898   551  1902 W ProcessStats: Tracking association SourceState{87a8f17 system/1000 BTopFgs #6862} whose proc state 2 is better than process ProcessState{6921f04 io.appium.settings/10145 pkg=io.appium.settings} proc state 3 (0 skipped)
+05-04 21:25:22.900     0     0 I binder  : undelivered transaction 450866, process died.
+05-04 21:25:22.930   551  1745 V ActivityManager: Got obituary of 12788:io.appium.uiautomator2.server
+05-04 21:25:22.931   343   343 I Zygote  : Process 12788 exited due to signal 9 (Killed)
+05-04 21:25:22.909     0     0 I binder  : undelivered TRANSACTION_COMPLETE
+05-04 21:25:22.911     0     0 I binder  : undelivered transaction 450903, process died.
+05-04 21:25:22.934   551   591 I libprocessgroup: Successfully killed process cgroup uid 10147 pid 12788 in 40ms
+05-04 21:25:23.046   551  1918 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10147 user=0: from pid 13147
+05-04 21:25:23.057   551  1918 I ActivityManager: Force stopping io.appium.uiautomator2.server.test appid=10146 user=0: from pid 13148
+05-04 21:25:23.058  2594  2594 D CarrierSvcBindHelper: No carrier app for: 0
+05-04 21:25:23.071  2594  2594 D CarrierSvcBindHelper: No carrier app for: 0
+05-04 21:25:23.135   551  1918 I ActivityManager: Force stopping com.krishivaas appid=10148 user=0: from pid 13158
+05-04 21:25:23.137   551  1918 I ActivityManager: Killing 12830:com.krishivaas/u0a148 (adj 0): stop com.krishivaas due to from pid 13158
+05-04 21:25:23.143   551  1918 W ActivityTaskManager: Force removing ActivityRecord{6d890a7 u0 com.krishivaas/.MainActivity t47 f}}: app died, no saved state
+05-04 21:25:23.144   551   658 D CompatibilityChangeReporter: Compat change id reported: 171306433; UID 10148; state: ENABLED
+05-04 21:25:23.147   551  1918 W InputManager-JNI: Input channel object 'a4561b4 com.krishivaas/com.krishivaas.MainActivity (client)' was disposed without first being removed with the input manager!
+05-04 21:25:23.189   497 11869 D BufferPoolConnection: connection 2136376654435 closed on death
+05-04 21:25:23.196   497   519 V C2Store : in ~ComponentModule
+05-04 21:25:23.196   497   519 V C2Store : unloading dll
+05-04 21:25:23.197   497   519 D BufferPoolAccessor2.0: Destruction - bufferpool2 0x7177043962e8 cached: 0/0M, 0/0% in use; allocs: 39, 97% recycled; transfers: 39, 97% unfetched
+05-04 21:25:23.203   551  2197 D TextToSpeechManagerPerUserService: Unbinding TTS engine: com.google.android.tts. Reason: client process death is reported
+05-04 21:25:23.204   551   818 D ConnectivityService: ConnectivityService NetworkRequestInfo binderDied(uid/pid:10148/12830, android.os.BinderProxy@cf39b48)
+05-04 21:25:23.205   343   343 I Zygote  : Process 12830 exited due to signal 9 (Killed)
+05-04 21:25:23.173     0     0 I binder  : undelivered transaction 451039, process died.
+05-04 21:25:23.180     0     0 I binder  : undelivered transaction 451040, process died.
+05-04 21:25:23.183     0     0 I binder  : undelivered transaction 451038, process died.
+05-04 21:25:23.206   551   666 D ConnectivityService: releasing NetworkRequest [ REQUEST id=171, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10148 RequestorUid: 10148 RequestorPkg: com.krishivaas] ] (release request)
+05-04 21:25:23.207   551   551 W TextToSpeechManagerPerUserService: Disconnected from TTS engine
+05-04 21:25:23.207   551   551 I TextToSpeechManagerPerUserService: Failed running callback method: android.os.DeadObjectException
+05-04 21:25:23.211   491  5261 E mediaserver: unlinkToDeath: removed reference to death recipient but unlink failed.
+05-04 21:25:23.212   551   591 I libprocessgroup: Successfully killed process cgroup uid 10148 pid 12830 in 72ms
+05-04 21:25:23.212   491  5261 E IPCThreadState: attemptIncStrongHandle(2): Not supported
+05-04 21:25:23.222   413   413 E BpTransactionCompletedListener: Failed to transact (-32)
+05-04 21:25:23.224   551  1918 W ActivityTaskManager: Can't find TaskDisplayArea to determine support for multi window. Task id=47 attached=false
+05-04 21:25:23.225   551  1918 W ActivityTaskManager: Can't find TaskDisplayArea to determine support for multi window. Task id=47 attached=false
+05-04 21:25:23.254  1505  1505 I A       : onApplyWindowInsets: systemWindowInsets=Insets{left=0, top=63, right=0, bottom=126}
+05-04 21:25:23.255  1505  1505 I A       : onApplyWindowInsets: systemWindowInsets=Insets{left=0, top=63, right=0, bottom=126}
+05-04 21:25:23.257   551  1902 W system_server: Long monitor contention with owner Binder:551_15 (1918) at void com.android.server.am.OomAdjuster.performUpdateOomAdjPendingTargetsLocked(java.lang.String)(OomAdjuster.java:840) waiters=0 in boolean com.android.server.am.ActivityManagerService.isUidActive(int, java.lang.String) for 117ms
+05-04 21:25:23.260   551   623 V ActivityManager: Got obituary of 12830:com.krishivaas
+05-04 21:25:23.272   365   406 D goldfish-address-space: claimShared: Ask to claim region [0x3f137f000 0x3f1d63000]
+05-04 21:25:23.273   551   551 W ServiceConnector.Impl: mayInterruptIfRunning not supported - ignoring
+05-04 21:25:23.277   365   406 D goldfish-address-space: claimShared: Ask to claim region [0x3f1d63000 0x3f2747000]
+05-04 21:25:23.278   551   581 W ActivityManager: setHasOverlayUi called on unknown pid: 12830
+05-04 21:25:23.293   365   365 D goldfish-address-space: claimShared: Ask to claim region [0x3f2747000 0x3f312b000]
+05-04 21:25:23.297   365   406 D goldfish-address-space: claimShared: Ask to claim region [0x3f312b000 0x3f3b0f000]
+05-04 21:25:23.307   551  1743 W ActivityManager: Unable to start service Intent { act=android.service.smartspace.SmartspaceService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiSmartspaceService } U=0: not found
+05-04 21:25:23.308   551  1743 W RemoteSmartspaceService: could not bind to Intent { act=android.service.smartspace.SmartspaceService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiSmartspaceService } using flags 67112961
+05-04 21:25:23.309   365   406 D goldfish-address-space: claimShared: Ask to claim region [0x3f4000000 0x3f49e4000]
+05-04 21:25:23.311   365   406 D goldfish-address-space: claimShared: Ask to claim region [0x3f49e4000 0x3f53c8000]
+05-04 21:25:23.347   551   551 W ActivityManager: Unbind failed: could not find connection for android.app.LoadedApk$ServiceDispatcher$InnerConnection@8afc363
+05-04 21:25:23.355  1505  1571 I OpenGLRenderer: Davey! duration=135702ms; Flags=1, FrameTimelineVsyncId=37342, IntendedVsync=1722008935990, Vsync=1722008935990, InputEventId=0, HandleInputStart=1722013946700, AnimationStart=1722013974800, PerformTraversalsStart=1722014015800, DrawStart=1722040834700, FrameDeadline=1722042269322, FrameInterval=1722013930300, FrameStartTime=16666666, SyncQueued=1722044812600, SyncStart=1722069297800, IssueDrawCommandsStart=1722069510500, SwapBuffers=1722072266900, FrameCompleted=1857735949100, DequeueBufferDuration=33600, QueueBufferDuration=15703300, GpuCompleted=1857735949100, SwapBuffersCompleted=1722105876400, DisplayPresentTime=0, 
+05-04 21:25:23.374  2594  2594 D CarrierSvcBindHelper: No carrier app for: 0
+05-04 21:25:23.377   551  1427 W ActivityManager: Unable to start service Intent { act=android.service.smartspace.SmartspaceService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiSmartspaceService } U=0: not found
+05-04 21:25:23.377   551  1427 W RemoteSmartspaceService: could not bind to Intent { act=android.service.smartspace.SmartspaceService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiSmartspaceService } using flags 67112961
+05-04 21:25:23.377   551   551 W ActivityManager: Unbind failed: could not find connection for android.app.LoadedApk$ServiceDispatcher$InnerConnection@a5132bf
+05-04 21:25:23.400  2104  2104 I GsaVoiceInteractionSrv: Handling ACTION_START_HOTWORD
+05-04 21:25:23.400  2104  2104 I GsaVoiceInteractionSrv: disregardVoiceMatch: false
+05-04 21:25:23.401  2104  2104 I GsaVoiceInteractionSrv: Cannot start hotword, hotword has been explicitly disabled.
+05-04 21:25:23.409  2647  2647 I GoogleInputMethodService: GoogleInputMethodService.onFinishInput():3420 
+05-04 21:25:23.411  2647  2647 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():2002 
+05-04 21:25:23.413  2647  2647 I DeviceUnlockedTag: DeviceUnlockedTag.notifyDeviceLockStatusChanged():31 Notify device unlocked.
+05-04 21:25:28.019   497   760 D BufferPoolAccessor2.0: evictor expired: 1, evicted: 0
+05-04 21:25:32.532   551   637 W libprocessgroup: Failed to open /sys/fs/cgroup/./frozen/cgroup.procs: No such file or directory
+05-04 21:25:32.532   551   637 W libprocessgroup: Failed to apply Frozen process profile: No such file or directory
+05-04 21:25:32.533   551   637 D ActivityManager: froze 9415 com.google.android.configupdater
+05-04 21:25:33.637   551  1743 W ProcessStats: Tracking association SourceState{87a8f17 system/1000 BTopFgs #6879} whose proc state 2 is better than process ProcessState{6921f04 io.appium.settings/10145 pkg=io.appium.settings} proc state 3 (21 skipped)
+05-04 21:25:46.747   731   955 D ControlsListingControllerImpl: Subscribing callback, service count: 0
+05-04 21:25:46.758   731   955 D ControlsListingControllerImpl: Unsubscribing callback
+05-04 21:25:48.698   551   856 W ProcessStats: Tracking association SourceState{87a8f17 system/1000 BTopFgs #6880} whose proc state 2 is better than process ProcessState{6921f04 io.appium.settings/10145 pkg=io.appium.settings} proc state 3 (1 skipped)
+05-04 21:25:59.906   731   880 D EGL_emulation: app_time_stats: avg=59866.74ms min=59866.74ms max=59866.74ms count=1
+05-04 21:26:02.347   551   589 W ProcessStats: Tracking association SourceState{87a8f17 system/1000 BTopFgs #6881} whose proc state 2 is better than process ProcessState{6921f04 io.appium.settings/10145 pkg=io.appium.settings} proc state 3 (1 skipped)
+05-04 21:26:02.380   342   342 I netd    : trafficSwapActiveStatsMap() <28.09ms>
+05-04 21:26:02.382   342   342 I netd    : tetherGetStats() -> {[]} <1.05ms>
+05-04 21:26:02.385   342   342 I netd    : bandwidthSetGlobalAlert(2097152) <0.16ms>
+05-04 21:26:02.395   342   342 I netd    : bandwidthRemoveInterfaceQuota(eth0) <1.02ms>
+05-04 21:26:02.396   342   342 I netd    : bandwidthSetInterfaceQuota(eth0, 9223372036854775807) <1.04ms>
