@@ -1,1 +1,1 @@
-[{"uid":"906e674432354fc9","name":"test_login_success [emulator-5556]","time":{"start":1777910641136,"stop":1777910669992,"duration":28856},"status":"failed","severity":"normal"},{"uid":"1d7e6975c338569f","name":"test_addfarm_addcrop_success [emulator-5556]","time":{"start":1777910965585,"stop":1777910991135,"duration":25550},"status":"failed","severity":"normal"},{"uid":"91c6058ebd10d230","name":"test_addfarm [emulator-5556]","time":{"start":1777910770700,"stop":1777910825091,"duration":54391},"status":"failed","severity":"normal"}]
+[]
