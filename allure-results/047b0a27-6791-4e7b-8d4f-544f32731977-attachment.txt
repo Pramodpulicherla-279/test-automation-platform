@@ -1,0 +1,80 @@
+CRASH START: 05-04 18:27:28.844 15740 15740 I AndroidRuntime: VM exiting with result code 0.
+05-04 18:27:28.881   960  1005 W Looper  : Slow dispatch took 72ms wmshell.main h=android.view.ViewRootImpl$ViewRootHandler c=android.view.accessibility.AccessibilityManager$$ExternalSyntheticLambda0@f588853 m=0
+05-04 18:27:28.886   587   587 D BatterySaverPolicy: accessibility changed to false, updating policy.
+05-04 18:27:28.886   960  1005 W Looper  : Slow delivery took 73ms wmshell.main h=android.view.ViewRootImpl$ViewRootHandler c=android.view.accessibility.AccessibilityManager$$ExternalSyntheticLambda0@56d8590 m=0
+05-04 18:27:28.886   587  2173 I ActivityManager: Killing 15756:io.appium.uiautomator2.server/u0a147 (adj 0): stop io.appium.uiautomator2.server due to finished inst
+05-04 18:27:28.889   960  1005 W Looper  : Drained
+05-04 18:27:28.896     0     0 I binder_alloc: 15756: binder_alloc_buf, no vma
+05-04 18:27:28.923   587  1104 V ActivityManager: Got obituary of 15756:io.appium.uiautomator2.server
+05-04 18:27:28.896     0     0 I binder  : release 15756:15773 transaction 1046007 out, still active
+05-04 18:27:28.899     0     0 I binder  : undelivered TRANSACTION_COMPLETE
+05-04 18:27:28.899     0     0 I binder  : 587:2173 transaction failed 29189/-3, size 4-0 line 3325
+05-04 18:27:28.899     0     0 I binder  : send failed reply for transaction 1046007, target dead
+05-04 18:27:28.926   356   356 I Zygote  : Process 15756 exited due to signal 9 (Killed)
+05-04 18:27:28.934   587   648 I libprocessgroup: Successfully killed process cgroup uid 10147 pid 15756 in 46ms
+05-04 18:27:29.066   587  2173 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10147 user=0: from pid 16116
+05-04 18:27:29.070   587  1829 I ActivityManager: Force stopping io.appium.uiautomator2.server.test appid=10146 user=0: from pid 16117
+05-04 18:27:29.089  1172  1172 D CarrierSvcBindHelper: No carrier app for: 0
+05-04 18:27:29.094  1172  1172 D CarrierSvcBindHelper: No carrier app for: 0
+05-04 18:27:29.157   587  2173 I ActivityManager: Force stopping com.krishivaas appid=10148 user=0: from pid 16127
+05-04 18:27:29.160   587  2173 I ActivityManager: Killing 15796:com.krishivaas/u0a148 (adj 0): stop com.krishivaas due to from pid 16127
+05-04 18:27:29.166   587   877 D CompatibilityChangeReporter: Compat change id reported: 171306433; UID 10148; state: ENABLED
+05-04 18:27:29.166   587  2173 W ActivityTaskManager: Force removing ActivityRecord{f532015 u0 com.krishivaas/.MainActivity t25 f}}: app died, no saved state
+05-04 18:27:29.172   587  2173 W InputManager-JNI: Input channel object 'acef33d com.krishivaas/com.krishivaas.MainActivity (client)' was disposed without first being removed with the input manager!
+05-04 18:27:29.203   518  7065 D BufferPoolConnection: connection 2226570955170 closed on death
+05-04 18:27:29.213   356   356 I Zygote  : Process 15796 exited due to signal 9 (Killed)
+05-04 18:27:29.186     0     0 I binder  : undelivered transaction 1046203, process died.
+05-04 18:27:29.190     0     0 I binder  : undelivered transaction 1046204, process died.
+05-04 18:27:29.215   518  1047 V C2Store : in ~ComponentModule
+05-04 18:27:29.215   518  1047 V C2Store : unloading dll
+05-04 18:27:29.216   587  2163 D TextToSpeechManagerPerUserService: Unbinding TTS engine: com.google.android.tts. Reason: client process death is reported
+05-04 18:27:29.217   587  2163 D ConnectivityService: ConnectivityService NetworkRequestInfo binderDied(uid/pid:10148/15796, android.os.BinderProxy@a96283b)
+05-04 18:27:29.195     0     0 I binder  : undelivered transaction 1046202, process died.
+05-04 18:27:29.218   518  1047 D BufferPoolAccessor2.0: Destruction - bufferpool2 0x72842e43b288 cached: 0/0M, 0/0% in use; allocs: 40, 98% recycled; transfers: 40, 98% unfetched
+05-04 18:27:29.220   587   587 W TextToSpeechManagerPerUserService: Disconnected from TTS engine
+05-04 18:27:29.220   587   587 I TextToSpeechManagerPerUserService: Failed running callback method: android.os.DeadObjectException
+05-04 18:27:29.221   505  4067 E mediaserver: unlinkToDeath: removed reference to death recipient but unlink failed.
+05-04 18:27:29.221   505  4067 E IPCThreadState: attemptIncStrongHandle(2): Not supported
+05-04 18:27:29.238   587  2173 W ActivityTaskManager: Can't find TaskDisplayArea to determine support for multi window. Task id=25 attached=false
+05-04 18:27:29.239   440   440 E BpTransactionCompletedListener: Failed to transact (-32)
+05-04 18:27:29.239   587  2173 W ActivityTaskManager: Can't find TaskDisplayArea to determine support for multi window. Task id=25 attached=false
+05-04 18:27:29.250   587   889 D ConnectivityService: releasing NetworkRequest [ REQUEST id=175, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10148 RequestorUid: 10148 RequestorPkg: com.krishivaas] ] (release request)
+05-04 18:27:29.257   587   648 I libprocessgroup: Successfully killed process cgroup uid 10148 pid 15796 in 92ms
+05-04 18:27:29.266   372   372 D goldfish-address-space: claimShared: Ask to claim region [0x3f4000000 0x3f49e4000]
+05-04 18:27:29.269   587  1487 V ActivityManager: Got obituary of 15796:com.krishivaas
+05-04 18:27:29.271   372   372 D goldfish-address-space: claimShared: Ask to claim region [0x3f6b8d000 0x3f7571000]
+05-04 18:27:29.275   372   372 D goldfish-address-space: claimShared: Ask to claim region [0x3f7571000 0x3f7f55000]
+05-04 18:27:29.282   587   587 W ServiceConnector.Impl: mayInterruptIfRunning not supported - ignoring
+05-04 18:27:29.286   587   636 W ActivityManager: setHasOverlayUi called on unknown pid: 15796
+05-04 18:27:29.331  1959  7985 I OpenGLRenderer: Davey! duration=189378ms; Flags=1, FrameTimelineVsyncId=38751, IntendedVsync=3476975878004, Vsync=3476992544670, InputEventId=0, HandleInputStart=3476996065000, AnimationStart=3476996106100, PerformTraversalsStart=3477068457800, DrawStart=3477288088000, FrameDeadline=3477009211336, FrameInterval=3476996031100, FrameStartTime=16666666, SyncQueued=3477292675700, SyncStart=3477297061600, IssueDrawCommandsStart=3477343110000, SwapBuffers=3477362829400, FrameCompleted=3666358661000, DequeueBufferDuration=45700, QueueBufferDuration=3039500, GpuCompleted=3666358661000, SwapBuffersCompleted=3477382607500, DisplayPresentTime=0, 
+05-04 18:27:29.334   372   372 D goldfish-address-space: claimShared: Ask to claim region [0x3f4a69000 0x3f544d000]
+05-04 18:27:29.344   372   372 D goldfish-address-space: claimShared: Ask to claim region [0x3f544d000 0x3f5e31000]
+05-04 18:27:29.350   372   372 D goldfish-address-space: claimShared: Ask to claim region [0x3faa3d000 0x3fb421000]
+05-04 18:27:29.403   587  1805 W ActivityManager: Unable to start service Intent { act=android.service.smartspace.SmartspaceService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiSmartspaceService } U=0: not found
+05-04 18:27:29.404   587  1805 W RemoteSmartspaceService: could not bind to Intent { act=android.service.smartspace.SmartspaceService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiSmartspaceService } using flags 67112961
+05-04 18:27:29.435  1569  1569 I GoogleInputMethodService: GoogleInputMethodService.onFinishInput():3420 
+05-04 18:27:29.438  1569  1569 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():2002 
+05-04 18:27:29.441  1569  1569 I DeviceUnlockedTag: DeviceUnlockedTag.notifyDeviceLockStatusChanged():31 Notify device unlocked.
+05-04 18:27:29.478  1172  1172 D CarrierSvcBindHelper: No carrier app for: 0
+05-04 18:27:29.498   587  1487 W ActivityManager: Unable to start service Intent { act=android.service.smartspace.SmartspaceService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiSmartspaceService } U=0: not found
+05-04 18:27:29.498  1734  1734 I GsaVoiceInteractionSrv: Handling ACTION_START_HOTWORD
+05-04 18:27:29.498   587   587 W ActivityManager: Unbind failed: could not find connection for android.app.LoadedApk$ServiceDispatcher$InnerConnection@2505e7a
+05-04 18:27:29.499  1734  1734 I GsaVoiceInteractionSrv: disregardVoiceMatch: false
+05-04 18:27:29.500  1734  1734 I GsaVoiceInteractionSrv: Cannot start hotword, hotword has been explicitly disabled.
+05-04 18:27:29.505   587  1487 W RemoteSmartspaceService: could not bind to Intent { act=android.service.smartspace.SmartspaceService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiSmartspaceService } using flags 67112961
+05-04 18:27:29.515   587   587 W ActivityManager: Unbind failed: could not find connection for android.app.LoadedApk$ServiceDispatcher$InnerConnection@55d962b
+05-04 18:27:33.609   518  1008 D BufferPoolAccessor2.0: evictor expired: 1, evicted: 0
+05-04 18:27:39.600  7997 12380 I AlarmManager: setExactAndAllowWhileIdle [name: GCM_HB_ALARM type: 2 triggerAtMillis: 4296648]
+05-04 18:27:39.602   587  2173 D CompatibilityChangeReporter: Compat change id reported: 171306433; UID 10100; state: ENABLED
+05-04 18:27:39.604  7997 12380 I AlarmManager: setExactAndAllowWhileIdle [name: GCM_HB_ALARM type: 2 triggerAtMillis: 4296653]
+05-04 18:27:39.607   587  2059 W ProcessStats: Tracking association SourceState{6bc79b4 system/1000 BTopFgs #19623} whose proc state 2 is better than process ProcessState{8cd9dd com.google.android.gms.persistent/10100 pkg=com.google.android.gms} proc state 3 (23 skipped)
+05-04 18:27:54.658   587  2059 W ProcessStats: Tracking association SourceState{6bc79b4 system/1000 BTopFgs #19625} whose proc state 2 is better than process ProcessState{8cd9dd com.google.android.gms.persistent/10100 pkg=com.google.android.gms} proc state 3 (3 skipped)
+05-04 18:27:59.514   387   387 E android.hardware.power.stats@1.0-service-mock: Failed to getEnergyData
+05-04 18:27:59.873   960  1032 I QuickAccessWalletTile: QAW service is unavailable, recreating the wallet client.
+05-04 18:28:00.036   960  1028 D EGL_emulation: app_time_stats: avg=51316.51ms min=51316.51ms max=51316.51ms count=1
+05-04 18:28:01.531   960  1032 D ControlsListingControllerImpl: Subscribing callback, service count: 0
+05-04 18:28:01.566   960  1032 D ControlsListingControllerImpl: Unsubscribing callback
+05-04 18:28:11.563  1569  2174 W ProcessReaper: Memory state is: 200
+05-04 18:28:21.712  1959 16154 W ProcessReaper: Memory state is: 100
+05-04 18:28:21.868  1734 16155 W ProcessReaper: Memory state is: 100
+05-04 18:28:48.732   960  1028 D EGL_emulation: app_time_stats: avg=48695.25ms min=48695.25ms max=48695.25ms count=1
