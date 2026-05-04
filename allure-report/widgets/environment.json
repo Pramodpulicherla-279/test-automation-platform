@@ -1,1 +1,1 @@
-[]
+[{"values":["2"],"name":"device.count"},{"values":["emulator-5554"],"name":"device.0.id"},{"values":["4723"],"name":"device.0.port"},{"values":["Android 12 (API 31)"],"name":"device.0.os"},{"values":["emulator-5556"],"name":"device.1.id"},{"values":["4725"],"name":"device.1.port"},{"values":["Android 10 (API 29)"],"name":"device.1.os"}]

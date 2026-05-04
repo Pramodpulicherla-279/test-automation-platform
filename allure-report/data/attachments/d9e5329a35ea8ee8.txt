@@ -1,0 +1,80 @@
+CRASH START: 05-04 17:31:01.733  7345  7345 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+05-04 17:31:01.743   587  1805 D CompatibilityChangeReporter: Compat change id reported: 168419799; UID 10113; state: DISABLED
+05-04 17:31:01.762  6178  7170 E MDD     : DownloadProgressMonitor: Can't find file group for uri: android://com.google.android.apps.messaging/files/datadownload/shared/public/datadownloadfile_1777896028014
+05-04 17:31:01.768  6178  6443 E MDD     : DownloadProgressMonitor: Can't find file group for uri: android://com.google.android.apps.messaging/files/datadownload/shared/public/datadownloadfile_1777896028015
+05-04 17:31:01.771  6178  7168 D asog    : Starting download: https://c.tenor.com/L8eHp5RTWfwAAAAk/tenor.gif
+05-04 17:31:01.771  6178  7168 V asog    : Is http uri, downloading (uri: https://c.tenor.com/L8eHp5RTWfwAAAAk/tenor.gif)
+05-04 17:31:01.783  6178  7170 D asog    : Starting download: https://c.tenor.com/zf4ZNomT0mkAAAAk/tenor.gif
+05-04 17:31:01.783  6178  7170 V asog    : Is http uri, downloading (uri: https://c.tenor.com/zf4ZNomT0mkAAAAk/tenor.gif)
+05-04 17:31:01.805  6178  7168 E MDD     : DownloadProgressMonitor: Can't find file group for uri: android://com.google.android.apps.messaging/files/datadownload/shared/public/datadownloadfile_1777896028016
+05-04 17:31:01.806  7345  7345 I AndroidRuntime: Using default boot image
+05-04 17:31:01.806  7345  7345 I AndroidRuntime: Leaving lock profiling enabled
+05-04 17:31:01.806  7345  7345 W libc    : Access denied finding property "odsign.verification.success"
+05-04 17:31:01.814  6178  7170 E MDD     : DownloadProgressMonitor: Can't find file group for uri: android://com.google.android.apps.messaging/files/datadownload/shared/public/datadownloadfile_1777896028017
+05-04 17:31:01.819  7345  7345 W app_process: ART APEX data files are untrusted.
+05-04 17:31:01.820  7345  7345 I app_process: Core platform API reporting enabled, enforcing=false
+05-04 17:31:01.803  7345  7345 W app_process: type=1400 audit(0.0:81): avc: denied { read } for name="u:object_r:odsign_prop:s0" dev="tmpfs" ino=206 scontext=u:r:shell:s0 tcontext=u:object_r:odsign_prop:s0 tclass=file permissive=0
+05-04 17:31:01.825  6178  6443 D asog    : Starting download: https://c.tenor.com/95im6cX0PSgAAAAk/tenor.gif
+05-04 17:31:01.825  6178  6443 V asog    : Is http uri, downloading (uri: https://c.tenor.com/95im6cX0PSgAAAAk/tenor.gif)
+05-04 17:31:01.834  6178  7168 D asog    : Starting download: https://c.tenor.com/VjE3bo1ITUMAAAAk/tenor.gif
+05-04 17:31:01.836  6178  7168 V asog    : Is http uri, downloading (uri: https://c.tenor.com/VjE3bo1ITUMAAAAk/tenor.gif)
+05-04 17:31:01.874  1367  2995 W gle.android.gm: Long monitor contention with owner [com.google.android.gms.chimera.container.intentoperation.GmsIntentOperationChimeraService-Executor] processing com.google.android.gms.chimera.container.InitConfigOperation for action com.google.android.chimera.container.REQUESTED_FEATURES_CHANGED (3091) at gwf gqt.l(gqm)(:com.google.android.gms@225014047@22.50.14 (190800-499278674):40) waiters=0 in gwf gqt.l(gqm) for 276ms
+05-04 17:31:01.886  1367  3091 I ChimeraConfigurator: Checking 1 listeners. All downloaded: false
+05-04 17:31:01.888  1367  3091 I GmsDebugLogger: [83] 1 [maps_core]
+05-04 17:31:01.893  1367  4015 I Icing   : IndexChimeraService.getServiceInterface callingPackage=com.google.android.googlequicksearchbox componentName=agsa_icing_connection serviceId=32
+05-04 17:31:01.898  6178  6443 E MDD     : DownloadProgressMonitor: Can't find file group for uri: android://com.google.android.apps.messaging/files/datadownload/shared/public/datadownloadfile_1777896028018
+05-04 17:31:01.902  1959  2204 W SearchServiceCore: Abort, client detached.
+05-04 17:31:01.908  1291  6768 W .gms.persisten: Long monitor contention with owner main (1291) at gwf gqt.l(gqm)(:com.google.android.gms@225014047@22.50.14 (190800-499278674):40) waiters=0 in android.os.ParcelFileDescriptor com.google.android.gms.chimera.container.GmsModuleChimeraProvider.openFile(android.net.Uri, java.lang.String) for 223ms
+05-04 17:31:01.921  1959  2230 I BgTaskExecutorImpl: Starting EXCLUSIVE background task FETCH_CONFIGS_FROM_PHENOTYPE.
+05-04 17:31:01.929  6178  7168 E MDD     : DownloadProgressMonitor: Can't find file group for uri: android://com.google.android.apps.messaging/files/datadownload/shared/public/datadownloadfile_1777896028019
+05-04 17:31:01.951  6178  6443 D asog    : Starting download: https://c.tenor.com/P6kgHGiskUsAAAAk/tenor.gif
+05-04 17:31:01.952  6178  6443 V asog    : Is http uri, downloading (uri: https://c.tenor.com/P6kgHGiskUsAAAAk/tenor.gif)
+05-04 17:31:01.958  1291  6934 W .gms.persisten: Long monitor contention with owner main (1291) at gwf gqt.l(gqm)(:com.google.android.gms@225014047@22.50.14 (190800-499278674):40) waiters=5 in gwf gqt.l(gqm) for 261ms
+05-04 17:31:01.963  1291  2849 W .gms.persisten: Long monitor contention with owner main (1291) at gwf gqt.l(gqm)(:com.google.android.gms@225014047@22.50.14 (190800-499278674):40) waiters=1 in android.os.ParcelFileDescriptor com.google.android.gms.chimera.container.GmsModuleChimeraProvider.openFile(android.net.Uri, java.lang.String) for 276ms
+05-04 17:31:01.972  1291  6641 W ChimeraUtils: Module com.google.android.gms.nearby_en has empty metadata display_name_string_id
+05-04 17:31:01.980  6178  7170 D asog    : Starting download: https://c.tenor.com/V_JeKKWgs3MAAAAk/tenor.gif
+05-04 17:31:01.981  6178  7170 V asog    : Is http uri, downloading (uri: https://c.tenor.com/V_JeKKWgs3MAAAAk/tenor.gif)
+05-04 17:31:01.981  1291  6641 W ChimeraUtils: Module com.google.android.gms.nearby_en has empty metadata display_name_string_id
+05-04 17:31:01.983  1291  6641 W ChimeraUtils: Module com.google.android.gms.nearby_en has empty metadata display_name_string_id
+05-04 17:31:02.003  1367  4975 W Icing   : No valid account for uploading user actions
+05-04 17:31:02.031  6178  6443 E MDD     : DownloadProgressMonitor: Can't find file group for uri: android://com.google.android.apps.messaging/files/datadownload/shared/public/datadownloadfile_1777896028021
+05-04 17:31:02.057  6178  7170 E MDD     : DownloadProgressMonitor: Can't find file group for uri: android://com.google.android.apps.messaging/files/datadownload/shared/public/datadownloadfile_1777896028020
+05-04 17:31:02.072  1367  4975 I Icing   : Usage reports ok 0, Failed Usage reports 0, indexed 0, rejected 0
+05-04 17:31:02.076  1959  2103 W A       : Can't format flag AndroidGsaVelourJars__velour_birthdaydoodle_jar__name to integer.
+05-04 17:31:02.076  1959  2103 W A       : Can't format flag AndroidGsaVelourJars__velour_call_jar__name to integer.
+05-04 17:31:02.077  1959  2103 W A       : Can't format flag AndroidGsaVelourJars__velour_canvas_jar__name to integer.
+05-04 17:31:02.077  1959  2103 W A       : Can't format flag AndroidGsaVelourJars__velour_chkpkg_jar__name to integer.
+05-04 17:31:02.077  1959  2103 W A       : Can't format flag AndroidGsaVelourJars__velour_crashtest_jar__name to integer.
+05-04 17:31:02.077  1959  2103 W A       : Can't format flag AndroidGsaVelourJars__velour_dining_jar__name to integer.
+05-04 17:31:02.077  1959  2103 W A       : Can't format flag AndroidGsaVelourJars__velour_doodle_notifications_jar__name to integer.
+05-04 17:31:02.084  1959  2103 W A       : Can't format flag AndroidGsaVelourJars__velour_imageviewer_jar__name to integer.
+05-04 17:31:02.087  1959  2103 W A       : Can't format flag AndroidGsaVelourJars__velour_ipa_jar__name to integer.
+05-04 17:31:02.090  1959  2103 W A       : Can't format flag AndroidGsaVelourJars__velour_jslocation_jar__name to integer.
+05-04 17:31:02.090  1959  2103 W A       : Can't format flag AndroidGsaVelourJars__velour_localintent_jar__name to integer.
+05-04 17:31:02.090  1959  2103 W A       : Can't format flag AndroidGsaVelourJars__velour_messaging_jar__name to integer.
+05-04 17:31:02.090  1959  2103 W A       : Can't format flag AndroidGsaVelourJars__velour_nativesrp_activity_jar__name to integer.
+05-04 17:31:02.090  1959  2103 W A       : Can't format flag AndroidGsaVelourJars__velour_nativesrp_presenter_jar__name to integer.
+05-04 17:31:02.090  1959  2103 W A       : Can't format flag AndroidGsaVelourJars__velour_nowcontent_jar__name to integer.
+05-04 17:31:02.090  1959  2103 W A       : Can't format flag AndroidGsaVelourJars__velour_recents_activity_jar__name to integer.
+05-04 17:31:02.091  1959  2103 W A       : Can't format flag AndroidGsaVelourJars__velour_save_jar__name to integer.
+05-04 17:31:02.091  1959  2103 W A       : Can't format flag AndroidGsaVelourJars__velour_searchresults_activity_jar__name to integer.
+05-04 17:31:02.091  1959  2103 W A       : Can't format flag AndroidGsaVelourJars__velour_test_jar__name to integer.
+05-04 17:31:02.091  1959  2103 W A       : Can't format flag AndroidGsaVelourJars__velour_weather_jar__name to integer.
+05-04 17:31:02.092  1959  2103 W A       : Can't format flag bindle_flags__bloblobber_blob to integer.
+05-04 17:31:02.092  1959  2103 W A       : Can't format flag bindle_flags__velour_jar to integer.
+05-04 17:31:02.096  6178  7168 D asog    : Starting download: https://c.tenor.com/jiQfWgZB0pcAAAAk/tenor.gif
+05-04 17:31:02.096  6178  7168 V asog    : Is http uri, downloading (uri: https://c.tenor.com/jiQfWgZB0pcAAAAk/tenor.gif)
+05-04 17:31:02.123  6178  7170 D asog    : Starting download: https://c.tenor.com/0Cz0CGB40TkAAAAk/tenor.gif
+05-04 17:31:02.123  6178  7170 V asog    : Is http uri, downloading (uri: https://c.tenor.com/0Cz0CGB40TkAAAAk/tenor.gif)
+05-04 17:31:02.157  1291  5321 W ChimeraUtils: Module com.google.android.gms.nearby_en has empty metadata display_name_string_id
+05-04 17:31:02.158  1959  2114 W A       : Account id is not cached
+05-04 17:31:02.165  6178  7168 E MDD     : DownloadProgressMonitor: Can't find file group for uri: android://com.google.android.apps.messaging/files/datadownload/shared/public/datadownloadfile_1777896028022
+05-04 17:31:02.167  1959  2114 W A       : Account id is not cached
+05-04 17:31:02.168  1959  2114 W A       : Account id is not cached
+05-04 17:31:02.184  1291  5321 W ChimeraUtils: Module com.google.android.gms.nearby_en has empty metadata display_name_string_id
+05-04 17:31:02.197  1291  5321 W ChimeraUtils: Module com.google.android.gms.nearby_en has empty metadata display_name_string_id
+05-04 17:31:02.201  1959  2114 I ModelDownloadListener: Schdedule model download
+05-04 17:31:02.203  1959  2113 I FedAssExpListener: Fed-ass not supported for signed out users.
+05-04 17:31:02.206  1959  2113 I FedAssExpListener: Successfully processed experiments changed.
+05-04 17:31:02.221  6178  7170 E MDD     : DownloadProgressMonitor: Can't find file group for uri: android://com.google.android.apps.messaging/files/datadownload/shared/public/datadownloadfile_1777896028023
+05-04 17:31:02.230  7345  7345 D app_process: Time zone APEX ICU file found: /apex/com.android.tzdata/etc/icu/icu_tzdata.dat

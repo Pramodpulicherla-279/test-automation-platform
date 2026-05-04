@@ -1,0 +1,80 @@
+CRASH START: 05-04 17:13:20.977 15280 15280 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+05-04 17:13:20.990 15280 15280 E libc    : Access denied finding property "persist.device_config.runtime_native_boot.enable_apex_image"
+05-04 17:13:20.991 15280 15280 I AndroidRuntime: Using default boot image
+05-04 17:13:20.991 15280 15280 E libc    : Access denied finding property "persist.device_config.runtime_native_boot.disable_lock_profiling"
+05-04 17:13:20.991 15280 15280 I AndroidRuntime: Leaving lock profiling enabled
+05-04 17:13:20.991 15280 15280 E libc    : Access denied finding property "persist.device_config.runtime_native_boot.enable_generational_cc"
+05-04 17:13:20.978 15280 15280 W app_process: type=1400 audit(0.0:90): avc: denied { read } for name="u:object_r:device_config_runtime_native_boot_prop:s0" dev="tmpfs" ino=8317 scontext=u:r:shell:s0 tcontext=u:object_r:device_config_runtime_native_boot_prop:s0 tclass=file permissive=0
+05-04 17:13:20.978 15280 15280 W app_process: type=1400 audit(0.0:91): avc: denied { read } for name="u:object_r:device_config_runtime_native_boot_prop:s0" dev="tmpfs" ino=8317 scontext=u:r:shell:s0 tcontext=u:object_r:device_config_runtime_native_boot_prop:s0 tclass=file permissive=0
+05-04 17:13:20.978 15280 15280 W app_process: type=1400 audit(0.0:92): avc: denied { read } for name="u:object_r:device_config_runtime_native_boot_prop:s0" dev="tmpfs" ino=8317 scontext=u:r:shell:s0 tcontext=u:object_r:device_config_runtime_native_boot_prop:s0 tclass=file permissive=0
+05-04 17:13:21.120 15280 15280 D ICU     : Time zone APEX file found: /apex/com.android.tzdata/etc/icu/icu_tzdata.dat
+05-04 17:13:21.132 15280 15280 W app_process: Unexpected CPU variant for X86 using defaults: x86
+05-04 17:13:21.137 15280 15280 I app_process: The ClassLoaderContext is a special shared library.
+05-04 17:13:21.144 13666 15287 I GmsModuleInitializer: Using ContainerGservicesDelegate
+05-04 17:13:21.145 13666 13678 W gle.android.gm: Reducing the number of considered missed Gc histogram windows from 150 to 100
+05-04 17:13:21.158 15280 15280 W app_process: JNI RegisterNativeMethods: attempt to register 0 native methods for android.media.AudioAttributes
+05-04 17:13:21.165 15280 15280 D AndroidRuntime: Calling main entry com.android.commands.am.Am
+05-04 17:13:21.172  2028  2823 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10149 user=0: start instr
+05-04 17:13:21.183  1751  1751 D Zygote  : Forked child process 15313
+05-04 17:13:21.188 15313 15313 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 13 lines
+05-04 17:13:21.194  2028  2059 I ActivityManager: Start proc 15313:io.appium.uiautomator2.server/u0a149 for added application io.appium.uiautomator2.server
+05-04 17:13:21.278 13666 15345 I Blockstore: [PackageIntentOperation] Checking the restore timespan. [CONTEXT service_id=258 ]
+05-04 17:13:21.279 13666 15287 I AppBackupStateCleanupIO: Backup state cleanup on uninstall is disabled. [CONTEXT service_id=229 ]
+05-04 17:13:21.289 13666 13666 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.backup.GMS_MODULE_RESTORE dat=chimera-action: cmp=com.google.android.gms/.chimera.GmsInternalBoundBrokerService }
+05-04 17:13:21.289 13666 13666 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.backup.GMS_MODULE_RESTORE dat=chimera-action: cmp=com.google.android.gms/.chimera.GmsInternalBoundBrokerService }
+05-04 17:13:21.323 13666 15342 I NearbyDiscovery: (REDACTED) processGrantSlicePermission: %s
+05-04 17:13:21.354 13666 15352 I Icing   : doRemovePackageData com.krishivaas
+05-04 17:13:21.360 13666 14021 I AndroidBackupEventsLogg: (REDACTED) null shouldSample, evaluating sampling value. Event %s
+05-04 17:13:21.364 13666 15345 I Blockstore: [PackageIntentOperation] Received broadcast before a restore was started. [CONTEXT service_id=258 ]
+05-04 17:13:21.383 13666 14019 I AndroidBackupEventsLogg: Evaluating whether required time has passed for sampling [CONTEXT service_id=229 ]
+05-04 17:13:21.383 13666 14019 I AndroidBackupEventsLogg: (REDACTED) Setting shouldSample to false. Event %s
+05-04 17:13:21.384 13666 14019 I AndroidBackupEventsLogg: (REDACTED) Logging without sampling %s
+05-04 17:13:21.416 13666 15288 I icing   : version-util.cc:50: v1 version file exists: 1
+05-04 17:13:21.416 13666 15288 I icing   : version-util.cc:84: Index flash index magic: -776490349
+05-04 17:13:21.416 13666 15288 I icing   : version-util.cc:101: v2 version file exists: 1
+05-04 17:13:21.416 13666 15288 I icing   : icing-search-engine.cc:882: Successfully read version proto from existing dataset. Version: 10, max_version: 10
+05-04 17:13:21.418 13666 15288 I icing   : version-util.cc:217: Successfully write and sync v1 version file with version = 10
+05-04 17:13:21.424 13666 15288 I icing   : version-util.cc:242: Successfully write and sync v2 version file with version = 10
+05-04 17:13:21.425 13666 15288 W icing   : status-util.h:31: Error: 3, Message: ICU data file path is empty.
+05-04 17:13:21.432 13666 15288 I icing   : icing-search-engine.cc:641: Initialize result: document store recovery cause = 0, schema store recovery cause = 0, index restoration cause = 0, integer index restoration cause = 0, qualified id join index restoration cause = 0, embedding index restoration cause = 0
+05-04 17:13:21.482 13666 15288 W icing   : status-util.h:31: Error: 5, Message: Document (VS#Pkg$VS#AndroidVDb/androidVOverlay, com.google.android.gms$cpg/cpg:GroupContactOrder) not found.
+05-04 17:13:21.707  3395  3395 E adbd    : failed to connect to socket 'tcp:6790': Connection refused
+05-04 17:13:21.946 15313 15354 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 16 lines
+05-04 17:13:22.193  2028  2028 V SettingsProvider: Notifying for 0: content://settings/secure/accessibility_enabled
+05-04 17:13:22.298 15313 15359 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 1 line
+05-04 17:13:22.401 15313 15360 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 38 lines
+05-04 17:13:22.538 15313 15313 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 1 line
+05-04 17:13:22.674 15313 15360 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 1 line
+05-04 17:13:22.895 15313 15363 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 11 lines
+05-04 17:13:23.086 15313 15365 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 2 lines
+05-04 17:13:23.088 15313 15366 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 4 lines
+05-04 17:13:23.092 15313 15367 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 2 lines
+05-04 17:13:23.093 15313 15365 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 1 line
+05-04 17:13:23.121 15313 15367 W tomator2.serve: Accessing hidden field Landroid/net/NetworkCapabilities;->mSignalStrength:I (greylist-max-p, reflection, allowed)
+05-04 17:13:23.121 15313 15367 W tomator2.serve: Accessing hidden field Landroid/net/NetworkCapabilities;->mSSID:Ljava/lang/String; (greylist-max-o, reflection, allowed)
+05-04 17:13:23.128 15313 15367 E BluetoothAdapter: Bluetooth binder is null
+05-04 17:13:23.132 15313 15367 I appium  : AppiumResponse: {"sessionId":"fec74b0e-5b19-4a84-a1c6-2158f9a8140c","value":{"androidId":"8fccd5fb708e0a2e","apiVersion":"29","bluetooth":null,"brand":"google","carrierName":"Android","displayDensity":440,"locale":"en_US","manufacturer":"Google","model":"Android SDK built for x86","networks":[{"capabilities":{"SSID…
+05-04 17:13:23.235  2028  2823 I ActivityManager: Force stopping com.krishivaas appid=10150 user=0: from pid 15376
+05-04 17:13:23.246  2528  2528 D CarrierSvcBindHelper: No carrier app for: 0
+05-04 17:13:23.489  2028  2823 I ActivityTaskManager: START u0 {act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=com.krishivaas/.MainActivity} from uid 2000
+05-04 17:13:23.567  1751  1751 D Zygote  : Forked child process 15379
+05-04 17:13:23.572 15379 15379 W com.krishivaas: Unexpected CPU variant for X86 using defaults: x86
+05-04 17:13:23.572  2028  2059 I ActivityManager: Start proc 15379:com.krishivaas/u0a150 for activity {com.krishivaas/com.krishivaas.MainActivity}
+05-04 17:13:23.581 15379 15379 E com.krishivaas: Not starting debugger since process cannot load the jdwp agent.
+05-04 17:13:23.606  2028  3119 W InputReader: Device has associated, but no associated display id.
+05-04 17:13:23.606  2028  3119 I chatty  : uid=1000(system) Binder:2028_13 identical 8 lines
+05-04 17:13:23.606  2028  3119 W InputReader: Device has associated, but no associated display id.
+05-04 17:13:23.628 13190 13275 I MicroDetector: Keeping mic open: false
+05-04 17:13:23.628 13190 13290 I DeviceStateChecker: DeviceStateChecker cancelled
+05-04 17:13:23.631 13190 15398 I AudioController: internalShutdown
+05-04 17:13:23.635 13190 15399 I MicroRecognitionRunner: Stopping hotword detection.
+05-04 17:13:23.694 13190 15398 I MicrophoneInputStream: mic_close  SR : 16000 CC : 16 SO : 1999
+05-04 17:13:23.695 13190 15398 E AudioSource: Stop listening is called on already closed AudioSource
+05-04 17:13:23.701 13190 13291 I MicroRecognitionRunner: Detection finished
+05-04 17:13:24.014 15379 15379 I FirebaseApp: Device unlocked: initializing all Firebase APIs for app [DEFAULT]
+05-04 17:13:24.054 15379 15379 I FirebaseInitProvider: FirebaseApp initialization successful
+05-04 17:13:24.058 15379 15379 D ReactNativeFirebaseApp: received application context.
+05-04 17:13:24.146 15379 15415 D NetworkSecurityConfig: No Network Security Config specified, using platform default
+05-04 17:13:24.172 15379 15379 I MapboxInitializer: MapboxMapsInitializer create() is called
+05-04 17:13:24.173 15379 15379 I MapboxInitializer: MapboxInitializer started MapboxMapsInitializerImpl initialization, attempt 1
+05-04 17:13:24.267 15379 15379 I Mapbox  : [common]: Using Mapbox Common SDK v23.10.0(1b9b63709)
