@@ -1,0 +1,80 @@
+CRASH START: 05-04 16:37:11.659  7894  7894 D AndroidRuntime: Shutting down VM
+05-04 16:37:11.729  1751  1751 I Zygote  : Process 7917 exited due to signal 9 (Killed)
+05-04 16:37:11.758  2028  2060 I libprocessgroup: Successfully killed process cgroup uid 10149 pid 7917 in 81ms
+05-04 16:37:11.924  2028  2815 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10149 user=0: from pid 8665
+05-04 16:37:11.929  2028  2815 I ActivityManager: Force stopping io.appium.uiautomator2.server.test appid=10148 user=0: from pid 8666
+05-04 16:37:11.939  2528  2528 D CarrierSvcBindHelper: No carrier app for: 0
+05-04 16:37:12.052  2028  3006 I ActivityManager: Force stopping com.krishivaas appid=10150 user=0: from pid 8676
+05-04 16:37:12.053  2028  3006 I ActivityManager: Killing 8095:com.krishivaas/u0a150 (adj 0): stop com.krishivaas
+05-04 16:37:12.060  2028  3006 W ActivityManager: Scheduling restart of crashed service com.krishivaas/com.uxcam.service.HttpPostService in 1000ms
+05-04 16:37:12.061  2028  3006 W ActivityTaskManager: Force removing ActivityRecord{37b5c43 u0 com.krishivaas/.MainActivity t7 f}: app died, no saved state
+05-04 16:37:11.942  2528  2528 D CarrierSvcBindHelper: No carrier app for: 0
+05-04 16:37:12.093  2028  3006 W InputReader: Device has associated, but no associated display id.
+05-04 16:37:12.093  2028  3006 I chatty  : uid=1000(system) Binder:2028_C identical 8 lines
+05-04 16:37:12.093  2028  3006 W InputReader: Device has associated, but no associated display id.
+05-04 16:37:12.128  1769  1828 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-04 16:37:12.200  1769  1828 I chatty  : uid=1000(system) HwBinder:1769_1 identical 2 lines
+05-04 16:37:12.201  1769  1828 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-04 16:37:12.201  2757  3390 D EGL_emulation: eglMakeCurrent: 0xe021a120: ver 2 0 (tinfo 0xe020f860)
+05-04 16:37:12.247  2528  2528 D CarrierSvcBindHelper: No carrier app for: 0
+05-04 16:37:12.250  2028  2050 W Looper  : Slow dispatch took 197ms android.ui h=com.android.server.am.ActivityManagerService$UiHandler c=null m=53
+05-04 16:37:12.271  1769  1828 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-04 16:37:12.272  1769  1828 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-04 16:37:12.280  3341  3678 D EGL_emulation: eglMakeCurrent: 0xe021b380: ver 2 0 (tinfo 0xc3957020)
+05-04 16:37:12.320  2028  2028 W ActivityManager: Unable to start service Intent { act=android.service.appprediction.AppPredictionService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiPredictionService } U=0: not found
+05-04 16:37:12.320  2028  2028 W RemoteAppPredictionService: could not bind to Intent { act=android.service.appprediction.AppPredictionService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiPredictionService } using flags 67108865
+05-04 16:37:12.414  2028  2057 I ActivityTaskManager: Displayed com.google.android.permissioncontroller/com.android.packageinstaller.permission.ui.GrantPermissionsActivity: +34s716ms
+05-04 16:37:12.432  2028  2815 D ConnectivityService: ConnectivityService NetworkRequestInfo binderDied(NetworkRequest [ TRACK_DEFAULT id=32, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10150] ], android.os.BinderProxy@d1fbc79)
+05-04 16:37:12.433  1853  8416 E OMXNodeInstance: !!! Observer died. Quickly, do something, ... anything...
+05-04 16:37:12.441  1751  1751 I Zygote  : Process 8095 exited due to signal 9 (Killed)
+05-04 16:37:12.447  2028  2060 I libprocessgroup: Successfully killed process cgroup uid 10150 pid 8095 in 392ms
+05-04 16:37:12.448  2028  2159 D ConnectivityService: releasing NetworkRequest [ TRACK_DEFAULT id=32, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10150] ] (release request)
+05-04 16:37:12.514  2028  2052 W ActivityManager: setHasOverlayUi called on unknown pid: 8095
+05-04 16:37:12.630  2028  2028 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy_pre_p_apps
+05-04 16:37:12.632  3341  3515 W ThreadPoolDumper: Queue length for executor EventBus is now 11. Perhaps some tasks are too long, or the pool is too small.
+05-04 16:37:12.662  2028  2028 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy_p_apps
+05-04 16:37:12.748  3341  3515 W SessionLifecycleManager: Handover failed. Creating new session controller.
+05-04 16:37:12.796  2028  2028 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy
+05-04 16:37:13.079  3341  3652 W LocationOracle: No location history returned by ContextManager
+05-04 16:37:13.182  3341  3515 I MicroDetectionWorker: #startMicroDetector [speakerMode: 0]
+05-04 16:37:13.184  3341  3515 I AudioController: Created new AudioSource
+05-04 16:37:13.186  3341  3515 I MicroDetectionWorker: onReady
+05-04 16:37:13.191  3341  3652 I MicroRecognitionRunner: Starting detection.
+05-04 16:37:13.191  3341  3652 I MultipleReaderAudioSrc: Using micInputStream
+05-04 16:37:13.192  3341  3911 I MicrophoneInputStream: mic_starting  SR : 16000 CC : 16 SO : 1999
+05-04 16:37:13.203  1794  8700 I AudioFlinger: AudioFlinger's thread 0xe67f4580 tid=8700 ready to run
+05-04 16:37:13.215  2028  2340 I AudioService.RecordingActivityMonitor: rec update riid:47 uid:10115 session:33 src:HOTWORD pack:com.google.android.googlequicksearchbox
+05-04 16:37:13.215  3341  3911 I MicrophoneInputStream: mic_started  SR : 16000 CC : 16 SO : 1999
+05-04 16:37:13.256  3341  3515 I MicroDetectionWorker: onReady
+05-04 16:37:13.618  2528  2538 I m.android.phon: Background concurrent copying GC freed 34046(2888KB) AllocSpace objects, 0(0B) LOS objects, 49% free, 1792KB/3585KB, paused 5.302ms total 110.188ms
+05-04 16:37:13.705  1757  8699 W audio_hw_generic: in_read_worker only could write 0 / 240 frames
+05-04 16:37:14.036  5100  8160 W ctxmgr  : [AclManager] No 3 for (accnt=account#-517948760#, com.google.android.gms(10111):UserVelocityProducer, vrsn=202414022, 0, 3pPkg = null ,  3pMdlId = null ,  pid = 5100). Was: 3 for 1, account#-517948760# [CONTEXT service_id=47 ]
+05-04 16:37:14.072  5100  5200 W GCoreFlp: No location to return for getLastLocation()
+05-04 16:37:14.279  5100  5112 I .gms.persisten: Background young concurrent copying GC freed 73821(3679KB) AllocSpace objects, 13(708KB) LOS objects, 32% free, 9394KB/13MB, paused 1.202ms total 173.266ms
+05-04 16:37:14.294  5100  6889 I LogUtils: [Places]: ?: Couldn't find platform key file. [CONTEXT service_id=253 ]
+05-04 16:37:14.390  5100  5200 W GCoreFlp: No location to return for getLastLocation()
+05-04 16:37:14.405  5100  5185 I LogUtils: [Places]: ?: PlacesBleScanner stop() [CONTEXT service_id=253 ]
+05-04 16:37:14.411  5100  5100 I BeaconBle: Scan : No clients left, canceling alarm. [CONTEXT service_id=111 ]
+05-04 16:37:14.412  5100  5100 I BeaconBle: Scan canceled successfully. [CONTEXT service_id=111 ]
+05-04 16:37:14.453  5100  5185 I PlacesLogger: [PlaceInferenceEngine]: [anon] Changed inference mode: 0 [CONTEXT service_id=253 ]
+05-04 16:37:14.465  5100  8160 I LogUtils: [Places]: ?: Couldn't find platform key file. [CONTEXT service_id=253 ]
+05-04 16:37:14.482  5100  5200 W GCoreFlp: No location to return for getLastLocation()
+05-04 16:37:14.528  5100  5185 I LogUtils: [Places]: ?: PlacesBleScanner start() with priority 2 [CONTEXT service_id=253 ]
+05-04 16:37:14.531  5100  5100 I BeaconBle: Client requested scan, settings=BleSettings [scanMode=ZERO_POWER, callbackType=ALL_MATCHES, reportDelayMillis=0, 1 filters, 0 clients, callingClientName=Places] [CONTEXT service_id=111 ]
+05-04 16:37:14.534  5100  5185 I PlacesLogger: [PlaceInferenceEngine]: [anon] Changed inference mode: 1 [CONTEXT service_id=253 ]
+05-04 16:37:14.541  5100  5100 I BeaconBle: Scan : No clients left, canceling alarm. [CONTEXT service_id=111 ]
+05-04 16:37:14.542  5100  5100 E BeaconBle: Scan couldn't start for Places [CONTEXT service_id=111 ]
+05-04 16:37:14.553  5100  5100 W Places  : BLE failure while scanning - code 5
+05-04 16:37:14.561  5100  5200 W GCoreFlp: No location to return for getLastLocation()
+05-04 16:37:14.942  7929  7975 I Finsky  : [550] ikw.run(3): Stats for Executor: BlockingExecutor imf@199ec3a[Running, pool size = 2, active threads = 0, queued tasks = 0, completed tasks = 11]
+05-04 16:37:14.943  7929  7975 I Finsky  : [550] ikw.run(3): Stats for Executor: LightweightExecutor imf@35f70eb[Running, pool size = 3, active threads = 0, queued tasks = 0, completed tasks = 61]
+05-04 16:37:15.469  2028  2815 D WificondControl: Scan result ready event
+05-04 16:37:15.474  7929  7975 I Finsky  : [550] ikw.run(3): Stats for Executor: bgExecutor imf@4ccde48[Running, pool size = 4, active threads = 0, queued tasks = 0, completed tasks = 1398]
+05-04 16:37:15.916  1757  8699 W audio_hw_generic: in_read_worker only could write 0 / 240 frames
+05-04 16:37:15.938  1757  8699 W audio_hw_generic: in_read_worker only could write 0 / 240 frames
+05-04 16:37:15.955  3341  3652 W SpeechLevelGenerator: Really low audio levels detected. The audio input may have issues.
+05-04 16:37:16.113  1757  8699 W audio_hw_generic: in_read_worker only could write 0 / 240 frames
+05-04 16:37:16.207  2028  2028 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy_pre_p_apps
+05-04 16:37:16.284  2028  2028 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy_p_apps
+05-04 16:37:16.314  2028  2028 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy
+05-04 16:37:18.694  2028  2815 I ActivityManager: Force stopping com.krishivaas appid=10150 user=0: from pid 8772
