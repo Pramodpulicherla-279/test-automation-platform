@@ -1,0 +1,80 @@
+CRASH START: 05-04 21:03:56.274 10604 10604 D AndroidRuntime: Shutting down VM
+05-04 21:03:56.299  2004  2035 I libprocessgroup: Successfully killed process cgroup uid 10149 pid 10618 in 82ms
+05-04 21:03:56.408  2004  2425 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10149 user=0: from pid 11268
+05-04 21:03:56.413  2004  2425 I ActivityManager: Force stopping io.appium.uiautomator2.server.test appid=10148 user=0: from pid 11269
+05-04 21:03:56.419  2278  2278 D CarrierSvcBindHelper: No carrier app for: 0
+05-04 21:03:56.494  2004  3478 I ActivityManager: Force stopping com.krishivaas appid=10150 user=0: from pid 11279
+05-04 21:03:56.495  2004  3478 I ActivityManager: Killing 10664:com.krishivaas/u0a150 (adj 0): stop com.krishivaas
+05-04 21:03:56.499  2004  3478 W ActivityManager: Scheduling restart of crashed service com.krishivaas/com.uxcam.service.HttpPostService in 1000ms
+05-04 21:03:56.500  2004  3478 W ActivityTaskManager: Force removing ActivityRecord{3e685dd u0 com.krishivaas/.MainActivity t41 f}: app died, no saved state
+05-04 21:03:56.425  2278  2278 D CarrierSvcBindHelper: No carrier app for: 0
+05-04 21:03:56.507  2004  2425 E InputDispatcher: Window handle Window{1377b7c u0 com.krishivaas/com.krishivaas.MainActivity} has no registered input channel
+05-04 21:03:56.531  2004  3478 W InputReader: Device has associated, but no associated display id.
+05-04 21:03:56.615  2004  2024 W Looper  : Slow dispatch took 120ms android.ui h=com.android.server.am.ActivityManagerService$UiHandler c=null m=53
+05-04 21:03:56.622  2004  2825 I ActivityManager: Killing 7167:com.android.chrome/u0a125 (adj 975): empty #17
+05-04 21:03:56.531  2004  3478 I chatty  : uid=1000(system) Binder:2004_19 identical 8 lines
+05-04 21:03:56.531  2004  3478 W InputReader: Device has associated, but no associated display id.
+05-04 21:03:56.625  1854  1921 E OMXNodeInstance: !!! Observer died. Quickly, do something, ... anything...
+05-04 21:03:56.631  2004  3063 D ConnectivityService: ConnectivityService NetworkRequestInfo binderDied(NetworkRequest [ TRACK_DEFAULT id=52, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10150] ], android.os.BinderProxy@7ed1cd0)
+05-04 21:03:56.631  2004  2122 D ConnectivityService: releasing NetworkRequest [ TRACK_DEFAULT id=52, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10150] ] (release request)
+05-04 21:03:56.631  1746  1746 I Zygote  : Process 10664 exited due to signal 9 (Killed)
+05-04 21:03:56.634  2004  2026 W ActivityManager: setHasOverlayUi called on unknown pid: 10664
+05-04 21:03:56.634  2278  2278 D CarrierSvcBindHelper: No carrier app for: 0
+05-04 21:03:56.659  2004  2035 I libprocessgroup: Successfully killed process cgroup uid 10150 pid 10664 in 162ms
+05-04 21:03:56.677  1776  1776 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-04 21:03:56.697  1776  1776 I chatty  : uid=1000(system) allocator@2.0-s identical 1 line
+05-04 21:03:56.700  1776  1776 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-04 21:03:56.704  2004  2035 I libprocessgroup: Successfully killed process cgroup uid 10125 pid 7167 in 43ms
+05-04 21:03:56.705  2396  2866 D EGL_emulation: eglMakeCurrent: 0xd7a1a300: ver 2 0 (tinfo 0xd7a0f3a0)
+05-04 21:03:56.722  1746  1746 D Zygote  : Forked child process 11282
+05-04 21:03:56.722  1746  1746 I Zygote  : Process 7167 exited due to signal 9 (Killed)
+05-04 21:03:56.735  2004  2034 W ActivityManager: Slow operation: 103ms so far, now at startProcess: returned from zygote!
+05-04 21:03:56.736  2004  2034 W ActivityManager: Slow operation: 104ms so far, now at startProcess: done updating battery stats
+05-04 21:03:56.736  2004  2034 W ActivityManager: Slow operation: 105ms so far, now at startProcess: building log message
+05-04 21:03:56.736  2004  2034 I ActivityManager: Start proc 11282:com.google.android.googlequicksearchbox:googleapp/u0a115 for service {com.google.android.googlequicksearchbox/com.google.android.apps.gsa.nowoverlayservice.DrawerOverlayService}
+05-04 21:03:56.737  2004  2034 W ActivityManager: Slow operation: 105ms so far, now at startProcess: starting to update pids map
+05-04 21:03:56.737  2004  2034 W ActivityManager: Slow operation: 106ms so far, now at startProcess: done updating pids map
+05-04 21:03:56.770 11282 11282 W chbox:googleap: Unexpected CPU variant for X86 using defaults: x86
+05-04 21:03:56.802  2004  2004 W ActivityManager: Unable to start service Intent { act=android.service.appprediction.AppPredictionService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiPredictionService } U=0: not found
+05-04 21:03:56.802  2004  2004 W RemoteAppPredictionService: could not bind to Intent { act=android.service.appprediction.AppPredictionService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiPredictionService } using flags 67108865
+05-04 21:03:56.846 11282 11282 E chbox:googleap: Not starting debugger since process cannot load the jdwp agent.
+05-04 21:03:56.990  2004  2004 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy_pre_p_apps
+05-04 21:03:57.130  2004  2004 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy_p_apps
+05-04 21:03:57.146  2004  2004 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy
+05-04 21:03:57.726 11282 11282 W chbox:googleap: JIT profile information will not be recorded: profile file does not exits.
+05-04 21:03:57.847 11282 11282 I MultiDex: VM with version 2.1.0 has multidex support
+05-04 21:03:57.847 11282 11282 I MultiDex: Installing application
+05-04 21:03:57.847 11282 11282 I MultiDex: VM has multidex support, MultiDex support library is disabled.
+05-04 21:03:58.864 11118 11118 I dex2oat : dex2oat took 33.864s (87.063s cpu) (threads: 4) arena alloc=17MB (18045736B) java alloc=4980KB (5100288B) native alloc=79MB (83799280B) free=4044KB (4141840B) swap=80MB (83886080B)
+05-04 21:03:58.904  1836  2668 V installd: DexInv: --- END '/data/app/com.google.android.googlequicksearchbox-ok21bbfAgdnDv2AV3OICPA==/base.apk' (success) ---
+05-04 21:03:58.919  2004  2048 W PackageManager: Cannot whitelist unknown permission: com.google.android.launcher.permission.CONTENT_REDIRECT
+05-04 21:03:58.920  2004  2048 W PackageManager: Cannot whitelist unknown permission: com.google.android.launcher.permission.READ_SETTINGS
+05-04 21:03:58.920  2004  2048 W PackageManager: Cannot whitelist unknown permission: com.google.android.launcher.permission.WRITE_SETTINGS
+05-04 21:03:58.920  2004  2048 W PackageManager: Cannot whitelist unknown permission: com.google.android.launcher.permission.RECEIVE_LAUNCH_BROADCASTS
+05-04 21:03:58.920  2004  2048 W PackageManager: Cannot whitelist unknown permission: com.google.android.launcher.permission.RECEIVE_FIRST_LOAD_BROADCAST
+05-04 21:03:58.920  2004  2048 W PackageManager: Cannot whitelist unknown permission: com.google.android.voicesearch.SHORTCUTS_ACCESS
+05-04 21:03:58.920  2004  2048 W PackageManager: Cannot whitelist unknown permission: com.google.android.voicesearch.ACCESS_SETTINGS
+05-04 21:03:58.920  2004  2048 W PackageManager: Cannot whitelist unknown permission: com.android.browser.permission.PRELOAD
+05-04 21:03:58.920  2004  2048 W PackageManager: Cannot whitelist unknown permission: com.google.android.ears.permission.WRITE
+05-04 21:03:58.920  2004  2048 W PackageManager: Cannot whitelist unknown permission: android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK
+05-04 21:03:58.920  2004  2048 W PackageManager: Cannot whitelist unknown permission: android.permission.FOREGROUND_SERVICE_DATA_SYNC
+05-04 21:03:58.920  2004  2048 W PackageManager: Cannot whitelist unknown permission: android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE
+05-04 21:03:58.920  2004  2048 W PackageManager: Cannot whitelist unknown permission: android.permission.FOREGROUND_SERVICE_MICROPHONE
+05-04 21:03:58.920  2004  2048 W PackageManager: Cannot whitelist unknown permission: android.permission.FOREGROUND_SERVICE_CAMERA
+05-04 21:03:58.920  2004  2048 W PackageManager: Cannot whitelist unknown permission: android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION
+05-04 21:03:58.920  2004  2048 W PackageManager: Cannot whitelist unknown permission: android.permission.READ_MEDIA_VISUAL_USER_SELECTED
+05-04 21:03:58.920  2004  2048 W PackageManager: Cannot whitelist unknown permission: android.permission.READ_MEDIA_IMAGES
+05-04 21:03:58.920  2004  2048 W PackageManager: Cannot whitelist unknown permission: android.permission.READ_MEDIA_VIDEO
+05-04 21:03:58.920  2004  2048 W PackageManager: Cannot whitelist unknown permission: com.google.googlenav.friend.permission.OPT_IN
+05-04 21:03:58.920  2004  2048 W PackageManager: Cannot whitelist unknown permission: com.google.android.apps.gmm.dev.permission.ASSISTANT_GRPC_SYNC
+05-04 21:03:58.920  2004  2048 W PackageManager: Cannot whitelist unknown permission: com.google.android.apps.gmm.dogfood.permission.ASSISTANT_GRPC_SYNC
+05-04 21:03:58.920  2004  2048 W PackageManager: Cannot whitelist unknown permission: com.google.android.apps.gmm.fishfood.permission.ASSISTANT_GRPC_SYNC
+05-04 21:03:58.920  2004  2048 W PackageManager: Cannot whitelist unknown permission: com.google.android.apps.gmm.permission.ASSISTANT_GRPC_SYNC
+05-04 21:03:58.920  2004  2048 W PackageManager: Cannot whitelist unknown permission: com.google.android.apps.gmm.qp.permission.ASSISTANT_GRPC_SYNC
+05-04 21:03:58.920  2004  2048 W PackageManager: Cannot whitelist unknown permission: com.google.android.apps.maps.permission.ASSISTANT_GRPC_SYNC
+05-04 21:03:58.921  2004  2048 W PackageManager: Cannot whitelist unknown permission: android.permission.NEARBY_WIFI_DEVICES
+05-04 21:03:58.921  2004  2048 W PackageManager: Cannot whitelist unknown permission: android.permission.READ_ASSISTANT_APP_SEARCH_DATA
+05-04 21:03:58.921  2004  2048 W PackageManager: Cannot whitelist unknown permission: com.google.android.apps.googlevoice.permission.AUTO_SEND
+05-04 21:03:58.921  2004  2048 W PackageManager: Cannot whitelist unknown permission: com.google.android.hangouts.START_HANGOUT
+05-04 21:03:58.921  2004  2048 W PackageManager: Cannot whitelist unknown permission: android.permission.SOUND_TRIGGER_RUN_IN_BATTERY_SAVER
+05-04 21:03:58.921  2004  2048 W PackageManager: Cannot whitelist unknown permission: com.android.chrome.PRERENDER_URL
