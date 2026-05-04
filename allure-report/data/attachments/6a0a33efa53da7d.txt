@@ -1,0 +1,80 @@
+CRASH START: 05-04 16:36:35.919  6257  6257 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+05-04 16:36:35.937  3465  3474 W ding:background: Suspending all threads took: 20.814ms
+05-04 16:36:35.960  1984  1984 E adbd    : failed to connect to socket 'tcp:6790': Connection refused
+05-04 16:36:36.034   674  1254 W SignedPackage: Cannot get ApplicationInfo for package: com.google.android.devicelockcontroller
+05-04 16:36:36.064  3185  3254 I Finsky  : [44] SCH: Received scheduling request: Id: 37-6, Constraints: [{ L: 0, D: 0, C: CHARGING_NONE, I: IDLE_NONE, N: NET_NONE, B: BATTERY_ANY }]
+05-04 16:36:36.077  6257  6257 I AndroidRuntime: Using default boot image
+05-04 16:36:36.077  6257  6257 I AndroidRuntime: Leaving lock profiling enabled
+05-04 16:36:36.085  3185  3185 I Finsky  : [2] aiky - Received: android.intent.action.PACKAGE_CHANGED, [yz3iAaSOpNJmwLS1VDXGEfcKYvOQfPNYdGgiHw9ayLE]
+05-04 16:36:36.087  3465  3578 I Finsky:background: [56] RECEIVER_ENGAGE_PACKAGE_CHANGED#logWorkEndAndFinishGoAsync: SKIPPED_PRECONDITIONS_UNMET
+05-04 16:36:36.099  3185  3324 I Finsky  : [58] AIM: AppInfoManager-Perf > ItemModel > CacheSize=0, cacheHitCount=0, cacheMissCount=1, total appsWithNoServerDataCount=0. Missed  in cache (limit 10) : [com.krishivaas]
+05-04 16:36:36.147   674   773 I PackageManager: getInstalledPackages: callingUid=10213 flags=0 updatedFlags=786432 userId=0
+05-04 16:36:36.147  6257  6257 I app_process: Core platform API enforcement enabled from the hiddenapi_platform_enforcement flag and the device API level
+05-04 16:36:36.152  6257  6257 I app_process: Using generational CollectorTypeCMC GC.
+05-04 16:36:36.219  3185  3324 I Finsky  : [58] AIM: AppInfoManager-Perf > ItemModel > ItemStore Called 1 apps cacheOptions = USE_CACHE
+05-04 16:36:36.226   674  1254 W SignedPackage: Package doesn't have required signing certificate: com.google.android.retaildemo
+05-04 16:36:36.295   674  1073 I AdbWifiNetworkMonitor: Wi-Fi network available
+05-04 16:36:36.303   674   674 W Looper  : Drained
+05-04 16:36:36.304   674  1073 I AdbWifiNetworkMonitor: Received the same Wi-Fi SSID. Ignoring.
+05-04 16:36:36.349   674  1049 W libbinder.IPCThreadState: Sending oneway calls to frozen process.
+05-04 16:36:36.427   674  1254 E RoleControllerServiceImpl: Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms.supervision, role: android.app.role.SYSTEM_SUPERVISION, user: 0
+05-04 16:36:36.431  3185  3324 I Finsky  : [58] ItemStore: Not cached: com.krishivaas
+05-04 16:36:36.549   674  1254 W SignedPackage: Package doesn't have required signing certificate: com.google.android.apps.work.clouddpc
+05-04 16:36:36.592  3185  3252 I Finsky  : [42] RECEIVER_PACKAGE_MONITOR#logWorkEndAndFinishGoAsync: SUCCESS
+05-04 16:36:36.594   674   701 V SafetySourceDataValidat: Package: com.android.vending has expected signature
+05-04 16:36:36.616  1605  5782 I Icing   : IndexChimeraService.getServiceInterface callingPackage=com.google.android.gms componentName=AppsCorpus serviceId=36
+05-04 16:36:36.621  3746  6269 I Fitness : (REDACTED) OnPackageChangedOperation got intent: %s
+05-04 16:36:36.653  3185  3327 I Finsky  : [60] AIM: AppInfoManager-Perf > OnDeviceAppInfo > cacheHitCount=0, cacheMissCount=1. Missed  in cache (limit 10) : [com.krishivaas]
+05-04 16:36:36.722  1901  5952 I AiAiEcho: AppIndexer Package:[com.krishivaas] UserProfile:[0] Enabled:[true].
+05-04 16:36:36.733   674  1043 I HalDevMgr: bestIfaceCreationProposal is null, requestIface=STA, existingIface=[name=wlan0 type=STA]
+05-04 16:36:36.751  1901  5952 I AiAiEcho: AppFetcherImplV2 updateApps package:[com.krishivaas], userId:[0], reason:[package is updated.].
+05-04 16:36:36.777  3746  3762 I NullBinder: NullBinder for android.net.action.RECOMMEND_NETWORKS triggering remote TransactionTooLargeException due to Service without Chimera impl, calling uid: 1000, calling pid: 0
+05-04 16:36:36.785  3746  3762 W libbinder.Binder: Large reply transaction of 1056768 bytes, interface descriptor , function: UNKNOWN_FUNCTION_NAME, code: 1, flags: 17
+05-04 16:36:36.811   674  2312 W ApplicationInfo: Large ApplicationInfo parcel: size=17564 package=com.google.android.googlequicksearchbox sharedLibs=3 resDirs=1 overlayPaths=1
+05-04 16:36:36.811   674  2312 W ParceledListSlice: Element #27 is 18732 bytes.
+05-04 16:36:36.812   674  2312 W ApplicationInfo: Large ApplicationInfo parcel: size=17564 package=com.google.android.googlequicksearchbox sharedLibs=3 resDirs=1 overlayPaths=1
+05-04 16:36:36.812   674  2312 W ParceledListSlice: Element #28 is 18912 bytes.
+05-04 16:36:36.812   674  2312 W ApplicationInfo: Large ApplicationInfo parcel: size=17564 package=com.google.android.googlequicksearchbox sharedLibs=3 resDirs=1 overlayPaths=1
+05-04 16:36:36.812   674  2312 W ParceledListSlice: Element #29 is 19124 bytes.
+05-04 16:36:36.812   674  2312 W ApplicationInfo: Large ApplicationInfo parcel: size=17564 package=com.google.android.googlequicksearchbox sharedLibs=3 resDirs=1 overlayPaths=1
+05-04 16:36:36.824  3185  3327 I Finsky  : [60] AIM: Got app ownership map. App counts: . Unique apps: 0
+05-04 16:36:36.825  3185  3327 E Finsky  : [60] [Counters] attempted to use a non-positive increment for: 4752
+05-04 16:36:36.834  3185  3327 E Finsky  : [60] [Counters] attempted to use a non-positive increment for: 4753
+05-04 16:36:36.856  3185  3324 I Finsky  : [58] AIM: ItemModel fetch - unauth(1), auth()
+05-04 16:36:36.859   674  2312 W ParceledListSlice: Element #30 is 18636 bytes.
+05-04 16:36:36.887  1605  4183 I cn_CronetUrlRequestContext: destroyNativeStreamLocked org.chromium.net.impl.CronetBidirectionalStream@e0a5d37
+05-04 16:36:36.985  1984  1984 E adbd    : failed to connect to socket 'tcp:6790': Connection refused
+05-04 16:36:36.997  1418  1470 D AlphabeticIndexCompat: computeSectionName: cs: Krishivaas Farmer sectionName: K
+05-04 16:36:37.000  1418  1418 D AllAppsStore: setApps: apps.length=22
+05-04 16:36:37.000  1418  1418 D AllAppsStore: notifyUpdate: notifying listeners
+05-04 16:36:37.000  1418  1418 D AllAppsStore: setApps: apps.length=22
+05-04 16:36:37.000  1418  1418 D AllAppsStore: notifyUpdate: notifying listeners
+05-04 16:36:37.000  1418  1418 D ActivityAllAppsContainerView: onAppsUpdated; number of apps: 22
+05-04 16:36:37.001  1418  1418 D ActivityAllAppsContainerView: rebindAdapters: force: false
+05-04 16:36:37.003  1418  1418 D ActivityAllAppsContainerView: rebindAdapters: Not needed.
+05-04 16:36:37.003  1418  1418 D StatsLog: LAUNCHER_ALLAPPS_COUNT
+05-04 16:36:37.003  1418  1418 D AlphabeticalAppsList: Clearing FastScrollerSections.
+05-04 16:36:37.003  1418  1418 D AlphabeticalAppsList: Adding apps with sections. HasPrivateApps: false
+05-04 16:36:37.003  1418  1418 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: A with appInfoTitle: Appium Settings
+05-04 16:36:37.003  1418  1418 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: C with appInfoTitle: Calendar
+05-04 16:36:37.003  1418  1418 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: D with appInfoTitle: Drive
+05-04 16:36:37.003  1418  1418 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: F with appInfoTitle: Files
+05-04 16:36:37.003  1418  1418 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: G with appInfoTitle: Glasses
+05-04 16:36:37.003  1418  1418 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: K with appInfoTitle: Krishivaas Farmer
+05-04 16:36:37.003  1418  1418 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: M with appInfoTitle: Maps
+05-04 16:36:37.003  1418  1418 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: P with appInfoTitle: Phone
+05-04 16:36:37.003  1418  1418 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: S with appInfoTitle: Safety
+05-04 16:36:37.003  1418  1418 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: T with appInfoTitle: TMoble
+05-04 16:36:37.003  1418  1418 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: Y with appInfoTitle: YouTube
+05-04 16:36:37.003  1418  1418 D AlphabeticalAppsList: Adding FastScrollSection duplicate to scroll to the bottom.
+05-04 16:36:37.014  1418  1418 D AlphabeticalAppsList: Clearing FastScrollerSections.
+05-04 16:36:37.014  1418  1418 D AlphabeticalAppsList: Adding apps with sections. HasPrivateApps: false
+05-04 16:36:37.014  1418  1418 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: A with appInfoTitle: Appium Settings
+05-04 16:36:37.014  1418  1418 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: C with appInfoTitle: Calendar
+05-04 16:36:37.014  1418  1418 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: D with appInfoTitle: Drive
+05-04 16:36:37.014  1418  1418 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: F with appInfoTitle: Files
+05-04 16:36:37.014  1418  1418 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: G with appInfoTitle: Glasses
+05-04 16:36:37.014  1418  1418 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: K with appInfoTitle: Krishivaas Farmer
+05-04 16:36:37.014  1418  1418 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: M with appInfoTitle: Maps
+05-04 16:36:37.014  1418  1418 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: P with appInfoTitle: Phone
+05-04 16:36:37.014  1418  1418 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: S with appInfoTitle: Safety

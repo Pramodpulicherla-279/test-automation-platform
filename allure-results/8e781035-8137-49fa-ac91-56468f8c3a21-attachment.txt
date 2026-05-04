@@ -1,0 +1,80 @@
+CRASH START: --------- beginning of crash
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: FATAL EXCEPTION: [com.google.android.gms.chimera.PersistentIntentOperationService$ChimeraService-Executor] idle
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: Process: com.google.android.gms.persistent, PID: 2202
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: android.database.CursorWindowAllocationException: Could not allocate CursorWindow '/data/user/0/com.google.android.gms/databases/phenotype.db' of size 2097152 due to error -12.
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at android.database.CursorWindow.nativeCreate(Native Method)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at android.database.CursorWindow.<init>(CursorWindow.java:139)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at android.database.CursorWindow.<init>(CursorWindow.java:120)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at android.database.AbstractWindowedCursor.clearOrCreateWindow(AbstractWindowedCursor.java:202)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at android.database.sqlite.SQLiteCursor.fillWindow(SQLiteCursor.java:147)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at android.database.sqlite.SQLiteCursor.getCount(SQLiteCursor.java:140)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at aooi.a(:com.google.android.gms@202414022@20.24.14 (040700-319035315):2)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at com.google.android.gms.phenotype.provider.ConfigurationChimeraProvider.query(:com.google.android.gms@202414022@20.24.14 (040700-319035315):66)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at qlv.query(:com.google.android.gms@202414022@20.24.14 (040700-319035315):3)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at android.content.ContentProvider.query(ContentProvider.java:1214)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at ctk.superQuery(:com.google.android.gms@202414022@20.24.14 (040700-319035315):2)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at com.google.android.chimera.ContentProvider.query(:com.google.android.gms@202414022@20.24.14 (040700-319035315):2)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at qlv.query(:com.google.android.gms@202414022@20.24.14 (040700-319035315):8)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at android.content.ContentProvider.query(ContentProvider.java:1307)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at ctk.superQuery(:com.google.android.gms@202414022@20.24.14 (040700-319035315):1)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at com.google.android.chimera.ContentProvider.query(:com.google.android.gms@202414022@20.24.14 (040700-319035315):1)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at ctk.query(:com.google.android.gms@202414022@20.24.14 (040700-319035315):2)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at android.content.ContentProvider$Transport.query(ContentProvider.java:267)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at android.content.ContentResolver.query(ContentResolver.java:944)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at android.content.ContentResolver.query(ContentResolver.java:880)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at android.content.ContentResolver.query(ContentResolver.java:836)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at bfra.a(Unknown Source:0)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at bfre.a(Unknown Source:0)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at bfrc.a(:com.google.android.gms@202414022@20.24.14 (040700-319035315):10)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at bfrc.a(:com.google.android.gms@202414022@20.24.14 (040700-319035315):0)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at bfsd.a(:com.google.android.gms@202414022@20.24.14 (040700-319035315):20)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at bfsd.c(:com.google.android.gms@202414022@20.24.14 (040700-319035315):10)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at ceuh.a(:com.google.android.gms@202414022@20.24.14 (040700-319035315):0)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at lrv.a(:com.google.android.gms@202414022@20.24.14 (040700-319035315):3)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at sgp.a(:com.google.android.gms@202414022@20.24.14 (040700-319035315):5)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at com.google.android.gms.backup.base.BackupAccountNotifierIntentOperation.onHandleIntent(:com.google.android.gms@202414022@20.24.14 (040700-319035315):3)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at com.google.android.chimera.IntentOperation.onHandleIntent(:com.google.android.gms@202414022@20.24.14 (040700-319035315):2)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at qlx.onHandleIntent(:com.google.android.gms@202414022@20.24.14 (040700-319035315):4)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at cuo.run(:com.google.android.gms@202414022@20.24.14 (040700-319035315):5)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at cun.run(:com.google.android.gms@202414022@20.24.14 (040700-319035315):10)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1167)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:641)
+05-04 16:32:28.285  2202  4669 E AndroidRuntime: 	at java.lang.Thread.run(Thread.java:919)
+05-04 16:32:28.305  2202  4669 I GCore-Chimera-Crash: ChkKCWNvbnRhaW5lchC4tsJgGEAgvPy8xfQ6IAA=
+05-04 16:32:28.305  2202  4669 I GCore-Chimera-Crash: GCore-Chimera-Crash
+05-04 16:32:28.319  2202  2514 E filemap : mmap(22351872,6612968) failed: Out of memory
+05-04 16:32:28.319  2202  2514 E .gms.persisten: Failed to mmap file 'resources.arsc' in APK '/system/product/app/Videos/Videos.apk'
+05-04 16:32:28.319  2202  2514 E .gms.persisten: Failed to open 'resources.arsc' in APK '/system/product/app/Videos/Videos.apk'.
+05-04 16:32:28.320  2202  2514 E ResourcesManager: failed to add asset path /system/product/app/Videos/Videos.apk
+05-04 16:32:28.320  2202  2514 E PhenotypeResourceReader: Error reading phenotype XML registration format: 
+05-04 16:32:28.320  2202  2514 E PhenotypeResourceReader: android.content.pm.PackageManager$NameNotFoundException: Unable to open /system/product/app/Videos/Videos.apk
+05-04 16:32:28.320  2202  2514 E PhenotypeResourceReader: 	at android.app.ApplicationPackageManager.getResourcesForApplication(ApplicationPackageManager.java:1537)
+05-04 16:32:28.320  2202  2514 E PhenotypeResourceReader: 	at android.app.ApplicationPackageManager.getResourcesForApplication(ApplicationPackageManager.java:1544)
+05-04 16:32:28.320  2202  2514 E PhenotypeResourceReader: 	at bftw.a(:com.google.android.gms@202414022@20.24.14 (040700-319035315):1)
+05-04 16:32:28.320  2202  2514 E PhenotypeResourceReader: 	at bftw.a(:com.google.android.gms@202414022@20.24.14 (040700-319035315):78)
+05-04 16:32:28.320  2202  2514 E PhenotypeResourceReader: 	at com.google.android.gms.phenotype.sync.HeterodyneSyncTaskChimeraService.a(:com.google.android.gms@202414022@20.24.14 (040700-319035315):14)
+05-04 16:32:28.320  2202  2514 E PhenotypeResourceReader: 	at com.google.android.gms.phenotype.sync.HeterodyneSyncTaskChimeraService.a(:com.google.android.gms@202414022@20.24.14 (040700-319035315):76)
+05-04 16:32:28.320  2202  2514 E PhenotypeResourceReader: 	at aeme.call(Unknown Source:0)
+05-04 16:32:28.320  2202  2514 E PhenotypeResourceReader: 	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+05-04 16:32:28.320  2202  2514 E PhenotypeResourceReader: 	at soy.b(:com.google.android.gms@202414022@20.24.14 (040700-319035315):12)
+05-04 16:32:28.320  2202  2514 E PhenotypeResourceReader: 	at soy.run(:com.google.android.gms@202414022@20.24.14 (040700-319035315):7)
+05-04 16:32:28.320  2202  2514 E PhenotypeResourceReader: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1167)
+05-04 16:32:28.320  2202  2514 E PhenotypeResourceReader: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:641)
+05-04 16:32:28.320  2202  2514 E PhenotypeResourceReader: 	at sux.run(:com.google.android.gms@202414022@20.24.14 (040700-319035315):0)
+05-04 16:32:28.320  2202  2514 E PhenotypeResourceReader: 	at java.lang.Thread.run(Thread.java:919)
+05-04 16:32:28.331  2202  4669 I DeviceDrDatabaseHelper: Cleaning stale data from database!
+05-04 16:32:28.391  2202  4669 W DeviceDoctorHandler: Crash Hash: 8a2f01dbf207841e06eb807011a7ea1e521a7593
+05-04 16:32:28.403  2585  5087 I SetupWizard: [ClearcutLogsUploaderService] User did not optin for usage reporting.
+05-04 16:32:28.404  2585  5087 I SetupWizard: [axr] Deleting metrics of sessionType = 0
+05-04 16:32:28.424  2202  4669 E CursorWindow: CursorWindow: mmap() failed: errno=12.
+05-04 16:32:28.424  2202  2202 E CursorWindow: CursorWindow: mmap() failed: errno=12.
+05-04 16:32:28.429  2202  4669 W DeviceDoctorHandler: Hit a RuntimeException while trying to handle the crash.
+05-04 16:32:28.429  2202  4669 W DeviceDoctorHandler: android.database.CursorWindowAllocationException: Could not create CursorWindow from Parcel due to error -12, process fd count=154
+05-04 16:32:28.429  2202  4669 W DeviceDoctorHandler: 	at android.database.CursorWindow.nativeCreateFromParcel(Native Method)
+05-04 16:32:28.429  2202  4669 W DeviceDoctorHandler: 	at android.database.CursorWindow.<init>(CursorWindow.java:167)
+05-04 16:32:28.429  2202  4669 W DeviceDoctorHandler: 	at android.database.CursorWindow.<init>(CursorWindow.java:45)
+05-04 16:32:28.429  2202  4669 W DeviceDoctorHandler: 	at android.database.CursorWindow$1.createFromParcel(CursorWindow.java:716)
+05-04 16:32:28.429  2202  4669 W DeviceDoctorHandler: 	at android.database.CursorWindow$1.createFromParcel(CursorWindow.java:714)
+05-04 16:32:28.429  2202  4669 W DeviceDoctorHandler: 	at android.database.CursorWindow.newFromParcel(CursorWindow.java:725)
+05-04 16:32:28.429  2202  4669 W DeviceDoctorHandler: 	at android.database.BulkCursorProxy.getWindow(BulkCursorNative.java:170)
+05-04 16:32:28.429  2202  4669 W DeviceDoctorHandler: 	at android.database.BulkCursorToCursorAdaptor.onMove(BulkCursorToCursorAdaptor.java:82)

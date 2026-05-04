@@ -1,0 +1,80 @@
+CRASH START: 05-04 16:43:22.461 10447 10612 I WindowManager: ANR in input window owned by pid=10790. Reason: Input dispatching timed out ([Gesture Monitor] edge-swipe is not responding. Waited 5003ms for MotionEvent).
+05-04 16:43:22.541 10447 14003 D ActivityManager: created ANR temporary file:/data/anr/temp_anr_954591840664128755.txt
+05-04 16:43:22.551 10447 14003 I ActivityManager: Collecting stacks for pid 10790 into temporary file temp_anr_954591840664128755.txt
+05-04 16:43:22.571 13949 13949 V GraphicsEnvironment: Currently set values for:
+05-04 16:43:22.571 13949 13949 V GraphicsEnvironment:   angle_gl_driver_selection_pkgs=[]
+05-04 16:43:22.571 13949 13949 V GraphicsEnvironment:   angle_gl_driver_selection_values=[]
+05-04 16:43:22.571 13949 13949 V GraphicsEnvironment: com.android.chrome is not listed in per-application setting
+05-04 16:43:22.585 13949 13949 V GraphicsEnvironment: No special selections for ANGLE, returning default driver choice
+05-04 16:43:22.595 13949 13949 V GraphicsEnvironment: Neither updatable production driver nor prerelease driver is supported.
+05-04 16:43:22.604 11139 11146 W .gms.persistent: Suspending all threads took: 31.974ms
+05-04 16:43:22.625 10447 14003 E android.os.Debug: Failed to get binder state info for pid: 10790 status: -2: Success
+05-04 16:43:22.596 10447 10447 W AnrMainProcessD: type=1400 audit(0.0:75): avc:  denied  { read } for  name="transactions" dev="binder" ino=1048589 scontext=u:r:system_server:s0 tcontext=u:object_r:binderfs_logs_transactions:s0 tclass=file permissive=0
+05-04 16:43:22.672 13949 13949 I LoadedApk: No resource references to update in package com.google.android.trichromelibrary
+05-04 16:43:22.685 10447 10467 W Looper  : Drained
+05-04 16:43:22.686 10447 10467 W Looper  : Slow dispatch took 468ms android.ui app=system_server main=false group=TOP_APP h=android.view.Choreographer$FrameHandler c=android.view.Choreographer$FrameDisplayEventReceiver@a7645e0 m=0
+05-04 16:43:22.701 10447 14003 I system_server: libdebuggerd_client: started dumping process 10790
+05-04 16:43:22.710   371   371 I tombstoned: registered intercept for pid 10790 and type kDebuggerdJavaBacktrace
+05-04 16:43:22.723 13949 13949 I cr_SplitCompatApp: version=145.0.7632.218 (763221838) minSdkVersion=29 processName=com.android.chrome isIsolatedProcess=false splits=<none>
+05-04 16:43:22.727 10790 10791 I ndroid.systemui: Thread[2,tid=10791,WaitingInMainSignalCatcherLoop,Thread*=0x7de31d4226f0,peer=0x2002c80,"Signal Catcher"]: reacting to signal 3
+05-04 16:43:22.728 10447 12147 I HWUI    : Davey! duration=790ms; Flags=0, FrameTimelineVsyncId=98325, IntendedVsync=954974865500, Vsync=955208198824, InputEventId=-86238755, HandleInputStart=955213468200, AnimationStart=955230678800, PerformTraversalsStart=955230767200, DrawStart=955230829100, FrameDeadline=955274865488, FrameStartTime=955208594100, FrameInterval=16666666, WorkloadTarget=16666666, AnimationTime=955208198824, SyncQueued=955230894700, SyncStart=955233323200, IssueDrawCommandsStart=955250818900, SwapBuffers=955549264600, FrameCompleted=955767516400, DequeueBufferDuration=109700, QueueBufferDuration=31305900, GpuCompleted=955766959200, SwapBuffersCompleted=955767516400, DisplayPresentTime=0, CommandSubmissionCompleted=955549264600, 
+05-04 16:43:22.728   532   577 W skia    : AGTM parsing failed flags.readFromStream(s) at 159
+05-04 16:43:22.728   532   577 W skia    : AGTM parsing failed flags.readFromStream(s) at 159
+05-04 16:43:22.746 10790 10791 I ndroid.systemui: 
+05-04 16:43:22.748 12620 12715 W Finsky:background: [50] SLM: no metadata property com.android.vending.derived.apk.id found for shared library com.google.android.trichromelibrary_763221838:
+05-04 16:43:22.751 12620 12715 W Finsky:background: [50] SLM: no metadata property com.android.vending.sdk.version.patch found for shared library com.google.android.trichromelibrary_763221838:
+05-04 16:43:22.883   532   577 W skia    : AGTM parsing failed flags.readFromStream(s) at 159
+05-04 16:43:22.884   532   577 W skia    : AGTM parsing failed flags.readFromStream(s) at 159
+05-04 16:43:22.914 12620 13753 I Finsky:background: [94] IQ: Notifying installation update. [Package:com.android.vending, isid:f9Mj7yB6RU2uvST6csPPSQ] state:DOWNLOADING, status=DOWNLOADING, status_code=0, reason=su_auto_update, tsc=PT34.987S, attempt=0
+05-04 16:43:22.932 12620 13942 I Finsky:background: [130] DSC::L: Update all listeners for download <3:RUNNING:0%[0%]> in group com.android.vending:f9Mj7yB6RU2uvST6csPPSQ
+05-04 16:43:22.980 12620 13942 I Finsky:background: [130] DSC::L: Updating listener DownloadServiceManagerListener::rzy@5799652 for download <3:RUNNING:0%[0%]>
+05-04 16:43:22.986 12620 13942 I Finsky:background: [130] DSC::L: Updating listener DownloadServiceManagerListener::amrb@ac3e895 for download <3:RUNNING:0%[0%]>
+05-04 16:43:22.992 10447 10466 W Looper  : Slow dispatch took 494ms android.fg app=system_server main=false group=FOREGROUND h=android.os.Handler c=com.android.server.wm.AnrController$$ExternalSyntheticLambda0@12310de m=0
+05-04 16:43:23.003 12620 13942 I Finsky:background: [130] DS: Received onProgress request_id=3
+05-04 16:43:23.006   532   577 W skia    : AGTM parsing failed flags.readFromStream(s) at 159
+05-04 16:43:23.007   532   577 W skia    : AGTM parsing failed flags.readFromStream(s) at 159
+05-04 16:43:23.012 10447 10467 W Looper  : Slow delivery took 453ms android.ui app=system_server main=false group=TOP_APP h=android.view.ViewRootImpl$ViewRootHandler c=android.view.View$SendViewScrolledAccessibilityEvent@b9e3ca6 m=0
+05-04 16:43:23.012 10447 10467 W Looper  : Slow dispatch took 326ms android.ui app=system_server main=false group=TOP_APP h=android.view.ViewRootImpl$ViewRootHandler c=android.view.View$SendViewScrolledAccessibilityEvent@b9e3ca6 m=0
+05-04 16:43:23.012 10447 10467 I Choreographer: Skipped 46 frames!  The application may be doing too much work on its main thread.
+05-04 16:43:23.032 12620 13942 I Finsky:background: [130] RM: receive resource status onProgress download_request_id=3, group_id=com.android.vending.dm reason: su_auto_update isid: f9Mj7yB6RU2uvST6csPPSQ, status_code=RESOURCE_STATUS_IN_PROGRESS, legacy_status_code=192, size: 0/40355
+05-04 16:43:23.105 12620 13942 I Finsky:background: [130] DSC::L: Updating listener ucj@5fe2d23 for download <3:RUNNING:0%[0%]>
+05-04 16:43:23.109   532   577 W skia    : AGTM parsing failed flags.readFromStream(s) at 159
+05-04 16:43:23.110   532   577 W skia    : AGTM parsing failed flags.readFromStream(s) at 159
+05-04 16:43:23.110 10447 10612 W InputDispatcher: channel [Gesture Monitor] edge-swipe~ dropping inconsistent event: DispatchEntry{resolvedMotionFlags=0x0, targetFlags=SPLIT, transform=transform (ROT_0) (IDENTITY)
+05-04 16:43:23.110 10447 10612 W InputDispatcher: } original: MotionEvent
+05-04 16:43:23.121 10447 11826 I HWUI    : Davey! duration=845ms; Flags=0, FrameTimelineVsyncId=98523, IntendedVsync=955324865486, Vsync=956091532122, InputEventId=-599684751, HandleInputStart=956112081000, AnimationStart=956132577700, PerformTraversalsStart=956132671400, DrawStart=956162314000, FrameDeadline=955824865466, FrameStartTime=956095824200, FrameInterval=16666666, WorkloadTarget=16666666, AnimationTime=956091532122, SyncQueued=956162478700, SyncStart=956164279000, IssueDrawCommandsStart=956164348200, SwapBuffers=956167460600, FrameCompleted=956172592200, DequeueBufferDuration=61900, QueueBufferDuration=933300, GpuCompleted=956171646000, SwapBuffersCompleted=956172592200, DisplayPresentTime=0, CommandSubmissionCompleted=956167460600, 
+05-04 16:43:23.142 12620 13942 I Finsky:background: [130] DS::IDC: updateWith: <3:RUNNING:0%[0%]>
+05-04 16:43:23.214 10447 10467 W Looper  : Slow dispatch took 118ms android.ui app=system_server main=false group=TOP_APP h=com.android.server.am.ActivityManagerService$UiHandler c=com.android.server.am.UidObserverController$$ExternalSyntheticLambda0@55cd109 m=0
+05-04 16:43:23.229 12620 12738 I Finsky:background: [53] RM: getStatus resourceRequestId=7e75c530-df86-4737-a53f-99a4e6f80131 requestId=3 package=com.android.vending artifact=com.android.vending.dm isid=f9Mj7yB6RU2uvST6csPPSQ
+05-04 16:43:23.229 12620 12738 I Finsky:background: [53] DSC: reviveDownload(3)
+05-04 16:43:23.251 10447 10612 W InputDispatcher: channel [Gesture Monitor] edge-swipe~ dropping inconsistent event: DispatchEntry{resolvedMotionFlags=0x0, targetFlags=SPLIT, transform=transform (ROT_0) (IDENTITY)
+05-04 16:43:23.251 10447 10612 W InputDispatcher: } original: MotionEvent
+05-04 16:43:23.270 12620 13942 I Finsky:background: [130] DSC::L: Update all listeners for download <2:RUNNING:0%[0%]> in group com.android.vending:f9Mj7yB6RU2uvST6csPPSQ
+05-04 16:43:23.270 12620 13942 I Finsky:background: [130] DSC::L: Updating listener DownloadServiceManagerListener::rzy@5799652 for download <2:RUNNING:0%[0%]>
+05-04 16:43:23.270 12620 13942 I Finsky:background: [130] DSC::L: Updating listener DownloadServiceManagerListener::amrb@ac3e895 for download <2:RUNNING:0%[0%]>
+05-04 16:43:23.271 12620 13942 I Finsky:background: [130] DS: Received onProgress request_id=2
+05-04 16:43:23.271 12620 13942 I Finsky:background: [130] RM: receive resource status onProgress download_request_id=2, group_id=phonesky_webrtc_native_lib reason: su_auto_update isid: f9Mj7yB6RU2uvST6csPPSQ, status_code=RESOURCE_STATUS_IN_PROGRESS, legacy_status_code=192, size: 0/16733
+05-04 16:43:23.334 10447 10612 W InputDispatcher: channel [Gesture Monitor] edge-swipe~ dropping inconsistent event: DispatchEntry{resolvedMotionFlags=0x0, targetFlags=SPLIT, transform=transform (ROT_0) (IDENTITY)
+05-04 16:43:23.334 10447 10612 W InputDispatcher: } original: MotionEvent
+05-04 16:43:23.354 12620 13942 I Finsky:background: [130] DSC::L: Updating listener ucj@5fe2d23 for download <2:RUNNING:0%[0%]>
+05-04 16:43:23.355 12620 13942 I Finsky:background: [130] DS::IDC: updateWith: <2:RUNNING:0%[0%]>
+05-04 16:43:23.377 12620 12634 W ding:background: Suspending all threads took: 56.293ms
+05-04 16:43:23.400 12620 12738 I Finsky:background: [53] RM: getStatus resourceRequestId=a244c1e2-9f73-4fdc-82ec-8593e0ebe9f1 requestId=2 package=com.android.vending artifact=phonesky_webrtc_native_lib isid=f9Mj7yB6RU2uvST6csPPSQ
+05-04 16:43:23.401 12620 12620 I Finsky:background: [2] PIM: Ignore install package event for: com.android.vending, isid: f9Mj7yB6RU2uvST6csPPSQ
+05-04 16:43:23.416 10447 14004 I ActivityManager: dumpStackTraces pids={10924=true, 10967=true, 10973=true, 11020=true, 11139=true, 11204=true, 11253=true, 11326=true, 11441=true, 11497=true, 11514=true, 11547=true, 11579=true, 11598=true, 11708=true, 11725=true, 11747=true, 11761=true, 11806=true, 11827=true, 11899=true, 12049=true, 12106=true, 12236=true, 12316=true, 12327=true, 12571=true, 12600=true, 12620=true, 12791=true, 12802=true, 12866=true, 12900=true, 12932=true, 12946=true, 12981=true, 13064=true, 13203=true, 13225=true, 13245=true, 13252=true, 13279=true, 13310=true, 13355=true, 13437=true, 13503=true, 13552=true, 13592=true, 13631=true, 13658=true, 13689=true, 13739=true, 13766=true, 13802=true, 13863=true, 13899=true, 13949=true}
+05-04 16:43:23.427 10447 14004 I ActivityManager: Dumping to /data/anr/anr_2026-05-04-16-43-23-417
+05-04 16:43:23.462 12620 12738 I Finsky:background: [53] DSC: reviveDownload(2)
+05-04 16:43:23.482 12620 12751 I Finsky:background: [61] DS: reviveDownload(request_id=3)
+05-04 16:43:23.482 12620 12738 I Finsky:background: [53] DS: reviveDownload(request_id=2)
+05-04 16:43:23.502 10955 11131 D SatelliteController: isInCarrierRoamingNbIotNtn: satellite is disabled
+05-04 16:43:23.503 10955 11131 D SatelliteController: getCarrierRoamingNtnConnectType: Checking connect type from PLMN config for subId: 1
+05-04 16:43:23.530 10955 11131 D TelephonyConfigUpdateInstallReceiver: getConfigParser: domain=satellite
+05-04 16:43:23.537 10955 11131 V SatelliteController: satelliteConfigParser is not ready
+05-04 16:43:23.537 10955 11131 D SatelliteController: isSatelliteAttachSupportedViaConfigupdater: return null (satelliteConfig is null)
+05-04 16:43:23.556 12620 13942 I Finsky:background: [130] DSC::L: Update all listeners for download <4:RUNNING:0%[0%]> in group com.android.vending:f9Mj7yB6RU2uvST6csPPSQ
+05-04 16:43:23.557 12620 13942 I Finsky:background: [130] DSC::L: Updating listener DownloadServiceManagerListener::rzy@5799652 for download <4:RUNNING:0%[0%]>
+05-04 16:43:23.559 12620 13942 I Finsky:background: [130] DSC::L: Updating listener DownloadServiceManagerListener::amrb@ac3e895 for download <4:RUNNING:0%[0%]>
+05-04 16:43:23.559 12620 13942 I Finsky:background: [130] DS: Received onProgress request_id=4
+05-04 16:43:23.559 12620 13942 I Finsky:background: [130] RM: receive resource status onProgress download_request_id=4, group_id=com.android.vending.apk reason: su_auto_update isid: f9Mj7yB6RU2uvST6csPPSQ, status_code=RESOURCE_STATUS_IN_PROGRESS, legacy_status_code=192, size: 0/20997945
+05-04 16:43:23.566 12620 13942 I Finsky:background: [130] DSC::L: Updating listener ucj@5fe2d23 for download <4:RUNNING:0%[0%]>
+05-04 16:43:23.567 12620 13942 I Finsky:background: [130] DS::IDC: updateWith: <4:RUNNING:0%[0%]>

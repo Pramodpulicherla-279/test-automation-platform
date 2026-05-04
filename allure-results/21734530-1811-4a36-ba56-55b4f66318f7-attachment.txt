@@ -1,0 +1,80 @@
+CRASH START: 05-04 16:46:47.484 10447 14330 E ActivityManager: ANR in system
+05-04 16:46:47.484 10447 14330 E ActivityManager: PID: 10447
+05-04 16:46:47.484 10447 14330 E ActivityManager: Reason: Input dispatching timed out (PointerEventDispatcher0 is not responding. Waited 5010ms for MotionEvent).
+05-04 16:46:47.484 10447 14330 E ActivityManager: ErrorId: c1e7cc10-3fb6-4e1e-9196-322b8008676a
+05-04 16:46:47.484 10447 14330 E ActivityManager: Frozen: false
+05-04 16:46:47.484 10447 14330 E ActivityManager: Load: 45.89 / 39.8 / 24.63
+05-04 16:46:47.484 10447 14330 E ActivityManager: ----- Output from /proc/pressure/memory -----
+05-04 16:46:47.484 10447 14330 E ActivityManager: some avg10=70.04 avg60=71.18 avg300=48.50 total=322540955
+05-04 16:46:47.484 10447 14330 E ActivityManager: full avg10=24.97 avg60=25.86 avg300=17.72 total=128155366
+05-04 16:46:47.484 10447 14330 E ActivityManager: ----- End output from /proc/pressure/memory -----
+05-04 16:46:47.484 10447 14330 E ActivityManager: ----- Output from /proc/pressure/cpu -----
+05-04 16:46:47.484 10447 14330 E ActivityManager: some avg10=97.58 avg60=91.34 avg300=82.47 total=865268418
+05-04 16:46:47.484 10447 14330 E ActivityManager: full avg10=0.00 avg60=0.00 avg300=0.00 total=0
+05-04 16:46:47.484 10447 14330 E ActivityManager: ----- End output from /proc/pressure/cpu -----
+05-04 16:46:47.484 10447 14330 E ActivityManager: ----- Output from /proc/pressure/io -----
+05-04 16:46:47.484 10447 14330 E ActivityManager: some avg10=97.22 avg60=89.54 avg300=74.45 total=744043079
+05-04 16:46:47.484 10447 14330 E ActivityManager: full avg10=2.66 avg60=2.54 avg300=4.14 total=86941720
+05-04 16:46:47.484 10447 14330 E ActivityManager: ----- End output from /proc/pressure/io -----
+05-04 16:46:47.484 10447 14330 E ActivityManager: 
+05-04 16:46:47.484 10447 14330 E ActivityManager: CPU usage from 1777ms to -4580ms ago (2026-05-04 16:46:40.339 to 2026-05-04 16:46:46.696):
+05-04 16:46:47.484 10447 14330 E ActivityManager:   89% 10447/system_server: 7.4% user + 82% kernel / faults: 10796 minor 1987 major
+05-04 16:46:47.484 10447 14330 E ActivityManager:   25% 12620/com.android.vending:background: 1.4% user + 24% kernel / faults: 3212 minor 257 major
+05-04 16:46:47.484 10447 14330 E ActivityManager:   24% 487/android.hardware.sensors-service.multihal: 0% user + 24% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:   22% 11827/com.google.android.gms: 1.3% user + 20% kernel / faults: 3891 minor 1204 major
+05-04 16:46:47.484 10447 14330 E ActivityManager:   21% 497/android.hardware.graphics.composer3-service.ranchu: 0.1% user + 21% kernel / faults: 9 minor 6 major
+05-04 16:46:47.484 10447 14330 E ActivityManager:   21% 532/surfaceflinger: 0.1% user + 20% kernel / faults: 215 minor 57 major
+05-04 16:46:47.484 10447 14330 E ActivityManager:   20% 10967/com.google.android.apps.nexuslauncher: 1% user + 18% kernel / faults: 1052 minor 268 major
+05-04 16:46:47.484 10447 14330 E ActivityManager:   18% 70/kswapd0: 0% user + 18% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:   8.7% 10790/com.android.systemui: 0.7% user + 8% kernel / faults: 1647 minor 435 major
+05-04 16:46:47.484 10447 14330 E ActivityManager:   9.1% 59/kcompactd0: 0% user + 9.1% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager: 99% TOTAL: 4.7% user + 85% kernel + 1.2% iowait + 8% softirq
+05-04 16:46:47.484 10447 14330 E ActivityManager: CPU usage from 1006ms to 3973ms later (2026-05-04 16:46:43.122 to 2026-05-04 16:46:46.088):
+05-04 16:46:47.484 10447 14330 E ActivityManager:   94% 10447/system_server: 11% user + 82% kernel / faults: 3939 minor 571 major
+05-04 16:46:47.484 10447 14330 E ActivityManager:     18% 10453/Signal Catcher: 5.6% user + 12% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     18% 14543/AnrAuxiliaryTas: 0.8% user + 17% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     7.2% 10679/ConnectivityThr: 0.4% user + 6.8% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     5.6% 10467/android.ui: 0% user + 5.6% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     4% 10456/HeapTaskDaemon: 1.6% user + 2.4% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     3.2% 10536/ActivityManager: 0% user + 3.2% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     2.8% 11124/binder:10447_B: 0.4% user + 2.4% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     2% 10470/android.anim: 0.4% user + 1.6% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     1.6% 10471/android.anim.lf: 0% user + 1.6% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     1.6% 10650/WifiHandlerThre: 0% user + 1.6% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     1.6% 10656/ConnectivitySer: 0% user + 1.6% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     1.6% 10766/TaskSnapshotPer: 0.8% user + 0.8% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     1.6% 11825/binder:10447_11: 0% user + 1.6% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     1.6% 12146/binder:10447_1D: 0% user + 1.6% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     1.2% 10472/watchdog: 0% user + 1.2% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     1.2% 10547/socket_writer_q: 0% user + 1.2% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     1.2% 10597/eduling.default: 0% user + 1.2% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     1.2% 10603/SettingsProvide: 0% user + 1.2% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     1.2% 11562/binder:10447_E: 0% user + 1.2% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     1.2% 12142/binder:10447_1B: 0% user + 1.2% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     0.8% 10460/binder:10447_1: 0% user + 0.8% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     0.8% 10466/android.fg: 0% user + 0.8% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     0.8% 10535/android.bg: 0% user + 0.8% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     0.8% 10562/PackageManagerB: 0% user + 0.8% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     0.8% 10612/InputDispatcher: 0% user + 0.8% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     0.8% 10621/android.imms: 0% user + 0.8% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     0.8% 10668/audioserver_lif: 0.8% user + 0% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     0.8% 10731/SliceManagerSer: 0% user + 0.8% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     0.4% 10447/system_server: 0% user + 0.4% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     0.4% 10468/android.io: 0% user + 0.4% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     0.4% 10469/android.display: 0% user + 0.4% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     0.4% 10537/ActivityManager: 0% user + 0.4% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     0.4% 10543/OomAdjuster: 0% user + 0.4% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     0.4% 10559/PowerManagerSer: 0% user + 0.4% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     0.4% 10594/SensorService: 0% user + 0.4% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     0.4% 10596/roid.usagestats: 0% user + 0.4% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     0.4% 10604/CachedAppOptimi: 0% user + 0.4% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     0.4% 10647/NetworkStats: 0% user + 0.4% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     0.4% 10684/AppWidgetServic: 0% user + 0.4% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     0.4% 10704/MediaRouterServ: 0% user + 0.4% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     0.4% 10921/binder:10447_A: 0% user + 0.4% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     0.4% 11429/UwbService: 0% user + 0.4% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     0.4% 11936/binder:10447_18: 0% user + 0.4% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     0.4% 11937/binder:10447_19: 0% user + 0.4% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     0.4% 12149/binder:10447_20: 0% user + 0.4% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:     0.4% 13197/SurfaceSyncGrou: 0% user + 0.4% kernel
+05-04 16:46:47.484 10447 14330 E ActivityManager:   25% 497/android.hardware.graphics.composer3-service.ranchu: 0% user + 25% kernel / faults: 1 minor
