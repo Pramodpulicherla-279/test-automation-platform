@@ -1,0 +1,80 @@
+CRASH START: 05-04 17:30:38.533 18286 18286 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+05-04 17:30:38.535 18286 18286 E libc    : Access denied finding property "persist.device_config.runtime_native_boot.enable_apex_image"
+05-04 17:30:38.535 18286 18286 I AndroidRuntime: Using default boot image
+05-04 17:30:38.535 18286 18286 E libc    : Access denied finding property "persist.device_config.runtime_native_boot.disable_lock_profiling"
+05-04 17:30:38.536 18286 18286 I AndroidRuntime: Leaving lock profiling enabled
+05-04 17:30:38.536 18286 18286 E libc    : Access denied finding property "persist.device_config.runtime_native_boot.enable_generational_cc"
+05-04 17:30:38.537 18286 18286 W app_process: Could not reserve sentinel fault page
+05-04 17:30:38.528 18286 18286 W app_process: type=1400 audit(0.0:110): avc: denied { read } for name="u:object_r:device_config_runtime_native_boot_prop:s0" dev="tmpfs" ino=8317 scontext=u:r:shell:s0 tcontext=u:object_r:device_config_runtime_native_boot_prop:s0 tclass=file permissive=0
+05-04 17:30:38.528 18286 18286 W app_process: type=1400 audit(0.0:111): avc: denied { read } for name="u:object_r:device_config_runtime_native_boot_prop:s0" dev="tmpfs" ino=8317 scontext=u:r:shell:s0 tcontext=u:object_r:device_config_runtime_native_boot_prop:s0 tclass=file permissive=0
+05-04 17:30:38.528 18286 18286 W app_process: type=1400 audit(0.0:112): avc: denied { read } for name="u:object_r:device_config_runtime_native_boot_prop:s0" dev="tmpfs" ino=8317 scontext=u:r:shell:s0 tcontext=u:object_r:device_config_runtime_native_boot_prop:s0 tclass=file permissive=0
+05-04 17:30:38.586 18286 18286 D ICU     : Time zone APEX file found: /apex/com.android.tzdata/etc/icu/icu_tzdata.dat
+05-04 17:30:38.590 18286 18286 W app_process: Unexpected CPU variant for X86 using defaults: x86
+05-04 17:30:38.596 18286 18286 I app_process: The ClassLoaderContext is a special shared library.
+05-04 17:30:38.614 18286 18286 W app_process: JNI RegisterNativeMethods: attempt to register 0 native methods for android.media.AudioAttributes
+05-04 17:30:38.618 18286 18286 D AndroidRuntime: Calling main entry com.android.commands.am.Am
+05-04 17:30:38.628  2028  4002 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10149 user=0: start instr
+05-04 17:30:38.643  1751  1751 D Zygote  : Forked child process 18300
+05-04 17:30:38.649 18300 18300 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 14 lines
+05-04 17:30:38.652  2028  2059 I ActivityManager: Start proc 18300:io.appium.uiautomator2.server/u0a149 for added application io.appium.uiautomator2.server
+05-04 17:30:39.471 18300 18331 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 16 lines
+05-04 17:30:39.484  3395  3395 E adbd    : failed to connect to socket 'tcp:6790': Connection refused
+05-04 17:30:39.908  2028  2028 V SettingsProvider: Notifying for 0: content://settings/secure/accessibility_enabled
+05-04 17:30:39.969 18300 18322 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 1 line
+05-04 17:30:40.029 18300 18338 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 1 line
+05-04 17:30:40.130 18300 18337 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 39 lines
+05-04 17:30:40.642 18300 18341 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 11 lines
+05-04 17:30:40.776 18300 18342 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 3 lines
+05-04 17:30:40.787 18300 18343 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 4 lines
+05-04 17:30:40.804 18300 18344 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 11 lines
+05-04 17:30:40.933  2028  3131 I ActivityManager: Force stopping com.krishivaas appid=10150 user=0: from pid 18353
+05-04 17:30:40.943  2528  2528 D CarrierSvcBindHelper: No carrier app for: 0
+05-04 17:30:41.188  2028  3131 I ActivityTaskManager: START u0 {act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=com.krishivaas/.MainActivity} from uid 2000
+05-04 17:30:41.255  1751  1751 D Zygote  : Forked child process 18356
+05-04 17:30:41.271 18356 18356 I chatty  : uid=10150(com.krishivaas) expire 21 lines
+05-04 17:30:41.282  2028  2059 W ActivityManager: Slow operation: 54ms so far, now at startProcess: returned from zygote!
+05-04 17:30:41.282  2028  2059 W ActivityManager: Slow operation: 54ms so far, now at startProcess: done updating battery stats
+05-04 17:30:41.282  2028  2059 W ActivityManager: Slow operation: 55ms so far, now at startProcess: building log message
+05-04 17:30:41.282  2028  2059 I ActivityManager: Start proc 18356:com.krishivaas/u0a150 for activity {com.krishivaas/com.krishivaas.MainActivity}
+05-04 17:30:41.283  2028  2059 W ActivityManager: Slow operation: 55ms so far, now at startProcess: starting to update pids map
+05-04 17:30:41.283  2028  2059 W ActivityManager: Slow operation: 55ms so far, now at startProcess: done updating pids map
+05-04 17:30:41.339 13190 13275 I MicroDetector: Keeping mic open: false
+05-04 17:30:41.340 13190 17048 I DeviceStateChecker: DeviceStateChecker cancelled
+05-04 17:30:41.341 13190 17663 I MicroRecognitionRunner: Stopping hotword detection.
+05-04 17:30:41.362 13190 17315 I MicroRecognitionRunner: Detection finished
+05-04 17:30:41.376 13190 17658 I AudioController: internalShutdown
+05-04 17:30:41.421  2028  2427 W InputReader: Device has associated, but no associated display id.
+05-04 17:30:41.423  2028  2427 I chatty  : uid=1000(system) Binder:2028_7 identical 8 lines
+05-04 17:30:41.423  2028  2427 W InputReader: Device has associated, but no associated display id.
+05-04 17:30:41.470 13190 17658 I MicrophoneInputStream: mic_close  SR : 16000 CC : 16 SO : 1999
+05-04 17:30:41.470 13190 17658 E AudioSource: Stop listening is called on already closed AudioSource
+05-04 17:30:42.025 18356 18389 I chatty  : uid=10150(com.krishivaas) expire 1 line
+05-04 17:30:42.231  1800  2017 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+05-04 17:30:42.234  1800  2017 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+05-04 17:30:42.255 18356 18399 I chatty  : uid=10150(com.krishivaas) expire 5 lines
+05-04 17:30:42.560  1841  1841 I keystore: del USRPKEY__androidx_security_master_key_ 10150
+05-04 17:30:42.571 18356 18407 I chatty  : uid=10150(com.krishivaas) expire 1 line
+05-04 17:30:42.571  1841  1841 I keystore: del USRSKEY__androidx_security_master_key_ 10150
+05-04 17:30:42.592  1841  1841 I keystore: del USRCERT__androidx_security_master_key_ 10150
+05-04 17:30:42.593  1841  1841 I keystore: del CACERT__androidx_security_master_key_ 10150
+05-04 17:30:42.598 18356 18397 I chatty  : uid=10150(com.krishivaas) expire 11 lines
+05-04 17:30:42.618  1841 18408 D DropBoxManager: About to call service->add()
+05-04 17:30:42.618  2028  3009 I DropBoxManagerService: add tag=keymaster isTagEnabled=true flags=0x0
+05-04 17:30:42.630  1841 18408 D DropBoxManager: service->add returned No error
+05-04 17:30:42.642  1769  1769 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-04 17:30:42.646  1652  1652 I hwservicemanager: getTransport: Cannot find entry android.hardware.graphics.mapper@3.0::IMapper/default in either framework or device manifest.
+05-04 17:30:42.656  1769  1769 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-04 17:30:42.657  1769  1769 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-04 17:30:42.685 18356 18402 I chatty  : uid=10150(com.krishivaas) expire 5 lines
+05-04 17:30:42.766 15475 15475 I TTS.GoogleTTSService: Creating Google TTS service, version 3.17.5.247520352
+05-04 17:30:42.913  2028  3009 D ConnectivityService: requestNetwork for uid/pid:10150/18356 NetworkRequest [ TRACK_DEFAULT id=71, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10150] ]
+05-04 17:30:42.915  2028  2154 D UntrustedWifiNetworkFactory: got request NetworkRequest [ TRACK_DEFAULT id=71, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10150] ] with score 60 and serial -1
+05-04 17:30:42.915  2028  2154 D WifiNetworkFactory: got request NetworkRequest [ TRACK_DEFAULT id=71, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10150] ] with score 60 and serial -1
+05-04 17:30:42.921  2528  2528 D PhoneSwitcherNetworkRequstListener: got request NetworkRequest [ TRACK_DEFAULT id=71, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10150] ] with score 60 and serial -1
+05-04 17:30:42.922 18356 18397 I chatty  : uid=10150(com.krishivaas) expire 1 line
+05-04 17:30:42.980 18356 18356 I chatty  : uid=10150(com.krishivaas) expire 126 lines
+05-04 17:30:43.266  1769  1769 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-04 17:30:43.275  1769  1769 I chatty  : uid=1000(system) allocator@2.0-s identical 1 line
+05-04 17:30:43.276  1769  1769 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-04 17:30:43.305 18356 18397 I chatty  : uid=10150(com.krishivaas) expire 2 lines
+05-04 17:30:43.418  2028  2057 I ActivityTaskManager: Displayed com.krishivaas/.MainActivity: +2s208ms

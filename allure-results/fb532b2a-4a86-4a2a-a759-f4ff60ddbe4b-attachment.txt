@@ -1,0 +1,80 @@
+CRASH START: 05-04 18:20:53.759 12520 12520 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+05-04 18:20:53.797 12520 12520 I AndroidRuntime: Using default boot image
+05-04 18:20:53.798 12520 12520 I AndroidRuntime: Leaving lock profiling enabled
+05-04 18:20:53.801 12520 12520 W libc    : Access denied finding property "odsign.verification.success"
+05-04 18:20:53.799 12520 12520 W app_process: type=1400 audit(0.0:108): avc: denied { read } for name="u:object_r:odsign_prop:s0" dev="tmpfs" ino=206 scontext=u:r:shell:s0 tcontext=u:object_r:odsign_prop:s0 tclass=file permissive=0
+05-04 18:20:53.809 12520 12520 W app_process: ART APEX data files are untrusted.
+05-04 18:20:53.810 12520 12520 I app_process: Core platform API reporting enabled, enforcing=false
+05-04 18:20:53.867 12011 12042 I Icing   : Internal init done: storage state 0
+05-04 18:20:53.900 12011 12504 I Icing   : IndexChimeraService.getServiceInterface callingPackage=com.google.android.gms componentName=AppsCorpus serviceId=36
+05-04 18:20:53.904 12011 12071 I Icing   : IndexChimeraService.getServiceInterface callingPackage=com.google.android.gms componentName=AppsCorpus serviceId=32
+05-04 18:20:53.920 12011 12466 W gle.android.gm: Long monitor contention with owner [com.google.android.gms.chimera.container.intentoperation.GmsIntentOperationChimeraService-Executor] idle (12475) at void gug.run()(:com.google.android.gms@225014047@22.50.14 (190800-499278674):3) waiters=0 in void gug.run() for 616ms
+05-04 18:20:53.927 12011 12042 I Icing   : Post-init done
+05-04 18:20:53.928 12011 12042 I Icing   : Indexing com.google.android.gms-internal.3p:MobileApplication from com.google.android.gms
+05-04 18:20:53.939 12011 12071 I Icing   : IndexChimeraService.getServiceInterface callingPackage=com.google.android.gms componentName=null serviceId=36
+05-04 18:20:53.950   587  1018 D CompatibilityChangeReporter: Compat change id reported: 135634846; UID 10056; state: DISABLED
+05-04 18:20:53.950   587  1018 D CompatibilityChangeReporter: Compat change id reported: 177438394; UID 10056; state: DISABLED
+05-04 18:20:53.952   587  1018 D CompatibilityChangeReporter: Compat change id reported: 135772972; UID 10056; state: DISABLED
+05-04 18:20:53.953   587  1018 D CompatibilityChangeReporter: Compat change id reported: 135754954; UID 10056; state: ENABLED
+05-04 18:20:53.954   587   647 D CompatibilityChangeReporter: Compat change id reported: 143937733; UID 10056; state: ENABLED
+05-04 18:20:53.966   356   356 D Zygote  : Forked child process 12534
+05-04 18:20:53.967   587   647 I ActivityManager: Start proc 12534:android.process.acore/u0a56 for content provider {com.android.providers.contacts/com.android.providers.contacts.ContactsProvider2}
+05-04 18:20:53.972 12011 12042 I Icing   : Indexing done com.google.android.gms-internal.3p:MobileApplication
+05-04 18:20:53.973 12011 12042 I Icing   : Indexing com.google.android.apps.messaging-internal.3p:Person_no_gsa from com.google.android.apps.messaging
+05-04 18:20:53.976 12534 12534 W d.process.acor: Unexpected CPU variant for X86 using defaults: x86_64
+05-04 18:20:53.977 12011 12042 I Icing   : Indexing done com.google.android.apps.messaging-internal.3p:Person_no_gsa
+05-04 18:20:53.980 12011 12042 I Icing   : doRemovePackageData com.krishivaas
+05-04 18:20:53.996   457   470 I adbd    : jdwp connection from 12534
+05-04 18:20:54.022   587  3528 D CompatibilityChangeReporter: Compat change id reported: 168419799; UID 10056; state: DISABLED
+05-04 18:20:54.043 12534 12534 D CompatibilityChangeReporter: Compat change id reported: 171979766; UID 10056; state: ENABLED
+05-04 18:20:54.056 12444 12552 I GAv4    : Google Analytics 212.4.12 is starting up. To enable debug logging on a device run:
+05-04 18:20:54.056 12444 12552 I GAv4    :   adb shell setprop log.tag.GAv4 DEBUG
+05-04 18:20:54.056 12444 12552 I GAv4    :   adb logcat -s GAv4
+05-04 18:20:54.065 12444 12552 D CompatibilityChangeReporter: Compat change id reported: 160794467; UID 10113; state: DISABLED
+05-04 18:20:54.083 12444 12554 W GAv4    : CampaignTrackingReceiver is not registered, not exported or is disabled. Installation campaign tracking is not possible. See http://goo.gl/8Rd3yj for instructions.
+05-04 18:20:54.094 12534 12534 V GraphicsEnvironment: ANGLE Developer option for 'com.android.providers.contacts' set to: 'default'
+05-04 18:20:54.095 12534 12534 V GraphicsEnvironment: Neither updatable production driver nor prerelease driver is supported.
+05-04 18:20:54.101 12534 12534 D NetworkSecurityConfig: No Network Security Config specified, using platform default
+05-04 18:20:54.102 12534 12534 D NetworkSecurityConfig: No Network Security Config specified, using platform default
+05-04 18:20:54.111 12011 12042 I Icing   : Usage reports ok 0, Failed Usage reports 0, indexed 0, rejected 0
+05-04 18:20:54.141 12011 12042 I Icing   : Usage reports ok 0, Failed Usage reports 0, indexed 0, rejected 0
+05-04 18:20:54.146   587   624 D PackageManager: Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+05-04 18:20:54.146   587   624 D PackageManager: Clear ephemeral installer activity
+05-04 18:20:54.170 12011 12042 I Icing   : Usage reports ok 0, Failed Usage reports 0, indexed 0, rejected 0
+05-04 18:20:54.206 12444 12562 W FieldDefinition: [RxCachedThreadScheduler-2] Ignoring isIndexed constraint as field also has uniqueness constraint (on just this field, and therefore SQLite will have to create an index on that. For field: blj$a@ff1d9ca
+05-04 18:20:54.226 12534 12534 I ContactsPerf: VoicemailContentProvider.onCreate start
+05-04 18:20:54.311   457   457 E adbd    : failed to connect to socket 'tcp:6790': Connection refused
+05-04 18:20:54.338 12011 12042 I Icing   : Usage reports ok 0, Failed Usage reports 0, indexed 0, rejected 0
+05-04 18:20:54.341 12520 12520 D app_process: Time zone APEX ICU file found: /apex/com.android.tzdata/etc/icu/icu_tzdata.dat
+05-04 18:20:54.342 12520 12520 D app_process: I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt68l.dat
+05-04 18:20:54.374 12534 12534 I ContactsPerf: VoicemailContentProvider.onCreate finish
+05-04 18:20:54.394 12520 12520 W app_process: Unexpected CPU variant for X86 using defaults: x86_64
+05-04 18:20:54.396 12444 12563 E NotificationAccessor: Cannot delete notification channel. Channel not found.
+05-04 18:20:54.401 12444 12563 E NotificationAccessor: Cannot delete notification channel. Channel not found.
+05-04 18:20:54.402 12444 12563 E NotificationAccessor: Cannot delete notification channel. Channel not found.
+05-04 18:20:54.421 12534 12583 D ActivityThread: Loading provider call_log_shadow: com.android.providers.contacts.ShadowCallLogProvider
+05-04 18:20:54.450 12011 12042 I Icing   : Usage reports ok 0, Failed Usage reports 0, indexed 0, rejected 0
+05-04 18:20:54.459 12520 12520 D AndroidRuntime: Calling main entry com.android.commands.am.Am
+05-04 18:20:54.473   587  1018 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10147 user=0: start instr
+05-04 18:20:54.486   587  1018 D CompatibilityChangeReporter: Compat change id reported: 135634846; UID 10147; state: DISABLED
+05-04 18:20:54.488   587  1018 D CompatibilityChangeReporter: Compat change id reported: 177438394; UID 10147; state: DISABLED
+05-04 18:20:54.488   587  1018 D CompatibilityChangeReporter: Compat change id reported: 135772972; UID 10147; state: DISABLED
+05-04 18:20:54.488   587  1018 D CompatibilityChangeReporter: Compat change id reported: 135754954; UID 10147; state: ENABLED
+05-04 18:20:54.492 12382 12433 I ProvidersCache: Provider returned no roots. Possibly naughty: com.google.android.apps.docs.storage
+05-04 18:20:54.493   587  1805 D CountryDetector: The first listener is added
+05-04 18:20:54.494   587   647 D CompatibilityChangeReporter: Compat change id reported: 143937733; UID 10147; state: ENABLED
+05-04 18:20:54.495 12382 12434 W oid.documentsu: Long monitor contention with owner pool-2-thread-1 (12429) at void com.android.documentsui.roots.ProvidersCache$MultiProviderUpdateTask.handleDocumentsProvider(android.content.pm.ProviderInfo, com.android.documentsui.base.UserId)(ProvidersCache.java:646) waiters=3 in void com.android.documentsui.roots.ProvidersCache$MultiProviderUpdateTask.handleDocumentsProvider(android.content.pm.ProviderInfo, com.android.documentsui.base.UserId) for 1.713s
+05-04 18:20:54.505 12382 12435 W oid.documentsu: Long monitor contention with owner pool-2-thread-1 (12429) at void com.android.documentsui.roots.ProvidersCache$MultiProviderUpdateTask.handleDocumentsProvider(android.content.pm.ProviderInfo, com.android.documentsui.base.UserId)(ProvidersCache.java:646) waiters=4 in void com.android.documentsui.roots.ProvidersCache$MultiProviderUpdateTask.handleDocumentsProvider(android.content.pm.ProviderInfo, com.android.documentsui.base.UserId) for 1.717s
+05-04 18:20:54.505   356   356 D Zygote  : Forked child process 12605
+05-04 18:20:54.507   587   647 I ActivityManager: Start proc 12605:io.appium.uiautomator2.server/u0a147 for added application io.appium.uiautomator2.server
+05-04 18:20:54.508 12534 12583 I CallLogProvider: Syncing call composer pics -- source user=0, isShadow=true, forAllUser=false
+05-04 18:20:54.508 12534 12583 I CallLogProvider: Fetching list of Uris to sync
+05-04 18:20:54.511 12534 12534 I ContactsDatabaseHelper: updateUseStrictPhoneNumberComparison: US
+05-04 18:20:54.511 12444 12569 E CelloDelayUploadFixer: [RxCachedThreadScheduler-7] Cleanup delay upload complete
+05-04 18:20:54.521 12605 12605 I tomator2.serve: Late-enabling -Xcheck:jni
+05-04 18:20:54.535 12534 12583 I CallLogProvider: Will sync following Uris:[]
+05-04 18:20:54.535 12534 12583 I CallLogProvider: Syncing call composer pics -- got []
+05-04 18:20:54.583  7997  7997 W SystemServiceRegistry: No service published for: persistent_data_block
+05-04 18:20:54.586 12534 12607 D ContactsDatabaseHelper: WAL enabled for contacts2.db: true
+05-04 18:20:54.660 12444 12461 W GmsIpProtection: [Binder:12444_2] Error changing state for com.google.android.apps.docs.sync.syncadapter.DocsSyncAdapterService
+05-04 18:20:54.670 12444 12461 W GmsIpProtection: [Binder:12444_2] Error changing state for com.google.android.apps.docs.drive.directsharing.ChooserTargetService
