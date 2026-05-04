@@ -1,0 +1,80 @@
+CRASH START: 05-04 21:24:22.069 12077 12077 I AndroidRuntime: VM exiting with result code 0.
+05-04 21:24:22.078   551  1215 I ActivityManager: Killing 12092:io.appium.uiautomator2.server/u0a147 (adj 0): stop io.appium.uiautomator2.server due to finished inst
+05-04 21:24:22.098   551   551 D BatterySaverPolicy: accessibility changed to false, updating policy.
+05-04 21:24:22.120   551   591 I libprocessgroup: Successfully killed process cgroup uid 10147 pid 12092 in 40ms
+05-04 21:24:22.160     0     0 I binder  : undelivered TRANSACTION_COMPLETE
+05-04 21:24:22.160     0     0 I binder  : undelivered transaction 433944, process died.
+05-04 21:24:22.182   551  1743 V ActivityManager: Got obituary of 12092:io.appium.uiautomator2.server
+05-04 21:24:22.184   343   343 I Zygote  : Process 12092 exited due to signal 9 (Killed)
+05-04 21:24:22.358   551  1902 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10147 user=0: from pid 12550
+05-04 21:24:22.367  2594  2594 D CarrierSvcBindHelper: No carrier app for: 0
+05-04 21:24:22.375   551  1902 I ActivityManager: Force stopping io.appium.uiautomator2.server.test appid=10146 user=0: from pid 12553
+05-04 21:24:22.385  2594  2594 D CarrierSvcBindHelper: No carrier app for: 0
+05-04 21:24:22.412  1284  6544 W MediaProvider: Failed to fetch original file descriptor
+05-04 21:24:22.412  1284  6544 W MediaProvider: java.io.IOException: stat failed: ENOENT (No such file or directory)
+05-04 21:24:22.412  1284  6544 W MediaProvider: 	at com.android.providers.media.MediaProvider.getFileFromFileDescriptor(MediaProvider.java:5794)
+05-04 21:24:22.412  1284  6544 W MediaProvider: 	at com.android.providers.media.MediaProvider.getOriginalMediaFormatFileDescriptor(MediaProvider.java:5711)
+05-04 21:24:22.412  1284  6544 W MediaProvider: 	at com.android.providers.media.MediaProvider.openTypedAssetFileCommon(MediaProvider.java:7134)
+05-04 21:24:22.412  1284  6544 W MediaProvider: 	at com.android.providers.media.MediaProvider.openTypedAssetFile(MediaProvider.java:7115)
+05-04 21:24:22.412  1284  6544 W MediaProvider: 	at android.content.ContentProvider$Transport.openTypedAssetFile(ContentProvider.java:548)
+05-04 21:24:22.412  1284  6544 W MediaProvider: 	at android.content.ContentProviderNative.onTransact(ContentProviderNative.java:327)
+05-04 21:24:22.412  1284  6544 W MediaProvider: 	at android.os.Binder.execTransactInternal(Binder.java:1184)
+05-04 21:24:22.412  1284  6544 W MediaProvider: 	at android.os.Binder.execTransact(Binder.java:1143)
+05-04 21:24:22.412  1284  6544 W MediaProvider: Caused by: android.system.ErrnoException: stat failed: ENOENT (No such file or directory)
+05-04 21:24:22.412  1284  6544 W MediaProvider: 	at libcore.io.Linux.stat(Native Method)
+05-04 21:24:22.412  1284  6544 W MediaProvider: 	at libcore.io.ForwardingOs.stat(ForwardingOs.java:853)
+05-04 21:24:22.412  1284  6544 W MediaProvider: 	at libcore.io.BlockGuardOs.stat(BlockGuardOs.java:420)
+05-04 21:24:22.412  1284  6544 W MediaProvider: 	at libcore.io.ForwardingOs.stat(ForwardingOs.java:853)
+05-04 21:24:22.412  1284  6544 W MediaProvider: 	at android.app.ActivityThread$AndroidOs.stat(ActivityThread.java:7739)
+05-04 21:24:22.412  1284  6544 W MediaProvider: 	at android.system.Os.stat(Os.java:919)
+05-04 21:24:22.412  1284  6544 W MediaProvider: 	at com.android.providers.media.MediaProvider.getFileFromFileDescriptor(MediaProvider.java:5788)
+05-04 21:24:22.412  1284  6544 W MediaProvider: 	... 7 more
+05-04 21:24:22.458   551  1902 I ActivityManager: Force stopping com.krishivaas appid=10148 user=0: from pid 12561
+05-04 21:24:22.461   551  1902 I ActivityManager: Killing 12133:com.krishivaas/u0a148 (adj 0): stop com.krishivaas due to from pid 12561
+05-04 21:24:22.465   551  1902 W ActivityTaskManager: Force removing ActivityRecord{e84a3f8 u0 com.krishivaas/.MainActivity t46 f}}: app died, no saved state
+05-04 21:24:22.470   551  1902 W InputManager-JNI: Input channel object '787770f com.krishivaas/com.krishivaas.MainActivity (client)' was disposed without first being removed with the input manager!
+05-04 21:24:22.483   551  1902 W ActivityTaskManager: Can't find TaskDisplayArea to determine support for multi window. Task id=46 attached=false
+05-04 21:24:22.483   551  1902 W ActivityTaskManager: Can't find TaskDisplayArea to determine support for multi window. Task id=46 attached=false
+05-04 21:24:22.498  1505  1505 I A       : onApplyWindowInsets: systemWindowInsets=Insets{left=0, top=63, right=0, bottom=761}
+05-04 21:24:22.499  1505  1505 I A       : onApplyWindowInsets: systemWindowInsets=Insets{left=0, top=63, right=0, bottom=761}
+05-04 21:24:22.504   365   365 D goldfish-address-space: claimShared: Ask to claim region [0x3f4000000 0x3f49e4000]
+05-04 21:24:22.509   551   591 I libprocessgroup: Successfully killed process cgroup uid 10148 pid 12133 in 44ms
+05-04 21:24:22.511   365   365 D goldfish-address-space: claimShared: Ask to claim region [0x3f3062000 0x3f3a46000]
+05-04 21:24:22.513   365   406 D goldfish-address-space: claimShared: Ask to claim region [0x3f49e4000 0x3f53c8000]
+05-04 21:24:22.589   551   856 W ActivityManager: Unable to start service Intent { act=android.service.smartspace.SmartspaceService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiSmartspaceService } U=0: not found
+05-04 21:24:22.590   551   856 W RemoteSmartspaceService: could not bind to Intent { act=android.service.smartspace.SmartspaceService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiSmartspaceService } using flags 67112961
+05-04 21:24:22.593   551   551 W ActivityManager: Unbind failed: could not find connection for android.app.LoadedApk$ServiceDispatcher$InnerConnection@cf87143
+05-04 21:24:22.570     0     0 I binder_alloc: 12133: binder_alloc_buf, no vma
+05-04 21:24:22.571     0     0 I binder  : 551:1743 transaction failed 29189/-3, size 1060-0 line 3325
+05-04 21:24:22.577     0     0 I binder  : send failed reply for transaction 434318 to 12133:12223
+05-04 21:24:22.582     0     0 I binder  : undelivered TRANSACTION_COMPLETE
+05-04 21:24:22.583     0     0 I binder  : undelivered TRANSACTION_ERROR: 29189
+05-04 21:24:22.585     0     0 I binder  : undelivered transaction 434338, process died.
+05-04 21:24:22.586     0     0 I binder  : undelivered transaction 434339, process died.
+05-04 21:24:22.588     0     0 I binder  : undelivered transaction 434337, process died.
+05-04 21:24:22.613   343   343 I Zygote  : Process 12133 exited due to signal 9 (Killed)
+05-04 21:24:22.625   497 11869 D BufferPoolAccessor2.0: bufferpool2 0x717704394e18 : 1(524288 size) total buffers - 0(0 size) used buffers - 45/46 (recycle/alloc) - 1/46 (fetch/transfer)
+05-04 21:24:22.625   497 11869 D BufferPoolConnection: connection 2136376654433 closed on death
+05-04 21:24:22.628   551  1744 V ActivityManager: Got obituary of 12133:com.krishivaas
+05-04 21:24:22.628   551  1919 D TextToSpeechManagerPerUserService: Unbinding TTS engine: com.google.android.tts. Reason: client process death is reported
+05-04 21:24:22.628  2647  2647 I GoogleInputMethodService: GoogleInputMethodService.onFinishInputView():2365 
+05-04 21:24:22.631   551  1918 D ConnectivityService: ConnectivityService NetworkRequestInfo binderDied(uid/pid:10148/12133, android.os.BinderProxy@51cd3c0)
+05-04 21:24:22.631   491   517 E mediaserver: unlinkToDeath: removed reference to death recipient but unlink failed.
+05-04 21:24:22.633  1505  1571 I OpenGLRenderer: Davey! duration=200222ms; Flags=1, FrameTimelineVsyncId=30678, IntendedVsync=1596775613206, Vsync=1596775613206, InputEventId=0, HandleInputStart=1596777677000, AnimationStart=1596777699600, PerformTraversalsStart=1596777730600, DrawStart=1596869727200, FrameDeadline=1596808946538, FrameInterval=1596777664000, FrameStartTime=16666666, SyncQueued=1596870922800, SyncStart=1596874410200, IssueDrawCommandsStart=1596875452800, SwapBuffers=1596877713900, FrameCompleted=1797002093000, DequeueBufferDuration=6515400, QueueBufferDuration=2717200, GpuCompleted=1797002093000, SwapBuffersCompleted=1596899585300, DisplayPresentTime=0, 
+05-04 21:24:22.634   413   413 E BpTransactionCompletedListener: Failed to transact (-32)
+05-04 21:24:22.636   551   581 W ActivityManager: setHasOverlayUi called on unknown pid: 12133
+05-04 21:24:22.620   497   519 V C2Store : in ~ComponentModule
+05-04 21:24:22.640   497   519 V C2Store : unloading dll
+05-04 21:24:22.640   551   666 D ConnectivityService: releasing NetworkRequest [ REQUEST id=169, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10148 RequestorUid: 10148 RequestorPkg: com.krishivaas] ] (release request)
+05-04 21:24:22.659  2104  2104 I GsaVoiceInteractionSrv: Handling ACTION_START_HOTWORD
+05-04 21:24:22.663   497   519 D BufferPoolAccessor2.0: Destruction - bufferpool2 0x717704394e18 cached: 0/0M, 0/0% in use; allocs: 46, 98% recycled; transfers: 46, 98% unfetched
+05-04 21:24:22.665  2104  2104 I GsaVoiceInteractionSrv: disregardVoiceMatch: false
+05-04 21:24:22.667  2104  2104 I GsaVoiceInteractionSrv: Cannot start hotword, hotword has been explicitly disabled.
+05-04 21:24:22.673   551   551 W TextToSpeechManagerPerUserService: Disconnected from TTS engine
+05-04 21:24:22.674   365   406 D goldfish-address-space: claimShared: Ask to claim region [0x3f53c8000 0x3f5dac000]
+05-04 21:24:22.675   551   551 I TextToSpeechManagerPerUserService: Failed running callback method: android.os.DeadObjectException
+05-04 21:24:22.690   551   551 W ServiceConnector.Impl: mayInterruptIfRunning not supported - ignoring
+05-04 21:24:22.697  2647  2647 D ActivityThread: ViewRootImpl.ConfigChangedCallback for IME, config={1.0 310mcc260mnc [en_US] ldltr sw411dp w411dp h842dp 420dpi nrml long port finger qwerty/v/v dpad/v winConfig={ mBounds=Rect(0, 0 - 1080, 2400) mAppBounds=Rect(0, 0 - 1080, 2274) mMaxBounds=Rect(0, 0 - 1080, 2400) mWindowingMode=fullscreen mDisplayWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} s.10 fontWeightAdjustment=0}
+05-04 21:24:22.698   365   406 D goldfish-address-space: claimShared: Ask to claim region [0x3f5dac000 0x3f6790000]
+05-04 21:24:22.702   365   406 D goldfish-address-space: claimShared: Ask to claim region [0x3f6790000 0x3f7174000]
+05-04 21:24:22.732   491   517 E IPCThreadState: attemptIncStrongHandle(2): Not supported
