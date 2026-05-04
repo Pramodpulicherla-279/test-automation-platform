@@ -1,0 +1,80 @@
+CRASH START: 05-04 21:02:50.961  9854  9854 D AndroidRuntime: Shutting down VM
+05-04 21:02:50.969  2004  2032 E memtrack: Couldn't load memtrack module
+05-04 21:02:50.969  2004  2032 W android.os.Debug: failed to get memory consumption info: -1
+05-04 21:02:51.028  1746  1746 I Zygote  : Process 9868 exited due to signal 9 (Killed)
+05-04 21:02:51.049  2004  2035 I libprocessgroup: Successfully killed process cgroup uid 10149 pid 9868 in 88ms
+05-04 21:02:51.198  2004  3475 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10149 user=0: from pid 10374
+05-04 21:02:51.207  2278  2278 D CarrierSvcBindHelper: No carrier app for: 0
+05-04 21:02:51.214  2004  3475 I ActivityManager: Force stopping io.appium.uiautomator2.server.test appid=10148 user=0: from pid 10379
+05-04 21:02:51.285  2004  2809 I ActivityManager: Force stopping com.krishivaas appid=10150 user=0: from pid 10387
+05-04 21:02:51.286  2004  2809 I ActivityManager: Killing 9918:com.krishivaas/u0a150 (adj 0): stop com.krishivaas
+05-04 21:02:51.300  2004  2809 W ActivityManager: Scheduling restart of crashed service com.krishivaas/com.uxcam.service.HttpPostService in 1000ms
+05-04 21:02:51.300  2004  2809 W ActivityTaskManager: Force removing ActivityRecord{42daf65 u0 com.krishivaas/.MainActivity t40 f}: app died, no saved state
+05-04 21:02:51.222  2278  2278 D CarrierSvcBindHelper: No carrier app for: 0
+05-04 21:02:51.311  2004  2110 W InputDispatcher: channel 'b79d24 com.krishivaas/com.krishivaas.MainActivity (server)' ~ Consumer closed input channel or an error occurred.  events=0x9
+05-04 21:02:51.312  2004  2110 E InputDispatcher: channel 'b79d24 com.krishivaas/com.krishivaas.MainActivity (server)' ~ Channel is unrecoverably broken and will be disposed!
+05-04 21:02:51.314  2004  2829 D ConnectivityService: ConnectivityService NetworkRequestInfo binderDied(NetworkRequest [ TRACK_DEFAULT id=51, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10150] ], android.os.BinderProxy@809b025)
+05-04 21:02:51.317  2004  2809 W InputDispatcher: Attempted to unregister already unregistered input channel 'b79d24 com.krishivaas/com.krishivaas.MainActivity (server)'
+05-04 21:02:51.323  2004  2122 D ConnectivityService: releasing NetworkRequest [ TRACK_DEFAULT id=51, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10150] ] (release request)
+05-04 21:02:51.314  1854  3966 E OMXNodeInstance: !!! Observer died. Quickly, do something, ... anything...
+05-04 21:02:51.329  2004  2809 W InputReader: Device has associated, but no associated display id.
+05-04 21:02:51.329  1746  1746 I Zygote  : Process 9918 exited due to signal 9 (Killed)
+05-04 21:02:51.329  2004  2809 W InputReader: Device has associated, but no associated display id.
+05-04 21:02:51.340  2004  3030 W WindowManager: Failed looking up window callers=com.android.server.wm.WindowManagerService.windowForClientLocked:5281 com.android.server.wm.WindowState$DeathRecipient.binderDied:2491 android.os.BinderProxy.sendDeathNotice:620 
+05-04 21:02:51.340  2004  3030 I WindowManager: WIN DEATH: null
+05-04 21:02:51.329  2004  2809 I chatty  : uid=1000(system) Binder:2004_B identical 7 lines
+05-04 21:02:51.329  2004  2809 W InputReader: Device has associated, but no associated display id.
+05-04 21:02:51.368  1776  1776 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-04 21:02:51.370  2004  2035 I libprocessgroup: Successfully killed process cgroup uid 10150 pid 9918 in 82ms
+05-04 21:02:51.372  1776  1776 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-04 21:02:51.374  2278  2278 D CarrierSvcBindHelper: No carrier app for: 0
+05-04 21:02:51.375  2004  3475 I ActivityManager: Killing 5986:android.process.acore/u0a54 (adj 975): empty #17
+05-04 21:02:51.376  2004  2026 W ActivityManager: setHasOverlayUi called on unknown pid: 9918
+05-04 21:02:51.377  1776  1776 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-04 21:02:51.392  3700  3785 D EGL_emulation: eglMakeCurrent: 0xd7a1b860: ver 2 0 (tinfo 0xd7a0fe50)
+05-04 21:02:51.458  1776  1776 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-04 21:02:51.464  1776  1776 I chatty  : uid=1000(system) allocator@2.0-s identical 1 line
+05-04 21:02:51.465  1776  1776 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-04 21:02:51.467  2396  2866 D EGL_emulation: eglMakeCurrent: 0xd7a1a300: ver 2 0 (tinfo 0xd7a0f3a0)
+05-04 21:02:51.519  1746  1746 I Zygote  : Process 5986 exited due to signal 9 (Killed)
+05-04 21:02:51.526  2004  3473 D CountryDetector: No listener is left
+05-04 21:02:51.539  2004  2035 I libprocessgroup: Successfully killed process cgroup uid 10054 pid 5986 in 163ms
+05-04 21:02:51.828  2004  2004 W ActivityManager: Unable to start service Intent { act=android.service.appprediction.AppPredictionService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiPredictionService } U=0: not found
+05-04 21:02:51.828  2004  2004 W RemoteAppPredictionService: could not bind to Intent { act=android.service.appprediction.AppPredictionService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiPredictionService } using flags 67108865
+05-04 21:02:51.828  2004  2004 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy_pre_p_apps
+05-04 21:02:51.836  3700  3700 W ThreadPoolDumper: Queue length for executor EventBus is now 11. Perhaps some tasks are too long, or the pool is too small.
+05-04 21:02:51.875  2004  2004 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy_p_apps
+05-04 21:02:51.879  3700  3768 W SessionLifecycleManager: Handover failed. Creating new session controller.
+05-04 21:02:51.926  2004  2004 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy
+05-04 21:02:51.988  3700  3861 W LocationOracle: No location history returned by ContextManager
+05-04 21:02:52.049  3700  3768 I MicroDetectionWorker: #startMicroDetector [speakerMode: 0]
+05-04 21:02:52.052  3700  3768 I AudioController: Created new AudioSource
+05-04 21:02:52.055  3700  3768 I MicroDetectionWorker: onReady
+05-04 21:02:52.060  3700  3833 I MicroRecognitionRunner: Starting detection.
+05-04 21:02:52.061  3700  3833 I MultipleReaderAudioSrc: Using micInputStream
+05-04 21:02:52.061  3700  3817 I MicrophoneInputStream: mic_starting  SR : 16000 CC : 16 SO : 1999
+05-04 21:02:52.079  1797 10415 I AudioFlinger: AudioFlinger's thread 0xec56ccc0 tid=10415 ready to run
+05-04 21:02:52.113  2551 10145 W ctxmgr  : [AclManager] No 3 for (accnt=account#-517948760#, com.google.android.gms(10111):UserVelocityProducer, vrsn=261631016, 0, 3pPkg = null ,  3pMdlId = null ,  pid = 2551 ,  featureId = null). Was: 3 for 1, account#-517948760# [CONTEXT service_id=47 ]
+05-04 21:02:52.118  2004  3478 I AudioService.RecordingActivityMonitor: rec update riid:95 uid:10115 session:81 src:HOTWORD pack:com.google.android.googlequicksearchbox
+05-04 21:02:52.119  3700  3817 I MicrophoneInputStream: mic_started  SR : 16000 CC : 16 SO : 1999
+05-04 21:02:52.153  3700  3768 I MicroDetectionWorker: onReady
+05-04 21:02:52.169  2551  2551 E ctxmgr  : [PlacesProducer] requestPlaceUpdates, priority=105, interval=0 [CONTEXT service_id=47 ]
+05-04 21:02:52.169  2551  2551 E ctxmgr  : bfvo: 8: INTERNAL_ERROR
+05-04 21:02:52.169  2551  2551 E ctxmgr  : 	at bgts.a(:com.google.android.gms@261631016@26.16.31 (100700-900800821):15)
+05-04 21:02:52.169  2551  2551 E ctxmgr  : 	at bgbx.c(:com.google.android.gms@261631016@26.16.31 (100700-900800821):11)
+05-04 21:02:52.169  2551  2551 E ctxmgr  : 	at bgbx.a(:com.google.android.gms@261631016@26.16.31 (100700-900800821):2)
+05-04 21:02:52.169  2551  2551 E ctxmgr  : 	at cxqs.d(:com.google.android.gms@261631016@26.16.31 (100700-900800821):3)
+05-04 21:02:52.169  2551  2551 E ctxmgr  : 	at fpfz.d(:com.google.android.gms@261631016@26.16.31 (100700-900800821):17)
+05-04 21:02:52.169  2551  2551 E ctxmgr  : 	at fpcq.i(:com.google.android.gms@261631016@26.16.31 (100700-900800821):7)
+05-04 21:02:52.169  2551  2551 E ctxmgr  : 	at fpcq.f(:com.google.android.gms@261631016@26.16.31 (100700-900800821):18)
+05-04 21:02:52.169  2551  2551 E ctxmgr  : 	at ctrw.fC(:com.google.android.gms@261631016@26.16.31 (100700-900800821):1)
+05-04 21:02:52.169  2551  2551 E ctxmgr  : 	at ctsh.run(:com.google.android.gms@261631016@26.16.31 (100700-900800821):121)
+05-04 21:02:52.169  2551  2551 E ctxmgr  : 	at fuhy.run(:com.google.android.gms@261631016@26.16.31 (100700-900800821):23)
+05-04 21:02:52.169  2551  2551 E ctxmgr  : 	at bhqg.c(:com.google.android.gms@261631016@26.16.31 (100700-900800821):50)
+05-04 21:02:52.169  2551  2551 E ctxmgr  : 	at bhqg.run(:com.google.android.gms@261631016@26.16.31 (100700-900800821):66)
+05-04 21:02:52.169  2551  2551 E ctxmgr  : 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1167)
+05-04 21:02:52.169  2551  2551 E ctxmgr  : 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:641)
+05-04 21:02:52.169  2551  2551 E ctxmgr  : 	at bhvx.run(:com.google.android.gms@261631016@26.16.31 (100700-900800821):8)
+05-04 21:02:52.169  2551  2551 E ctxmgr  : 	at java.lang.Thread.run(Thread.java:919)
+05-04 21:02:52.244  2551  2586 I GoogleSignatureVerifier: package info is not set correctly
+05-04 21:02:52.273  2551  3163 I ActivityScheduler: nextTriggerTime: 507901, in 28676ms, detectorType: 39, FULL_TYPE alarmWindowMillis: 7500
