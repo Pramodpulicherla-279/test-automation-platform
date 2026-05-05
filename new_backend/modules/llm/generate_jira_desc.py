@@ -1,7 +1,12 @@
-from google import genai
-from google.genai import types
-import json
+import google.generativeai as genai
 import os
+import json
+
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+
+model = genai.GenerativeModel("gemini-pro")
+
+
 
 # ── Client is created lazily so importing this module never raises an error
 # ── even if GEMINI_API_KEY is not yet in the environment at import time.

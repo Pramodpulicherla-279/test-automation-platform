@@ -1,0 +1,80 @@
+CRASH START: 05-05 19:21:24.117  8099  8099 D AndroidRuntime: Shutting down VM
+05-05 19:21:24.124  8288  8288 W unknown:WrappingUtils: Don't know how to round that drawable: com.facebook.react.views.image.ReactImageDownloadListener$EmptyDrawable@31efbb8
+05-05 19:21:24.136  8288  8288 W unknown:WrappingUtils: Don't know how to round that drawable: com.facebook.react.views.image.ReactImageDownloadListener$EmptyDrawable@d336d91
+05-05 19:21:24.149  1748  1748 I Zygote  : Process 8229 exited due to signal 9 (Killed)
+05-05 19:21:24.159  8288  8300 I com.krishivaas: Background young concurrent copying GC freed 135799(4673KB) AllocSpace objects, 2(104KB) LOS objects, 21% free, 13MB/17MB, paused 639us total 319.315ms
+05-05 19:21:24.162  8288  8288 W unknown:WrappingUtils: Don't know how to round that drawable: com.facebook.react.views.image.ReactImageDownloadListener$EmptyDrawable@96e04f6
+05-05 19:21:24.169  2001  2031 I libprocessgroup: Successfully killed process cgroup uid 10149 pid 8229 in 76ms
+05-05 19:21:24.170  8288  8288 W unknown:WrappingUtils: Don't know how to round that drawable: com.facebook.react.views.image.ReactImageDownloadListener$EmptyDrawable@59f40f7
+05-05 19:21:24.176  8288  8288 W unknown:WrappingUtils: Don't know how to round that drawable: com.facebook.react.views.image.ReactImageDownloadListener$EmptyDrawable@a41b64
+05-05 19:21:24.180  8288  8423 I ReactNativeJS: https://api.krishivaas.in/api/v1/farmer-app/get-farmer-farms-list?start=0&crop_name=&length=10&msearch=&year=&season=&crop_type=&app_type=regular-farmer&farm_type=current&active_historical=&year=&crop_season=&farm_crop_type=
+05-05 19:21:24.189  8288  8288 W unknown:WrappingUtils: Don't know how to round that drawable: com.facebook.react.views.image.ReactImageDownloadListener$EmptyDrawable@324c2e8
+05-05 19:21:24.194  8288  8288 W unknown:WrappingUtils: Don't know how to round that drawable: com.facebook.react.views.image.ReactImageDownloadListener$EmptyDrawable@179dd01
+05-05 19:21:24.211  8288  8288 W unknown:WrappingUtils: Don't know how to round that drawable: com.facebook.react.views.image.ReactImageDownloadListener$EmptyDrawable@1ff97a6
+05-05 19:21:24.223  8288  8288 W unknown:WrappingUtils: Don't know how to round that drawable: com.facebook.react.views.image.ReactImageDownloadListener$EmptyDrawable@a6c55e7
+05-05 19:21:24.230  8288  8288 W unknown:WrappingUtils: Don't know how to round that drawable: com.facebook.react.views.image.ReactImageDownloadListener$EmptyDrawable@9f72594
+05-05 19:21:24.247  8288  8288 W unknown:WrappingUtils: Don't know how to round that drawable: com.facebook.react.views.image.ReactImageDownloadListener$EmptyDrawable@b9e6983
+05-05 19:21:24.257  8288  8288 W unknown:WrappingUtils: Don't know how to round that drawable: com.facebook.react.views.image.ReactImageDownloadListener$EmptyDrawable@4eb0700
+05-05 19:21:24.272  8288  8288 W unknown:WrappingUtils: Don't know how to round that drawable: com.facebook.react.views.image.ReactImageDownloadListener$EmptyDrawable@e342b39
+05-05 19:21:24.285  8288  8288 W unknown:WrappingUtils: Don't know how to round that drawable: com.facebook.react.views.image.ReactImageDownloadListener$EmptyDrawable@877f57e
+05-05 19:21:24.294  8288  8288 W unknown:WrappingUtils: Don't know how to round that drawable: com.facebook.react.views.image.ReactImageDownloadListener$EmptyDrawable@5541adf
+05-05 19:21:24.300  2001  3232 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10149 user=0: from pid 9910
+05-05 19:21:24.308  8288  8288 W unknown:WrappingUtils: Don't know how to round that drawable: com.facebook.react.views.image.ReactImageDownloadListener$EmptyDrawable@c79932c
+05-05 19:21:24.308  2001  3232 I ActivityManager: Force stopping io.appium.uiautomator2.server.test appid=10148 user=0: from pid 9912
+05-05 19:21:24.309  2255  2255 D CarrierSvcBindHelper: No carrier app for: 0
+05-05 19:21:24.315  2255  2255 D CarrierSvcBindHelper: No carrier app for: 0
+05-05 19:21:24.332  8288  8288 W unknown:WrappingUtils: Don't know how to round that drawable: com.facebook.react.views.image.ReactImageDownloadListener$EmptyDrawable@aa341f5
+05-05 19:21:24.342  8288  8288 W unknown:WrappingUtils: Don't know how to round that drawable: com.facebook.react.views.image.ReactImageDownloadListener$EmptyDrawable@e19eb8a
+05-05 19:21:24.354  8288  8288 W unknown:WrappingUtils: Don't know how to round that drawable: com.facebook.react.views.image.ReactImageDownloadListener$EmptyDrawable@d8985fb
+05-05 19:21:24.372  8288  8288 W unknown:WrappingUtils: Don't know how to round that drawable: com.facebook.react.views.image.ReactImageDownloadListener$EmptyDrawable@582b618
+05-05 19:21:24.387  8288  8288 W unknown:WrappingUtils: Don't know how to round that drawable: com.facebook.react.views.image.ReactImageDownloadListener$EmptyDrawable@ab30871
+05-05 19:21:24.397  8288  8288 W unknown:WrappingUtils: Don't know how to round that drawable: com.facebook.react.views.image.ReactImageDownloadListener$EmptyDrawable@3333656
+05-05 19:21:24.405  8288  8288 W unknown:WrappingUtils: Don't know how to round that drawable: com.facebook.react.views.image.ReactImageDownloadListener$EmptyDrawable@3e086d7
+05-05 19:21:24.408  2001  2985 I ActivityManager: Force stopping com.krishivaas appid=10150 user=0: from pid 9922
+05-05 19:21:24.409  2001  2985 I ActivityManager: Killing 8288:com.krishivaas/u0a150 (adj 0): stop com.krishivaas
+05-05 19:21:24.413  2715  2715 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.auth.api.phone.service.SmsRetrieverApiService.START pkg=com.google.android.gms }
+05-05 19:21:24.417  2001  2985 W ActivityManager: Scheduling restart of crashed service com.krishivaas/com.uxcam.service.HttpPostService in 1000ms
+05-05 19:21:24.418  2001  2985 W ActivityTaskManager: Force removing ActivityRecord{bc5ada2 u0 com.krishivaas/.MainActivity t5 f}: app died, no saved state
+05-05 19:21:24.435  2001  2985 W InputReader: Device has associated, but no associated display id.
+05-05 19:21:24.436  2001  2985 I chatty  : uid=1000(system) Binder:2001_10 identical 8 lines
+05-05 19:21:24.436  2001  2985 W InputReader: Device has associated, but no associated display id.
+05-05 19:21:24.467  1766  1854 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-05 19:21:24.478  1829  1908 E OMXNodeInstance: !!! Observer died. Quickly, do something, ... anything...
+05-05 19:21:24.485  2001  2142 D ConnectivityService: ConnectivityService NetworkRequestInfo binderDied(NetworkRequest [ TRACK_DEFAULT id=67, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10150] ], android.os.BinderProxy@8905986)
+05-05 19:21:24.487  1748  1748 I Zygote  : Process 8288 exited due to signal 9 (Killed)
+05-05 19:21:24.494  2001  2109 D ConnectivityService: releasing NetworkRequest [ TRACK_DEFAULT id=67, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10150] ] (release request)
+05-05 19:21:24.499  1766  1854 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-05 19:21:24.503  1766  1766 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-05 19:21:24.505  2255  2255 D CarrierSvcBindHelper: No carrier app for: 0
+05-05 19:21:24.511  2001  2023 W ActivityManager: setHasOverlayUi called on unknown pid: 8288
+05-05 19:21:24.513  2001  2031 I libprocessgroup: Successfully killed process cgroup uid 10150 pid 8288 in 98ms
+05-05 19:21:24.524  1766  1854 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-05 19:21:24.526  3093  3412 D EGL_emulation: eglMakeCurrent: 0xdaa1b020: ver 2 0 (tinfo 0xdaa0feb0)
+05-05 19:21:24.555  3093  3093 I bqwu    : onStart
+05-05 19:21:24.573  1766  1854 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-05 19:21:24.605  2001  2294 D ConnectivityService: requestNetwork for uid/pid:10115/3093 NetworkRequest [ TRACK_DEFAULT id=72, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10115] ]
+05-05 19:21:24.579  1766  1854 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-05 19:21:24.606  2001  2106 D UntrustedWifiNetworkFactory: got request NetworkRequest [ TRACK_DEFAULT id=72, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10115] ] with score 60 and serial -1
+05-05 19:21:24.606  2001  2106 D WifiNetworkFactory: got request NetworkRequest [ TRACK_DEFAULT id=72, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10115] ] with score 60 and serial -1
+05-05 19:21:24.607  2410  2821 D EGL_emulation: eglMakeCurrent: 0xdaa1a2a0: ver 2 0 (tinfo 0xdaa0f870)
+05-05 19:21:24.610  2255  2255 D PhoneSwitcherNetworkRequstListener: got request NetworkRequest [ TRACK_DEFAULT id=72, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10115] ] with score 60 and serial -1
+05-05 19:21:24.612  3093  3093 I bout    : (REDACTED) [%s] onStart()
+05-05 19:21:24.617  3093  3093 I bqwu    : onResume
+05-05 19:21:24.646  2715  2715 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.inappreach.service.START dat=chimera-action: cmp=com.google.android.gms/.chimera.GmsApiService }
+05-05 19:21:24.646  2715  2715 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.inappreach.service.START dat=chimera-action: cmp=com.google.android.gms/.chimera.GmsApiService }
+05-05 19:21:24.688  2001  2028 I ActivityTaskManager: Displayed com.google.android.permissioncontroller/com.android.packageinstaller.permission.ui.GrantPermissionsActivity: +5m27s236ms
+05-05 19:21:24.731  2001  2001 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy_pre_p_apps
+05-05 19:21:24.745  2001  2001 W ActivityManager: Unable to start service Intent { act=android.service.appprediction.AppPredictionService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiPredictionService } U=0: not found
+05-05 19:21:24.746  2001  2001 W RemoteAppPredictionService: could not bind to Intent { act=android.service.appprediction.AppPredictionService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiPredictionService } using flags 67108865
+05-05 19:21:24.756  2001  2001 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy_p_apps
+05-05 19:21:24.998  2001  2001 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy
+05-05 19:21:27.834  2001  2001 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy_pre_p_apps
+05-05 19:21:27.853  2001  2001 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy_p_apps
+05-05 19:21:27.872  2001  2001 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy
+05-05 19:21:29.559  2001  6775 I ActivityManager: Force stopping com.krishivaas appid=10150 user=0: from pid 10012
+05-05 19:21:29.566  2255  2255 D CarrierSvcBindHelper: No carrier app for: 0
+05-05 19:21:29.621  2001  6775 I ActivityManager: Force stopping com.krishivaas appid=10150 user=0: clear data
+05-05 19:21:29.623  2001  2029 I ActivityManager: Force stopping com.krishivaas appid=10150 user=-1: clearApplicationUserData
+05-05 19:21:29.624  2001  6775 I ConditionProviders: Disallowing condition provider com.krishivaas
+05-05 19:21:29.633  1776  1966 D AF::TrackHandle: OpPlayAudio: track:56 usage:13 not muted
+05-05 19:21:29.639  1776  1966 I chatty  : uid=1041(audioserver) Binder:1776_1 identical 5 lines

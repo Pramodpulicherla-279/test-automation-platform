@@ -1,6 +1,34 @@
 [
     {
-        "step": "Click Next button on language selection",
+        "step": "Click Next on language selection",
+        "status": "Success"
+    },
+    {
+        "step": "Allow picture permission",
+        "status": "Skipped (dialog not shown)"
+    },
+    {
+        "step": "Allow location permission",
+        "status": "Skipped (dialog not shown)"
+    },
+    {
+        "step": "Allow audio permission",
+        "status": "Skipped (dialog not shown)"
+    },
+    {
+        "step": "Allow notifications permission",
+        "status": "Skipped (dialog not shown)"
+    },
+    {
+        "step": "Enter valid phone number",
+        "status": "Success"
+    },
+    {
+        "step": "Click Next after phone number",
+        "status": "Success"
+    },
+    {
+        "step": "Click Verify OTP",
         "status": "Success"
     }
 ]

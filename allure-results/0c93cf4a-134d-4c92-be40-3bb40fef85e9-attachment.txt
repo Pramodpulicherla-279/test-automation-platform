@@ -1,0 +1,80 @@
+CRASH START: 05-05 18:44:52.064  6010  6010 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+05-05 18:44:52.079  5987  6028 I Finsky:background: [423] IV2: IQv2 is disabled. Recovering all active installs: []
+05-05 18:44:52.080  2001  2031 I libprocessgroup: Successfully killed process cgroup uid 10061 pid 5270 in 100ms
+05-05 18:44:52.087  1748  1748 D Zygote  : Forked child process 6047
+05-05 18:44:52.099  2001  2030 I ActivityManager: Start proc 6047:com.android.mtp/u0a59 for content provider {com.android.mtp/com.android.mtp.MtpDocumentsProvider}
+05-05 18:44:52.104  6047  6047 W com.android.mt: Unexpected CPU variant for X86 using defaults: x86
+05-05 18:44:52.133  6047  6047 E com.android.mt: Not starting debugger since process cannot load the jdwp agent.
+05-05 18:44:52.138  6034  6034 E oid.apps.photo: Not starting debugger since process cannot load the jdwp agent.
+05-05 18:44:52.179  6010  6010 E libc    : Access denied finding property "persist.device_config.runtime_native_boot.enable_apex_image"
+05-05 18:44:52.180  6010  6010 I AndroidRuntime: Using default boot image
+05-05 18:44:52.180  6010  6010 E libc    : Access denied finding property "persist.device_config.runtime_native_boot.disable_lock_profiling"
+05-05 18:44:52.180  6010  6010 I AndroidRuntime: Leaving lock profiling enabled
+05-05 18:44:52.180  6010  6010 E libc    : Access denied finding property "persist.device_config.runtime_native_boot.enable_generational_cc"
+05-05 18:44:52.169  6010  6010 W app_process: type=1400 audit(0.0:20): avc: denied { read } for name="u:object_r:device_config_runtime_native_boot_prop:s0" dev="tmpfs" ino=166 scontext=u:r:shell:s0 tcontext=u:object_r:device_config_runtime_native_boot_prop:s0 tclass=file permissive=0
+05-05 18:44:52.169  6010  6010 I chatty  : uid=2000(shell) app_process identical 1 line
+05-05 18:44:52.169  6010  6010 W app_process: type=1400 audit(0.0:22): avc: denied { read } for name="u:object_r:device_config_runtime_native_boot_prop:s0" dev="tmpfs" ino=166 scontext=u:r:shell:s0 tcontext=u:object_r:device_config_runtime_native_boot_prop:s0 tclass=file permissive=0
+05-05 18:44:52.226  6010  6010 W app_process: Could not reserve sentinel fault page
+05-05 18:44:52.235  2001  2686 I ActivityManager: Killing 4565:com.google.android.partnersetup/u0a114 (adj 985): empty #17
+05-05 18:44:52.236  6034  6034 I oid.apps.photo: The ClassLoaderContext is a special shared library.
+05-05 18:44:52.246  6047  6047 I com.android.mt: The ClassLoaderContext is a special shared library.
+05-05 18:44:52.279  1748  1748 I Zygote  : Process 4565 exited due to signal 9 (Killed)
+05-05 18:44:52.279  2001  2031 I libprocessgroup: Successfully killed process cgroup uid 10114 pid 4565 in 42ms
+05-05 18:44:52.289  5987  6027 I Finsky:background: [422] Device is ineligible for platform Cronet and will use embedded Cronet instead.
+05-05 18:44:52.300  2001  2019 D ConnectivityService: requestNetwork for uid/pid:10107/5987 NetworkRequest [ TRACK_DEFAULT id=54, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10107] ]
+05-05 18:44:52.304  5987  6027 D HttpFlagsLoader: Not loading HTTP flags because they are disabled in the manifest
+05-05 18:44:52.305  2001  2106 D UntrustedWifiNetworkFactory: got request NetworkRequest [ TRACK_DEFAULT id=54, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10107] ] with score 60 and serial -1
+05-05 18:44:52.306  2001  2106 D WifiNetworkFactory: got request NetworkRequest [ TRACK_DEFAULT id=54, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10107] ] with score 60 and serial -1
+05-05 18:44:52.306  2255  2255 D PhoneSwitcherNetworkRequstListener: got request NetworkRequest [ TRACK_DEFAULT id=54, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10107] ] with score 60 and serial -1
+05-05 18:44:52.324  5987  6022 I Finsky:background: [417] IQ: start evaluating install requests.
+05-05 18:44:52.324  5987  6022 I Finsky:background: [417] IQ: no jobs active. Skipping
+05-05 18:44:52.335  5987  6076 I Finsky:background: [431] IQ: Pruning inactive install requests
+05-05 18:44:52.376  2001  2900 D ConnectivityService: requestNetwork for uid/pid:10107/5987 NetworkRequest [ TRACK_DEFAULT id=55, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10107] ]
+05-05 18:44:52.380  2001  2106 D UntrustedWifiNetworkFactory: got request NetworkRequest [ TRACK_DEFAULT id=55, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10107] ] with score 60 and serial -1
+05-05 18:44:52.381  2001  2106 D WifiNetworkFactory: got request NetworkRequest [ TRACK_DEFAULT id=55, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10107] ] with score 60 and serial -1
+05-05 18:44:52.382  2255  2255 D PhoneSwitcherNetworkRequstListener: got request NetworkRequest [ TRACK_DEFAULT id=55, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10107] ] with score 60 and serial -1
+05-05 18:44:52.407  5987  6027 I cn_CronetLibraryLoader: Cronet version: 147.0.7727.49, arch: i686
+05-05 18:44:52.441  5987  6027 I Finsky:background: [422] CronetEngine is present. Using Cronet for the networking stack.
+05-05 18:44:52.613  1748  1748 D Zygote  : Forked child process 6096
+05-05 18:44:52.620  6096  6096 W droid.apps.doc: Unexpected CPU variant for X86 using defaults: x86
+05-05 18:44:52.632  2001  2030 I ActivityManager: Start proc 6096:com.google.android.apps.docs/u0a145 for content provider {com.google.android.apps.docs/com.google.android.apps.docs.storagebackend.StorageBackendContentProvider}
+05-05 18:44:52.637  6096  6096 E droid.apps.doc: Not starting debugger since process cannot load the jdwp agent.
+05-05 18:44:52.673  5987  6027 I Finsky:background: [422] Subscription detail: DataSubscriptionInfo{groupIdLevel1=null, serviceProviderName=[Zr1R7g28S8p7iucp_gnNJJtsRl-pgO3Y6eIkCh24Iy0], simCarrierId=1}
+05-05 18:44:52.680  5987  5987 I Finsky:background: [2] onSubscriptionsChanged
+05-05 18:44:52.704  5987  6022 I Finsky:background: [417] IQ: 0 scheduled install statuses found to proceed. 
+05-05 18:44:52.730  2001  2985 W ActivityManager: Slow operation: 55ms so far, now at attachApplicationLocked: immediately after bindApplication
+05-05 18:44:52.730  2001  2985 W ActivityManager: Slow operation: 55ms so far, now at attachApplicationLocked: after updateLruProcessLocked
+05-05 18:44:52.730  2001  2985 W ActivityManager: Slow operation: 55ms so far, now at attachApplicationLocked: after mServices.attachApplicationLocked
+05-05 18:44:52.732  2001  2985 I ActivityManager: Killing 3142:com.google.process.gapps/u0a111 (adj 985): empty #17
+05-05 18:44:52.734  2001  2985 W ActivityManager: Slow operation: 60ms so far, now at attachApplicationLocked: after updateOomAdjLocked
+05-05 18:44:52.758  6010  6010 D ICU     : Time zone APEX file found: /apex/com.android.tzdata/etc/icu/icu_tzdata.dat
+05-05 18:44:52.766  6096  6096 I droid.apps.doc: The ClassLoaderContext is a special shared library.
+05-05 18:44:52.779  1748  1748 I Zygote  : Process 3142 exited due to signal 9 (Killed)
+05-05 18:44:52.780  6010  6010 W app_process: Unexpected CPU variant for X86 using defaults: x86
+05-05 18:44:52.786  6096  6096 I droid.apps.doc: The ClassLoaderContext is a special shared library.
+05-05 18:44:52.789  2001  2031 I libprocessgroup: Successfully killed process cgroup uid 10111 pid 3142 in 47ms
+05-05 18:44:52.802  6010  6010 I app_process: The ClassLoaderContext is a special shared library.
+05-05 18:44:52.847  6010  6010 W app_process: JNI RegisterNativeMethods: attempt to register 0 native methods for android.media.AudioAttributes
+05-05 18:44:52.861  6010  6010 D AndroidRuntime: Calling main entry com.android.commands.am.Am
+05-05 18:44:52.866  2001  2294 I ActivityManager: Killing 5293:com.google.android.apps.maps/u0a127 (adj 985): empty #17
+05-05 18:44:52.887  1754  1754 W audio_hw_generic: Not supplying enough data to HAL, expected position 441125 , only wrote 222757
+05-05 18:44:52.908  2001  2980 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10149 user=0: start instr
+05-05 18:44:52.910  1748  1748 I Zygote  : Process 5293 exited due to signal 9 (Killed)
+05-05 18:44:52.913  2001  2031 I libprocessgroup: Successfully killed process cgroup uid 10127 pid 5293 in 46ms
+05-05 18:44:52.937  2532  6136 I Fitness : (REDACTED) FitCleanupIntentOperation received Intent %s
+05-05 18:44:52.950  1748  1748 D Zygote  : Forked child process 6138
+05-05 18:44:52.961  6138  6138 W ssioncontrolle: Unexpected CPU variant for X86 using defaults: x86
+05-05 18:44:52.965  2001  2030 W ActivityManager: Slow operation: 69ms so far, now at startProcess: returned from zygote!
+05-05 18:44:52.966  2001  2030 W ActivityManager: Slow operation: 70ms so far, now at startProcess: done updating battery stats
+05-05 18:44:52.966  2001  2030 W ActivityManager: Slow operation: 70ms so far, now at startProcess: building log message
+05-05 18:44:52.966  2001  2030 I ActivityManager: Start proc 6138:com.google.android.permissioncontroller/u0a73 for broadcast {com.google.android.permissioncontroller/com.android.packageinstaller.permission.service.LocationAccessCheck$PackageResetHandler}
+05-05 18:44:52.966  2001  2030 W ActivityManager: Slow operation: 70ms so far, now at startProcess: starting to update pids map
+05-05 18:44:52.966  2001  2030 W ActivityManager: Slow operation: 70ms so far, now at startProcess: done updating pids map
+05-05 18:44:52.966  2001  2030 W ActivityManager: Slow operation: 56ms so far, now at startProcess: asking zygote to start proc
+05-05 18:44:52.974  6138  6138 E ssioncontrolle: Not starting debugger since process cannot load the jdwp agent.
+05-05 18:44:52.985  1748  1748 D Zygote  : Forked child process 6153
+05-05 18:44:52.989  2001  2030 W ActivityManager: Slow operation: 78ms so far, now at startProcess: returned from zygote!
+05-05 18:44:52.989  2001  2030 W ActivityManager: Slow operation: 79ms so far, now at startProcess: done updating battery stats
+05-05 18:44:52.990  2001  2030 W ActivityManager: Slow operation: 80ms so far, now at startProcess: building log message
+05-05 18:44:52.990  2001  2030 I ActivityManager: Start proc 6153:io.appium.uiautomator2.server/u0a149 for added application io.appium.uiautomator2.server
+05-05 18:44:52.990  2001  2030 W ActivityManager: Slow operation: 80ms so far, now at startProcess: starting to update pids map

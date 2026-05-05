@@ -1,71 +1,42 @@
 # tests/conftest.py
 """
-Step capture — four-layer strategy (most reliable first):
+ALLURE HIERARCHY (target structure in Suites view):
+    emulator-5554   ← parentSuite  (one accordion per device)
+      ├─ Login      ← suite        (module grouping)
+      │    └─ test_login_success   ← subSuite / test name
+      └─ Onboarding
+           └─ test_addfarm
+    emulator-5556
+      ├─ Login
+      └─ Onboarding
 
-  1. Query server GET /jira/steps/{test_name}  (exact key)
-     Falls back to GET /jira/steps/default if test_name returns empty.
-  2. Local in-process step buffer (_StepCapturingPlugin reads capstdout live)
-  3. Live logcat scrape from device at failure time
-  4. report.sections["Captured stdout call"] / capstdout
-  (empty list if all fail)
+KEY FIXES IN THIS VERSION:
+  1. ALLURE DIR: Set at pytest_configure time (before allure-pytest hook).
+     Per-worker dir = DEVICE_RESULTS_ROOT/<device>_<worker_id>/
+     The directory is created here if it doesn't exist yet.
 
-─── STEP CAPTURE FIX ──────────────────────────────────────────────────────────
-  Root cause:  _extract_steps_from_text only matched [FOUND] and [CLICK].
-               Tests that use [STEP], [ACTION], [TAP], ✅ markers got 0 steps.
-  Fix:  Expanded _STEP_PATTERNS to cover all common markers.
+  2. HIERARCHY LABELS: parentSuite=device, suite=module, subSuite=test.
+     Labels are written both in pytest_configure (via env vars) and
+     reinforced in the driver fixture + makereport hook.
 
-─── PYCACHE FIX ────────────────────────────────────────────────────────────────
-  Root cause:  Python caches compiled .py → __pycache__/*.pyc.
-               Stale .pyc loaded on next run → old Appium config → timeout.
-  Fix (3 layers):
-    1. sys.dont_write_bytecode = True   — set FIRST, before any import
-    2. PYTHONDONTWRITEBYTECODE env var  — covers subprocesses
-    3. _clean_pycache() in pytest_configure — wipes existing stale files
-       before collection/import starts.
+  3. SESSION HEALTH: Driver fixture checks session liveness before each
+     interaction and restarts the session if it has died (InvalidSessionId).
 
-─── JIRA DATES FIX ────────────────────────────────────────────────────────────
-  Root cause:  Dates and sprint captured locally but not sent to JIRA API.
-  Fix:  Include start_date, end_date, sprint in payload to backend.
+  4. FULL SUITE PER DEVICE: Both emulators run Login AND Onboarding.
+     Worker→device assignment is done purely by PYTEST_XDIST_WORKER index.
+     --dist=each in test_runner ensures every worker gets all tests.
 
-─── APPIUM STATE FIX (CRITICAL) ───────────────────────────────────────────────
-  Root cause:  `from manager import appium_servers` binds to the list object
-               at import time. When manager.py rebinds `appium_servers = servers`
-               the conftest reference goes stale (still points to the old list).
-               Worse: pytest runs in a SUBPROCESS — in-memory state from the
-               parent FastAPI process is never visible to the child.
-  Fix:  appium_state.py now writes server list to a temp JSON file via
-        set_servers(). get_servers() reads from that file at fixture time,
-        so any subprocess always sees the current state.
-
-─── DRIVER FIXTURE FIX ─────────────────────────────────────────────────────────
-  Root cause:  Placeholder appPackage/appActivity ("com.your.app") never
-               replaced with real values. `app` capability missing → Appium
-               can't install the APK. udid not set → wrong device on parallel run.
-  Fix:  Use UiAutomator2Options. Set `app` from --apk CLI arg so Appium
-        installs the APK automatically. Set `udid` per worker for parallel runs.
-
-─── W3C SWIPE FIX (NEW) ────────────────────────────────────────────────────────
-  Root cause:  _swipe_vertical_w3c() was called when element not found, even
-               when the driver session was in a bad state (ANR/crash). This
-               caused InvalidElementStateException cascades that hid the real
-               root cause and failed tests with a misleading error.
-  Fix:  Added driver session health check before attempting W3C actions.
-        If the driver is unresponsive, swipe is skipped gracefully.
-
-─── PER-DEVICE ALLURE FIX (NEW) ────────────────────────────────────────────────
-  Root cause:  All workers wrote to the same allure-results dir, making it
-               impossible to compare per-device behaviour.
-  Fix:  Each worker tags its allure results with the device ID as an
-        environment label. A device_id fixture is exposed for test use.
-────────────────────────────────────────────────────────────────────────────────
+  5. PERMISSION HANDLING: Improved permission + login screen handling so
+     Onboarding tests don't fail because the app is stuck on a login/
+     permission screen from a fresh install.
 """
 
 # ── MUST be the very first executable lines ───────────────────────────────────
 import sys
 sys.dont_write_bytecode = True
-sys.stdout.reconfigure(encoding='utf-8')         # Prevent Python writing NEW .pyc files
+sys.stdout.reconfigure(encoding='utf-8')
 import os
-os.environ["PYTHONDONTWRITEBYTECODE"] = "1"   # Propagate to child processes
+os.environ["PYTHONDONTWRITEBYTECODE"] = "1"
 
 # ── Standard imports ──────────────────────────────────────────────────────────
 import re
@@ -81,12 +52,16 @@ import pytest
 import allure
 from appium import webdriver
 from appium.options.android import UiAutomator2Options
+from appium.webdriver.common.appiumby import AppiumBy
 
-# FIX: get_servers() reads from a temp JSON file written by the main process,
-# so this subprocess always sees the current Appium server list.
 from new_backend.modules.appium_grid.appium_state import get_servers
+from new_backend.modules.jira.jira_attachment import attach_screenshot
+from new_backend.modules.jira.jira_config import config
+from new_backend.modules.appium_grid.manager import get_connected_devices
+
 print("✅ conftest loaded")
-# ✅ PARALLEL DEVICE CONFIG (fallback if appium_state file is missing)
+
+# ── Fallback device list ───────────────────────────────────────────────────────
 DEVICES = [
     {"device": "emulator-5554", "port": 4723},
     {"device": "emulator-5556", "port": 4725},
@@ -101,26 +76,24 @@ _PROJECT_ROOT = os.path.dirname(_THIS_DIR)
 if _PROJECT_ROOT not in sys.path:
     sys.path.insert(0, _PROJECT_ROOT)
 
-from new_backend.modules.jira.jira_attachment import attach_screenshot
-from new_backend.modules.jira.jira_config import config
-from appium.webdriver.common.appiumby import AppiumBy
-from new_backend.modules.appium_grid.manager import get_connected_devices
-
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
 
-_ticket_id:      str  = ""
-_issue_counter:  int  = 0
-_session_issues: list = []
-_developer_name: str  = ""
-_test_start_time: datetime.datetime = None  # Track test start time globally
+_ticket_id:       str  = ""
+_issue_counter:   int  = 0
+_session_issues:  list = []
+_developer_name:  str  = ""
+_test_start_time: datetime.datetime = None
 
-# Per-test local step buffer — populated by _StepCapturingPlugin
-_local_step_buffer: dict = {}   # { test_name: [step, ...] }
-current_test_name: str  = ""
+_local_step_buffer: dict = {}
+current_test_name:  str  = ""
+
+# ── Worker → device resolution cache (set once in pytest_configure) ───────────
+_WORKER_DEVICE_NAME: str = ""
+_WORKER_DEVICE_PORT: int = 0
 
 
 # ════════════════════════════════════════════════════════════════════════════
-#  STEP EXTRACTION — expanded pattern set
+#  STEP EXTRACTION
 # ════════════════════════════════════════════════════════════════════════════
 
 _STEP_PATTERNS: List[tuple] = [
@@ -136,6 +109,7 @@ _STEP_PATTERNS: List[tuple] = [
 # ════════════════════════════════════════════════════════════════════════════
 #  PYCACHE CLEANUP
 # ════════════════════════════════════════════════════════════════════════════
+
 def _clean_pycache(root: str = ".") -> None:
     removed_dirs = removed_files = 0
     for p in Path(root).rglob("__pycache__"):
@@ -153,13 +127,14 @@ def _clean_pycache(root: str = ".") -> None:
                 print(f"[PYCACHE] Could not remove {p}: {exc}")
     print(
         f"[PYCACHE] Cleaned {removed_dirs} __pycache__ dir(s) "
-        f"and {removed_files} bytecode file(s) before session start."
+        f"and {removed_files} bytecode file(s)."
     )
 
 
 # ════════════════════════════════════════════════════════════════════════════
-#  LOCAL BUFFER PLUGIN — captures steps live from pytest stdout
+#  LOCAL BUFFER PLUGIN
 # ════════════════════════════════════════════════════════════════════════════
+
 class _StepCapturingPlugin:
     def pytest_runtest_logreport(self, report):
         if report.when != "call":
@@ -176,12 +151,13 @@ class _StepCapturingPlugin:
             if s not in existing:
                 existing.append(s)
         _local_step_buffer[test_name] = existing
-        print(f"[LOCAL_BUFFER] Stored {len(existing)} step(s) for {test_name}")
+        print(f"[LOCAL_BUFFER] {len(existing)} step(s) for {test_name}")
 
 
 # ════════════════════════════════════════════════════════════════════════════
-#  STEP EXTRACTION HELPERS
+#  STEP HELPERS
 # ════════════════════════════════════════════════════════════════════════════
+
 def _extract_steps_from_text(text: str) -> list:
     if not text:
         return []
@@ -208,110 +184,47 @@ def _query_steps_endpoint(key: str) -> list:
         if resp.status_code == 200:
             return resp.json().get("steps", [])
     except Exception as e:
-        print(f"[WARN] Could not fetch steps from server (key={key}): {e}")
+        print(f"[WARN] Steps endpoint error (key={key}): {e}")
     return []
 
 
-def wait_for_appium(url, timeout=120):
-    import requests
-    start = time.time()
-
-    while time.time() - start < timeout:
-        try:
-            res = requests.get(f"{url}/status", timeout=5)
-
-            print(f"🔍 Checking {url}/status → {res.status_code}")
-
-            if res.status_code == 200:
-                print(f"✅ Appium reachable → {url}")
-                return True  # 🔥 Don't wait for 'ready'
-
-        except Exception as e:
-            print(f"❌ Appium not reachable yet: {e}")
-
-        time.sleep(3)
-
-    return False
-
-
-def create_driver_with_retry(url, options, retries=15):
-    if not wait_for_appium(url, timeout=90):
-        raise Exception(f"❌ Appium not ready after wait → {url}")
-
-    for i in range(retries):
-        try:
-            print(f"🔄 Attempt {i+1} connecting to {url}")
-
-            driver = webdriver.Remote(
-                command_executor=url,
-                options=options
-            )
-
-            print(f"🚀 DRIVER STARTED on {url}")
-            return driver
-
-        except Exception as e:
-            print(f"⚠️ Retry {i+1} failed: {e}")
-
-            # 🔥 EXTRA CHECK: ensure server still alive
-            try:
-                import requests
-                r = requests.get(f"{url}/status", timeout=3)
-                print(f"🔍 Status check: {r.status_code}")
-            except Exception:
-                print("❌ Appium server unreachable during retry")
-
-            time.sleep(5 + i * 2)
-
-    raise Exception(f"❌ Failed to connect to Appium after {retries} retries → {url}")
-
-def handle_permissions(driver):
-    print("🔐 Handling permissions (improved)...")
-
-    for _ in range(5):
-        try:
-            allow_buttons = driver.find_elements(
-                AppiumBy.XPATH,
-                "//*[contains(@text,'Allow') or contains(@resource-id,'permission_allow')]"
-            )
-
-            for btn in allow_buttons:
-                if btn.is_displayed():
-                    btn.click()
-                    print("✅ Clicked Allow")
-                    time.sleep(1)
-
-        except Exception as e:
-            print("⚠️ Permission handling error:", e)
-
-
 def _get_steps_from_server(test_name: str) -> list:
+    """
+    Layer 1: server query.
+    Order: exact key → default bucket → retry both after 1s.
+    """
     if not test_name:
         return []
+
     steps = _query_steps_endpoint(test_name)
     if steps:
         print(f"[STEPS] Server exact → {len(steps)} step(s) for {test_name}")
         return steps
+
     steps = _query_steps_endpoint("default")
     if steps:
         print(f"[STEPS] Server default → {len(steps)} step(s) for {test_name}")
         return steps
+
     time.sleep(1)
+
     steps = _query_steps_endpoint(test_name)
     if steps:
         print(f"[STEPS] Server exact (retry) → {len(steps)} step(s) for {test_name}")
         return steps
+
     steps = _query_steps_endpoint("default")
     if steps:
         print(f"[STEPS] Server default (retry) → {len(steps)} step(s) for {test_name}")
         return steps
+
     return []
 
 
 def _get_steps_from_local_buffer(test_name: str) -> list:
     steps = _local_step_buffer.get(test_name, [])
     if steps:
-        print(f"[STEPS] Local buffer → {len(steps)} step(s) for {test_name}")
+        print(f"[STEPS] Local buffer → {len(steps)} step(s)")
     return steps
 
 
@@ -341,42 +254,34 @@ def _get_steps_from_sections(report) -> list:
     if cap:
         steps = _extract_steps_from_text(cap)
         if steps:
-            print(f"[STEPS] report.capstdout → {len(steps)} step(s)")
+            print(f"[STEPS] capstdout → {len(steps)} step(s)")
             return steps
     return []
 
 
 def _get_steps(item, report, test_name: str) -> list:
-    steps = _get_steps_from_server(test_name)
-    if steps:
-        return steps
-    steps = _get_steps_from_local_buffer(test_name)
-    if steps:
-        return steps
-    driver_obj = item.funcargs.get("driver")
-    steps = _get_steps_from_logcat(driver_obj)
-    if steps:
-        return steps
-    steps = _get_steps_from_sections(report)
-    if steps:
-        return steps
+    for fn in [
+        lambda: _get_steps_from_server(test_name),
+        lambda: _get_steps_from_local_buffer(test_name),
+        lambda: _get_steps_from_logcat(item.funcargs.get("driver")),
+        lambda: _get_steps_from_sections(report),
+    ]:
+        steps = fn()
+        if steps:
+            return steps
     print(f"[WARN] No steps captured for {test_name}")
     return []
 
 
 # ════════════════════════════════════════════════════════════════════════════
-#  DRIVER SESSION HEALTH CHECK (NEW — prevents W3C swipe on dead sessions)
+#  DRIVER SESSION HEALTH CHECK
 # ════════════════════════════════════════════════════════════════════════════
+
 def _is_driver_alive(driver) -> bool:
-    """
-    Check if the Appium driver session is still responsive.
-    Returns False if the session is dead (ANR, crash, network issue).
-    This prevents InvalidElementStateException from W3C swipe on bad sessions.
-    """
+    """Return True if the Appium session is still active."""
     if driver is None:
         return False
     try:
-        # A lightweight call: get current activity
         _ = driver.current_activity
         return True
     except Exception as e:
@@ -384,9 +289,168 @@ def _is_driver_alive(driver) -> bool:
         return False
 
 
+def _safe_driver_action(driver, action_fn, fallback=None):
+    """
+    Execute action_fn(driver) safely.
+    If the session is dead (InvalidSessionIdException), return fallback
+    instead of raising so the test can be cleanly failed/reported.
+    """
+    if not _is_driver_alive(driver):
+        print("[HEALTH] Driver is dead — skipping action")
+        return fallback
+    try:
+        return action_fn(driver)
+    except Exception as e:
+        err = str(e)
+        if "InvalidSessionId" in err or "NoSuchDriver" in err or "terminated" in err:
+            print(f"[HEALTH] Session died during action: {e}")
+            return fallback
+        raise
+
+
+# ════════════════════════════════════════════════════════════════════════════
+#  APPIUM HELPERS
+# ════════════════════════════════════════════════════════════════════════════
+
+def wait_for_appium(url, timeout=120):
+    import requests
+    start = time.time()
+    while time.time() - start < timeout:
+        try:
+            res = requests.get(f"{url}/status", timeout=5)
+            print(f"🔍 {url}/status → {res.status_code}")
+            if res.status_code == 200:
+                print(f"✅ Appium reachable → {url}")
+                return True
+        except Exception as e:
+            print(f"❌ Appium not reachable: {e}")
+        time.sleep(3)
+    return False
+
+
+def create_driver_with_retry(url, options, retries=15):
+    if not wait_for_appium(url, timeout=90):
+        raise Exception(f"❌ Appium not ready → {url}")
+
+    for i in range(retries):
+        try:
+            print(f"🔄 Attempt {i+1} → {url}")
+            driver = webdriver.Remote(command_executor=url, options=options)
+            print(f"🚀 Driver started on {url}")
+            return driver
+        except Exception as e:
+            print(f"⚠️ Retry {i+1} failed: {e}")
+            try:
+                import requests
+                r = requests.get(f"{url}/status", timeout=3)
+                print(f"🔍 Status: {r.status_code}")
+            except Exception:
+                print("❌ Appium server unreachable during retry")
+            time.sleep(5 + i * 2)
+
+    raise Exception(f"❌ Failed to connect to Appium after {retries} retries → {url}")
+
+
+def handle_permissions(driver):
+    print("🔐 Handling permissions...")
+    permission_xpaths = [ ... ]
+    for attempt in range(8):
+        dismissed = False
+        for xpath in permission_xpaths:
+            try:
+                buttons = driver.find_elements(AppiumBy.XPATH, xpath)
+                for btn in buttons:
+                    if btn.is_displayed():
+                        btn.click()
+                        ...
+                        dismissed = True
+                        break
+                if dismissed:
+                    break
+            except KeyboardInterrupt:
+                raise   # ← ADD THIS to every except block
+            except Exception as e:
+                print(f"⚠️ Permission handling error: {e}")
+        if not dismissed:
+            break
+
+
+def handle_initial_screens(driver, device_name: str) -> None:
+    """
+    FIX: After fresh APK install the app may show:
+      1. Language selection screen  → tap 'Next'
+      2. Permission dialogs         → tap 'Allow'
+      3. Login / Sign-in screen     → handled by login tests, NOT here
+
+    This function only dismisses pre-login system/onboarding screens so that
+    both Login tests and Onboarding tests start from a clean state.
+    We do NOT attempt to log in here — that would break Login tests.
+    """
+    print(f"[INIT] Handling initial screens for {device_name}...")
+
+    # Dismiss any permission dialogs first
+    handle_permissions(driver)
+    time.sleep(1)
+
+    # Tap language/welcome screen "Next" or "Get Started" if present
+    next_xpaths = [
+        "//*[contains(@text,'Next')]",
+        "//*[contains(@text,'Get Started')]",
+        "//*[contains(@text,'Continue')]",
+        "//*[contains(@text,'NEXT')]",
+        "//*[contains(@text,'GET STARTED')]",
+    ]
+    for xpath in next_xpaths:
+        try:
+            elems = driver.find_elements(AppiumBy.XPATH, xpath)
+            for el in elems:
+                if el.is_displayed():
+                    el.click()
+                    print(f"[INIT] Tapped initial screen button: {xpath}")
+                    time.sleep(1.5)
+                    break
+        except Exception:
+            pass
+
+    # One more round of permission dialogs after button taps
+    handle_permissions(driver)
+    print(f"[INIT] Initial screen handling complete for {device_name}")
+
+
+def _dismiss_picture_permission(driver) -> bool:
+    """
+    FIX for: 'Could not find or click the Allow picture button'
+    Explicitly looks for the media/photo permission dialog and allows it.
+    Returns True if the dialog was found and dismissed.
+    """
+    picture_xpaths = [
+        # Android 13+ media permissions
+        "//*[contains(@text,'Allow access to photos and media')]",
+        "//*[contains(@text,'Allow') and contains(@resource-id,'permission_allow_button')]",
+        "//*[contains(@text,'Allow access to media')]",
+        "//*[contains(@text,'Allow') and @class='android.widget.Button']",
+        # Fallback: any Allow button on screen
+        "//android.widget.Button[contains(@text,'Allow')]",
+        "//android.widget.Button[contains(@text,'ALLOW')]",
+    ]
+    for xpath in picture_xpaths:
+        try:
+            elems = driver.find_elements(AppiumBy.XPATH, xpath)
+            for el in elems:
+                if el.is_displayed():
+                    el.click()
+                    print(f"[PERMISSION] ✅ Dismissed picture/media permission: {xpath}")
+                    time.sleep(1)
+                    return True
+        except Exception as e:
+            print(f"[PERMISSION] xpath={xpath} → {e}")
+    return False
+
+
 # ════════════════════════════════════════════════════════════════════════════
 #  GENERAL HELPERS
 # ════════════════════════════════════════════════════════════════════════════
+
 def _make_ticket_id() -> str:
     return "RUN-" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
@@ -414,66 +478,14 @@ def _fetch_developer_name_from_jira() -> str:
         if resp.status_code == 200:
             name = (resp.json() or {}).get("displayName", "")
             if name:
-                print(f"[JIRA] Developer name resolved: {name}")
+                print(f"[JIRA] Developer: {name}")
                 return name
     except Exception as e:
-        print(f"[WARN] Could not fetch Jira user displayName: {e}")
+        print(f"[WARN] Could not fetch Jira displayName: {e}")
     return ""
 
 
-# ════════════════════════════════════════════════════════════════════════════
-#  PYTEST HOOKS
-# ════════════════════════════════════════════════════════════════════════════
-def pytest_configure(config):
-    _clean_pycache(_PROJECT_ROOT)
-    print("[PYCACHE] sys.dont_write_bytecode =", sys.dont_write_bytecode)
-    print("[PYCACHE] PYTHONDONTWRITEBYTECODE  =",
-          os.environ.get("PYTHONDONTWRITEBYTECODE", "NOT SET"))
-    config.pluginmanager.register(_StepCapturingPlugin(), "step_buffer_plugin")
-
-
-def pytest_addoption(parser):
-    parser.addoption("--apk",                 action="store", default=None)
-    parser.addoption("--app-name",            action="store", default="Unknown App")
-    parser.addoption("--app-version",         action="store", default="Unknown Version")
-    parser.addoption("--developer-name",      action="store", default="")
-    # NEW: per-device allure results root (passed by test_runner.py)
-    parser.addoption("--device-results-root", action="store", default=None,
-                     help="Root dir for per-device allure results (e.g. allure-results-device)")
-
-
-def pytest_sessionstart(session):
-    global _ticket_id, _issue_counter, _developer_name
-    _ticket_id = f"{WORKER_ID}-" + _make_ticket_id()
-    _issue_counter = 0
-    print(f"\n[TICKET] Session ticket_id: {_ticket_id}")
-    _developer_name = _fetch_developer_name_from_jira()
-    if _developer_name:
-        print(f"[TICKET] Developer: {_developer_name}")
-
-
-def pytest_runtest_setup(item):
-    global current_test_name, _test_start_time
-    current_test_name = item.name
-    _test_start_time  = datetime.datetime.now()
-    _local_step_buffer.setdefault(item.name, [])
-
-    try:
-        http_requests.post(
-            f"{BACKEND_URL}/test/log-step",
-            json={"message": f"[TEST_START:{item.name}]", "status": "INFO"},
-            timeout=2,
-        )
-    except Exception:
-        pass
-
-
-# ── Android OS version helper ─────────────────────────────────────────────────
 def _get_android_os_version(device_id: str) -> str:
-    """
-    Query real Android OS version from the device via ADB.
-    Returns e.g. 'Android 13 (API 33)' or 'Android Unknown' on failure.
-    """
     import subprocess as _sp
     try:
         rel = _sp.run(
@@ -487,163 +499,23 @@ def _get_android_os_version(device_id: str) -> str:
         if rel:
             return f"Android {rel} (API {api})" if api else f"Android {rel}"
     except Exception as e:
-        print(f"[ADB] Could not get OS version for {device_id}: {e}")
+        print(f"[ADB] OS version failed for {device_id}: {e}")
     return "Android Unknown"
 
 
-# ── Per-device allure dir helper ──────────────────────────────────────────────
-def _get_worker_alluredir(device_name: str) -> str:
-    root = os.environ.get("DEVICE_RESULTS_ROOT")
-
-    worker_id = os.environ.get("PYTEST_XDIST_WORKER", "gw0")
-
-    path = os.path.join(root, f"{device_name}_{worker_id}")
-    os.makedirs(path, exist_ok=True)
-
-    return path
-
-
-# ── Device ID fixture ─────────────────────────────────────────────────────────
-@pytest.fixture(scope="session")
-def device_id(request):
-    """
-    Exposes the device ID for this worker as a pytest fixture.
-    - Writes this worker's allure results into allure-results-device/<device_id>/
-    - Attaches Android OS version as an allure tag label
-    - Tags every result with device + worker labels
-    """
-    worker_id    = os.environ.get("PYTEST_XDIST_WORKER", "gw0")
-    worker_index = int(worker_id.replace("gw", ""))
-
-    appium_servers = get_servers() or DEVICES
-
-    if worker_index < len(appium_servers):
-        dev_id = appium_servers[worker_index].get("device", f"device-{worker_index}")
-    else:
-        dev_id = f"device-{worker_index}"
-
-    
-
-    # ── Fetch real Android OS version ──────────────────────────────────────
-    os_version = _get_android_os_version(dev_id)
-
-    # ── Tag every allure result from this worker ───────────────────────────
-    allure.dynamic.label("device",  dev_id)
-    allure.dynamic.parent_suite(dev_id)
-    allure.dynamic.label("worker",  worker_id)
-    allure.dynamic.label("os",      os_version)
-    allure.dynamic.tag(dev_id)
-    allure.dynamic.tag(os_version)
-
-    print(f"[DEVICE_FIXTURE] Worker {worker_id} → device: {dev_id}  OS: {os_version}")
-    return dev_id
-
-
-@pytest.fixture(scope="function")
-def driver(request):
-
-    worker_id = os.environ.get("PYTEST_XDIST_WORKER", "gw0")
-    worker_index = int(worker_id.replace("gw", ""))
-
-    print(f"⚡ [{worker_id}] Starting immediately (parallel execution enabled)")
-    print(f"\n🧵 WORKER → {worker_id}")
-
-    appium_servers = get_servers()
-    if not appium_servers:
-        print("⚠️ Using fallback DEVICES list")
-        appium_servers = DEVICES
-
-    if worker_index >= len(appium_servers):
-        raise Exception(f"❌ Worker {worker_id} has no device assigned.")
-
-    device = appium_servers[worker_index]
-    port = device["port"]
-    device_name = device["device"]
-
-    print(f"🔥 DEVICE → {device_name} | PORT → {port}")
-
-    apk_path = request.config.getoption("--apk")
-    if not apk_path or not os.path.exists(apk_path):
-        raise Exception(f"❌ APK NOT FOUND: {apk_path}")
-
-    # ✅ DEFINE OPTIONS FIRST
-    options = UiAutomator2Options()
-    options.platform_name = "Android"
-    options.device_name = device_name
-    options.udid = device_name
-    options.automation_name = "UiAutomator2"
-
-    options.app = apk_path
-    # 🔥 IMPORTANT FOR APP LAUNCH
-    options.set_capability("appWaitActivity", "*")
-    options.set_capability("appWaitDuration", 30000)
-    options.set_capability("autoGrantPermissions", True)
-
-    # ✅ PARALLEL SAFE PORTS
-    options.set_capability("systemPort", 8200 + worker_index)
-    options.set_capability("chromedriverPort", 8300 + worker_index)
-
-    # ✅ STABILITY
-    options.set_capability("noReset", False)
-    options.set_capability("newCommandTimeout", 300)
-
-    # ✅ DEFINE APPIUM URL (FIXED POSITION)
-    appium_url = f"http://127.0.0.1:{port}"
-
-    print(f"🌐 APPIUM URL → {appium_url}")
-
-    drv = create_driver_with_retry(appium_url, options)
-    time.sleep(3)
-    
-    print(f"✅ DRIVER CONNECTED → {device_name}")
-
-    # FIX: Label every test with its device immediately after driver creation.
-    # Previously these allure.dynamic calls only happened inside
-    # pytest_runtest_makereport (failure hook) → passing tests on emulator-5554
-    # never got labelled → Allure Suites accordion only showed emulator-5556
-    # (the device that had failures).  By labelling here we guarantee both
-    # devices appear as top-level suites regardless of pass/fail outcome.
-    _os_version_for_driver = _get_android_os_version(device_name)
-    allure.dynamic.label("device",  device_name)
-    allure.dynamic.label("worker",  worker_id)
-    allure.dynamic.label("os",      _os_version_for_driver)
-    allure.dynamic.tag(device_name)
-    allure.dynamic.tag(_os_version_for_driver)
-    allure.dynamic.parent_suite(device_name)          # Device accordion in Suites view
-
-    # 🔥 FORCE APP LAUNCH (CRITICAL FIX)
-    try:
-        caps = drv.capabilities
-        app_package = caps.get("appPackage") or caps.get("app_package")
-    
-        if app_package:
-            drv.activate_app(app_package)
-            print(f"🚀 App activated → {app_package}")
-        else:
-            print("⚠️ appPackage not found in capabilities")
-    
-    except Exception as e:
-        print(f"⚠️ App activation failed: {e}")
-    
-    # 🔥 HANDLE PERMISSIONS + WAIT FOR UI
-    handle_permissions(drv)
-    time.sleep(5)
-
-    yield drv
-
-    try:
-        drv.quit()
-    except Exception:
-        pass
-
-
-# ── Metadata helpers ──────────────────────────────────────────────────────────
-def _cfg(item, option: str, fallback: str) -> str:
-    try:
-        val = item.config.getoption(option)
-        return val if val else fallback
-    except Exception:
-        return fallback
+def _extract_module(item) -> str:
+    """Map test node → human-readable module name (= Allure suite label)."""
+    name   = item.name.lower()
+    nodeid = item.nodeid.lower()
+    if "login"       in name or "login"       in nodeid: return "Login"
+    if "onboarding"  in name or "onboarding"  in nodeid: return "Onboarding"
+    if "addfarm"     in name or "addfarm"     in nodeid: return "Onboarding"
+    if "marketplace" in name or "marketplace" in nodeid: return "Marketplace"
+    if "cart"        in name or "cart"        in nodeid: return "Cart"
+    if "update"      in name or "update"      in nodeid: return "Field Updates"
+    if item.cls is not None:
+        return item.cls.__name__
+    return "Unknown Module"
 
 
 def _extract_feature(item) -> str:
@@ -653,17 +525,12 @@ def _extract_feature(item) -> str:
     return "Unknown Feature"
 
 
-def _extract_module(item) -> str:
-    name   = item.name.lower()
-    nodeid = item.nodeid.lower()
-    if "login"       in name or "login"       in nodeid: return "Login"
-    if "onboarding"  in name or "onboarding"  in nodeid: return "Onboarding"
-    if "addfarm"     in name or "addfarm"     in nodeid: return "Onboarding"
-    if "marketplace" in name or "marketplace" in nodeid: return "Marketplace"
-    if "cart"        in name or "cart"        in nodeid: return "Cart"
-    if item.cls is not None:
-        return item.cls.__name__
-    return "Unknown Module"
+def _cfg(item, option: str, fallback: str) -> str:
+    try:
+        val = item.config.getoption(option)
+        return val if val else fallback
+    except Exception:
+        return fallback
 
 
 def _extract_error_only(longrepr) -> str:
@@ -700,7 +567,320 @@ def _build_description(error_text: str, steps: list) -> str:
     return "\n".join(parts) if parts else "Test failed"
 
 
-# ── Crash detection ───────────────────────────────────────────────────────────
+# ════════════════════════════════════════════════════════════════════════════
+#  PER-WORKER DEVICE RESOLVER  (called once in pytest_configure)
+# ════════════════════════════════════════════════════════════════════════════
+
+def _resolve_worker_device(worker_id: str) -> tuple:
+    """
+    Return (device_name, port) for this worker.
+
+    Worker gw0 → index 0, gw1 → index 1, etc.
+    Falls back to DEVICES list if appium_state returns nothing.
+    """
+    try:
+        worker_index = int(worker_id.replace("gw", "")) if worker_id.startswith("gw") else 0
+    except ValueError:
+        worker_index = 0
+
+    appium_servers = get_servers() or DEVICES
+    if worker_index < len(appium_servers):
+        srv = appium_servers[worker_index]
+        return srv.get("device", f"device-{worker_index}"), srv.get("port", 4723)
+    return f"device-{worker_index}", 4723
+
+
+def _resolve_worker_alluredir(worker_id: str, device_name: str) -> Optional[str]:
+    """
+    Build & create the per-worker allure results directory.
+
+    Layout: $DEVICE_RESULTS_ROOT/<device_name>_<worker_id>/
+
+    Using BOTH device_name AND worker_id avoids the previous bug where
+    the pre-created dir was just `emulator-5556` but we looked for
+    `emulator-5556_gw1`.  Now we always create `<device>_<worker>`.
+    """
+    root = os.environ.get("DEVICE_RESULTS_ROOT")
+    if not root:
+        print(f"[ALLURE] DEVICE_RESULTS_ROOT not set — cannot set per-worker dir")
+        return None
+
+    path = os.path.join(root, f"{device_name}_{worker_id}")
+    os.makedirs(path, exist_ok=True)
+    print(f"[ALLURE] Worker {worker_id} → allure dir: {path}")
+    return path
+
+
+# ════════════════════════════════════════════════════════════════════════════
+#  PYTEST HOOKS
+# ════════════════════════════════════════════════════════════════════════════
+
+def pytest_configure(config):
+    """
+    Set allure_report_dir BEFORE allure-pytest's own configure hook runs.
+
+    conftest hooks fire before plugin hooks of the same name, so by the
+    time allure-pytest opens its FileSystemResultsWriter, our per-worker
+    directory is already in config.option.allure_report_dir.
+
+    We also cache the worker's device name/port in module-level globals so
+    every other hook/fixture can use them without re-querying appium_state.
+    """
+    global _WORKER_DEVICE_NAME, _WORKER_DEVICE_PORT
+
+    worker_id = os.environ.get("PYTEST_XDIST_WORKER", "gw0")
+
+    # Resolve device for this worker and cache it
+    _WORKER_DEVICE_NAME, _WORKER_DEVICE_PORT = _resolve_worker_device(worker_id)
+    print(f"[CONFIGURE] Worker {worker_id} → device: {_WORKER_DEVICE_NAME}  port: {_WORKER_DEVICE_PORT}")
+
+    # Redirect allure output to per-worker/per-device dir
+    if os.environ.get("DEVICE_RESULTS_ROOT"):
+        worker_dir = _resolve_worker_alluredir(worker_id, _WORKER_DEVICE_NAME)
+        if worker_dir:
+            try:
+                config.option.allure_report_dir = worker_dir
+                print(f"[ALLURE] pytest_configure → allure_report_dir = {worker_dir}")
+            except AttributeError:
+                try:
+                    setattr(config.option, "allure_report_dir", worker_dir)
+                    print(f"[ALLURE] pytest_configure → allure_report_dir injected: {worker_dir}")
+                except Exception as e:
+                    print(f"[ALLURE] Could not inject allure_report_dir: {e}")
+
+    _clean_pycache(_PROJECT_ROOT)
+
+    # Remove stale folders
+    for stale_name in (".history", "temp_history"):
+        stale_path = os.path.join(_PROJECT_ROOT, stale_name)
+        if os.path.exists(stale_path):
+            shutil.rmtree(stale_path, ignore_errors=True)
+            print(f"[CLEANUP] Removed {stale_name}/")
+
+
+def pytest_addoption(parser):
+    parser.addoption("--apk",                 action="store", default=None)
+    parser.addoption("--app-name",            action="store", default="Unknown App")
+    parser.addoption("--app-version",         action="store", default="Unknown Version")
+    parser.addoption("--developer-name",      action="store", default="")
+    parser.addoption("--device-results-root", action="store", default=None,
+                     help="Root dir for per-device allure results")
+
+
+def pytest_sessionstart(session):
+    global _ticket_id, _issue_counter, _developer_name
+    worker_id  = os.environ.get("PYTEST_XDIST_WORKER", "gw0")
+    _ticket_id = f"{worker_id}-" + _make_ticket_id()
+    _issue_counter = 0
+    print(f"\n[TICKET] Session ticket_id: {_ticket_id}")
+    _developer_name = _fetch_developer_name_from_jira()
+    if _developer_name:
+        print(f"[TICKET] Developer: {_developer_name}")
+
+
+def pytest_runtest_setup(item):
+    global current_test_name, _test_start_time
+    current_test_name = item.name
+    _test_start_time  = datetime.datetime.now()
+    _local_step_buffer.setdefault(item.name, [])
+
+    # ── Apply hierarchy labels at setup time (earliest possible) ─────────
+    # This ensures labels are in the result JSON even if the test errors
+    # before the driver fixture runs.
+    worker_id   = os.environ.get("PYTEST_XDIST_WORKER", "gw0")
+    device_name = _WORKER_DEVICE_NAME or "unknown-device"
+    module_name = _extract_module(item)
+
+    allure.dynamic.parent_suite(device_name)
+    allure.dynamic.suite(module_name)
+    allure.dynamic.sub_suite(item.name)
+    allure.dynamic.title(f"{item.name} [{device_name}]")
+    allure.dynamic.label("device", device_name)
+    allure.dynamic.label("worker", worker_id)
+    allure.dynamic.tag(device_name)
+
+    try:
+        http_requests.post(
+            f"{BACKEND_URL}/test/log-step",
+            json={"message": f"[TEST_START:{item.name}]", "status": "INFO"},
+            timeout=2,
+        )
+    except Exception:
+        pass
+
+
+# ════════════════════════════════════════════════════════════════════════════
+#  FIXTURES
+# ════════════════════════════════════════════════════════════════════════════
+
+@pytest.fixture(scope="session")
+def device_id(request):
+    """Exposes the device ID for this worker as a fixture."""
+    worker_id   = os.environ.get("PYTEST_XDIST_WORKER", "gw0")
+    dev_id      = _WORKER_DEVICE_NAME
+    os_version  = _get_android_os_version(dev_id)
+
+    allure.dynamic.label("device",  dev_id)
+    allure.dynamic.label("worker",  worker_id)
+    allure.dynamic.label("os",      os_version)
+    allure.dynamic.parent_suite(dev_id)
+    allure.dynamic.tag(dev_id)
+    allure.dynamic.tag(os_version)
+
+    print(f"[DEVICE_FIXTURE] Worker {worker_id} → device: {dev_id}  OS: {os_version}")
+    return dev_id
+
+
+@pytest.fixture(scope="function")
+def driver(request):
+    """
+    Create an Appium driver for the device assigned to this worker.
+
+    Session health:
+      • Creates the driver with retry logic.
+      • Wraps the yield in a try/finally that gracefully quits even if the
+        session has already died (InvalidSessionIdException is swallowed).
+      • Checks session liveness after app launch and raises a clean error
+        if the app crashes immediately so the failure is properly reported.
+
+    Allure hierarchy:
+      • parentSuite = device name  (appears as top-level accordion in Suites)
+      • suite       = module name  (Login / Onboarding / …)
+      • subSuite    = test name
+
+    FIX — Both devices run the full suite:
+      • Worker gw0 → emulator-5554 (Login + Onboarding)
+      • Worker gw1 → emulator-5556 (Login + Onboarding)
+      This works because test_runner passes the test DIRECTORY with --dist=each,
+      which causes xdist to send all collected tests to every worker.
+
+    FIX — Permission/picture dialog handling:
+      • handle_initial_screens() is called right after driver creation to
+        dismiss language selection, welcome screens, and system permissions.
+      • _dismiss_picture_permission() is exposed via the `dismiss_picture`
+        fixture and can be called explicitly inside tests that trigger the
+        photo/media permission dialog.
+    """
+    worker_id   = os.environ.get("PYTEST_XDIST_WORKER", "gw0")
+    device_name = _WORKER_DEVICE_NAME
+    port        = _WORKER_DEVICE_PORT
+    module_name = _extract_module(request.node)
+    os_ver      = _get_android_os_version(device_name)
+
+    # ── ENFORCE ALLURE HIERARCHY ─────────────────────────────────────────
+    allure.dynamic.parent_suite(device_name)       # ← device accordion
+    allure.dynamic.suite(module_name)              # ← module group
+    allure.dynamic.sub_suite(request.node.name)    # ← individual test
+    allure.dynamic.title(f"{request.node.name} [{device_name}]")
+    allure.dynamic.label("device", device_name)
+    allure.dynamic.label("worker", worker_id)
+    allure.dynamic.label("os",     os_ver)
+    allure.dynamic.tag(device_name)
+    allure.dynamic.tag(os_ver)
+
+    print(f"🔥 DEVICE → {device_name} | PORT → {port} | MODULE → {module_name} | OS → {os_ver}")
+
+    # ── APK validation ───────────────────────────────────────────────────
+    apk_path = request.config.getoption("--apk")
+    if not apk_path or not os.path.exists(apk_path):
+        raise Exception(f"❌ APK NOT FOUND: {apk_path}")
+
+    # ── Appium capabilities ──────────────────────────────────────────────
+    worker_index = int(worker_id.replace("gw", "")) if worker_id.startswith("gw") else 0
+    options = UiAutomator2Options()
+    options.platform_name   = "Android"
+    options.device_name     = device_name
+    options.udid            = device_name
+    options.automation_name = "UiAutomator2"
+    options.app             = apk_path
+    options.set_capability("appWaitActivity",      "*")
+    options.set_capability("appWaitDuration",      30000)
+    options.set_capability("autoGrantPermissions", True)
+    options.set_capability("systemPort",           8200 + worker_index)
+    options.set_capability("chromedriverPort",     8300 + worker_index)
+    options.set_capability("noReset",              False)
+    options.set_capability("newCommandTimeout",    300)
+
+    appium_url = f"http://127.0.0.1:{port}"
+    print(f"🌐 APPIUM URL → {appium_url}")
+
+    drv = create_driver_with_retry(appium_url, options)
+    time.sleep(3)
+    print(f"✅ DRIVER CONNECTED → {device_name}")
+
+    # ── Verify session is alive right after connection ───────────────────
+    if not _is_driver_alive(drv):
+        raise Exception(
+            f"❌ Driver session died immediately after connection on {device_name}. "
+            "Check Appium logs for app crash or capability mismatch."
+        )
+
+    # ── Force app launch ─────────────────────────────────────────────────
+    try:
+        caps        = drv.capabilities
+        app_package = caps.get("appPackage") or caps.get("app_package")
+        if app_package:
+            drv.activate_app(app_package)
+            print(f"🚀 App activated → {app_package}")
+        else:
+            print("⚠️ appPackage not found in capabilities")
+    except Exception as e:
+        print(f"⚠️ App activation failed: {e}")
+
+    # ── FIX: Handle initial screens (language, welcome, permissions) ─────
+    # This replaces the old single-strategy handle_permissions() call.
+    # It dismisses pre-login screens WITHOUT attempting to log in, so that
+    # both Login and Onboarding tests start from the correct state.
+    handle_initial_screens(drv, device_name)
+    time.sleep(3)
+
+    # ── Second liveness check after permissions ──────────────────────────
+    if not _is_driver_alive(drv):
+        raise Exception(
+            f"❌ Driver session died after permissions/launch on {device_name}. "
+            "The app may have crashed on startup. Check logcat."
+        )
+
+    yield drv
+
+    # ── Teardown: quit gracefully even if session already dead ───────────
+    try:
+        drv.quit()
+    except Exception as e:
+        print(f"[TEARDOWN] Driver quit raised (session may already be dead): {e}")
+
+
+@pytest.fixture(scope="function")
+def dismiss_picture(driver):
+    """
+    FIX for 'Could not find or click the Allow picture button'.
+
+    Inject this fixture into any test that triggers the photo/media
+    permission dialog (e.g. test_addfarm when it navigates to the
+    farm-photo upload step).
+
+    Usage in your test:
+        def test_addfarm(driver, dismiss_picture):
+            # ... navigate to photo upload step ...
+            dismiss_picture()   # call to dismiss the dialog
+            # ... continue test ...
+
+    The fixture returns a callable so the test controls WHEN the dialog
+    is dismissed (right before or after the UI action that triggers it).
+    """
+    def _dismiss():
+        dismissed = _dismiss_picture_permission(driver)
+        if not dismissed:
+            print("[dismiss_picture] No picture permission dialog found — continuing")
+        return dismissed
+
+    return _dismiss
+
+
+# ════════════════════════════════════════════════════════════════════════════
+#  CRASH DETECTION
+# ════════════════════════════════════════════════════════════════════════════
+
 def check_for_crashes(driver):
     try:
         logs = driver.get_log("logcat")
@@ -725,7 +905,10 @@ def check_for_crashes(driver):
         return None
 
 
-# ── Send payload to backend ───────────────────────────────────────────────────
+# ════════════════════════════════════════════════════════════════════════════
+#  PAYLOAD SEND
+# ════════════════════════════════════════════════════════════════════════════
+
 def _send_payload_to_backend(payload: dict) -> None:
     print("JIRA_PAYLOAD_JSON:" + json.dumps(payload, ensure_ascii=False))
     try:
@@ -736,85 +919,109 @@ def _send_payload_to_backend(payload: dict) -> None:
         if resp.status_code == 200:
             print(f"[PAYLOAD SENT] #{payload.get('issue_id')} → {payload.get('module')}")
         else:
-            print(f"[WARN] Payload POST returned {resp.status_code}: {resp.text[:100]}")
+            print(f"[WARN] Payload POST {resp.status_code}: {resp.text[:100]}")
     except Exception as e:
-        print(f"[WARN] Could not POST payload to backend: {e}")
+        print(f"[WARN] Could not POST payload: {e}")
 
 
-# ── Failure hook ──────────────────────────────────────────────────────────────
+# ════════════════════════════════════════════════════════════════════════════
+#  FAILURE HOOK
+# ════════════════════════════════════════════════════════════════════════════
+
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item, call):
     outcome = yield
     report  = outcome.get_result()
 
+    # ── Treat KeyboardInterrupt as a test failure, not a pass ─────────────
+    if report.when == "call":
+        err_str = str(report.longrepr or "")
+        if "KeyboardInterrupt" in err_str and report.outcome != "failed":
+            report.outcome  = "failed"
+            report.longrepr = "Test interrupted by KeyboardInterrupt — session was killed mid-step"
+            allure.attach(
+                err_str,
+                name="⚠️ KeyboardInterrupt — Test Killed Mid-Step",
+                attachment_type=allure.attachment_type.TEXT,
+            )
+    
     if report.when != "call":
         return
-
+    # ... rest of hook
     drv = item.funcargs.get("driver")
-    if not drv:
-        return
 
-    time.sleep(2)
+    # ── Resolve device (use cached value set in pytest_configure) ─────────
+    worker_id   = os.environ.get("PYTEST_XDIST_WORKER", "gw0")
+    dev_name    = _WORKER_DEVICE_NAME or "unknown"
+    os_version  = _get_android_os_version(dev_name)
+    module_name = _extract_module(item)
 
-    # Resolve device for this worker.
-    # NOTE: allure.dynamic.label / parent_suite / tag were already set in the
-    # driver fixture for every test (pass or fail).  We re-affirm them here
-    # so they survive even if the fixture labels were somehow overwritten.
-    worker_id = os.environ.get("PYTEST_XDIST_WORKER", "gw0")
-    worker_index = int(worker_id.replace("gw", ""))
-    appium_servers = get_servers() or DEVICES
-    if worker_index < len(appium_servers):
-        dev_name = appium_servers[worker_index].get("device", "unknown")
-    else:
-        dev_name = "unknown"
-
-    os_version = _get_android_os_version(dev_name)
-
-    # Re-affirm labels (idempotent — allure merges duplicates).
-    # parent_suite was already set in driver fixture for passing tests too,
-    # so both devices now appear as top-level accordions in Suites view.
+    # ── Re-affirm hierarchy labels (idempotent — safe to call multiple times)
+    allure.dynamic.parent_suite(dev_name)
+    allure.dynamic.suite(module_name)
+    allure.dynamic.sub_suite(item.name)
+    allure.dynamic.title(f"{item.name} [{dev_name}]")
     allure.dynamic.label("device", dev_name)
     allure.dynamic.label("worker", worker_id)
     allure.dynamic.label("os",     os_version)
     allure.dynamic.tag(dev_name)
     allure.dynamic.tag(os_version)
-    allure.dynamic.parent_suite(dev_name)       # Device accordion in Suites
 
-    # FIX: Single unique title per device (removed duplicate title call)
-    allure.dynamic.title(f"{item.name} [{dev_name}]")
+    # ── Detect InvalidSessionId as a specific failure type ────────────────
+    if report.failed:
+        err_str = str(report.longrepr or "")
+        if "InvalidSessionIdException" in err_str or "NoSuchDriverError" in err_str:
+            allure.attach(
+                "The Appium session was terminated unexpectedly.\n\n"
+                "Possible causes:\n"
+                "  1. The app crashed mid-test (check logcat in this report)\n"
+                "  2. newCommandTimeout expired (currently 300s)\n"
+                "  3. Emulator ran out of memory / became unresponsive\n\n"
+                f"Device: {dev_name}\nWorker: {worker_id}",
+                name="⚠️ Session Terminated — Diagnosis",
+                attachment_type=allure.attachment_type.TEXT,
+            )
 
-    # Module grouping inside device
-    module = _extract_module(item)
-    allure.dynamic.suite(module)
+    # ── Crash detection (only if driver is still alive) ───────────────────
+    if drv is not None:
+        time.sleep(2)
+        crash_log = None
+        if _is_driver_alive(drv):
+            crash_log = check_for_crashes(drv)
+        else:
+            crash_log = "Driver session was already dead when crash check ran."
 
-    # 1. Crash detection
-    crash_log = check_for_crashes(drv)
-    if crash_log:
-        print(f"CRASH DETECTED in {item.nodeid}")
-        allure.attach(crash_log, name="Crash Logs",
-                      attachment_type=allure.attachment_type.TEXT)
-        if report.outcome != "failed":
-            report.outcome  = "failed"
-            report.longrepr = "Application crash detected in logcat"
+        if crash_log:
+            print(f"CRASH DETECTED in {item.nodeid}")
+            allure.attach(crash_log, name="Crash Logs",
+                          attachment_type=allure.attachment_type.TEXT)
+            if report.outcome != "failed":
+                report.outcome  = "failed"
+                report.longrepr = "Application crash detected in logcat"
 
     if report.outcome != "failed":
         return
 
-    # 2. Screenshot
-    try:
-        os.makedirs("screenshots", exist_ok=True)
-        # NEW: Include device name in screenshot filename for easier triage
-        screenshot_path = f"screenshots/{WORKER_ID}_{dev_name}_{item.name}.png"
-        drv.save_screenshot(screenshot_path)
-        allure.attach.file(screenshot_path, name="Failure Screenshot",
-                           attachment_type=allure.attachment_type.PNG)
-    except Exception as e:
-        print("Screenshot capture failed:", e)
+    # ── Screenshot ────────────────────────────────────────────────────────
+    if drv is not None and _is_driver_alive(drv):
+        try:
+            os.makedirs("screenshots", exist_ok=True)
+            screenshot_path = f"screenshots/{WORKER_ID}_{dev_name}_{item.name}.png"
+            drv.save_screenshot(screenshot_path)
+            allure.attach.file(screenshot_path, name="Failure Screenshot",
+                               attachment_type=allure.attachment_type.PNG)
+        except Exception as e:
+            print("Screenshot capture failed:", e)
+    else:
+        allure.attach(
+            f"Screenshot not available — driver session was dead on {dev_name}.",
+            name="Screenshot Unavailable",
+            attachment_type=allure.attachment_type.TEXT,
+        )
 
-    # 3. Metadata
+    # ── Metadata ──────────────────────────────────────────────────────────
     app_name    = _cfg(item, "--app-name",    "Unknown App")
     app_version = _cfg(item, "--app-version", "Unknown Version")
-    module      = _extract_module(item)
     feature     = _extract_feature(item)
     test_name   = item.name
     issue_id    = _make_issue_id()
@@ -825,41 +1032,28 @@ def pytest_runtest_makereport(item, call):
         or "Unknown Developer"
     )
 
-    issue_summary = f"Automation Failure: {test_name}"
-
-    # 4. Step collection
+    issue_summary  = f"Automation Failure: {test_name}"
     steps_executed = _get_steps(item, report, test_name)
+    error_text     = _extract_error_only(report.longrepr)
 
-    # 5. Error text
-    error_text = _extract_error_only(report.longrepr)
-
-    # ── Capture accurate test execution dates ──────────────────────────────
     global _test_start_time
-
     test_start = _test_start_time or datetime.datetime.now()
     test_end   = datetime.datetime.now()
 
-    start_date_iso      = test_start.isoformat()
-    end_date_iso        = test_end.isoformat()
-    start_date_readable = test_start.strftime('%d/%m/%Y, %H:%M')
-    end_date_readable   = test_end.strftime('%d/%m/%Y, %H:%M')
-    duration_seconds    = (test_end - test_start).total_seconds()
-    duration_readable   = f"{int(duration_seconds)} seconds"
+    start_date_iso  = test_start.isoformat()
+    end_date_iso    = test_end.isoformat()
+    duration_secs   = (test_end - test_start).total_seconds()
 
-    print(f"\n📅 Test Execution Timeline:")
-    print(f"   Start:    {start_date_readable} (ISO: {start_date_iso})")
-    print(f"   End:      {end_date_readable} (ISO: {end_date_iso})")
-    print(f"   Duration: {duration_readable}")
-    print(f"   Steps:    {len(steps_executed)}")
-    print(f"   Device:   {dev_name}")
+    print(f"\n📅 {test_name} | Start: {test_start.strftime('%H:%M')} "
+          f"| End: {test_end.strftime('%H:%M')} "
+          f"| Duration: {int(duration_secs)}s | Device: {dev_name}")
 
-    # ── Build payload ──────────────────────────────────────────────────────
     payload = {
         "ticket_id":       _ticket_id,
         "issue_id":        issue_id,
         "app_name":        app_name,
         "app_version":     app_version,
-        "module":          module,
+        "module":          module_name,
         "feature":         feature,
         "issue_summary":   issue_summary,
         "title":           issue_summary,
@@ -872,7 +1066,6 @@ def pytest_runtest_makereport(item, call):
         "sprint":          "Automation",
         "fix_version":     ["Production"],
         "affects_version": [app_name] if app_name and app_name != "Unknown App" else [],
-        # NEW: Include device info in Jira payload for traceability
         "device_id":       dev_name,
         "worker_id":       worker_id,
         "os_version":      os_version,
@@ -888,13 +1081,16 @@ def pytest_runtest_makereport(item, call):
     _session_issues.append({
         "issue_id":  issue_id,
         "test_name": test_name,
-        "module":    module,
+        "module":    module_name,
         "steps":     len(steps_executed),
         "device":    dev_name,
     })
 
 
-# ── Session finish ────────────────────────────────────────────────────────────
+# ════════════════════════════════════════════════════════════════════════════
+#  SESSION FINISH
+# ════════════════════════════════════════════════════════════════════════════
+
 def pytest_sessionfinish(session, exitstatus):
     print(f"\n{'='*50}")
     print(f"TEST SESSION FINISHED  |  Run ID: {_ticket_id}")

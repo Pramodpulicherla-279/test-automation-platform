@@ -2,19 +2,16 @@ import os
 import sys
 import shutil
 
-# Disable auto-loading of 3rd-party pytest plugins (like browserstack)
 os.environ["PYTEST_DISABLE_PLUGIN_AUTOLOAD"] = "1"
 
-# FIX: use get_servers() from appium_state (reads shared JSON file) instead of
-# directly importing appium_servers from manager (stale list binding).
 from new_backend.modules.appium_grid.appium_state import (
     get_servers,
     get_device_for_port,
     get_device_mapping
 )
-import glob  
+import glob
 import pytest
-import allure_pytest  # pip install allure-pytest
+import allure_pytest
 import requests
 import subprocess
 from dotenv import load_dotenv
@@ -31,18 +28,17 @@ CURRENT_PROC: Optional[subprocess.Popen] = None
 STOP_FLAG = False
 
 # ── Directory constants ────────────────────────────────────────────────────────
-RESULTS_DIR = "allure-results"          # final merged results (single source of truth)
+# FIX: Single shared results dir — both workers write here, allure generate reads here.
+# Previously RESULTS_DIR ("allure-results") and DEVICE_RESULTS_ROOT ("allure-results-device")
+# were different paths, so allure generate found 0 results.
+RESULTS_DIR = "allure-results"   # ← THE only results dir now (workers + generate both use this)
 REPORT_DIR  = "allure-report"
-
-# Per-device subdirectory prefix — each worker writes here, then we merge
-# e.g.  allure-results-device/emulator-5554/
-_PER_DEVICE_RESULTS_ROOT = "allure-results-device"
 
 # --- Log queue + worker -------------------------------------------------------
 _LOG_Q: "queue.Queue[tuple[str, str]]" = queue.Queue(maxsize=5000)
 _LOG_WORKER_STARTED = False
 
-_DEVICE_MAPPING: Dict[int, str] = {}   # port -> device_id
+_DEVICE_MAPPING: Dict[int, str] = {}
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -78,148 +74,40 @@ def _start_log_worker() -> None:
 #  ALLURE DIR HELPERS
 # ════════════════════════════════════════════════════════════════════════════
 
-def _ensure_clean_allure_dirs(project_root: str, current_servers: list) -> None:
+def _ensure_clean_allure_dir(project_root: str) -> None:
     """
-    Create a clean per-device results directory for each connected device
-    AND wipe the merged RESULTS_DIR so the new run starts fresh.
+    FIX: Single shared dir approach.
 
-    Layout:
-        allure-results/                  ← merged (generated after run)
-        allure-results-device/
-            emulator-5554/               ← pytest worker gw0 writes here
-            emulator-5556/               ← pytest worker gw1 writes here
+    Previously: created per-worker subdirs under allure-results-device/ then
+    tried to merge them.  The merge step ran BEFORE tests, allure-results/ was
+    empty, and generate_report found 0 items.
+
+    Now: wipe allure-results/ (preserving history), all workers write directly
+    to it, generate_report reads the same dir.  No merge step needed.
     """
-    # Wipe + recreate the final merged dir
-    # ── SAFE HISTORY PRESERVATION ─────────────────────────────
-    merged = os.path.join(project_root, RESULTS_DIR)
+    merged      = os.path.join(project_root, RESULTS_DIR)
     history_path = os.path.join(merged, "history")
     temp_history = os.path.join(project_root, "temp_history")
-    
-    # Clean previous temp history
+
+    # Preserve trend history across runs
     if os.path.exists(temp_history):
         shutil.rmtree(temp_history, ignore_errors=True)
-    
-    # Backup history if exists
     if os.path.isdir(history_path):
         shutil.copytree(history_path, temp_history)
-    
-    # Remove old merged results
     if os.path.isdir(merged):
         shutil.rmtree(merged, ignore_errors=True)
-    
     os.makedirs(merged, exist_ok=True)
-    
-    # Restore history
     if os.path.exists(temp_history):
         shutil.copytree(temp_history, os.path.join(merged, "history"))
         shutil.rmtree(temp_history, ignore_errors=True)
-
-    # Wipe + recreate per-device dirs
-    device_root = os.path.join(project_root, _PER_DEVICE_RESULTS_ROOT)
-    if os.path.isdir(device_root):
-        shutil.rmtree(device_root, ignore_errors=True)
-    os.makedirs(device_root, exist_ok=True)
-
-    for srv in current_servers:
-        device = srv.get("device", "unknown")
-        d = os.path.join(device_root, device)
-        os.makedirs(d, exist_ok=True)
-        print(f"[ALLURE] Created per-device dir: {d}")
 
     # Wipe old HTML report
     report_path = os.path.join(project_root, REPORT_DIR)
     if os.path.isdir(report_path):
         shutil.rmtree(report_path, ignore_errors=True)
 
+    print(f"[ALLURE] Shared results dir ready: {merged}")
 
-def _get_device_alluredir(project_root: str, device_id: str) -> str:
-    """Return the per-device allure results path for a given device."""
-    return os.path.join(project_root, _PER_DEVICE_RESULTS_ROOT, device_id)
-
-
-def _merge_device_results(project_root: str, current_servers: list) -> None:
-    import json as _json
-    import glob
-
-    merged_dir = os.path.join(project_root, RESULTS_DIR)
-    device_root = os.path.join(project_root, _PER_DEVICE_RESULTS_ROOT)
-
-    total_copied = 0
-
-    for srv in current_servers:
-        device = srv.get("device", "unknown")
-
-        # 🔥 HANDLE WORKER DIRS (emulator-5554_gw0)
-        device_pattern = os.path.join(device_root, f"{device}*")
-        matching_dirs = glob.glob(device_pattern)
-
-        if not matching_dirs:
-            print(f"[MERGE] No results dir for {device} — skipping")
-            continue
-
-        for src_dir in matching_dirs:
-            if not os.path.isdir(src_dir):
-                continue
-
-            print(f"[MERGE] Processing → {src_dir}")
-
-            result_files = glob.glob(os.path.join(src_dir, "*.json"))
-            attachment_files = [
-                f for f in glob.glob(os.path.join(src_dir, "*"))
-                if not f.endswith(".json")
-            ]
-
-            # ✅ PROCESS RESULTS PER DIRECTORY (FIXED)
-            for rf in result_files:
-                try:
-                    with open(rf, "r", encoding="utf-8") as fh:
-                        data = _json.load(fh)
-
-                    labels = data.get("labels", [])
-                    labels = [l for l in labels if l.get("name") != "device"]
-                    labels.append({"name": "device", "value": device})
-                    data["labels"] = labels
-
-                    dest_rf = os.path.join(merged_dir, os.path.basename(rf))
-
-                    # 🔥 PREVENT OVERWRITE
-                    if os.path.exists(dest_rf):
-                        base, ext = os.path.splitext(os.path.basename(rf))
-                        dest_rf = os.path.join(
-                            merged_dir,
-                            f"{device}_{base}{ext}"
-                        )
-
-                    with open(dest_rf, "w", encoding="utf-8") as fh:
-                        _json.dump(data, fh, ensure_ascii=False)
-
-                    total_copied += 1
-
-                except Exception as e:
-                    print(f"[MERGE] Failed to process {rf}: {e}")
-
-            # ✅ COPY ATTACHMENTS
-            for af in attachment_files:
-                try:
-                    dest = os.path.join(merged_dir, os.path.basename(af))
-
-                    if os.path.exists(dest):
-                        base, ext = os.path.splitext(os.path.basename(af))
-                        dest = os.path.join(
-                            merged_dir,
-                            f"{device}_{base}{ext}"
-                        )
-
-                    shutil.copy2(af, dest)
-
-                except Exception as e:
-                    print(f"[MERGE] Attachment copy failed {af}: {e}")
-
-    print(f"[MERGE] Copied {total_copied} result file(s)")
-
-# ════════════════════════════════════════════════════════════════════════════
-#  ALLURE ENVIRONMENT FILE  (shows in Allure Overview tab)
-# ════════════════════════════════════════════════════════════════════════════
 
 def _write_allure_environment(
     project_root: str,
@@ -227,21 +115,6 @@ def _write_allure_environment(
     app_name: str = "",
     app_version: str = "",
 ) -> None:
-    """
-    Write allure-results/environment.properties.
-    One block per device so the Allure Overview shows ALL devices.
-
-    Example output:
-        device.count=2
-        device.0.id=emulator-5554
-        device.0.port=4723
-        device.0.os=Android 13
-        device.1.id=emulator-5556
-        device.1.port=4725
-        device.1.os=Android 12
-        app.name=Krishivaas Farmer
-        app.version=1.3.96
-    """
     env_file = os.path.join(project_root, RESULTS_DIR, "environment.properties")
     try:
         lines = [f"device.count={len(current_servers)}"]
@@ -267,23 +140,17 @@ def _write_allure_environment(
 
 
 def _get_android_os_version(device_id: str) -> str:
-    """
-    Query the real Android OS version from a connected device via ADB.
-    Returns e.g. 'Android 13 (API 33)' or 'Android Unknown' on failure.
-    """
     try:
         result = subprocess.run(
             ["adb", "-s", device_id, "shell", "getprop", "ro.build.version.release"],
             capture_output=True, text=True, timeout=5
         )
         release = result.stdout.strip()
-
         api_result = subprocess.run(
             ["adb", "-s", device_id, "shell", "getprop", "ro.build.version.sdk"],
             capture_output=True, text=True, timeout=5
         )
         api = api_result.stdout.strip()
-
         if release:
             return f"Android {release} (API {api})" if api else f"Android {release}"
     except Exception as e:
@@ -355,19 +222,16 @@ def stop_current_tests() -> bool:
 # ════════════════════════════════════════════════════════════════════════════
 
 def generate_report(project_root: Optional[str] = None) -> None:
-    """Merge per-device results → generate unified Allure HTML report."""
+    """
+    Generate Allure HTML report from RESULTS_DIR.
+
+    FIX: No merge step needed — all workers already wrote directly to RESULTS_DIR.
+    Previously the merge ran before tests finished (race condition) or
+    pointed at the wrong directory entirely.
+    """
     if project_root is None:
         project_root = os.path.dirname(os.path.dirname(__file__))
 
-    # ── 1. Merge per-device result dirs into RESULTS_DIR ──────────────────
-    current_servers = get_servers()
-    if current_servers:
-        send_log(f"[Report] Merging results from {len(current_servers)} device(s)...", "INFO")
-        _merge_device_results(project_root, current_servers)
-    else:
-        send_log("[Report] No device mapping — using existing allure-results as-is", "WARN")
-
-    # ── 2. Locate allure executable ────────────────────────────────────────
     allure_cmd = "allure"
     scoop_path = r"C:\Users\Pramo\scoop\shims\allure.cmd"
     if os.path.exists(scoop_path):
@@ -375,10 +239,23 @@ def generate_report(project_root: Optional[str] = None) -> None:
     elif shutil.which("allure.cmd"):
         allure_cmd = "allure.cmd"
 
+    results_abs = os.path.join(project_root, RESULTS_DIR)
+    report_abs  = os.path.join(project_root, REPORT_DIR)
+
+    # Verify results exist before generating
+    json_files = glob.glob(os.path.join(results_abs, "*.json"))
+    print(f"[Report] Found {len(json_files)} result file(s) in {results_abs}")
+    if not json_files:
+        send_log(
+            f"⚠️  No result JSON files found in {results_abs}. "
+            "Report will be empty. Check ALLURE_RESULTS_DIR env var.",
+            "WARN"
+        )
+
     try:
         send_log("Generating Allure HTML report...", "INFO")
         subprocess.run(
-            [allure_cmd, "generate", RESULTS_DIR, "-o", REPORT_DIR, "--clean"],
+            [allure_cmd, "generate", results_abs, "-o", report_abs, "--clean"],
             cwd=project_root,
             check=True,
             shell=True,
@@ -387,7 +264,7 @@ def generate_report(project_root: Optional[str] = None) -> None:
 
         send_log("Opening Allure report in browser...", "INFO")
         subprocess.Popen(
-            [allure_cmd, "open", REPORT_DIR],
+            [allure_cmd, "open", report_abs],
             cwd=project_root,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
@@ -428,7 +305,6 @@ def run_tests_and_get_suggestions(
         send_log(f"❌ APK not found at {apk_path}", "FAILED")
         return
 
-    # ── Device validation ──────────────────────────────────────────────────
     current_servers = get_servers()
     if not current_servers:
         send_log(
@@ -444,11 +320,14 @@ def run_tests_and_get_suggestions(
         if srv.get("port")
     }
 
-    # ── Clean dirs + write environment file ───────────────────────────────
-    _ensure_clean_allure_dirs(project_root, current_servers)
+    # FIX: Set ALLURE_RESULTS_DIR env var so conftest._resolve_shared_alluredir()
+    # picks up the same path that generate_report() will read from.
+    results_abs = os.path.join(project_root, RESULTS_DIR)
+    os.environ["ALLURE_RESULTS_DIR"] = results_abs
+
+    _ensure_clean_allure_dir(project_root)
     _write_allure_environment(project_root, current_servers, app_name or "", app_version or "")
 
-    # ── Resolve test paths ─────────────────────────────────────────────────
     final_test_list = tests_to_run or []
     if not final_test_list:
         send_log("⚠️  No valid test modules found. Aborting.", "FAILED")
@@ -488,7 +367,6 @@ def run_tests_and_get_suggestions(
         send_log("❌ No valid scripts to execute. Check test file paths.", "FAILED")
         return
 
-    # Tell frontend a new run is starting
     try:
         import requests as _req
         _req.post(
@@ -499,7 +377,6 @@ def run_tests_and_get_suggestions(
     except Exception:
         pass
 
-    # ── Log device map to UI ───────────────────────────────────────────────
     device_mapping = get_device_mapping()
     workers = max(1, len(current_servers))
 
@@ -514,6 +391,7 @@ def run_tests_and_get_suggestions(
     print(f"   ⚙️  Parallel Workers: {workers}")
     print(f"   📋 Test Modules: {len(valid_paths)}")
     print(f"{'='*70}\n")
+    print(f"[DIRS] All workers writing to: {results_abs}")
 
     send_log(
         f"[Parallel] Running with {workers} worker(s) across {len(current_servers)} device(s)",
@@ -522,37 +400,46 @@ def run_tests_and_get_suggestions(
     for device, port in device_mapping.items():
         send_log(f"   📱 {device} → Appium server on port {port}", "INFO")
 
-    # ── Detect xdist ──────────────────────────────────────────────────────
     try:
         import xdist
         use_parallel = True
     except ImportError:
         use_parallel = False
 
-    # ── Build pytest args ─────────────────────────────────────────────────
+    # ── FIX: Pass INDIVIDUAL FILE PATHS (not directory) ───────────────────
     #
-    # KEY FIX: each worker is told its own per-device alluredir via the
-    # ALLURE_RESULTS_DIR environment variable which conftest reads.
-    # The --alluredir flag still points to the MERGED dir so that allure
-    # doesn't complain; the real per-device write is done inside conftest.
+    # BEFORE (broken):
+    #   test_dirs = [".../regular_farmer_test_cases"]   ← 1 item
+    #   With --dist=each, xdist schedules the directory as ONE item → "2 workers [1 item]"
+    #   Both workers end up running only the first collected test.
     #
-    pytest_args = valid_paths + [
+    # AFTER (fixed):
+    #   pytest_target_paths = [".../test_login.py", ".../test_onboarding.py"]  ← N items
+    #   With --dist=each, xdist sees N items and sends ALL N to EACH worker.
+    #   → "2 workers [2 items]" (or however many test files you have)
+    #
+    pytest_target_paths = valid_paths  # individual .py file paths
+
+    pytest_args = pytest_target_paths + [
         f"--apk={apk_path}",
         "-v",
-        f"--device-results-root={os.path.join(project_root, _PER_DEVICE_RESULTS_ROOT)}",
+        f"--alluredir={results_abs}",   # FIX: explicit absolute path
     ]
-    
-    # ✅ Add reruns ONLY if plugin is installed
+
     try:
         import pytest_rerunfailures  # type: ignore
         pytest_args += ["--reruns", "1"]
         send_log("🔁 Reruns enabled (pytest-rerunfailures detected)", "INFO")
     except ImportError:
         send_log("⚠️ pytest-rerunfailures not installed → skipping reruns", "WARN")
-    
+
     if use_parallel and workers > 1:
         pytest_args += ["-n", str(workers), "--dist=each"]
-        send_log(f"🚀 Running in PARALLEL with {workers} workers (FULL SUITE PER DEVICE)", "INFO")
+        send_log(
+            f"🚀 Running in PARALLEL: {workers} workers, FULL SUITE on EACH device",
+            "INFO"
+        )
+        send_log(f"   Test files: {[os.path.basename(p) for p in pytest_target_paths]}", "INFO")
     else:
         send_log("⚠️ Running in SEQUENTIAL mode (xdist not installed or 1 device)", "WARN")
 
@@ -568,12 +455,10 @@ def run_tests_and_get_suggestions(
     overall_ok = run_pytest_streaming_with_tracking(
         pytest_args,
         path_to_name_map,
-        clean_allure=True,
         project_root=project_root,
         current_servers=current_servers,
     )
 
-    # ── Post-run ───────────────────────────────────────────────────────────
     if not STOP_FLAG:
         if overall_ok:
             send_log("✅ Full test suite execution completed successfully.", "SUCCESS")
@@ -600,19 +485,16 @@ def run_tests_and_get_suggestions(
 def run_pytest_streaming_with_tracking(
     pytest_args: list,
     path_mapping: dict,
-    clean_allure: bool,
     project_root: Optional[str] = None,
     current_servers: Optional[list] = None,
 ) -> bool:
     """
     Execute pytest in a subprocess and stream output to the UI.
 
-    Per-device allure results:
-      - --alluredir points to allure-results (merged target, keeps allure happy)
-      - The subprocess env carries DEVICE_RESULTS_ROOT so conftest.py can
-        write each worker's results into allure-results-device/<device_id>/
-      - After the subprocess finishes, generate_report() calls
-        _merge_device_results() to copy everything into allure-results/.
+    FIX: Removed `clean_allure` parameter and --clean-alluredir flag.
+    _ensure_clean_allure_dir() already wiped the dir before this is called.
+    Passing --clean-alluredir here would delete all results written by gw0
+    when gw1 starts up (race condition), leaving 0 items in the report.
     """
     global CURRENT_PROC, STOP_FLAG
 
@@ -624,15 +506,17 @@ def run_pytest_streaming_with_tracking(
     existing = env.get("PYTHONPATH", "")
     env["PYTHONPATH"] = backend_dir + os.pathsep + existing if existing else backend_dir
 
+    results_abs = os.path.join(project_root, RESULTS_DIR)
+
     env.update({
-        "PYTHONIOENCODING":       "utf-8",
-        "PYTHONUTF8":             "1",
-        "PYTHONUNBUFFERED":       "1",
+        "PYTHONIOENCODING":        "utf-8",
+        "PYTHONUTF8":              "1",
+        "PYTHONUNBUFFERED":        "1",
         "PYTHONDONTWRITEBYTECODE": "1",
         "LANG":   "en_US.UTF-8" if os.name != "nt" else "",
         "LC_ALL": "en_US.UTF-8" if os.name != "nt" else "",
-        # Pass per-device root so conftest can resolve per-worker alluredir
-        "DEVICE_RESULTS_ROOT": os.path.join(project_root, _PER_DEVICE_RESULTS_ROOT),
+        # FIX: Tell conftest where to write results (absolute path)
+        "ALLURE_RESULTS_DIR": results_abs,
     })
 
     if os.name == "nt":
@@ -644,18 +528,15 @@ def run_pytest_streaming_with_tracking(
         "-p", "xdist",
         "-p", "pytest_rerunfailures",
         "-s", "-v", "--tb=short",
-        f"--alluredir={RESULTS_DIR}",  # allure plugin needs this; conftest overrides per-worker
+        # NOTE: --alluredir already in pytest_args (absolute path)
+        # NOTE: --clean-alluredir intentionally REMOVED (see docstring)
         "-o", "log_cli=true",
         "-o", "log_cli_level=INFO",
     ]
-    if clean_allure:
-        cmd.append("--clean-alluredir")
     cmd += pytest_args
 
-    print(f"\n[pytest] Starting with command:")
-    print(f"   {' '.join(cmd[:5])}...")
-    print(f"   {' '.join(cmd[-5:])}")
-    print()
+    print(f"\n[pytest] Command:")
+    print(f"   {' '.join(cmd)}\n")
 
     CURRENT_PROC = subprocess.Popen(
         cmd,

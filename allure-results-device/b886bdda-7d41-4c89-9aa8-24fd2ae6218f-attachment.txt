@@ -1,0 +1,80 @@
+CRASH START: 05-05 16:09:52.640 27088 27088 D AndroidRuntime: Shutting down VM
+05-05 16:09:52.753  1748  1748 I Zygote  : Process 27103 exited due to signal 9 (Killed)
+05-05 16:09:52.770  1998  2027 I chatty  : uid=1000(system) ActivityManager expire 3 lines
+05-05 16:09:52.811  1998  2262 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10149 user=0: from pid 28641
+05-05 16:09:52.817  1998  4797 I ActivityManager: Force stopping io.appium.uiautomator2.server.test appid=10148 user=0: from pid 28642
+05-05 16:09:52.825  2232  2232 D CarrierSvcBindHelper: No carrier app for: 0
+05-05 16:09:52.889  1998  2262 I ActivityManager: Force stopping com.krishivaas appid=10150 user=0: from pid 28651
+05-05 16:09:52.889  1998  2262 I ActivityManager: Killing 27148:com.krishivaas/u0a150 (adj 0): stop com.krishivaas
+05-05 16:09:52.896  1998  2262 W ActivityManager: Scheduling restart of crashed service com.krishivaas/com.uxcam.service.HttpPostService in 1000ms
+05-05 16:09:52.897  1998  2262 W ActivityTaskManager: Force removing ActivityRecord{ebc37c1 u0 com.krishivaas/.MainActivity t32 f}: app died, no saved state
+05-05 16:09:52.832  2232  2232 D CarrierSvcBindHelper: No carrier app for: 0
+05-05 16:09:52.897 21072 21072 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.auth.api.phone.service.SmsRetrieverApiService.START pkg=com.google.android.gms }
+05-05 16:09:52.906  1998  2262 I chatty  : uid=1000(system) Binder:1998_4 expire 10 lines
+05-05 16:09:52.946  1998  4797 I ActivityManager: Killing 24445:com.google.process.gapps/u0a111 (adj 985): empty #17
+05-05 16:09:52.949  1764 26880 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-05 16:09:52.972  1998  1998 W ActivityManager: Unable to start service Intent { act=android.service.appprediction.AppPredictionService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiPredictionService } U=0: not found
+05-05 16:09:52.972  1998  1998 W RemoteAppPredictionService: could not bind to Intent { act=android.service.appprediction.AppPredictionService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiPredictionService } using flags 67108865
+05-05 16:09:52.995  1837  1940 E OMXNodeInstance: !!! Observer died. Quickly, do something, ... anything...
+05-05 16:09:53.000  2232  2232 D CarrierSvcBindHelper: No carrier app for: 0
+05-05 16:09:53.003  1998  6419 D ConnectivityService: ConnectivityService NetworkRequestInfo binderDied(NetworkRequest [ TRACK_DEFAULT id=141, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10150] ], android.os.BinderProxy@f8af71c)
+05-05 16:09:53.004  1998  2101 D ConnectivityService: releasing NetworkRequest [ TRACK_DEFAULT id=141, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10150] ] (release request)
+05-05 16:09:53.007  1998  2019 W ActivityManager: setHasOverlayUi called on unknown pid: 27148
+05-05 16:09:53.019  1748  1748 I Zygote  : Process 27148 exited due to signal 9 (Killed)
+05-05 16:09:53.034  1764 26880 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-05 16:09:53.036  1748  1748 I Zygote  : Process 24445 exited due to signal 9 (Killed)
+05-05 16:09:53.041  1764  1866 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-05 16:09:53.054  3087  3465 D EGL_emulation: eglMakeCurrent: 0xf15548e0: ver 2 0 (tinfo 0xdad60a20)
+05-05 16:09:53.054  1764  1866 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-05 16:09:53.063  1764  1866 I chatty  : uid=1000(system) HwBinder:1764_1 identical 1 line
+05-05 16:09:53.070  1764  1866 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-05 16:09:53.072  2395  2822 D EGL_emulation: eglMakeCurrent: 0xf15539e0: ver 2 0 (tinfo 0xe63b7370)
+05-05 16:09:53.102  3087  3087 I bqwu    : onStart
+05-05 16:09:53.109  1998  4797 D ConnectivityService: requestNetwork for uid/pid:10115/3087 NetworkRequest [ TRACK_DEFAULT id=142, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10115] ]
+05-05 16:09:53.111  2232  2232 D PhoneSwitcherNetworkRequstListener: got request NetworkRequest [ TRACK_DEFAULT id=142, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10115] ] with score 60 and serial -1
+05-05 16:09:53.111  3087  3087 I bout    : (REDACTED) [%s] onStart()
+05-05 16:09:53.114  3087  3087 I bqwu    : onResume
+05-05 16:09:53.121  1998  2098 I chatty  : uid=1000(system) ClientModeImpl expire 2 lines
+05-05 16:09:53.184 21072 21072 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.inappreach.service.START dat=chimera-action: cmp=com.google.android.gms/.chimera.GmsApiService }
+05-05 16:09:53.184 21072 21072 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.inappreach.service.START dat=chimera-action: cmp=com.google.android.gms/.chimera.GmsApiService }
+05-05 16:09:53.185  1998  1998 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy_pre_p_apps
+05-05 16:09:53.200  1998  1998 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy_p_apps
+05-05 16:09:53.296  1998  1998 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy
+05-05 16:09:53.586  1998  2016 W Looper  : Slow dispatch took 142ms android.fg h=com.android.server.location.GnssLocationProvider$ProviderHandler c=com.android.server.location.RemoteListenerHelper$HandlerRunnable@ff8e377 m=0
+05-05 16:09:58.794  2522  3013 W Settings: Setting airplane_mode_on has moved from android.provider.Settings.System to android.provider.Settings.Global, returning read-only value.
+05-05 16:09:59.398  1998  4797 W AppOps  : Noting op not finished: uid 10111 pkg com.google.android.gms code 79 time=1777977592912 duration=-1777961274233
+05-05 16:09:59.403  1998  4797 W AppOps  : Noting op not finished: uid 10111 pkg com.google.android.gms code 79 time=1777977599398 duration=0
+05-05 16:09:59.410  1998  2844 W AppOps  : Noting op not finished: uid 10111 pkg com.google.android.gms code 79 time=1777977599403 duration=0
+05-05 16:09:59.419  2522  3013 I ActivityScheduler: nextTriggerTime: 16566338, in 598100ms, detectorType: 39, FULL_TYPE alarmWindowMillis: 200000
+05-05 16:09:59.702  1998  2844 I chatty  : uid=1000(system) Binder:1998_E expire 5 lines
+05-05 16:09:59.713  2522  2542 I NullBinder: NullBinder for android.net.action.RECOMMEND_NETWORKS triggering remote TransactionTooLargeException due to Service without Chimera impl, calling uid: 1000, calling pid: 0
+05-05 16:09:59.717  2522 28514 I FrewleTileCacheManagerV: (REDACTED) Fetched %d AP models from cache
+05-05 16:09:59.721  2522  3013 I ActivityScheduler: nextTriggerTime: 16566338, in 597796ms, detectorType: 39, FULL_TYPE alarmWindowMillis: 200000
+05-05 16:10:03.711  1998  2016 W Looper  : Slow dispatch took 252ms android.fg h=com.android.server.location.GnssLocationProvider$ProviderHandler c=com.android.server.location.RemoteListenerHelper$HandlerRunnable@8917614 m=0
+05-05 16:10:08.622  1998  2305 I chatty  : uid=1000(system) Binder:1998_7 expire 2 lines
+05-05 16:10:11.810  1869  1869 E netmgr  : Failed to open QEMU pipe 'qemud:network': Invalid argument
+05-05 16:10:12.931  1882  1882 E wifi_forwarder: RemoteConnection failed to initialize: RemoteConnection failed to open pipe
+05-05 16:10:13.901  1998  2024 I chatty  : uid=1000(system) android.bg expire 10 lines
+05-05 16:10:59.712  2522  3013 W Settings: Setting airplane_mode_on has moved from android.provider.Settings.System to android.provider.Settings.Global, returning read-only value.
+05-05 16:11:00.551  1998  4797 I chatty  : uid=1000(system) Binder:1998_19 expire 2 lines
+05-05 16:11:00.559  2522  3766 I NullBinder: NullBinder for android.net.action.RECOMMEND_NETWORKS triggering remote TransactionTooLargeException due to Service without Chimera impl, calling uid: 1000, calling pid: 0
+05-05 16:11:00.566  2522 28514 I FrewleTileCacheManagerV: (REDACTED) Fetched %d AP models from cache
+05-05 16:11:00.574  2522 28514 W GLSUser : [DeviceKeyStore] Cannot load key: Device key file not found.
+05-05 16:11:00.675  1747 28705 E ResolverController: No valid NAT64 prefix (101, <unspecified>/0)
+05-05 16:11:00.704  2522 28514 W GmsUrlRequestImpl: [https://android.googleapis.com/auth/devicekey] Content-Type header is overwritten.
+05-05 16:11:00.866  2522 28514 W GLSUser : [AppCertManager] Exception while requesting key: 
+05-05 16:11:00.866  2522 28514 W GLSUser : java.util.concurrent.ExecutionException: cusw: Parse Proto Exception with response code 400
+05-05 16:11:00.866  2522 28514 W GLSUser : 	at gcuk.j(:com.google.android.gms@261631016@26.16.31 (100700-900800821):21)
+05-05 16:11:00.866  2522 28514 W GLSUser : 	at gcut.t(:com.google.android.gms@261631016@26.16.31 (100700-900800821):73)
+05-05 16:11:00.866  2522 28514 W GLSUser : 	at aknn.b(:com.google.android.gms@261631016@26.16.31 (100700-900800821):435)
+05-05 16:11:00.866  2522 28514 W GLSUser : 	at aknl.a(:com.google.android.gms@261631016@26.16.31 (100700-900800821):67)
+05-05 16:11:00.866  2522 28514 W GLSUser : 	at aknh.a(:com.google.android.gms@261631016@26.16.31 (100700-900800821):3)
+05-05 16:11:00.866  2522 28514 W GLSUser : 	at aknj.a(:com.google.android.gms@261631016@26.16.31 (100700-900800821):58)
+05-05 16:11:00.866  2522 28514 W GLSUser : 	at aknj.b(:com.google.android.gms@261631016@26.16.31 (100700-900800821):21)
+05-05 16:11:00.866  2522 28514 W GLSUser : 	at bhjf.m(:com.google.android.gms@261631016@26.16.31 (100700-900800821):13)
+05-05 16:11:00.866  2522 28514 W GLSUser : 	at bhju.f(:com.google.android.gms@261631016@26.16.31 (100700-900800821):10)
+05-05 16:11:00.866  2522 28514 W GLSUser : 	at fkbi.a(:com.google.android.gms@261631016@26.16.31 (100700-900800821):45)
+05-05 16:11:00.866  2522 28514 W GLSUser : 	at fkbc.b(:com.google.android.gms@261631016@26.16.31 (100700-900800821):293)
+05-05 16:11:00.866  2522 28514 W GLSUser : 	at fltv.call(:com.google.android.gms@261631016@26.16.31 (100700-900800821):1001)
+05-05 16:11:00.866  2522 28514 W GLSUser : 	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+05-05 16:11:00.866  2522 28514 W GLSUser : 	at bhqg.c(:com.google.android.gms@261631016@26.16.31 (100700-900800821):50)

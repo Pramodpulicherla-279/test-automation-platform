@@ -1,0 +1,174 @@
+{
+    "name": "test_login_success [emulator-5556]",
+    "status": "failed",
+    "steps": [
+        {
+            "name": "1. Next button on language selection screen",
+            "status": "passed",
+            "start": 1777980327828,
+            "stop": 1777980335837
+        },
+        {
+            "name": "2. Allow picture (optional permission)",
+            "status": "passed",
+            "start": 1777980335837,
+            "stop": 1777980372532
+        },
+        {
+            "name": "3. Allow location (optional permission)",
+            "status": "passed",
+            "start": 1777980372532,
+            "stop": 1777980425922
+        },
+        {
+            "name": "4. Allow audio (optional permission)",
+            "status": "passed",
+            "start": 1777980425922,
+            "stop": 1777980470297
+        },
+        {
+            "name": "5. Allow notifications (optional permission)",
+            "status": "passed",
+            "start": 1777980470297,
+            "stop": 1777980505035
+        },
+        {
+            "name": "6. Enter phone number",
+            "status": "passed",
+            "start": 1777980505035,
+            "stop": 1777980541042
+        },
+        {
+            "name": "7. Tap next button",
+            "status": "passed",
+            "start": 1777980541042,
+            "stop": 1777980545052
+        },
+        {
+            "name": "8. Wait for OTP and verify",
+            "status": "passed",
+            "start": 1777980545052,
+            "stop": 1777980678610
+        }
+    ],
+    "attachments": [
+        {
+            "name": "Crash Logs",
+            "source": "b886bdda-7d41-4c89-9aa8-24fd2ae6218f-attachment.txt",
+            "type": "text/plain"
+        },
+        {
+            "name": "Failure Screenshot",
+            "source": "b93907f2-ff1e-4a7f-881a-703cff9f63dc-attachment.png",
+            "type": "image/png"
+        },
+        {
+            "name": "Automation Payload [#ISS-001]",
+            "source": "6547be7a-2c57-4bfa-9fe3-167703fc4ef0-attachment.json",
+            "type": "application/json"
+        }
+    ],
+    "start": 1777980327827,
+    "stop": 1777980678611,
+    "uuid": "c8b62a99-124e-457d-b9c7-7cee3f92fbf9",
+    "historyId": "6cd4db9cc3c09c9f91c899baebd19817",
+    "testCaseId": "6cd4db9cc3c09c9f91c899baebd19817",
+    "fullName": "tests.test_cases.regular_farmer_test_cases.test_login_pytest.TestLogin#test_login_success",
+    "labels": [
+        {
+            "name": "parentSuite",
+            "value": "emulator-5556"
+        },
+        {
+            "name": "suite",
+            "value": "Login"
+        },
+        {
+            "name": "subSuite",
+            "value": "test_login_success"
+        },
+        {
+            "name": "device",
+            "value": "emulator-5556"
+        },
+        {
+            "name": "worker",
+            "value": "gw1"
+        },
+        {
+            "name": "tag",
+            "value": "emulator-5556"
+        },
+        {
+            "name": "parentSuite",
+            "value": "emulator-5556"
+        },
+        {
+            "name": "suite",
+            "value": "Login"
+        },
+        {
+            "name": "subSuite",
+            "value": "test_login_success"
+        },
+        {
+            "name": "device",
+            "value": "emulator-5556"
+        },
+        {
+            "name": "worker",
+            "value": "gw1"
+        },
+        {
+            "name": "tag",
+            "value": "emulator-5556"
+        },
+        {
+            "name": "os",
+            "value": "Android 10 (API 29)"
+        },
+        {
+            "name": "tag",
+            "value": "Android 10 (API 29)"
+        },
+        {
+            "name": "feature",
+            "value": "Authentication"
+        },
+        {
+            "name": "story",
+            "value": "Successful Login"
+        },
+        {
+            "name": "epic",
+            "value": "Login Flow"
+        },
+        {
+            "name": "host",
+            "value": "DESKTOP-6MNOA49"
+        },
+        {
+            "name": "thread",
+            "value": "17748-MainThread"
+        },
+        {
+            "name": "framework",
+            "value": "pytest"
+        },
+        {
+            "name": "language",
+            "value": "cpython3"
+        },
+        {
+            "name": "package",
+            "value": "tests.test_cases.regular_farmer_test_cases.test_login_pytest"
+        }
+    ],
+    "titlePath": [
+        "tests",
+        "test_cases",
+        "regular_farmer_test_cases",
+        "test_login_pytest.py",
+        "TestLogin"
+    ]
+}
