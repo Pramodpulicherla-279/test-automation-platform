@@ -1,0 +1,80 @@
+CRASH START: 05-05 17:10:13.909 32368 32368 D AndroidRuntime: Shutting down VM
+05-05 17:10:13.944  1748  1748 I Zygote  : Process 32382 exited due to signal 9 (Killed)
+05-05 17:10:14.020  1869  1869 E netmgr  : Failed to open QEMU pipe 'qemud:network': Invalid argument
+05-05 17:10:14.051  1998  2014 I ActivityManager: Force stopping io.appium.uiautomator2.server.test appid=10148 user=0: from pid 2143
+05-05 17:10:14.052  1998  9101 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10149 user=0: from pid 2142
+05-05 17:10:14.072  2232  2232 D CarrierSvcBindHelper: No carrier app for: 0
+05-05 17:10:14.133  1998  2014 I ActivityManager: Force stopping com.krishivaas appid=10150 user=0: from pid 2163
+05-05 17:10:14.133  1998  2014 I ActivityManager: Killing 32432:com.krishivaas/u0a150 (adj 0): stop com.krishivaas
+05-05 17:10:14.139  1998  2014 W ActivityManager: Scheduling restart of crashed service com.krishivaas/com.uxcam.service.HttpPostService in 1000ms
+05-05 17:10:14.140  1998  2014 W ActivityTaskManager: Force removing ActivityRecord{3a3871 u0 com.krishivaas/.MainActivity t34 f}: app died, no saved state
+05-05 17:10:14.078  2232  2232 D CarrierSvcBindHelper: No carrier app for: 0
+05-05 17:10:14.203  1764  1866 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-05 17:10:14.204  1998  1998 W ActivityManager: Unable to start service Intent { act=android.service.appprediction.AppPredictionService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiPredictionService } U=0: not found
+05-05 17:10:14.204  1998  1998 W RemoteAppPredictionService: could not bind to Intent { act=android.service.appprediction.AppPredictionService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiPredictionService } using flags 67108865
+05-05 17:10:14.207  1764  1866 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-05 17:10:14.207  2232  2232 D CarrierSvcBindHelper: No carrier app for: 0
+05-05 17:10:14.210  3087  3465 D EGL_emulation: eglMakeCurrent: 0xf15548e0: ver 2 0 (tinfo 0xdad60a20)
+05-05 17:10:14.218  1764 26880 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-05 17:10:14.225  1764 26880 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-05 17:10:14.247  3087  3087 I bqwu    : onStart
+05-05 17:10:14.247  2395  2822 D EGL_emulation: eglMakeCurrent: 0xf15539e0: ver 2 0 (tinfo 0xe63b7370)
+05-05 17:10:14.255  1764 26880 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-05 17:10:14.261  1998  4797 D ConnectivityService: requestNetwork for uid/pid:10115/3087 NetworkRequest [ TRACK_DEFAULT id=161, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10115] ]
+05-05 17:10:14.263  3087  3087 I bout    : (REDACTED) [%s] onStart()
+05-05 17:10:14.266  3087  3087 I bqwu    : onResume
+05-05 17:10:14.272  2232  2232 D PhoneSwitcherNetworkRequstListener: got request NetworkRequest [ TRACK_DEFAULT id=161, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10115] ] with score 60 and serial -1
+05-05 17:10:14.275  1764 26880 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-05 17:10:14.319  1998  2014 W InputMethodManagerService: Got RemoteException sending setActive(false) notification to pid 32432 uid 10150
+05-05 17:10:14.333  1837  7937 E OMXNodeInstance: !!! Observer died. Quickly, do something, ... anything...
+05-05 17:10:14.339  1998  2417 D ConnectivityService: ConnectivityService NetworkRequestInfo binderDied(NetworkRequest [ TRACK_DEFAULT id=160, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10150] ], android.os.BinderProxy@3445c90)
+05-05 17:10:14.343  1998  2101 D ConnectivityService: releasing NetworkRequest [ TRACK_DEFAULT id=160, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10150] ] (release request)
+05-05 17:10:14.363 21072 21072 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.inappreach.service.START dat=chimera-action: cmp=com.google.android.gms/.chimera.GmsApiService }
+05-05 17:10:14.364 21072 21072 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.inappreach.service.START dat=chimera-action: cmp=com.google.android.gms/.chimera.GmsApiService }
+05-05 17:10:14.385  1748  1748 I Zygote  : Process 32432 exited due to signal 9 (Killed)
+05-05 17:10:14.392  1998  2019 W ActivityManager: setHasOverlayUi called on unknown pid: 32432
+05-05 17:10:14.518  1998  1998 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy_pre_p_apps
+05-05 17:10:14.554  1998  1998 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy_p_apps
+05-05 17:10:14.574  1998  1998 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy
+05-05 17:10:15.512  1882  1882 E wifi_forwarder: RemoteConnection failed to initialize: RemoteConnection failed to open pipe
+05-05 17:10:19.049 21072 21072 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.auth.api.phone.service.InternalService.START dat=chimera-action: cmp=com.google.android.gms/.chimera.GmsInternalApiService }
+05-05 17:10:46.566  2522   853 I AlarmManager: setExactAndAllowWhileIdle [name: GCM_HB_ALARM type: 2 triggerAtMillis: 20695387]
+05-05 17:10:46.571  2522   853 I AlarmManager: setExactAndAllowWhileIdle [name: GCM_HB_ALARM type: 2 triggerAtMillis: 20695391]
+05-05 17:10:50.452  2522  3013 W Settings: Setting airplane_mode_on has moved from android.provider.Settings.System to android.provider.Settings.Global, returning read-only value.
+05-05 17:10:51.282  1998  2417 I chatty  : uid=1000(system) Binder:1998_9 expire 5 lines
+05-05 17:10:51.291  2522  2889 I NullBinder: NullBinder for android.net.action.RECOMMEND_NETWORKS triggering remote TransactionTooLargeException due to Service without Chimera impl, calling uid: 1000, calling pid: 0
+05-05 17:10:51.296  2522  1219 I FrewleTileCacheManagerV: (REDACTED) Fetched %d AP models from cache
+05-05 17:10:51.309  2522  3013 I ActivityScheduler: nextTriggerTime: 20171419, in 551289ms, detectorType: 39, FULL_TYPE alarmWindowMillis: 200000
+05-05 17:11:14.082  1869  1869 E netmgr  : Failed to open QEMU pipe 'qemud:network': Invalid argument
+05-05 17:11:15.573  1882  1882 E wifi_forwarder: RemoteConnection failed to initialize: RemoteConnection failed to open pipe
+05-05 17:11:51.292  2522  3013 W Settings: Setting airplane_mode_on has moved from android.provider.Settings.System to android.provider.Settings.Global, returning read-only value.
+05-05 17:11:52.132  2139  2139 I wpa_supplicant: nl80211: send_and_recv->nl_recvmsgs failed: -33
+05-05 17:11:52.133  1998  2844 I chatty  : uid=1000(system) Binder:1998_E expire 5 lines
+05-05 17:11:52.142  2522  2542 I NullBinder: NullBinder for android.net.action.RECOMMEND_NETWORKS triggering remote TransactionTooLargeException due to Service without Chimera impl, calling uid: 1000, calling pid: 0
+05-05 17:11:52.142  2522  1219 I FrewleTileCacheManagerV: (REDACTED) Fetched %d AP models from cache
+05-05 17:11:52.150  2522  1219 W GLSUser : [DeviceKeyStore] Cannot load key: Device key file not found.
+05-05 17:11:52.246  1747  2248 E ResolverController: No valid NAT64 prefix (101, <unspecified>/0)
+05-05 17:11:52.282  2522  1219 W GmsUrlRequestImpl: [https://android.googleapis.com/auth/devicekey] Content-Type header is overwritten.
+05-05 17:11:52.524  2522  1219 W GLSUser : [AppCertManager] Exception while requesting key: 
+05-05 17:11:52.524  2522  1219 W GLSUser : java.util.concurrent.ExecutionException: cusw: Parse Proto Exception with response code 400
+05-05 17:11:52.524  2522  1219 W GLSUser : 	at gcuk.j(:com.google.android.gms@261631016@26.16.31 (100700-900800821):21)
+05-05 17:11:52.524  2522  1219 W GLSUser : 	at gcut.t(:com.google.android.gms@261631016@26.16.31 (100700-900800821):73)
+05-05 17:11:52.524  2522  1219 W GLSUser : 	at aknn.b(:com.google.android.gms@261631016@26.16.31 (100700-900800821):435)
+05-05 17:11:52.524  2522  1219 W GLSUser : 	at aknl.a(:com.google.android.gms@261631016@26.16.31 (100700-900800821):67)
+05-05 17:11:52.524  2522  1219 W GLSUser : 	at aknh.a(:com.google.android.gms@261631016@26.16.31 (100700-900800821):3)
+05-05 17:11:52.524  2522  1219 W GLSUser : 	at aknj.a(:com.google.android.gms@261631016@26.16.31 (100700-900800821):58)
+05-05 17:11:52.524  2522  1219 W GLSUser : 	at aknj.b(:com.google.android.gms@261631016@26.16.31 (100700-900800821):21)
+05-05 17:11:52.524  2522  1219 W GLSUser : 	at bhjf.m(:com.google.android.gms@261631016@26.16.31 (100700-900800821):13)
+05-05 17:11:52.524  2522  1219 W GLSUser : 	at bhju.f(:com.google.android.gms@261631016@26.16.31 (100700-900800821):10)
+05-05 17:11:52.524  2522  1219 W GLSUser : 	at fkbi.a(:com.google.android.gms@261631016@26.16.31 (100700-900800821):45)
+05-05 17:11:52.524  2522  1219 W GLSUser : 	at fkbc.b(:com.google.android.gms@261631016@26.16.31 (100700-900800821):293)
+05-05 17:11:52.524  2522  1219 W GLSUser : 	at fltv.call(:com.google.android.gms@261631016@26.16.31 (100700-900800821):1001)
+05-05 17:11:52.524  2522  1219 W GLSUser : 	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+05-05 17:11:52.524  2522  1219 W GLSUser : 	at bhqg.c(:com.google.android.gms@261631016@26.16.31 (100700-900800821):50)
+05-05 17:11:52.524  2522  1219 W GLSUser : 	at bhqg.run(:com.google.android.gms@261631016@26.16.31 (100700-900800821):66)
+05-05 17:11:52.524  2522  1219 W GLSUser : 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1167)
+05-05 17:11:52.524  2522  1219 W GLSUser : 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:641)
+05-05 17:11:52.524  2522  1219 W GLSUser : 	at bhvx.run(:com.google.android.gms@261631016@26.16.31 (100700-900800821):8)
+05-05 17:11:52.524  2522  1219 W GLSUser : 	at java.lang.Thread.run(Thread.java:919)
+05-05 17:11:52.524  2522  1219 W GLSUser : Caused by: cusw: Parse Proto Exception with response code 400
+05-05 17:11:52.524  2522  1219 W GLSUser : 	at cuud.e(:com.google.android.gms@261631016@26.16.31 (100700-900800821):91)
