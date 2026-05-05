@@ -1,0 +1,80 @@
+CRASH START: 05-05 12:27:02.956 10294 10294 D AndroidRuntime: Calling main entry com.android.commands.am.Am
+05-05 12:27:02.964  1998  3227 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10149 user=0: start instr
+05-05 12:27:02.974  1748  1748 D Zygote  : Forked child process 10308
+05-05 12:27:02.979  1998  2026 I ActivityManager: Start proc 10308:io.appium.uiautomator2.server/u0a149 for added application io.appium.uiautomator2.server
+05-05 12:27:02.983 10308 10308 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 34 lines
+05-05 12:27:03.317  1882  1882 E wifi_forwarder: RemoteConnection failed to initialize: RemoteConnection failed to open pipe
+05-05 12:27:03.670 10308 10332 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 16 lines
+05-05 12:27:03.778  1803  1803 E adbd    : failed to connect to socket 'tcp:6790': Connection refused
+05-05 12:27:03.857  1998  1998 V SettingsProvider: Notifying for 0: content://settings/secure/accessibility_enabled
+05-05 12:27:03.958 10308 10336 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 2 lines
+05-05 12:27:04.265 10308 10337 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 39 lines
+05-05 12:27:05.023 10308 10340 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 11 lines
+05-05 12:27:05.149 10308 10345 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 27 lines
+05-05 12:27:05.149 10308 10344 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 4 lines
+05-05 12:27:05.149 10308 10343 I chatty  : uid=10149(io.appium.uiautomator2.server) expire 3 lines
+05-05 12:27:05.297  1998  2263 I ActivityManager: Force stopping com.krishivaas appid=10150 user=0: from pid 10356
+05-05 12:27:05.307  2232  2232 D CarrierSvcBindHelper: No carrier app for: 0
+05-05 12:27:05.551  1998  2263 I ActivityTaskManager: START u0 {act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=com.krishivaas/.MainActivity} from uid 2000
+05-05 12:27:05.655  1748  1748 D Zygote  : Forked child process 10359
+05-05 12:27:05.660 10359 10359 W com.krishivaas: Unexpected CPU variant for X86 using defaults: x86
+05-05 12:27:05.665  3087  3087 I bqwu    : onPause
+05-05 12:27:05.672  1998  2026 W ActivityManager: Slow operation: 79ms so far, now at startProcess: returned from zygote!
+05-05 12:27:05.672  1998  2026 W ActivityManager: Slow operation: 79ms so far, now at startProcess: done updating battery stats
+05-05 12:27:05.673  1998  2026 W ActivityManager: Slow operation: 79ms so far, now at startProcess: building log message
+05-05 12:27:05.673  1998  2026 I ActivityManager: Start proc 10359:com.krishivaas/u0a150 for activity {com.krishivaas/com.krishivaas.MainActivity}
+05-05 12:27:05.673  1998  2026 W ActivityManager: Slow operation: 80ms so far, now at startProcess: starting to update pids map
+05-05 12:27:05.674  1998  2026 W ActivityManager: Slow operation: 81ms so far, now at startProcess: done updating pids map
+05-05 12:27:05.686 10359 10359 E com.krishivaas: Not starting debugger since process cannot load the jdwp agent.
+05-05 12:27:05.698  3087  3155 V ClearcutMetricXmitter: Transmission is done.
+05-05 12:27:05.720  1998  3562 W InputReader: Device has associated, but no associated display id.
+05-05 12:27:05.720  1998  3562 I chatty  : uid=1000(system) Binder:1998_13 identical 16 lines
+05-05 12:27:05.720  1998  3562 W InputReader: Device has associated, but no associated display id.
+05-05 12:27:05.814 10359 10359 I FirebaseApp: Device unlocked: initializing all Firebase APIs for app [DEFAULT]
+05-05 12:27:05.849 10359 10359 I FirebaseInitProvider: FirebaseApp initialization successful
+05-05 12:27:05.863 10359 10359 D ReactNativeFirebaseApp: received application context.
+05-05 12:27:05.952 10359 10359 D WM-WrkMgrInitializer: Initializing WorkManager with default configuration.
+05-05 12:27:06.003 10359 10392 D NetworkSecurityConfig: No Network Security Config specified, using platform default
+05-05 12:27:06.022 10359 10359 I MapboxInitializer: MapboxMapsInitializer create() is called
+05-05 12:27:06.023 10359 10359 I MapboxInitializer: MapboxInitializer started MapboxMapsInitializerImpl initialization, attempt 1
+05-05 12:27:06.122 10359 10359 I Mapbox  : [common]: Using Mapbox Common SDK v23.10.0(1b9b63709)
+05-05 12:27:06.207 10359 10359 I Mapbox  : [telemetry]: Telemetry service not started, missing token
+05-05 12:27:06.232 10359 10359 I Mapbox  : [maps-core]: Using Mapbox Core Maps SDK v10.18.0(83c0470aa4)
+05-05 12:27:06.258 10359 10359 I MapboxInitializer: Initialized MapboxMapsInitializerImpl successfully
+05-05 12:27:06.260 10359 10359 I MapboxInitializer: MapboxSDKCommonInitializer create() is called
+05-05 12:27:06.260 10359 10359 I MapboxInitializer: Already initialized MapboxSDKCommonInitializerImpl before successfully
+05-05 12:27:06.262 10359 10359 D NOTIFEE : (context): received application context
+05-05 12:27:06.273 10359 10359 W SoLoader: Initializing SoLoader: 0
+05-05 12:27:06.275 10359 10359 W SoLoader: SoLoader initialized: 0
+05-05 12:27:06.342  1794  2409 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+05-05 12:27:06.344  1794  2409 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+05-05 12:27:06.350 10359 10402 D libEGL  : Emulator has host GPU support, qemu.gles is set to 1.
+05-05 12:27:06.353 10359 10402 W libc    : Unable to set property "qemu.gles" to "1": connection failed; errno=13 (Permission denied)
+05-05 12:27:06.344 10359 10359 W RenderThread: type=1400 audit(0.0:64): avc: denied { write } for name="property_service" dev="tmpfs" ino=9420 scontext=u:r:untrusted_app:s0:c150,c256,c512,c768 tcontext=u:object_r:property_socket:s0 tclass=sock_file permissive=0
+05-05 12:27:06.386 10359 10402 D libEGL  : loaded /vendor/lib/egl/libEGL_emulation.so
+05-05 12:27:06.387 10359 10402 D libEGL  : loaded /vendor/lib/egl/libGLESv1_CM_emulation.so
+05-05 12:27:06.388 10359 10402 D libEGL  : loaded /vendor/lib/egl/libGLESv2_emulation.so
+05-05 12:27:06.393 10359 10359 D AppCompatDelegate: Checking for metadata for AppLocalesMetadataHolderService : Service not found
+05-05 12:27:06.627 10359 10359 W SoLoader: SoLoader already initialized
+05-05 12:27:06.705 10359 10359 W SoLoader: SoLoader already initialized
+05-05 12:27:06.794 10359 10359 I Choreographer: Skipped 45 frames!  The application may be doing too much work on its main thread.
+05-05 12:27:06.819 10359 10399 D HostConnection: HostConnection::get() New Host Connection established 0xde24cf50, tid 10399
+05-05 12:27:06.842 10359 10399 D HostConnection: HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_hwc_color_transform GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_2 
+05-05 12:27:06.881 10359 10399 D EGL_emulation: eglCreateContext: 0xde21b4a0: maj 2 min 0 rcv 2
+05-05 12:27:06.883 10359 10399 D EGL_emulation: eglMakeCurrent: 0xde21b4a0: ver 2 0 (tinfo 0xc2e752d0)
+05-05 12:27:06.941  1764  2551 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-05 12:27:06.976  1826  1826 I keystore: del USRPKEY__androidx_security_master_key_ 10150
+05-05 12:27:06.981  1826  1826 I keystore: del USRSKEY__androidx_security_master_key_ 10150
+05-05 12:27:06.982  1826  1826 I keystore: del USRCERT__androidx_security_master_key_ 10150
+05-05 12:27:06.984  1652  1652 I hwservicemanager: getTransport: Cannot find entry android.hardware.graphics.mapper@3.0::IMapper/default in either framework or device manifest.
+05-05 12:27:06.986 10359 10399 W Gralloc3: mapper 3.x is not supported
+05-05 12:27:06.987  1826  1826 I keystore: del CACERT__androidx_security_master_key_ 10150
+05-05 12:27:06.991 10359 10399 D HostConnection: createUnique: call
+05-05 12:27:06.992 10359 10399 D HostConnection: HostConnection::get() New Host Connection established 0xde24d040, tid 10399
+05-05 12:27:06.993 10359 10399 D HostConnection: HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_hwc_color_transform GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_2 
+05-05 12:27:06.993 10359 10399 D eglCodecCommon: allocate: Ask for block of size 0x1000
+05-05 12:27:06.994 10359 10399 D eglCodecCommon: allocate: ioctl allocate returned offset 0x3ffff8000 size 0x2000
+05-05 12:27:07.053 10359 10399 D EGL_emulation: eglMakeCurrent: 0xde21b4a0: ver 2 0 (tinfo 0xc2e752d0)
+05-05 12:27:07.054  1764  2551 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-05 12:27:07.065  1764  2551 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-05 12:27:07.113  1826 10410 D DropBoxManager: About to call service->add()

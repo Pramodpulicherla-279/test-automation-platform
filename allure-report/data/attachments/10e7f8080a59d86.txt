@@ -1,0 +1,80 @@
+CRASH START: 05-05 12:27:52.931   552  2166 W ActivityTaskManager: Force removing ActivityRecord{8270e8a u0 com.krishivaas/.MainActivity t27 f}}: app died, no saved state
+05-05 12:27:52.937   552  2166 W InputManager-JNI: Input channel object '87e6c63 com.krishivaas/com.krishivaas.MainActivity (client)' was disposed without first being removed with the input manager!
+05-05 12:27:52.972   552   591 I libprocessgroup: Successfully killed process cgroup uid 10148 pid 9360 in 42ms
+05-05 12:27:52.978   496  6757 D BufferPoolConnection: connection 2132081740540 closed on death
+05-05 12:27:52.982   346   346 I Zygote  : Process 9360 exited due to signal 9 (Killed)
+05-05 12:27:52.984   552   715 D TextToSpeechManagerPerUserService: Unbinding TTS engine: com.google.android.tts. Reason: client process death is reported
+05-05 12:27:52.988   552   870 D ConnectivityService: ConnectivityService NetworkRequestInfo binderDied(uid/pid:10148/9360, android.os.BinderProxy@f0e7a4b)
+05-05 12:27:52.989   552   552 W TextToSpeechManagerPerUserService: Disconnected from TTS engine
+05-05 12:27:52.990   490   509 E mediaserver: unlinkToDeath: removed reference to death recipient but unlink failed.
+05-05 12:27:52.990   552   552 I TextToSpeechManagerPerUserService: Failed running callback method: android.os.DeadObjectException
+05-05 12:27:52.995   490   509 E IPCThreadState: attemptIncStrongHandle(2): Not supported
+05-05 12:27:52.949     0     0 I binder  : undelivered transaction 267574, process died.
+05-05 12:27:52.951     0     0 I binder  : undelivered transaction 267575, process died.
+05-05 12:27:52.961     0     0 I binder  : undelivered transaction 267573, process died.
+05-05 12:27:53.000   413   413 E BpTransactionCompletedListener: Failed to transact (-32)
+05-05 12:27:53.002   496   830 V C2Store : in ~ComponentModule
+05-05 12:27:53.004   552   669 D ConnectivityService: releasing NetworkRequest [ REQUEST id=150, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10148 RequestorUid: 10148 RequestorPkg: com.krishivaas] ] (release request)
+05-05 12:27:53.005   496   830 V C2Store : unloading dll
+05-05 12:27:53.006   552  2166 W ActivityTaskManager: Can't find TaskDisplayArea to determine support for multi window. Task id=27 attached=false
+05-05 12:27:53.010   552  2166 W ActivityTaskManager: Can't find TaskDisplayArea to determine support for multi window. Task id=27 attached=false
+05-05 12:27:53.012   496   830 D BufferPoolAccessor2.0: Destruction - bufferpool2 0x79e3adfdb788 cached: 0/0M, 0/0% in use; allocs: 5, 80% recycled; transfers: 5, 80% unfetched
+05-05 12:27:53.037   552  2167 W system_server: Long monitor contention with owner Binder:552_17 (2166) at void com.android.server.am.OomAdjuster.updateOomAdjLocked(java.lang.String)(OomAdjuster.java:534) waiters=0 in boolean com.android.server.am.ActivityManagerService.isUidActive(int, java.lang.String) for 112ms
+05-05 12:27:53.048   552  3028 V ActivityManager: Got obituary of 9360:com.krishivaas
+05-05 12:27:53.069   364   402 D goldfish-address-space: claimShared: Ask to claim region [0x3f10b8000 0x3f1a9c000]
+05-05 12:27:53.084   364   402 D goldfish-address-space: claimShared: Ask to claim region [0x3f1a9c000 0x3f2480000]
+05-05 12:27:53.088   364   472 D goldfish-address-space: claimShared: Ask to claim region [0x3f2480000 0x3f2e64000]
+05-05 12:27:53.117   891   891 D CarrierSvcBindHelper: No carrier app for: 0
+05-05 12:27:53.129   552   552 W ServiceConnector.Impl: mayInterruptIfRunning not supported - ignoring
+05-05 12:27:53.129   552   552 W Looper  : Slow dispatch took 141ms main h=android.os.Handler c=com.android.internal.infra.ServiceConnector$Impl$$ExternalSyntheticLambda1@6231772 m=0
+05-05 12:27:53.141   364   402 D goldfish-address-space: claimShared: Ask to claim region [0x3f2e64000 0x3f3848000]
+05-05 12:27:53.151   364   402 D goldfish-address-space: claimShared: Ask to claim region [0x3f0000000 0x3f09e4000]
+05-05 12:27:53.169   364   402 D goldfish-address-space: claimShared: Ask to claim region [0x3f4000000 0x3f49e4000]
+05-05 12:27:53.171   552   581 W ActivityManager: setHasOverlayUi called on unknown pid: 9360
+05-05 12:27:53.173   552  3028 W ActivityManager: Unable to start service Intent { act=android.service.smartspace.SmartspaceService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiSmartspaceService } U=0: not found
+05-05 12:27:53.177   552  3028 W RemoteSmartspaceService: could not bind to Intent { act=android.service.smartspace.SmartspaceService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiSmartspaceService } using flags 67112961
+05-05 12:27:53.240   552   552 W ActivityManager: Unbind failed: could not find connection for android.app.LoadedApk$ServiceDispatcher$InnerConnection@330a86c
+05-05 12:27:53.265   552  2166 W ActivityManager: Unable to start service Intent { act=android.service.smartspace.SmartspaceService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiSmartspaceService } U=0: not found
+05-05 12:27:53.274   552  2166 W RemoteSmartspaceService: could not bind to Intent { act=android.service.smartspace.SmartspaceService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiSmartspaceService } using flags 67112961
+05-05 12:27:53.279  1550  1572 I OpenGLRenderer: Davey! duration=65319ms; Flags=1, FrameTimelineVsyncId=6832, IntendedVsync=2532520142742, Vsync=2532520142742, InputEventId=0, HandleInputStart=2532523666900, AnimationStart=2532523702800, PerformTraversalsStart=2532523747800, DrawStart=2532567310000, FrameDeadline=2532553476074, FrameInterval=2532521883200, FrameStartTime=16666666, SyncQueued=2532567778100, SyncStart=2532571730200, IssueDrawCommandsStart=2532572383200, SwapBuffers=2532574915800, FrameCompleted=2597843667700, DequeueBufferDuration=26700, QueueBufferDuration=3943400, GpuCompleted=2597843667700, SwapBuffersCompleted=2532587663200, DisplayPresentTime=0, 
+05-05 12:27:53.282  1307  1307 I GsaVoiceInteractionSrv: Handling ACTION_START_HOTWORD
+05-05 12:27:53.282  1307  1307 I GsaVoiceInteractionSrv: disregardVoiceMatch: false
+05-05 12:27:53.282  1307  1307 I GsaVoiceInteractionSrv: Cannot start hotword, hotword has been explicitly disabled.
+05-05 12:27:53.287   552   552 W ActivityManager: Unbind failed: could not find connection for android.app.LoadedApk$ServiceDispatcher$InnerConnection@ab5df58
+05-05 12:27:53.290  1229  1229 I GoogleInputMethodService: GoogleInputMethodService.onFinishInput():3420 
+05-05 12:27:53.291  1229  1229 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():2002 
+05-05 12:27:53.304  1229  1229 I DeviceUnlockedTag: DeviceUnlockedTag.notifyDeviceLockStatusChanged():31 Notify device unlocked.
+05-05 12:27:54.489   202   202 I servicemanager: Since 'apexservice' could not be found, trying to start it as a lazy AIDL service
+05-05 12:27:54.469     0     0 I init    : starting service 'apexd'...
+05-05 12:27:54.476     0     0 I init    : Control message: Processed ctl.interface_start for 'aidl/apexservice' from pid: 202 (/system/bin/servicemanager)
+05-05 12:27:54.495     0     0 I apexd   : Scanning /system/apex for pre-installed ApexFiles
+05-05 12:27:54.499     0     0 I apexd   : Found pre-installed APEX /system/apex/com.android.i18n.apex
+05-05 12:27:54.501     0     0 I apexd   : Found pre-installed APEX /system/apex/com.android.vndk.current.apex
+05-05 12:27:54.505     0     0 I apexd   : Found pre-installed APEX /system/apex/com.google.android.art.apex
+05-05 12:27:54.508     0     0 I apexd   : Found pre-installed APEX /system/apex/com.google.android.media.swcodec.apex
+05-05 12:27:54.511     0     0 I apexd   : Found pre-installed APEX /system/apex/com.google.android.telephony.apex
+05-05 12:27:54.515     0     0 I apexd   : Found pre-installed APEX /system/apex/com.google.android.scheduling.apex
+05-05 12:27:54.520     0     0 I apexd   : Found pre-installed APEX /system/apex/com.google.android.media.apex
+05-05 12:27:54.528     0     0 I apexd   : Found pre-installed APEX /system/apex/com.google.android.cellbroadcast.apex
+05-05 12:27:54.535     0     0 I apexd   : Found pre-installed APEX /system/apex/com.google.android.os.statsd.apex
+05-05 12:27:54.542     0     0 I apexd   : Found pre-installed APEX /system/apex/com.google.android.ipsec.apex
+05-05 12:27:54.554     0     0 I apexd   : Found pre-installed APEX /system/apex/com.google.mainline.primary.libs.apex
+05-05 12:27:54.557     0     0 I apexd   : Found pre-installed APEX /system/apex/com.google.android.adbd.apex
+05-05 12:27:54.560     0     0 I apexd   : Found pre-installed APEX /system/apex/com.google.android.sdkext.apex
+05-05 12:27:54.562     0     0 I apexd   : Found pre-installed APEX /system/apex/com.google.android.tzdata3.apex
+05-05 12:27:54.564     0     0 I apexd   : Found pre-installed APEX /system/apex/com.google.android.neuralnetworks.apex
+05-05 12:27:54.571     0     0 I apexd   : Found pre-installed APEX /system/apex/com.google.android.appsearch.apex
+05-05 12:27:54.574     0     0 I apexd   : Found pre-installed APEX /system/apex/com.google.android.resolv.apex
+05-05 12:27:54.578     0     0 I apexd   : Found pre-installed APEX /system/apex/com.android.runtime.apex
+05-05 12:27:54.581     0     0 I apexd   : Found pre-installed APEX /system/apex/com.google.android.permission.apex
+05-05 12:27:54.587     0     0 I apexd   : Found pre-installed APEX /system/apex/com.android.apex.cts.shim.apex
+05-05 12:27:54.589     0     0 I apexd   : Found pre-installed APEX /system/apex/com.google.android.mediaprovider.apex
+05-05 12:27:54.589     0     0 I apexd   : Found pre-installed APEX /system/apex/com.google.android.conscrypt.apex
+05-05 12:27:54.596     0     0 I apexd   : Found pre-installed APEX /system/apex/com.google.android.wifi.apex
+05-05 12:27:54.601     0     0 I apexd   : Found pre-installed APEX /system/apex/com.google.android.tethering.apex
+05-05 12:27:54.612     0     0 I apexd   : Found pre-installed APEX /system/apex/com.google.android.extservices.apex
+05-05 12:27:54.620     0     0 I apexd   : Scanning /system_ext/apex for pre-installed ApexFiles
+05-05 12:27:54.623     0     0 W apexd   : /system_ext/apex does not exist. Skipping
+05-05 12:27:54.626     0     0 I apexd   : Scanning /product/apex for pre-installed ApexFiles
+05-05 12:27:54.628     0     0 W apexd   : /product/apex does not exist. Skipping
+05-05 12:27:54.630     0     0 I apexd   : Scanning /vendor/apex for pre-installed ApexFiles
