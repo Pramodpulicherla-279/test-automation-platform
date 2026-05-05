@@ -1,4 +1,2 @@
 "DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"","128299","test_addfarm [emulator-5556]","emulator-5556","2026-05-05","failed","2026-05-05","test_addfarm","Onboarding","",""
-"","282757","test_login_success [emulator-5556]","emulator-5556","2026-05-05","failed","2026-05-05","test_login_success","Login","",""
-"","202733","test_addfarm_addcrop_success [emulator-5556]","emulator-5556","2026-05-05","failed","2026-05-05","test_addfarm_addcrop_success","Onboarding","",""
+"","197110","Verify user can login with valid credentials","emulator-5554","2026-05-05","passed","2026-05-05","test_login_success","Login","",""
