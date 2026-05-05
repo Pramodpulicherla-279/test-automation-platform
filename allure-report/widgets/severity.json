@@ -1,1 +1,1 @@
-[{"uid":"85b9ee5c7d901748","name":"Verify user can login with valid credentials","time":{"start":1777825308195,"stop":1777825308195,"duration":0},"status":"broken","severity":"normal"}]
+[{"uid":"d657e4b858e7906c","name":"add farm","time":{"start":1777985478298,"stop":1777985505028,"duration":26730},"status":"failed","severity":"normal"},{"uid":"c3ce62a48c404d4c","name":"Verify user can login with valid credentials","time":{"start":1777985462073,"stop":1777985462073,"duration":0},"status":"broken","severity":"normal"}]
