@@ -1,0 +1,80 @@
+CRASH START: 05-05 08:46:14.725  3067  3085 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+05-05 08:46:14.726   342   342 I Zygote  : Process 2293 exited due to signal 9 (Killed)
+05-05 08:46:14.741  2233  2587 I BugleNotifications: Silently refreshing notifications after Boot/Package replacement
+05-05 08:46:14.661     0     0 I binder  : undelivered transaction 86298, process died.
+05-05 08:46:14.665     0     0 I binder  : undelivered TRANSACTION_COMPLETE
+05-05 08:46:14.668     0     0 I binder  : undelivered transaction 86301, process died.
+05-05 08:46:14.755   552   574 I ActivityManager: Process com.google.android.apps.maps:server_recovery_process (pid 3067) has died: cch+5 CEM 
+05-05 08:46:14.756   552   589 I libprocessgroup: Successfully killed process cgroup uid 10111 pid 3067 in 0ms
+05-05 08:46:14.758   342   342 I Zygote  : Process 3067 exited cleanly (0)
+05-05 08:46:14.793  1348  2984 I Checkin : [CheckinOperation] Checkin Operation finished with result: RESCHEDULED finish time: 99791.
+05-05 08:46:14.810  1348  2984 I Checkin : [ScheduledCheckinGmsTaskService] scheduleCheckinTask
+05-05 08:46:14.825  1118  2537 I NetworkScheduler.Stats: Task com.google.android.gms/com.google.android.gms.ipa.base.IpaGcmTaskService started execution. cause:5 exec_start_elapsed_seconds: 99 [CONTEXT service_id=218 ]
+05-05 08:46:14.832  1118  1201 I NetworkScheduler.Stats: Task com.google.android.gms/com.google.android.gms.gcm.HeartbeatAlarm$ConnectionInfoPersistService started execution. cause:5 exec_start_elapsed_seconds: 99 [CONTEXT service_id=218 ]
+05-05 08:46:14.852  1348  2984 I Checkin : [ExecutionManager] Checkin scheduled at 342340.
+05-05 08:46:14.887  1118  1201 I NetworkScheduler.Stats: Task com.google.android.gms/com.google.android.gms.ipa.base.IpaGcmTaskService finished executing. cause:5 result: 1 elapsed_millis: 79 uptime_millis: 79 exec_start_elapsed_seconds: 99 [CONTEXT service_id=218 ]
+05-05 08:46:14.921  2233  2351 D MddListenableWorkerFactory: createWorker for class: com.google.android.apps.messaging.shared.datamodel.workqueue.WorkQueueWorkerShim
+05-05 08:46:14.936  1118  1201 I NetworkScheduler.Stats: Task com.google.android.gms/com.google.android.gms.gcm.HeartbeatAlarm$ConnectionInfoPersistService finished executing. cause:5 result: 1 elapsed_millis: 61 uptime_millis: 61 exec_start_elapsed_seconds: 99 [CONTEXT service_id=218 ]
+05-05 08:46:14.959  2233  3003 I BugleNotifications: Starting refreshIncomingMessageNotifications: silent - true, isSmartReplyUpdate - false, isFromNotification - false
+05-05 08:46:14.984  2233  3003 W SQLiteLog: (28) double-quoted string literal: ""
+05-05 08:46:14.984  2233  3003 W SQLiteLog: (28) double-quoted string literal: ""
+05-05 08:46:14.984  2233  3003 W SQLiteLog: (28) double-quoted string literal: ""
+05-05 08:46:14.985  2233  3003 W SQLiteLog: (28) double-quoted string literal: ""
+05-05 08:46:14.985  2233  3003 W SQLiteLog: (28) double-quoted string literal: ""
+05-05 08:46:14.985  2233  3003 W SQLiteLog: (28) double-quoted string literal: ""
+05-05 08:46:14.988  2233  3003 W SQLiteLog: (28) double-quoted string literal: ""
+05-05 08:46:14.988  2233  3003 W SQLiteLog: (28) double-quoted string literal: ""
+05-05 08:46:14.989  2233  3003 W SQLiteLog: (28) double-quoted string literal: ""
+05-05 08:46:14.997  2233  3003 I BugleNotifications: No unseen incoming message notifications
+05-05 08:46:14.997  2233  3003 I BugleNotifications: No incomingMessageNotification created, canceling existing incomingMessageNotifications
+05-05 08:46:15.023  2233  2312 I WM-WorkerWrapper: Worker result SUCCESS for Work [ id=1331e122-0bc4-4f33-9ccf-7db24e9d942d, tags={ com.google.android.apps.messaging.shared.datamodel.workqueue.WorkQueueWorkerShim, refresh_incoming_message_notifications- } ]
+05-05 08:46:15.044  1118  2540 I NetworkScheduler.Stats: Task com.google.android.gms/com.google.android.gms.stats.PlatformStatsCollectorService started execution. cause:5 exec_start_elapsed_seconds: 99 [CONTEXT service_id=218 ]
+05-05 08:46:15.049  1118  2537 I NetworkScheduler.Stats: Task com.google.android.gms/com.google.android.gms.ads.social.GcmSchedulerWakeupService started execution. cause:5 exec_start_elapsed_seconds: 100 [CONTEXT service_id=218 ]
+05-05 08:46:15.068  1118  1201 I NetworkScheduler.Stats: Task com.google.android.gms/com.google.android.gms.stats.PlatformStatsCollectorService finished executing. cause:5 result: 1 elapsed_millis: 67 uptime_millis: 67 exec_start_elapsed_seconds: 99 [CONTEXT service_id=218 ]
+05-05 08:46:15.101  1118  1201 I NetworkScheduler.Stats: Task com.google.android.gms/com.google.android.gms.ads.social.GcmSchedulerWakeupService finished executing. cause:5 result: 1 elapsed_millis: 47 uptime_millis: 47 exec_start_elapsed_seconds: 100 [CONTEXT service_id=218 ]
+05-05 08:46:15.158  2233  2587 I Bugle   : BootAndPackageReplacedReceiver: run post-reboot oobe tasks
+05-05 08:46:15.174  2233  2587 I BugleRcsProvisioning: BugleSystemBindingManager: onBootComplete
+05-05 08:46:15.174  2233  2587 I BugleRcsProvisioning: BugleSystemBindingManager: onCsLibPhenotypeUpdated
+05-05 08:46:15.174  2233  2587 I BugleRcsEngine: [56] zuq.c: SystemBindingManager: force P/H Flag update scheduled and start updateBinding
+05-05 08:46:15.176  2233  2354 W BugleRcsEngine: [47] ajnl.z: Unable to send diagnostic log
+05-05 08:46:15.177  2233  2587 I BugleRcsProvisioning: RcsProvisioningTrigger: onBootComplete
+05-05 08:46:15.177  2233  2587 I BugleRcsProvisioning: RcsProvisioningTrigger: updateRcsAvailabilityAsync : hint = BOOT_COMPLETE
+05-05 08:46:15.180  2233  2351 I BugleRcsEngine: [46] ajkh.run: SystemBindingManager: SystemBinding enabled: true
+05-05 08:46:15.183  2233  2351 I BugleRcsEngine: [46] ajki.b: System Binding updated
+05-05 08:46:15.183  2233  3003 W BugleRcsEngine: [91] ajnl.z: Unable to send diagnostic log
+05-05 08:46:15.184  2233  2311 I BugleRcsProvisioning: RcsProvisioningTrigger: updateRcsAvailability : hint = BOOT_COMPLETE
+05-05 08:46:15.185  2233  2311 I Bugle   : RcsAvailabilityUtilForProvisioningEngineV2: updateAvailabilityAsync, hint: BOOT_COMPLETE
+05-05 08:46:15.187  2233  2311 I BugleRcsEngine: [40] alsz.d: Checking if using CarrierServices.apk is possible. Enabled: true, isAtLeastM: true, runningInsideBugle: true
+05-05 08:46:15.187  2233  2311 W BugleRcsEngine: [40] alsz.g: Carrier Services Apk was not found.
+05-05 08:46:15.189  2233  2311 I BugleRcsEngine: [40] alsz.e: Cannot get service version because CS.apk was not found, not pre-loaded or disabled.
+05-05 08:46:15.189  2233  2311 W BugleRcsEngine: [40] alsz.e: Service with meta data key: JibeServiceApiVersions is not compatible. Service Version 1 is not supported. Supported versions: []
+05-05 08:46:15.192  2233  2311 W BugleRcsEngine: [40] akrz.a: [SR]: Single Registration is disabled. Skipping Single Registration capability check for subId: 1
+05-05 08:46:15.192  2233  2311 I BugleRcsProvisioning: RcsAvailabilityUpdaterLocal: [SR]: SingleRegistration capability, singleRegistrationCapability: false, simId: redacted-pii:sim_id[20-chars], subId: 1
+05-05 08:46:15.193  2233  2311 I BugleRcsEngine: [40] albk.n: No RCS Configuration was found in Bugle for simID: redacted-pii:sim_id[20-chars]
+05-05 08:46:15.193  2233  2311 I BugleRcsProvisioning: RcsAvailabilityUpdaterLocal: [SR]: SingleRegistration configuration, singleRegistrationRcsConfigAvailableAndEnabled: false, simId: redacted-pii:sim_id[20-chars]
+05-05 08:46:15.195  2233  2311 I BugleRcsEngine: [40] albk.n: No RCS Configuration was found in Bugle for simID: redacted-pii:sim_id[20-chars]
+05-05 08:46:15.196  2233  2311 W BugleRcsEngine: [40] alcv.a: No config URL. RCS will be disabled!
+05-05 08:46:15.196  2233  2311 I BugleRcsProvisioning: RcsAvailabilityUpdaterLocal: updateRcsAvailability, currentAvailability: 2, newAvailability: 2, hint: BOOT_COMPLETE
+05-05 08:46:15.198  2233  2311 I BugleRcsProvisioning: RcsProvisioningTrigger: onRcsAvailabilityUpdate : availability is updated to RCS is disabled for this carrier by Google, lastAvailability is RCS is disabled for this carrier by Google, simId hash = -8430249022558478157, isPev3Enabled = true
+05-05 08:46:15.208  2233  2312 I Bugle   : CountryCodeDetector: updateMainDeviceCountry from default subscription network country. detected country: us
+05-05 08:46:15.237  1405  1405 W BugleRcsEngine: [2] alsz.g: Carrier Services Apk was not found.
+05-05 08:46:15.238  1405  1405 I BugleRcsEngine: [2] alsz.e: Cannot get service version because CS.apk was not found, not pre-loaded or disabled.
+05-05 08:46:15.238  1405  1405 W BugleRcsEngine: [2] alsz.e: Service with meta data key: JibeServiceApiVersions is not compatible. Service Version 1 is not supported. Supported versions: []
+05-05 08:46:15.239  1405  1405 I BugleRcsEngine: [2] alsz.c: Not using CS JibeService because it is not compatible with AM.
+05-05 08:46:15.242  1405  1405 E BugleRcsEngine: [2] AutoStartReceiver.onReceive: JibeService cannot be started because Bugle is not exempt from doze mode.
+05-05 08:46:15.268  2233  2313 I GnpSdk  : [PhenotypeManagerImpl] Phenotype registration SUCCESS
+05-05 08:46:15.274  2233  2311 D MddListenableWorkerFactory: createWorker for class: com.google.android.apps.messaging.shared.datamodel.workqueue.WorkQueueWorkerShim
+05-05 08:46:15.275  2233  2312 W BugleDataModel: ExpireWapPushSiMessageHandler:no WAP Push SI messages.
+05-05 08:46:15.295  2233  2233 D CompatibilityChangeReporter: Compat change id reported: 119147584; UID 10101; state: ENABLED
+05-05 08:46:15.302  2233  2312 I WM-WorkerWrapper: Worker result SUCCESS for Work [ id=193842b5-2c97-4607-84a8-1916f9738085, tags={ com.google.android.apps.messaging.shared.datamodel.workqueue.WorkQueueWorkerShim, expire_wap_push_si_message- } ]
+05-05 08:46:15.323  2233  2351 W BugleRcsEngine: [46] alsz.g: Carrier Services Apk was not found.
+05-05 08:46:15.329  2233  2351 I ShortcutBadger: Checking if platform supports badge counters, attempt 1/3.
+05-05 08:46:15.340  2233  2351 I ShortcutBadger: Checking if platform supports badge counters, attempt 2/3.
+05-05 08:46:15.343  2233  2313 I GnpSdk  : [PhenotypeManagerImpl] Phenotype registration SUCCESS
+05-05 08:46:15.353  2233  2351 I ShortcutBadger: Checking if platform supports badge counters, attempt 3/3.
+05-05 08:46:15.359  2233  2351 W ShortcutBadger: Badge counter seems not supported in this platform: unable to resolve intent: Intent { act=android.intent.action.BADGE_COUNT_UPDATE (has extras) }
+05-05 08:46:15.383  2233  2351 W BugleAction: Null config in BugleSharedPrefs
+05-05 08:46:15.384  2233  2351 W BugleAction: Failed to get msisdn from Bugle
+05-05 08:46:15.384  2233  2351 W BugleAction: Failed to get msisdn from RcsProfileService
+05-05 08:46:15.384  2233  2351 W BugleAction: awmw: Jibe SDK Service not available. Is the Jibe SDK service running? Did you call connect() and wait for the notification before calling an API function?
+05-05 08:46:15.384  2233  2351 W BugleAction: 	at awmp.b(PG:2)
