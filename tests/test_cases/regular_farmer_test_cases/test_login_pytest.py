@@ -4,22 +4,19 @@ import pytest
 from appium.webdriver.common.appiumby import AppiumBy
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from utils.wait_utils import smart_click, wait_for_otp, wait_for_element, wait_and_click, wait_for_otp_filled
+from utils.wait_utils import smart_find_element, smart_click
+from utils.ocr_utils import extract_text_with_coordinates
 import json
 import os
 from selenium.common.exceptions import WebDriverException
+from utils.wait_utils import find_and_click
+from utils.wait_utils import dynamic_wait
 import sys
 sys.dont_write_bytecode = True
 
 @allure.epic("Login Flow")
 @allure.feature("Authentication")
 class TestLogin:
-
-    @pytest.fixture(autouse=True)
-    def setup(self):
-        """Initialize API validator for this test class"""
-        self.api = APIValidator(base_url="http://localhost:8000")
-        yield
 
     @allure.story("Successful Login")
     @allure.title("Verify user can login with valid credentials")
@@ -74,13 +71,14 @@ class TestLogin:
                     pytest.fail("Could not find or click the 'Allow notifications' button.")
                 test_flow_steps.append({"step": "Allow notifications permission", "status": "Success"})
 
+           
             with allure.step("6. Enter phone number"):
                 phone_input = WebDriverWait(driver, 10).until(
                     EC.presence_of_element_located((AppiumBy.XPATH, phone_number_input_xpath))
                 )
                 phone_input.clear()
-                phone_input.send_keys("7660852538")
-                test_flow_steps.append({"step": "Enter valid phone number", "status": "Success", "value": "9618574550"})
+                phone_input.send_keys("9603824348")
+                test_flow_steps.append({"step": "Enter valid phone number", "status": "Success", "value": "9603824348"})
 
             with allure.step("7. Tap next button"):
                 if not smart_click(driver, "Next (login)", next_button_login_xpath, "Next"):
@@ -88,9 +86,12 @@ class TestLogin:
                 test_flow_steps.append({"step": "Click Next after entering phone number", "status": "Success"})
             
             with allure.step("8. Wait for OTP and verify"):
-                wait_for_otp_filled(driver, "//android.widget.EditText[contains(@resource-id,'otp_input')]", expected_length=4)
-                assert smart_click(driver, "Verify", verify_button_login_xpath, "Verify")
-                test_flow_steps.append({"step": "Verify OTP", "status": "Success"})
+                # time.sleep(20)
+                success = dynamic_wait(driver, lambda d: smart_click(d, "Verify (login)", verify_button_login_xpath, "Verify"), timeout=30,)
+
+                if not success:
+                    pytest.fail("Could not find or click the 'Verify' button.")
+                test_flow_steps.append({"step": "Click Verify OTP", "status": "Success"})
 
             # with allure.step("9. Verify Dashboard"):
             #    print("[INFO] Waiting for dashboard screen...")
