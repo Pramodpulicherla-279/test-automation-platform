@@ -1,0 +1,80 @@
+CRASH START: 05-05 12:25:27.162  7552  7552 D AndroidRuntime: Shutting down VM
+05-05 12:25:27.176  7552  7568 W Binder  : Caught a RuntimeException from the binder stub implementation.
+05-05 12:25:27.176  7552  7568 W Binder  : java.lang.SecurityException: Calling from not trusted UID!
+05-05 12:25:27.176  7552  7568 W Binder  : 	at android.app.UiAutomationConnection.throwIfCalledByNotTrustedUidLocked(UiAutomationConnection.java:520)
+05-05 12:25:27.176  7552  7568 W Binder  : 	at android.app.UiAutomationConnection.shutdown(UiAutomationConnection.java:424)
+05-05 12:25:27.176  7552  7568 W Binder  : 	at android.app.IUiAutomationConnection$Stub.onTransact(IUiAutomationConnection.java:390)
+05-05 12:25:27.176  7552  7568 W Binder  : 	at android.os.Binder.execTransactInternal(Binder.java:1021)
+05-05 12:25:27.176  7552  7568 W Binder  : 	at android.os.Binder.execTransact(Binder.java:994)
+05-05 12:25:27.186  1998  3568 I ActivityManager: Force stopping io.appium.uiautomator2.server.test appid=10148 user=0: from pid 8056
+05-05 12:25:27.189  1998  2024 E memtrack: Couldn't load memtrack module
+05-05 12:25:27.189  1998  2024 W android.os.Debug: failed to get memory consumption info: -1
+05-05 12:25:27.192  1998  3227 W WindowManager: removeWindowToken: Attempted to remove non-existing token: android.os.Binder@99ee28b
+05-05 12:25:27.193  1748  1748 I Zygote  : Process 7569 exited due to signal 9 (Killed)
+05-05 12:25:27.194  2232  2232 D CarrierSvcBindHelper: No carrier app for: 0
+05-05 12:25:27.196  1998  1998 V SettingsProvider: Notifying for 0: content://settings/secure/accessibility_enabled
+05-05 12:25:27.198  1998  2024 E memtrack: Couldn't load memtrack module
+05-05 12:25:27.200  1998  2024 W android.os.Debug: failed to get memory consumption info: -1
+05-05 12:25:27.202  2232  2232 D CarrierSvcBindHelper: No carrier app for: 0
+05-05 12:25:27.204  1998  2024 E memtrack: Couldn't load memtrack module
+05-05 12:25:27.204  1998  2024 W android.os.Debug: failed to get memory consumption info: -1
+05-05 12:25:27.213  1998  2024 E memtrack: Couldn't load memtrack module
+05-05 12:25:27.213  1998  2024 W android.os.Debug: failed to get memory consumption info: -1
+05-05 12:25:27.229  1998  2027 I libprocessgroup: Successfully killed process cgroup uid 10149 pid 7569 in 84ms
+05-05 12:25:27.317  1998  2263 I ActivityManager: Force stopping com.krishivaas appid=10150 user=0: from pid 8064
+05-05 12:25:27.318  1998  2263 I ActivityManager: Killing 7614:com.krishivaas/u0a150 (adj 0): stop com.krishivaas
+05-05 12:25:27.326  1998  2263 W ActivityManager: Scheduling restart of crashed service com.krishivaas/com.uxcam.service.HttpPostService in 1000ms
+05-05 12:25:27.328  1998  2263 W ActivityTaskManager: Force removing ActivityRecord{9c0d40a u0 com.krishivaas/.MainActivity t13 f}: app died, no saved state
+05-05 12:25:27.344  1998  2263 W InputReader: Device has associated, but no associated display id.
+05-05 12:25:27.344  1998  2263 I chatty  : uid=1000(system) Binder:1998_5 identical 8 lines
+05-05 12:25:27.344  1998  2263 W InputReader: Device has associated, but no associated display id.
+05-05 12:25:27.370  1764  1764 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-05 12:25:27.378  1998  2262 I ActivityManager: Killing 3015:com.google.android.googlequicksearchbox:search/u0a115 (adj 985): empty #17
+05-05 12:25:27.409  2232  2232 D CarrierSvcBindHelper: No carrier app for: 0
+05-05 12:25:27.440  1764  1764 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-05 12:25:27.444  1837  1941 E OMXNodeInstance: !!! Observer died. Quickly, do something, ... anything...
+05-05 12:25:27.448  1764  1764 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-05 12:25:27.452  1998  4166 D ConnectivityService: ConnectivityService NetworkRequestInfo binderDied(NetworkRequest [ TRACK_DEFAULT id=63, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10150] ], android.os.BinderProxy@2233817)
+05-05 12:25:27.455  1998  2101 D ConnectivityService: releasing NetworkRequest [ TRACK_DEFAULT id=63, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10150] ] (release request)
+05-05 12:25:27.464  1748  1748 I Zygote  : Process 7614 exited due to signal 9 (Killed)
+05-05 12:25:27.472  1998  2017 W Looper  : Slow dispatch took 155ms android.ui h=com.android.server.am.ActivityManagerService$UiHandler c=null m=53
+05-05 12:25:27.472  1998  2019 W ActivityManager: setHasOverlayUi called on unknown pid: 7614
+05-05 12:25:27.480  1998  2027 I libprocessgroup: Successfully killed process cgroup uid 10150 pid 7614 in 160ms
+05-05 12:25:27.498  3087  3465 D EGL_emulation: eglMakeCurrent: 0xf15548e0: ver 2 0 (tinfo 0xdad60a20)
+05-05 12:25:27.515  1998  2015 D ConnectivityService: ConnectivityService NetworkRequestInfo binderDied(NetworkRequest [ TRACK_DEFAULT id=20, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10115] ], android.os.BinderProxy@ce01404)
+05-05 12:25:27.520  1764  1764 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-05 12:25:27.520  1998  2101 D ConnectivityService: releasing NetworkRequest [ TRACK_DEFAULT id=20, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10115] ] (release request)
+05-05 12:25:27.526  1998  2015 D ConnectivityService: ConnectivityService NetworkRequestInfo binderDied(NetworkRequest [ TRACK_DEFAULT id=34, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10115] ], android.os.BinderProxy@99eded)
+05-05 12:25:27.526  1998  2027 I libprocessgroup: Successfully killed process cgroup uid 10115 pid 3015 in 44ms
+05-05 12:25:27.528  1748  1748 I Zygote  : Process 3015 exited due to signal 9 (Killed)
+05-05 12:25:27.529  1998  2101 D ConnectivityService: releasing NetworkRequest [ TRACK_DEFAULT id=34, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10115] ] (release request)
+05-05 12:25:27.556  1764  1764 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-05 12:25:27.560  1764  1764 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-05 12:25:27.560  3087  3087 I bqwu    : onStart
+05-05 12:25:27.570  2395  2822 D EGL_emulation: eglMakeCurrent: 0xf15539e0: ver 2 0 (tinfo 0xe63b7370)
+05-05 12:25:27.596  1998  2024 E memtrack: Couldn't load memtrack module
+05-05 12:25:27.596  1998  2024 W android.os.Debug: failed to get memory consumption info: -1
+05-05 12:25:27.608  1998  2024 E memtrack: Couldn't load memtrack module
+05-05 12:25:27.610  1998  2024 W android.os.Debug: failed to get memory consumption info: -1
+05-05 12:25:27.628  1998  2024 I ActivityTaskManager: Displayed com.google.android.permissioncontroller/com.android.packageinstaller.permission.ui.GrantPermissionsActivity: +4s458ms
+05-05 12:25:27.653  1998  1998 W ActivityManager: Unable to start service Intent { act=android.service.appprediction.AppPredictionService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiPredictionService } U=0: not found
+05-05 12:25:27.653  1998  1998 W RemoteAppPredictionService: could not bind to Intent { act=android.service.appprediction.AppPredictionService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiPredictionService } using flags 67108865
+05-05 12:25:27.668  1998  2262 D ConnectivityService: requestNetwork for uid/pid:10115/3087 NetworkRequest [ TRACK_DEFAULT id=65, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10115] ]
+05-05 12:25:27.674  1998  2098 D WifiNetworkFactory: got request NetworkRequest [ TRACK_DEFAULT id=65, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10115] ] with score 60 and serial -1
+05-05 12:25:27.674  2232  2232 D PhoneSwitcherNetworkRequstListener: got request NetworkRequest [ TRACK_DEFAULT id=65, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10115] ] with score 60 and serial -1
+05-05 12:25:27.677  1998  2098 D UntrustedWifiNetworkFactory: got request NetworkRequest [ TRACK_DEFAULT id=65, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10115] ] with score 60 and serial -1
+05-05 12:25:27.717  3087  3087 I bout    : (REDACTED) [%s] onStart()
+05-05 12:25:27.752  3087  3087 I bqwu    : onResume
+05-05 12:25:27.782  2698  2698 D BoundBrokerSvc: onRebind: Intent { act=com.google.android.gms.inappreach.service.START dat=chimera-action: cmp=com.google.android.gms/.chimera.GmsApiService }
+05-05 12:25:27.815  1998  1998 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy_pre_p_apps
+05-05 12:25:27.923  1998  1998 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy_p_apps
+05-05 12:25:28.019  1998  1998 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy
+05-05 12:25:30.653  1998  2015 I ActivityManager: Force stopping io.appium.uiautomator2.server.test appid=10148 user=0: from pid 8102
+05-05 12:25:30.656  1998  2024 E memtrack: Couldn't load memtrack module
+05-05 12:25:30.656  1998  2024 W android.os.Debug: failed to get memory consumption info: -1
+05-05 12:25:30.663  1998  2024 E memtrack: Couldn't load memtrack module
+05-05 12:25:30.663  1998  2024 W android.os.Debug: failed to get memory consumption info: -1
+05-05 12:25:30.668  1998  2024 E memtrack: Couldn't load memtrack module
+05-05 12:25:30.668  1998  2024 W android.os.Debug: failed to get memory consumption info: -1
+05-05 12:25:30.671  1998  2015 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10149 user=0: from pid 8103
+05-05 12:25:30.682  1998  2024 E memtrack: Couldn't load memtrack module

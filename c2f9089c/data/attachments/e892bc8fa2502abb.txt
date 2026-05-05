@@ -1,0 +1,80 @@
+CRASH START: 05-05 12:26:18.550  8668  8668 D AndroidRuntime: Shutting down VM
+05-05 12:26:18.578  2232  2232 D CarrierSvcBindHelper: No carrier app for: 0
+05-05 12:26:18.603  1748  1748 I Zygote  : Process 8693 exited due to signal 9 (Killed)
+05-05 12:26:18.604  1998  3227 W WindowManager: removeWindowToken: Attempted to remove non-existing token: android.os.Binder@219f30d
+05-05 12:26:18.607  1998  1998 V SettingsProvider: Notifying for 0: content://settings/secure/accessibility_enabled
+05-05 12:26:18.617  1998  9086 I ActivityManager: Failure reporting to instrumentation watcher: comp=ComponentInfo{io.appium.uiautomator2.server.test/androidx.test.runner.AndroidJUnitRunner} results=Bundle[{shortMsg=Process crashed.}]
+05-05 12:26:18.655  1998  2027 I libprocessgroup: Successfully killed process cgroup uid 10149 pid 8693 in 108ms
+05-05 12:26:18.665  1830  2306 W Utils   : did not find mime type
+05-05 12:26:18.687  1998  3227 I ActivityManager: Force stopping com.krishivaas appid=10150 user=0: from pid 9096
+05-05 12:26:18.688  1998  3227 I ActivityManager: Killing 8816:com.krishivaas/u0a150 (adj 0): stop com.krishivaas
+05-05 12:26:18.692  1998  3227 W ActivityManager: Scheduling restart of crashed service com.krishivaas/com.uxcam.service.HttpPostService in 1000ms
+05-05 12:26:18.693  1998  3227 W ActivityTaskManager: Force removing ActivityRecord{46e93ce u0 com.krishivaas/.MainActivity t15 f}: app died, no saved state
+05-05 12:26:18.668  1830  2306 W Utils   : did not find mime type
+05-05 12:26:18.721  1998  3227 W InputReader: Device has associated, but no associated display id.
+05-05 12:26:18.721  1998  3227 I chatty  : uid=1000(system) Binder:1998_11 identical 8 lines
+05-05 12:26:18.721  1998  3227 W InputReader: Device has associated, but no associated display id.
+05-05 12:26:18.747  1837  1941 E OMXNodeInstance: !!! Observer died. Quickly, do something, ... anything...
+05-05 12:26:18.754  1998  2070 D ConnectivityService: ConnectivityService NetworkRequestInfo binderDied(NetworkRequest [ TRACK_DEFAULT id=68, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10150] ], android.os.BinderProxy@f537e6b)
+05-05 12:26:18.757  1748  1748 I Zygote  : Process 8816 exited due to signal 9 (Killed)
+05-05 12:26:18.760  1998  3226 I ActivityManager: Killing 6102:com.google.android.setupwizard/u0a108 (adj 975): empty #17
+05-05 12:26:18.769  1998  2101 D ConnectivityService: releasing NetworkRequest [ TRACK_DEFAULT id=68, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10150] ] (release request)
+05-05 12:26:18.806  1998  2027 I libprocessgroup: Successfully killed process cgroup uid 10150 pid 8816 in 117ms
+05-05 12:26:18.817  2232  2232 D CarrierSvcBindHelper: No carrier app for: 0
+05-05 12:26:18.832  1748  1748 I Zygote  : Process 6102 exited due to signal 9 (Killed)
+05-05 12:26:18.833  1998  4518 D ConnectivityService: ConnectivityService NetworkRequestInfo binderDied(NetworkRequest [ LISTEN id=57, [ Transports: WIFI Capabilities: NOT_RESTRICTED&TRUSTED&NOT_VPN Uid: 10108] ], android.os.BinderProxy@cdd4e61)
+05-05 12:26:18.843  1998  2019 W ActivityManager: setHasOverlayUi called on unknown pid: 8816
+05-05 12:26:18.844  1998  2017 W Looper  : Slow dispatch took 155ms android.ui h=com.android.server.am.ActivityManagerService$UiHandler c=null m=53
+05-05 12:26:18.846  1764  1764 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-05 12:26:18.853  1998  2027 I libprocessgroup: Successfully killed process cgroup uid 10108 pid 6102 in 44ms
+05-05 12:26:18.871  1998  1998 W ActivityManager: Unable to start service Intent { act=android.service.appprediction.AppPredictionService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiPredictionService } U=0: not found
+05-05 12:26:18.871  1998  1998 W RemoteAppPredictionService: could not bind to Intent { act=android.service.appprediction.AppPredictionService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiPredictionService } using flags 67108865
+05-05 12:26:18.881  1764  1764 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-05 12:26:18.881  3087  3465 D EGL_emulation: eglMakeCurrent: 0xf15548e0: ver 2 0 (tinfo 0xdad60a20)
+05-05 12:26:18.882  1764  1764 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-05 12:26:18.908  1764  1764 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-05 12:26:18.915  3087  3087 I bqwu    : onStart
+05-05 12:26:18.921  1998  2263 D ConnectivityService: requestNetwork for uid/pid:10115/3087 NetworkRequest [ TRACK_DEFAULT id=69, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10115] ]
+05-05 12:26:18.923  1998  2098 D WifiNetworkFactory: got request NetworkRequest [ TRACK_DEFAULT id=69, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10115] ] with score 60 and serial -1
+05-05 12:26:18.924  1998  2098 D UntrustedWifiNetworkFactory: got request NetworkRequest [ TRACK_DEFAULT id=69, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10115] ] with score 60 and serial -1
+05-05 12:26:18.926  2232  2232 D PhoneSwitcherNetworkRequstListener: got request NetworkRequest [ TRACK_DEFAULT id=69, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10115] ] with score 60 and serial -1
+05-05 12:26:18.927  3087  3087 I bout    : (REDACTED) [%s] onStart()
+05-05 12:26:18.932  3087  3087 I bqwu    : onResume
+05-05 12:26:18.936  1764  1764 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-05 12:26:18.938  2395  2822 D EGL_emulation: eglMakeCurrent: 0xf15539e0: ver 2 0 (tinfo 0xe63b7370)
+05-05 12:26:18.940  1764  1764 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 9850880
+05-05 12:26:18.971  1998  1998 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy_pre_p_apps
+05-05 12:26:18.979  1998  2024 I ActivityTaskManager: Displayed com.google.android.permissioncontroller/com.android.packageinstaller.permission.ui.GrantPermissionsActivity: +11s777ms
+05-05 12:26:19.004  2698  2698 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.inappreach.service.START dat=chimera-action: cmp=com.google.android.gms/.chimera.GmsApiService }
+05-05 12:26:19.004  2698  2698 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.inappreach.service.START dat=chimera-action: cmp=com.google.android.gms/.chimera.GmsApiService }
+05-05 12:26:19.073  1998  1998 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy_p_apps
+05-05 12:26:19.114  1998  1998 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy
+05-05 12:26:21.488  1998  3566 I ActivityManager: Force stopping io.appium.uiautomator2.server.test appid=10148 user=0: from pid 9135
+05-05 12:26:21.500  2232  2232 D CarrierSvcBindHelper: No carrier app for: 0
+05-05 12:26:21.505  1998  3226 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10149 user=0: from pid 9136
+05-05 12:26:21.586  1998  3226 I ActivityManager: Force stopping com.krishivaas appid=10150 user=0: from pid 9146
+05-05 12:26:23.329  1998  1998 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy_pre_p_apps
+05-05 12:26:23.347  1998  1998 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy_p_apps
+05-05 12:26:23.366  1998  1998 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy
+05-05 12:26:25.446  1998  2263 I ActivityManager: Force stopping com.krishivaas appid=10150 user=0: from pid 9228
+05-05 12:26:25.531  1998  2263 I ActivityManager: Force stopping com.krishivaas appid=10150 user=0: clear data
+05-05 12:26:25.533  1998  2025 I ActivityManager: Force stopping com.krishivaas appid=10150 user=-1: clearApplicationUserData
+05-05 12:26:25.533  1998  2263 I ConditionProviders: Disallowing condition provider com.krishivaas
+05-05 12:26:21.595  2232  2232 I chatty  : uid=1001(radio) com.android.phone identical 2 lines
+05-05 12:26:25.474  2232  2232 D CarrierSvcBindHelper: No carrier app for: 0
+05-05 12:26:25.578  1789  2176 D AF::TrackHandle: OpPlayAudio: track:56 usage:13 not muted
+05-05 12:26:25.585  1826  1826 I keystore: clear_uid 10150
+05-05 12:26:25.588  1789  2176 D AF::TrackHandle: OpPlayAudio: track:56 usage:13 not muted
+05-05 12:26:25.595  1789  2176 D AF::TrackHandle: OpPlayAudio: track:56 usage:13 not muted
+05-05 12:26:25.612  2232  2232 D CarrierSvcBindHelper: No carrier app for: 0
+05-05 12:26:25.613  1789  2176 D AF::TrackHandle: OpPlayAudio: track:56 usage:13 not muted
+05-05 12:26:25.614  3722  3722 I CarrierServices: [2] RcsAutoStartReceiver.a: enableRcs changed from true to true
+05-05 12:26:25.624  1789  2176 D AF::TrackHandle: OpPlayAudio: track:56 usage:13 not muted
+05-05 12:26:25.634  1789  2176 I chatty  : uid=1041(audioserver) Binder:1789_4 identical 3 lines
+05-05 12:26:25.639  1789  2176 D AF::TrackHandle: OpPlayAudio: track:56 usage:13 not muted
+05-05 12:26:25.645  1789  1789 D AF::TrackHandle: OpPlayAudio: track:56 usage:13 not muted
+05-05 12:26:25.653  1789  1789 D AF::TrackHandle: OpPlayAudio: track:56 usage:13 not muted
+05-05 12:26:25.654  7063  7107 I Finsky:background: [421] RECEIVER_ENGAGE_PACKAGE_CHANGED#logWorkEndAndFinishGoAsync: SUCCESS
+05-05 12:26:25.655  7013  9237 I MediaProvider: Begin Intent { act=android.intent.action.PACKAGE_DATA_CLEARED dat=package:com.krishivaas flg=0x1000010 cmp=com.android.providers.media/.MediaService (has extras) }
+05-05 12:26:25.661  7013  9237 I MediaProvider: End Intent { act=android.intent.action.PACKAGE_DATA_CLEARED dat=package:com.krishivaas flg=0x1000010 cmp=com.android.providers.media/.MediaService (has extras) }
+05-05 12:26:25.665  1789  1789 D AF::TrackHandle: OpPlayAudio: track:56 usage:13 not muted
