@@ -1,0 +1,80 @@
+CRASH START: 05-05 17:40:24.061 26832 26832 I AndroidRuntime: VM exiting with result code 0.
+05-05 17:40:24.095   552   870 I ActivityManager: Killing 26885:io.appium.uiautomator2.server/u0a147 (adj 0): stop io.appium.uiautomator2.server due to finished inst
+05-05 17:40:24.110   552   870 W ProcessStats: Tracking association SourceState{726d3c1 system/1000 BTopFgs #12124} whose proc state 2 is better than process ProcessState{8532766 io.appium.settings/10145 pkg=io.appium.settings} proc state 3 (2 skipped)
+05-05 17:40:24.125  1550  1685 I A       : NGA disabled due to not being eligible.
+05-05 17:40:24.149   552   591 I libprocessgroup: Successfully killed process cgroup uid 10147 pid 26885 in 43ms
+05-05 17:40:24.173   552   588 E DiscreteRegistry: Deleting file 1777895865104tl
+05-05 17:40:24.174   552   588 E DiscreteRegistry: Deleting file 1777895967838tl
+05-05 17:40:24.190   552   552 D BatterySaverPolicy: accessibility changed to false, updating policy.
+05-05 17:40:24.164     0     0 I binder  : undelivered TRANSACTION_COMPLETE
+05-05 17:40:24.167     0     0 I binder  : undelivered transaction 1397302, process died.
+05-05 17:40:24.202   346   346 I Zygote  : Process 26885 exited due to signal 9 (Killed)
+05-05 17:40:24.203   552  2175 V ActivityManager: Got obituary of 26885:io.appium.uiautomator2.server
+05-05 17:40:24.224   733   806 W Looper  : Slow dispatch took 89ms wmshell.main h=android.view.ViewRootImpl$ViewRootHandler c=android.view.accessibility.AccessibilityManager$$ExternalSyntheticLambda0@3426fb2 m=0
+05-05 17:40:24.225   733   806 W Looper  : Slow delivery took 100ms wmshell.main h=android.view.ViewRootImpl$ViewRootHandler c=null m=21
+05-05 17:40:24.225   733   806 W Looper  : Drained
+05-05 17:40:24.341   496 27160 D BufferPoolAccessor2.0: bufferpool2 0x79e3adfdcc58 : 1(524288 size) total buffers - 1(524288 size) used buffers - 236/237 (recycle/alloc) - 1/236 (fetch/transfer)
+05-05 17:40:24.590   552  1226 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10147 user=0: from pid 28113
+05-05 17:40:24.608   552  1933 I ActivityManager: Force stopping io.appium.uiautomator2.server.test appid=10146 user=0: from pid 28114
+05-05 17:40:24.627   891   891 D CarrierSvcBindHelper: No carrier app for: 0
+05-05 17:40:24.647   891   891 D CarrierSvcBindHelper: No carrier app for: 0
+05-05 17:40:24.653 26978 27016 D EGL_emulation: app_time_stats: avg=1034.06ms min=839.75ms max=1228.36ms count=2
+05-05 17:40:24.757   552  1226 I ActivityManager: Force stopping com.krishivaas appid=10148 user=0: from pid 28124
+05-05 17:40:24.764   552  1226 I ActivityManager: Killing 26978:com.krishivaas/u0a148 (adj 0): stop com.krishivaas due to from pid 28124
+05-05 17:40:24.770  1496  1496 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.auth.api.phone.service.SmsRetrieverApiService.START pkg=com.google.android.gms }
+05-05 17:40:24.775   552  1226 W ActivityTaskManager: Force removing ActivityRecord{91641a7 u0 com.krishivaas/.MainActivity t44 f}}: app died, no saved state
+05-05 17:40:24.785   552  1226 W InputManager-JNI: Input channel object '9a8d3ba com.krishivaas/com.krishivaas.MainActivity (client)' was disposed without first being removed with the input manager!
+05-05 17:40:24.790   552  1226 W InputManager-JNI: Input channel object '85227d9 com.krishivaas/com.krishivaas.MainActivity (client)' was disposed without first being removed with the input manager!
+05-05 17:40:24.812   552   591 I libprocessgroup: Successfully killed process cgroup uid 10148 pid 26978 in 45ms
+05-05 17:40:24.837   552  1226 W ActivityTaskManager: Can't find TaskDisplayArea to determine support for multi window. Task id=44 attached=false
+05-05 17:40:24.849   552  1226 W ActivityTaskManager: Can't find TaskDisplayArea to determine support for multi window. Task id=44 attached=false
+05-05 17:40:24.900   733   806 W Looper  : Slow delivery took 35ms wmshell.main h=android.os.Handler c=null m=11
+05-05 17:40:24.905   733   806 W Looper  : Drained
+05-05 17:40:24.982  1550  1550 I A       : onApplyWindowInsets: systemWindowInsets=Insets{left=0, top=63, right=0, bottom=126}
+05-05 17:40:24.982  1550  1550 I A       : onApplyWindowInsets: systemWindowInsets=Insets{left=0, top=63, right=0, bottom=126}
+05-05 17:40:24.986   364   472 D goldfish-address-space: claimShared: Ask to claim region [0x3f4000000 0x3f49e4000]
+05-05 17:40:25.020   364   472 D goldfish-address-space: claimShared: Ask to claim region [0x3f49e4000 0x3f53c8000]
+05-05 17:40:25.030   364   402 D goldfish-address-space: claimShared: Ask to claim region [0x3f53c8000 0x3f5dac000]
+05-05 17:40:25.003     0     0 I binder  : undelivered transaction 1397580, process died.
+05-05 17:40:25.007     0     0 I binder  : undelivered transaction 1397582, process died.
+05-05 17:40:25.051  1550 15679 I OpenGLRenderer: Davey! duration=5447175ms; Flags=1, FrameTimelineVsyncId=97731, IntendedVsync=15902469607944, Vsync=15902486274610, InputEventId=0, HandleInputStart=15902502839600, AnimationStart=15902502870300, PerformTraversalsStart=15902502911000, DrawStart=15902549363100, FrameDeadline=15902519607942, FrameInterval=15902502822200, FrameStartTime=16666666, SyncQueued=15902559263100, SyncStart=15902585604400, IssueDrawCommandsStart=15902588692500, SwapBuffers=15902589202100, FrameCompleted=21349671094300, DequeueBufferDuration=28700, QueueBufferDuration=7294800, GpuCompleted=21349671094300, SwapBuffersCompleted=15902610758200, DisplayPresentTime=0, 
+05-05 17:40:25.051   496   831 V C2Store : in ~ComponentModule
+05-05 17:40:25.051   496   831 V C2Store : unloading dll
+05-05 17:40:25.052   346   346 I Zygote  : Process 26978 exited due to signal 9 (Killed)
+05-05 17:40:25.053   364   472 D goldfish-address-space: claimShared: Ask to claim region [0x3f5dac000 0x3f6790000]
+05-05 17:40:25.060   496   763 D BufferPoolAccessor2.0: Destruction - bufferpool2 0x79e3adfdcc58 cached: 0/0M, 0/0% in use; allocs: 237, 100% recycled; transfers: 237, 100% unfetched
+05-05 17:40:25.064   552   715 D TextToSpeechManagerPerUserService: Unbinding TTS engine: com.google.android.tts. Reason: client process death is reported
+05-05 17:40:25.069   364   402 D goldfish-address-space: claimShared: Ask to claim region [0x3f0654000 0x3f1038000]
+05-05 17:40:25.039     0     0 I binder  : undelivered transaction 1397579, process died.
+05-05 17:40:25.040     0     0 I binder  : undelivered transaction 1397581, process died.
+05-05 17:40:25.046     0     0 I binder  : undelivered transaction 1397577, process died.
+05-05 17:40:25.076   413   413 E BpTransactionCompletedListener: Failed to transact (-32)
+05-05 17:40:25.053     0     0 I binder  : undelivered transaction 1397578, process died.
+05-05 17:40:25.080   413   413 E BpTransactionCompletedListener: Failed to transact (-32)
+05-05 17:40:25.090   552   552 W TextToSpeechManagerPerUserService: Disconnected from TTS engine
+05-05 17:40:25.094   552   552 I TextToSpeechManagerPerUserService: Failed running callback method: android.os.DeadObjectException
+05-05 17:40:25.106   364   472 D goldfish-address-space: claimShared: Ask to claim region [0x3f1a1c000 0x3f2400000]
+05-05 17:40:25.109   552   867 D ConnectivityService: ConnectivityService NetworkRequestInfo binderDied(uid/pid:10148/26978, android.os.BinderProxy@d6cb573)
+05-05 17:40:25.117   552   669 D ConnectivityService: releasing NetworkRequest [ REQUEST id=215, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10148 RequestorUid: 10148 RequestorPkg: com.krishivaas] ] (release request)
+05-05 17:40:25.144   490 12779 E mediaserver: unlinkToDeath: removed reference to death recipient but unlink failed.
+05-05 17:40:25.144   490 12779 E IPCThreadState: attemptIncStrongHandle(2): Not supported
+05-05 17:40:25.193   891   891 D CarrierSvcBindHelper: No carrier app for: 0
+05-05 17:40:25.267   552  2166 W system_server: Long monitor contention with owner ActivityManager (589) at void com.android.server.am.BroadcastQueue.processNextBroadcast(boolean)(BroadcastQueue.java:1005) waiters=4 in void com.android.server.am.ActivityManagerService$AppDeathRecipient.binderDied() for 240ms
+05-05 17:40:25.267   552  2166 V ActivityManager: Got obituary of 26978:com.krishivaas
+05-05 17:40:25.277   552   870 W ActivityManager: Unable to start service Intent { act=android.service.smartspace.SmartspaceService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiSmartspaceService } U=0: not found
+05-05 17:40:25.277   552   581 W ActivityManager: setHasOverlayUi called on unknown pid: 26978
+05-05 17:40:25.278   552   870 W RemoteSmartspaceService: could not bind to Intent { act=android.service.smartspace.SmartspaceService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiSmartspaceService } using flags 67112961
+05-05 17:40:25.283  1307  1307 I GsaVoiceInteractionSrv: Handling ACTION_START_HOTWORD
+05-05 17:40:25.283  1307  1307 I GsaVoiceInteractionSrv: disregardVoiceMatch: false
+05-05 17:40:25.284  1307  1307 I GsaVoiceInteractionSrv: Cannot start hotword, hotword has been explicitly disabled.
+05-05 17:40:25.284   552   552 W ServiceConnector.Impl: mayInterruptIfRunning not supported - ignoring
+05-05 17:40:25.285   552   552 W Looper  : Slow dispatch took 195ms main h=android.os.Handler c=com.android.internal.infra.ServiceConnector$Impl$$ExternalSyntheticLambda1@3bcbe1 m=0
+05-05 17:40:25.384  1229  1229 I GoogleInputMethodService: GoogleInputMethodService.onFinishInput():3420 
+05-05 17:40:25.386  1229  1229 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():2002 
+05-05 17:40:25.391  1229  1229 I DeviceUnlockedTag: DeviceUnlockedTag.notifyDeviceLockStatusChanged():31 Notify device unlocked.
+05-05 17:40:25.410   552  1933 I ActivityManager: Killing 25438:com.google.android.settings.intelligence/u0a90 (adj 975): empty #17
+05-05 17:40:25.442   552   552 W ActivityManager: Unbind failed: could not find connection for android.app.LoadedApk$ServiceDispatcher$InnerConnection@ba91619
+05-05 17:40:25.488   552   591 I libprocessgroup: Successfully killed process cgroup uid 10090 pid 25438 in 0ms
+05-05 17:40:25.512   346   346 I Zygote  : Process 25438 exited due to signal 9 (Killed)
+05-05 17:40:25.535   552   588 W system_server: Long monitor contention with owner Binder:552_8 (870) at void com.android.server.smartspace.SmartspacePerUserService.onServiceDied(com.android.server.smartspace.RemoteSmartspaceService)(SmartspacePerUserService.java:227) waiters=0 in boolean com.android.server.infra.AbstractMasterSystemService$1.onHandleForceStop(android.content.Intent, java.lang.String[], int, boolean) for 386ms
+05-05 17:40:25.582   552   579 W Looper  : Slow delivery took 238ms android.ui h=com.android.server.am.ActivityManagerService$UiHandler c=null m=31
