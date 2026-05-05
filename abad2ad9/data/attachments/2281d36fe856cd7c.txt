@@ -1,0 +1,80 @@
+CRASH START: 05-05 19:27:29.417 10136 10136 D AndroidRuntime: Shutting down VM
+05-05 19:27:29.491  1748  1748 I Zygote  : Process 10150 exited due to signal 9 (Killed)
+05-05 19:27:29.498  2001  2031 I libprocessgroup: Successfully killed process cgroup uid 10149 pid 10150 in 81ms
+05-05 19:27:29.619  2001  2318 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10149 user=0: from pid 11518
+05-05 19:27:29.631  2255  2255 D CarrierSvcBindHelper: No carrier app for: 0
+05-05 19:27:29.631  2001  2984 I ActivityManager: Force stopping io.appium.uiautomator2.server.test appid=10148 user=0: from pid 11521
+05-05 19:27:29.717  2001  2318 I ActivityManager: Force stopping com.krishivaas appid=10150 user=0: from pid 11530
+05-05 19:27:29.718  2001  2318 I ActivityManager: Killing 10195:com.krishivaas/u0a150 (adj 700): stop com.krishivaas
+05-05 19:27:29.722  2001  2318 W ActivityTaskManager: Force removing ActivityRecord{37e3323 u0 com.krishivaas/.MainActivity t6 f}: app died, no saved state
+05-05 19:27:29.784  2001  2078 D ConnectivityService: ConnectivityService NetworkRequestInfo binderDied(NetworkRequest [ TRACK_DEFAULT id=73, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10150] ], android.os.BinderProxy@2c59dfd)
+05-05 19:27:29.785  2001  2109 D ConnectivityService: releasing NetworkRequest [ TRACK_DEFAULT id=73, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10150] ] (release request)
+05-05 19:27:29.641  2255  2255 D CarrierSvcBindHelper: No carrier app for: 0
+05-05 19:27:29.786  1748  1748 I Zygote  : Process 10195 exited due to signal 9 (Killed)
+05-05 19:27:29.786  2001  2023 W ActivityManager: setHasOverlayUi called on unknown pid: 10195
+05-05 19:27:29.799  2001  2031 I libprocessgroup: Successfully killed process cgroup uid 10150 pid 10195 in 79ms
+05-05 19:27:29.853  2255  2255 D CarrierSvcBindHelper: No carrier app for: 0
+05-05 19:27:29.866  1652  1652 I hwservicemanager: getTransport: Cannot find entry android.hardware.graphics.allocator@3.0::IAllocator/default in either framework or device manifest.
+05-05 19:27:29.866  2001  5614 W Gralloc3: allocator 3.x is not supported
+05-05 19:27:29.869  1766  1854 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 1576960
+05-05 19:27:29.877  2001 11535 D HostConnection: HostConnection::get() New Host Connection established 0xbdbbf200, tid 11535
+05-05 19:27:29.878  2001 11535 D HostConnection: HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_hwc_color_transform GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_2 
+05-05 19:27:29.882  2001 11535 D EGL_emulation: eglCreateContext: 0xd7476920: maj 2 min 0 rcv 2
+05-05 19:27:29.884  2001 11535 D EGL_emulation: eglMakeCurrent: 0xd7476920: ver 2 0 (tinfo 0xbe1eac90)
+05-05 19:27:29.888  2001  5614 D HostConnection: HostConnection::get() New Host Connection established 0xb2353940, tid 5614
+05-05 19:27:29.895  2001  5614 D HostConnection: HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_hwc_color_transform GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_2 
+05-05 19:27:29.933  2001  2001 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy_pre_p_apps
+05-05 19:27:29.947  2001  2001 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy_p_apps
+05-05 19:27:29.960  2001  2001 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy
+05-05 19:27:32.843  2001  2001 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy_pre_p_apps
+05-05 19:27:32.857  2001  2001 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy_p_apps
+05-05 19:27:32.871  2001  2001 V SettingsProvider: Notifying for 0: content://settings/global/hidden_api_policy
+05-05 19:27:34.043  2001  5614 I ActivityManager: Force stopping com.krishivaas appid=10150 user=0: from pid 11620
+05-05 19:27:34.050  2255  2255 D CarrierSvcBindHelper: No carrier app for: 0
+05-05 19:27:34.105  2001  3921 I ActivityManager: Force stopping com.krishivaas appid=10150 user=0: clear data
+05-05 19:27:34.109  2001  3921 I ConditionProviders: Disallowing condition provider com.krishivaas
+05-05 19:27:34.112  2001  2029 I ActivityManager: Force stopping com.krishivaas appid=10150 user=-1: clearApplicationUserData
+05-05 19:27:34.123  1776  1966 D AF::TrackHandle: OpPlayAudio: track:56 usage:13 not muted
+05-05 19:27:34.142  1776  1966 I chatty  : uid=1041(audioserver) Binder:1776_1 identical 7 lines
+05-05 19:27:34.152  1776  1966 D AF::TrackHandle: OpPlayAudio: track:56 usage:13 not muted
+05-05 19:27:34.153  1818  1818 I keystore: clear_uid 10150
+05-05 19:27:34.166  1776  1966 D AF::TrackHandle: OpPlayAudio: track:56 usage:13 not muted
+05-05 19:27:34.176  1776  1966 D AF::TrackHandle: OpPlayAudio: track:56 usage:13 not muted
+05-05 19:27:34.177  2255  2255 D CarrierSvcBindHelper: No carrier app for: 0
+05-05 19:27:34.184  3629  3629 I CarrierServices: [2] RcsAutoStartReceiver.a: enableRcs changed from true to true
+05-05 19:27:34.187  1776  1966 D AF::TrackHandle: OpPlayAudio: track:56 usage:13 not muted
+05-05 19:27:34.193  1776  1966 D AF::TrackHandle: OpPlayAudio: track:56 usage:13 not muted
+05-05 19:27:34.196  7969 11629 I MediaProvider: Begin Intent { act=android.intent.action.PACKAGE_DATA_CLEARED dat=package:com.krishivaas flg=0x1000010 cmp=com.android.providers.media/.MediaService (has extras) }
+05-05 19:27:34.200  1776  1966 D AF::TrackHandle: OpPlayAudio: track:56 usage:13 not muted
+05-05 19:27:34.201  7969 11629 I MediaProvider: End Intent { act=android.intent.action.PACKAGE_DATA_CLEARED dat=package:com.krishivaas flg=0x1000010 cmp=com.android.providers.media/.MediaService (has extras) }
+05-05 19:27:34.206  1776  1966 D AF::TrackHandle: OpPlayAudio: track:56 usage:13 not muted
+05-05 19:27:34.215  1776  1966 D AF::TrackHandle: OpPlayAudio: track:56 usage:13 not muted
+05-05 19:27:34.216  8035  8128 I Finsky:background: [517] RECEIVER_ENGAGE_PACKAGE_CHANGED#logWorkEndAndFinishGoAsync: SUCCESS
+05-05 19:27:34.225  7905  7945 I ProvidersCache: Provider returned no roots. Possibly naughty: com.google.android.apps.docs.storage
+05-05 19:27:34.249  2715 11634 I AppBackupStateCleanupIO: Backup state cleanup on uninstall is disabled. [CONTEXT service_id=229 ]
+05-05 19:27:34.249  2715 11636 I Blockstore: [PackageIntentOperation] Checking the restore timespan. [CONTEXT service_id=258 ]
+05-05 19:27:34.256  2532 11637 I Fitness : (REDACTED) FitCleanupIntentOperation received Intent %s
+05-05 19:27:34.264  2715  2715 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.backup.GMS_MODULE_RESTORE dat=chimera-action: cmp=com.google.android.gms/.chimera.GmsInternalBoundBrokerService }
+05-05 19:27:34.264  2715  2715 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.backup.GMS_MODULE_RESTORE dat=chimera-action: cmp=com.google.android.gms/.chimera.GmsInternalBoundBrokerService }
+05-05 19:27:34.267  2715 11642 I NearbyDiscovery: (REDACTED) processGrantSlicePermission: %s
+05-05 19:27:34.282  2715  3768 I AndroidBackupEventsLogg: (REDACTED) Logging without sampling %s
+05-05 19:27:34.287  2715 11636 I Blockstore: [PackageIntentOperation] Received broadcast before a restore was started. [CONTEXT service_id=258 ]
+05-05 19:27:34.297  2715  2899 I Icing   : doRemovePackageData com.krishivaas
+05-05 19:27:34.325  1660  2689 D vold    : Remounting 10150 as mode read
+05-05 19:27:34.343  1660  2689 D vold    : Remounting 10150 as mode write
+05-05 19:27:34.680  1808  1808 E adbd    : failed to connect to socket 'tcp:6790': Connection refused
+05-05 19:27:34.603  1660  2689 I chatty  : uid=0(root) Binder:1660_4 identical 1 line
+05-05 19:27:34.645  1660  2689 D vold    : Remounting 10150 as mode write
+05-05 19:27:34.741  2001  4690 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10149 user=0: from pid 11735
+05-05 19:27:34.752  2255  2255 D CarrierSvcBindHelper: No carrier app for: 0
+05-05 19:27:34.764  2001  4690 I ActivityManager: Force stopping io.appium.uiautomator2.server.test appid=10148 user=0: from pid 11740
+05-05 19:27:34.786  2255  2255 D CarrierSvcBindHelper: No carrier app for: 0
+05-05 19:27:34.803  1808  1808 E adbd    : failed to connect to socket 'tcp:6790': Connection refused
+05-05 19:27:34.903 11743 11743 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+05-05 19:27:34.905 11743 11743 E libc    : Access denied finding property "persist.device_config.runtime_native_boot.enable_apex_image"
+05-05 19:27:34.905 11743 11743 I AndroidRuntime: Using default boot image
+05-05 19:27:34.906 11743 11743 E libc    : Access denied finding property "persist.device_config.runtime_native_boot.disable_lock_profiling"
+05-05 19:27:34.906 11743 11743 I AndroidRuntime: Leaving lock profiling enabled
+05-05 19:27:34.906 11743 11743 E libc    : Access denied finding property "persist.device_config.runtime_native_boot.enable_generational_cc"
+05-05 19:27:34.907 11743 11743 W app_process: Could not reserve sentinel fault page
+05-05 19:27:34.899 11743 11743 W app_process: type=1400 audit(0.0:38): avc: denied { read } for name="u:object_r:device_config_runtime_native_boot_prop:s0" dev="tmpfs" ino=166 scontext=u:r:shell:s0 tcontext=u:object_r:device_config_runtime_native_boot_prop:s0 tclass=file permissive=0

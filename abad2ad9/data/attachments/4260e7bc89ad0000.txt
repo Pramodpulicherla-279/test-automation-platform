@@ -1,0 +1,80 @@
+CRASH START: 05-05 18:46:16.376  4859  4859 I AndroidRuntime: VM exiting with result code 0.
+05-05 18:46:16.415   552   552 D BatterySaverPolicy: accessibility changed to false, updating policy.
+05-05 18:46:16.443   552   588 I libprocessgroup: Successfully killed process cgroup uid 10147 pid 4969 in 51ms
+05-05 18:46:16.446  1462  1740 I A       : NGA disabled due to not being eligible.
+05-05 18:46:16.171     0     0 I binder  : undelivered TRANSACTION_COMPLETE
+05-05 18:46:16.172     0     0 I binder  : undelivered transaction 197011, process died.
+05-05 18:46:16.512   348   348 I Zygote  : Process 4969 exited due to signal 9 (Killed)
+05-05 18:46:16.530   552   620 V ActivityManager: Got obituary of 4969:io.appium.uiautomator2.server
+05-05 18:46:16.584  5139  5177 D EGL_emulation: app_time_stats: avg=982.44ms min=634.81ms max=1330.07ms count=2
+05-05 18:46:16.676   552   620 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10147 user=0: from pid 5675
+05-05 18:46:16.687   893   893 D CarrierSvcBindHelper: No carrier app for: 0
+05-05 18:46:16.688   552   620 I ActivityManager: Force stopping io.appium.uiautomator2.server.test appid=10146 user=0: from pid 5676
+05-05 18:46:16.701   893   893 D CarrierSvcBindHelper: No carrier app for: 0
+05-05 18:46:16.791   552   828 I ActivityManager: Force stopping com.krishivaas appid=10148 user=0: from pid 5686
+05-05 18:46:16.793   552   828 I ActivityManager: Killing 5139:com.krishivaas/u0a148 (adj 0): stop com.krishivaas due to from pid 5686
+05-05 18:46:16.798   552   588 I libprocessgroup: Successfully killed process cgroup uid 10148 pid 5139 in 0ms
+05-05 18:46:16.810   552   828 W ActivityTaskManager: Force removing ActivityRecord{31d8edf u0 com.krishivaas/.MainActivity t55 f}}: app died, no saved state
+05-05 18:46:16.824   552   828 W InputManager-JNI: Input channel object '44cded8 com.krishivaas/com.krishivaas.MainActivity (client)' was disposed without first being removed with the input manager!
+05-05 18:46:16.849   492  5123 I hw-BpHwBinder: onLastStrongRef automatically unlinking death recipients
+05-05 18:46:16.849   552   828 W ActivityTaskManager: Can't find TaskDisplayArea to determine support for multi window. Task id=55 attached=false
+05-05 18:46:16.849   552   828 W ActivityTaskManager: Can't find TaskDisplayArea to determine support for multi window. Task id=55 attached=false
+05-05 18:46:16.858   492  5123 V C2Store : in ~ComponentModule
+05-05 18:46:16.858   492  5123 V C2Store : unloading dll
+05-05 18:46:16.861   492   755 D BufferPoolAccessor2.0: During invalidation found 1 dead clients
+05-05 18:46:16.861   492  5123 D BufferPoolAccessor2.0: bufferpool2 0x7783115d3128 : 0(0 size) total buffers - 0(0 size) used buffers - 63/64 (recycle/alloc) - 1/64 (fetch/transfer)
+05-05 18:46:16.529     0     0 I binder  : 492:755 transaction failed 29189/-22, size 64-0 line 3133
+05-05 18:46:16.533     0     0 I binder  : undelivered transaction 197271, process died.
+05-05 18:46:16.536     0     0 I binder  : undelivered transaction 197272, process died.
+05-05 18:46:16.539     0     0 I binder  : undelivered transaction 197270, process died.
+05-05 18:46:16.875   348   348 I Zygote  : Process 5139 exited due to signal 9 (Killed)
+05-05 18:46:16.877   484  5620 E mediaserver: unlinkToDeath: removed reference to death recipient but unlink failed.
+05-05 18:46:16.878   484  5620 E IPCThreadState: attemptIncStrongHandle(2): Not supported
+05-05 18:46:16.878   492  5123 D BufferPoolAccessor2.0: Destruction - bufferpool2 0x7783115d3128 cached: 0/0M, 0/0% in use; allocs: 64, 98% recycled; transfers: 64, 98% unfetched
+05-05 18:46:16.878   552  1649 D TextToSpeechManagerPerUserService: Unbinding TTS engine: com.google.android.tts. Reason: client process death is reported
+05-05 18:46:16.879   552  3372 D ConnectivityService: ConnectivityService NetworkRequestInfo binderDied(uid/pid:10148/5139, android.os.BinderProxy@2875962)
+05-05 18:46:16.880   552   667 D ConnectivityService: releasing NetworkRequest [ REQUEST id=136, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10148 RequestorUid: 10148 RequestorPkg: com.krishivaas] ] (release request)
+05-05 18:46:16.881   437   437 E BpTransactionCompletedListener: Failed to transact (-32)
+05-05 18:46:16.917  1462  1462 I A       : onApplyWindowInsets: systemWindowInsets=Insets{left=0, top=63, right=0, bottom=126}
+05-05 18:46:16.918  1462  1462 I A       : onApplyWindowInsets: systemWindowInsets=Insets{left=0, top=63, right=0, bottom=126}
+05-05 18:46:16.933   370   398 D goldfish-address-space: claimShared: Ask to claim region [0x3f0654000 0x3f1038000]
+05-05 18:46:16.943   370   398 D goldfish-address-space: claimShared: Ask to claim region [0x3f1038000 0x3f1a1c000]
+05-05 18:46:16.946   370   398 D goldfish-address-space: claimShared: Ask to claim region [0x3f1a1c000 0x3f2400000]
+05-05 18:46:16.949   552   578 W ActivityManager: setHasOverlayUi called on unknown pid: 5139
+05-05 18:46:16.950   370   398 D goldfish-address-space: claimShared: Ask to claim region [0x3f2400000 0x3f2de4000]
+05-05 18:46:16.959   552   620 V ActivityManager: Got obituary of 5139:com.krishivaas
+05-05 18:46:16.965   552   552 W Looper  : Slow dispatch took 164ms main h=com.android.server.job.JobSchedulerService$JobHandler c=null m=7
+05-05 18:46:16.968   370   398 D goldfish-address-space: claimShared: Ask to claim region [0x3f2de4000 0x3f37c8000]
+05-05 18:46:16.971   370   398 D goldfish-address-space: claimShared: Ask to claim region [0x3f4000000 0x3f49e4000]
+05-05 18:46:16.973   552   552 W TextToSpeechManagerPerUserService: Disconnected from TTS engine
+05-05 18:46:16.982   893   893 D CarrierSvcBindHelper: No carrier app for: 0
+05-05 18:46:16.994   552  1969 W system_server: Long monitor contention with owner Binder:552_5 (828) at void com.android.server.am.ActivityManagerService.forceStopPackage(java.lang.String, int)(ActivityManagerService.java:3737) waiters=3 in int com.android.server.am.ActivityManagerService.broadcastIntentWithFeature(android.app.IApplicationThread, java.lang.String, android.content.Intent, java.lang.String, android.content.IIntentReceiver, int, java.lang.String, android.os.Bundle, java.lang.String[], java.lang.String[], java.lang.String[], int, android.os.Bundle, boolean, boolean, int) for 120ms
+05-05 18:46:16.998   552   552 I TextToSpeechManagerPerUserService: Failed running callback method: android.os.DeadObjectException
+05-05 18:46:17.015   552  1970 W ActivityManager: Unable to start service Intent { act=android.service.smartspace.SmartspaceService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiSmartspaceService } U=0: not found
+05-05 18:46:17.015   552  1970 W RemoteSmartspaceService: could not bind to Intent { act=android.service.smartspace.SmartspaceService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiSmartspaceService } using flags 67112961
+05-05 18:46:17.021   552   552 W ServiceConnector.Impl: mayInterruptIfRunning not supported - ignoring
+05-05 18:46:17.028   552  1970 W ActivityManager: Unable to start service Intent { act=android.service.smartspace.SmartspaceService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiSmartspaceService } U=0: not found
+05-05 18:46:17.030   552  1970 W RemoteSmartspaceService: could not bind to Intent { act=android.service.smartspace.SmartspaceService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiSmartspaceService } using flags 67112961
+05-05 18:46:17.053   552   552 W ActivityManager: Unbind failed: could not find connection for android.app.LoadedApk$ServiceDispatcher$InnerConnection@f06b2ba
+05-05 18:46:17.058   552   552 W ActivityManager: Unbind failed: could not find connection for android.app.LoadedApk$ServiceDispatcher$InnerConnection@62af56b
+05-05 18:46:17.094  1314  1314 I GsaVoiceInteractionSrv: Handling ACTION_START_HOTWORD
+05-05 18:46:17.095  1314  1314 I GsaVoiceInteractionSrv: disregardVoiceMatch: false
+05-05 18:46:17.095  1314  1314 I GsaVoiceInteractionSrv: Cannot start hotword, hotword has been explicitly disabled.
+05-05 18:46:17.129  1462  2021 I OpenGLRenderer: Davey! duration=99638ms; Flags=1, FrameTimelineVsyncId=2209, IntendedVsync=191938235642, Vsync=191954902308, InputEventId=0, HandleInputStart=191960095600, AnimationStart=191960129900, PerformTraversalsStart=191960220000, DrawStart=192006280300, FrameDeadline=191971568974, FrameInterval=191960076500, FrameStartTime=16666666, SyncQueued=192063696900, SyncStart=192064580700, IssueDrawCommandsStart=192065015400, SwapBuffers=192079011000, FrameCompleted=291577756600, DequeueBufferDuration=78900, QueueBufferDuration=10107800, GpuCompleted=291577756600, SwapBuffersCompleted=192172495300, DisplayPresentTime=0, 
+05-05 18:46:17.162  1210  1210 I GoogleInputMethodService: GoogleInputMethodService.onFinishInput():3420 
+05-05 18:46:17.208  1210  1210 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():2002 
+05-05 18:46:17.209  1210  1210 I DeviceUnlockedTag: DeviceUnlockedTag.notifyDeviceLockStatusChanged():31 Notify device unlocked.
+05-05 18:46:17.364  1462  1754 I WorkerManager: dispose()
+05-05 18:46:22.589   492   756 D BufferPoolAccessor2.0: evictor expired: 1, evicted: 0
+05-05 18:46:29.913   552   620 W ProcessStats: Tracking association SourceState{5c47240 system/1000 BTopFgs #4057} whose proc state 2 is better than process ProcessState{cf45579 io.appium.settings/10145 pkg=io.appium.settings} proc state 3 (35 skipped)
+05-05 18:46:40.018   347  5712 D resolv  : GetAddrInfoHandler::run: {100 786532 100 983140 10100 0}
+05-05 18:46:40.018   347  5712 D resolv  : resolv_getaddrinfo: explore_fqdn(): ai_family=0 ai_socktype=1 ai_protocol=6
+05-05 18:46:40.019   347  5713 D resolv  : doQuery: (1, 28)
+05-05 18:46:40.019   347  5713 D resolv  : res_nmkquery: (QUERY, IN, AAAA)
+05-05 18:46:40.020   347  5714 D resolv  : doQuery: (1, 1)
+05-05 18:46:40.020   347  5713 D resolv  : res_nsend
+05-05 18:46:40.020   347  5713 I resolv  : resolv_cache_lookup: lookup
+05-05 18:46:40.020   347  5713 I resolv  : resolv_cache_lookup: NOT IN CACHE (STALE ENTRY 0x79adb1f3c270DISCARDED)
+05-05 18:46:40.020   347  5713 I resolv  : _cache_remove_p: entry 34 removed (count=39)
+05-05 18:46:40.020   347  5714 D resolv  : res_nmkquery: (QUERY, IN, A)
+05-05 18:46:40.020   347  5713 I resolv  : resolv_populate_res_for_net: netid=100
