@@ -1,0 +1,80 @@
+CRASH START: 05-05 15:16:05.109 22205 22205 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+05-05 15:16:05.114  1748  1748 D Zygote  : Forked child process 22234
+05-05 15:16:05.116 22137 22219 W Settings: Setting download_manager_max_bytes_over_mobile has moved from android.provider.Settings.Secure to android.provider.Settings.Global.
+05-05 15:16:05.116 22137 22219 I Finsky:background: [723] SettingNotFoundException, fall through to G.downloadBytesOverMobileMaximum
+05-05 15:16:05.124 22205 22205 E libc    : Access denied finding property "persist.device_config.runtime_native_boot.enable_apex_image"
+05-05 15:16:05.124 22205 22205 I AndroidRuntime: Using default boot image
+05-05 15:16:05.124 22205 22205 E libc    : Access denied finding property "persist.device_config.runtime_native_boot.disable_lock_profiling"
+05-05 15:16:05.124 22205 22205 I AndroidRuntime: Leaving lock profiling enabled
+05-05 15:16:05.124 22205 22205 E libc    : Access denied finding property "persist.device_config.runtime_native_boot.enable_generational_cc"
+05-05 15:16:05.127 22137 22219 W Settings: Setting download_manager_recommended_max_bytes_over_mobile has moved from android.provider.Settings.Secure to android.provider.Settings.Global.
+05-05 15:16:05.128 22234 22234 W oid.apps.photo: Unexpected CPU variant for X86 using defaults: x86
+05-05 15:16:05.134 22137 22219 I Finsky:background: [723] SettingNotFoundException, fall through to G.downloadBytesOverMobileRecommended
+05-05 15:16:05.134  1998  2026 I ActivityManager: Start proc 22234:com.google.android.apps.photos/u0a131 for broadcast {com.google.android.apps.photos/com.google.android.libraries.social.mediastoresync.reset.impl.MediaStoreClearedReceiver}
+05-05 15:16:05.136 22234 22234 E oid.apps.photo: Not starting debugger since process cannot load the jdwp agent.
+05-05 15:16:05.136 22205 22205 W app_process: Could not reserve sentinel fault page
+05-05 15:16:05.137 22137 22219 I Finsky:background: [723] registerListener
+05-05 15:16:05.143 22137 22219 I Finsky:background: [723] DFS: Listener added for smy@be22c6
+05-05 15:16:05.143 22137 22219 I Finsky:background: [723] registerListener
+05-05 15:16:05.146 22011 22046 I ProvidersCache: Provider returned no roots. Possibly naughty: com.google.android.apps.docs.storage
+05-05 15:16:05.149 22011 22048 I ProvidersCache: Provider returned no roots. Possibly naughty: com.google.android.apps.docs.storage
+05-05 15:16:05.149 22137 22219 I Finsky:background: [723] registerListener
+05-05 15:16:05.150 22137 22219 I Finsky:background: [723] DFS: Listener added for anss@ca842d9
+05-05 15:16:05.114 22205 22205 W app_process: type=1400 audit(0.0:120): avc: denied { read } for name="u:object_r:device_config_runtime_native_boot_prop:s0" dev="tmpfs" ino=9326 scontext=u:r:shell:s0 tcontext=u:object_r:device_config_runtime_native_boot_prop:s0 tclass=file permissive=0
+05-05 15:16:05.114 22205 22205 W app_process: type=1400 audit(0.0:121): avc: denied { read } for name="u:object_r:device_config_runtime_native_boot_prop:s0" dev="tmpfs" ino=9326 scontext=u:r:shell:s0 tcontext=u:object_r:device_config_runtime_native_boot_prop:s0 tclass=file permissive=0
+05-05 15:16:05.114 22205 22205 W app_process: type=1400 audit(0.0:122): avc: denied { read } for name="u:object_r:device_config_runtime_native_boot_prop:s0" dev="tmpfs" ino=9326 scontext=u:r:shell:s0 tcontext=u:object_r:device_config_runtime_native_boot_prop:s0 tclass=file permissive=0
+05-05 15:16:05.173  2522  3840 W PhBaseOp: Phenotype API error. Event: # hcgi@8de3ea8f, EventCode: SET_APP_SPECIFIC_PROPERTIES [CONTEXT service_id=51 ]
+05-05 15:16:05.173  2522  3840 W PhBaseOp: dygl: 29503
+05-05 15:16:05.173  2522  3840 W PhBaseOp: 	at dykc.i(:com.google.android.gms@261631016@26.16.31 (100700-900800821):187)
+05-05 15:16:05.173  2522  3840 W PhBaseOp: 	at dyie.h(:com.google.android.gms@261631016@26.16.31 (100700-900800821):34)
+05-05 15:16:05.173  2522  3840 W PhBaseOp: 	at dyie.f(:com.google.android.gms@261631016@26.16.31 (100700-900800821):16)
+05-05 15:16:05.173  2522  3840 W PhBaseOp: 	at ctrw.fC(:com.google.android.gms@261631016@26.16.31 (100700-900800821):1)
+05-05 15:16:05.173  2522  3840 W PhBaseOp: 	at ctsh.run(:com.google.android.gms@261631016@26.16.31 (100700-900800821):121)
+05-05 15:16:05.173  2522  3840 W PhBaseOp: 	at fuhy.run(:com.google.android.gms@261631016@26.16.31 (100700-900800821):23)
+05-05 15:16:05.173  2522  3840 W PhBaseOp: 	at bhqg.c(:com.google.android.gms@261631016@26.16.31 (100700-900800821):50)
+05-05 15:16:05.173  2522  3840 W PhBaseOp: 	at bhqg.run(:com.google.android.gms@261631016@26.16.31 (100700-900800821):66)
+05-05 15:16:05.173  2522  3840 W PhBaseOp: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1167)
+05-05 15:16:05.173  2522  3840 W PhBaseOp: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:641)
+05-05 15:16:05.173  2522  3840 W PhBaseOp: 	at bhvx.run(:com.google.android.gms@261631016@26.16.31 (100700-900800821):8)
+05-05 15:16:05.173  2522  3840 W PhBaseOp: 	at java.lang.Thread.run(Thread.java:919)
+05-05 15:16:05.185 22011 22227 I ProvidersCache: Provider returned no roots. Possibly naughty: com.google.android.apps.docs.storage
+05-05 15:16:05.186  2522  3840 W AsyncOperation: operation=SetAppSpecificPropertiesOperationCall, opStatusCode=29503 [CONTEXT service_id=51 ]
+05-05 15:16:05.186  2522  3840 W AsyncOperation: OperationException[Status{statusCode=unknown status code: 29503, resolution=null}]
+05-05 15:16:05.186  2522  3840 W AsyncOperation: 	at dyie.h(:com.google.android.gms@261631016@26.16.31 (100700-900800821):64)
+05-05 15:16:05.186  2522  3840 W AsyncOperation: 	at dyie.f(:com.google.android.gms@261631016@26.16.31 (100700-900800821):16)
+05-05 15:16:05.186  2522  3840 W AsyncOperation: 	at ctrw.fC(:com.google.android.gms@261631016@26.16.31 (100700-900800821):1)
+05-05 15:16:05.186  2522  3840 W AsyncOperation: 	at ctsh.run(:com.google.android.gms@261631016@26.16.31 (100700-900800821):121)
+05-05 15:16:05.186  2522  3840 W AsyncOperation: 	at fuhy.run(:com.google.android.gms@261631016@26.16.31 (100700-900800821):23)
+05-05 15:16:05.186  2522  3840 W AsyncOperation: 	at bhqg.c(:com.google.android.gms@261631016@26.16.31 (100700-900800821):50)
+05-05 15:16:05.186  2522  3840 W AsyncOperation: 	at bhqg.run(:com.google.android.gms@261631016@26.16.31 (100700-900800821):66)
+05-05 15:16:05.186  2522  3840 W AsyncOperation: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1167)
+05-05 15:16:05.186  2522  3840 W AsyncOperation: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:641)
+05-05 15:16:05.186  2522  3840 W AsyncOperation: 	at bhvx.run(:com.google.android.gms@261631016@26.16.31 (100700-900800821):8)
+05-05 15:16:05.186  2522  3840 W AsyncOperation: 	at java.lang.Thread.run(Thread.java:919)
+05-05 15:16:05.192  2522  3840 I PhenotypeResourceReader: unable to find any Phenotype resource metadata for com.google.android.apps.docs
+05-05 15:16:05.215 22234 22234 I oid.apps.photo: The ClassLoaderContext is a special shared library.
+05-05 15:16:05.234 22137 22219 I Finsky:background: [723] IV2: IQv2 is disabled. Recovering all active installs: []
+05-05 15:16:05.343  1998  2262 D ConnectivityService: requestNetwork for uid/pid:10107/22137 NetworkRequest [ TRACK_DEFAULT id=120, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10107] ]
+05-05 15:16:05.344  2232  2232 D PhoneSwitcherNetworkRequstListener: got request NetworkRequest [ TRACK_DEFAULT id=120, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10107] ] with score 60 and serial -1
+05-05 15:16:05.345 22137 22217 I Finsky:background: [722] Device is ineligible for platform Cronet and will use embedded Cronet instead.
+05-05 15:16:05.349  1998  2098 D WifiNetworkFactory: got request NetworkRequest [ TRACK_DEFAULT id=120, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10107] ] with score 60 and serial -1
+05-05 15:16:05.349  1998  2098 D UntrustedWifiNetworkFactory: got request NetworkRequest [ TRACK_DEFAULT id=120, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10107] ] with score 60 and serial -1
+05-05 15:16:05.361 22137 22210 I Finsky:background: [717] IQ: start evaluating install requests.
+05-05 15:16:05.368 22137 22210 I Finsky:background: [717] IQ: no jobs active. Skipping
+05-05 15:16:05.383 22137 22260 I Finsky:background: [731] IQ: Pruning inactive install requests
+05-05 15:16:05.384 22137 22217 D HttpFlagsLoader: Not loading HTTP flags because they are disabled in the manifest
+05-05 15:16:05.448  1998  4166 D ConnectivityService: requestNetwork for uid/pid:10107/22137 NetworkRequest [ TRACK_DEFAULT id=121, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10107] ]
+05-05 15:16:05.452  2232  2232 D PhoneSwitcherNetworkRequstListener: got request NetworkRequest [ TRACK_DEFAULT id=121, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10107] ] with score 60 and serial -1
+05-05 15:16:05.453  1998  2098 D WifiNetworkFactory: got request NetworkRequest [ TRACK_DEFAULT id=121, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10107] ] with score 60 and serial -1
+05-05 15:16:05.453  1998  2098 D UntrustedWifiNetworkFactory: got request NetworkRequest [ TRACK_DEFAULT id=121, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10107] ] with score 60 and serial -1
+05-05 15:16:05.505  1748  1748 D Zygote  : Forked child process 22269
+05-05 15:16:05.523 22269 22269 W ssioncontrolle: Unexpected CPU variant for X86 using defaults: x86
+05-05 15:16:05.539  2522 22274 I Fitness : (REDACTED) FitCleanupIntentOperation received Intent %s
+05-05 15:16:05.554  1998  2026 W ActivityManager: Slow operation: 67ms so far, now at startProcess: returned from zygote!
+05-05 15:16:05.555  1998  2026 W ActivityManager: Slow operation: 68ms so far, now at startProcess: done updating battery stats
+05-05 15:16:05.555  1998  2026 W ActivityManager: Slow operation: 68ms so far, now at startProcess: building log message
+05-05 15:16:05.555  1998  2026 I ActivityManager: Start proc 22269:com.google.android.permissioncontroller/u0a73 for broadcast {com.google.android.permissioncontroller/com.android.packageinstaller.permission.service.LocationAccessCheck$PackageResetHandler}
+05-05 15:16:05.555  1998  2026 W ActivityManager: Slow operation: 68ms so far, now at startProcess: starting to update pids map
+05-05 15:16:05.556  1998  2026 W ActivityManager: Slow operation: 68ms so far, now at startProcess: done updating pids map
+05-05 15:16:05.562 22269 22269 E ssioncontrolle: Not starting debugger since process cannot load the jdwp agent.
+05-05 15:16:05.575 22137 22217 I cn_CronetLibraryLoader: Cronet version: 147.0.7727.49, arch: i686
