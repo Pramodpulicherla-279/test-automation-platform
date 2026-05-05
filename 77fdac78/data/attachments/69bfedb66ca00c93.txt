@@ -1,0 +1,80 @@
+CRASH START: 05-05 12:24:51.117  7094  7094 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+05-05 12:24:51.120  7117  7117 W com.android.mt: Unexpected CPU variant for X86 using defaults: x86
+05-05 12:24:51.143  7117  7117 E com.android.mt: Not starting debugger since process cannot load the jdwp agent.
+05-05 12:24:51.153  7094  7094 E libc    : Access denied finding property "persist.device_config.runtime_native_boot.enable_apex_image"
+05-05 12:24:51.153  7094  7094 I AndroidRuntime: Using default boot image
+05-05 12:24:51.154  7094  7094 E libc    : Access denied finding property "persist.device_config.runtime_native_boot.disable_lock_profiling"
+05-05 12:24:51.154  7094  7094 I AndroidRuntime: Leaving lock profiling enabled
+05-05 12:24:51.154  7094  7094 E libc    : Access denied finding property "persist.device_config.runtime_native_boot.enable_generational_cc"
+05-05 12:24:51.160  1998  2026 W ActivityManager: Slow operation: 75ms so far, now at startProcess: returned from zygote!
+05-05 12:24:51.160  1998  2026 W ActivityManager: Slow operation: 75ms so far, now at startProcess: done updating battery stats
+05-05 12:24:51.160  1998  2026 W ActivityManager: Slow operation: 75ms so far, now at startProcess: building log message
+05-05 12:24:51.160  1998  2026 I ActivityManager: Start proc 7117:com.android.mtp/u0a59 for content provider {com.android.mtp/com.android.mtp.MtpDocumentsProvider}
+05-05 12:24:51.160  1998  2026 W ActivityManager: Slow operation: 75ms so far, now at startProcess: starting to update pids map
+05-05 12:24:51.161  1998  2026 W ActivityManager: Slow operation: 75ms so far, now at startProcess: done updating pids map
+05-05 12:24:51.179  1748  1748 D Zygote  : Forked child process 7134
+05-05 12:24:51.144  7094  7094 W app_process: type=1400 audit(0.0:26): avc: denied { read } for name="u:object_r:device_config_runtime_native_boot_prop:s0" dev="tmpfs" ino=9326 scontext=u:r:shell:s0 tcontext=u:object_r:device_config_runtime_native_boot_prop:s0 tclass=file permissive=0
+05-05 12:24:51.144  7094  7094 W app_process: type=1400 audit(0.0:27): avc: denied { read } for name="u:object_r:device_config_runtime_native_boot_prop:s0" dev="tmpfs" ino=9326 scontext=u:r:shell:s0 tcontext=u:object_r:device_config_runtime_native_boot_prop:s0 tclass=file permissive=0
+05-05 12:24:51.211  7117  7117 I com.android.mt: The ClassLoaderContext is a special shared library.
+05-05 12:24:51.215  7134  7134 W oid.apps.photo: Unexpected CPU variant for X86 using defaults: x86
+05-05 12:24:51.215  1998  2026 W ActivityManager: Slow operation: 85ms so far, now at startProcess: returned from zygote!
+05-05 12:24:51.215  1998  2026 W ActivityManager: Slow operation: 85ms so far, now at startProcess: done updating battery stats
+05-05 12:24:51.215  1998  2026 W ActivityManager: Slow operation: 85ms so far, now at startProcess: building log message
+05-05 12:24:51.215  1998  2026 I ActivityManager: Start proc 7134:com.google.android.apps.photos/u0a131 for broadcast {com.google.android.apps.photos/com.google.android.libraries.social.mediastoresync.reset.impl.MediaStoreClearedReceiver}
+05-05 12:24:51.216  1998  2026 W ActivityManager: Slow operation: 85ms so far, now at startProcess: starting to update pids map
+05-05 12:24:51.216  1998  2026 W ActivityManager: Slow operation: 86ms so far, now at startProcess: done updating pids map
+05-05 12:24:51.253  7134  7134 E oid.apps.photo: Not starting debugger since process cannot load the jdwp agent.
+05-05 12:24:51.264  1998  4897 D ConnectivityService: requestNetwork for uid/pid:10107/7063 NetworkRequest [ TRACK_DEFAULT id=58, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10107] ]
+05-05 12:24:51.265  1998  2098 D WifiNetworkFactory: got request NetworkRequest [ TRACK_DEFAULT id=58, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10107] ] with score 60 and serial -1
+05-05 12:24:51.265  1998  2098 D UntrustedWifiNetworkFactory: got request NetworkRequest [ TRACK_DEFAULT id=58, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10107] ] with score 60 and serial -1
+05-05 12:24:51.267  2232  2232 D PhoneSwitcherNetworkRequstListener: got request NetworkRequest [ TRACK_DEFAULT id=58, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10107] ] with score 60 and serial -1
+05-05 12:24:51.286  7063  7104 I Finsky:background: [418] IQ: start evaluating install requests.
+05-05 12:24:51.287  7063  7104 I Finsky:background: [418] IQ: no jobs active. Skipping
+05-05 12:24:51.317  7063  7149 I Finsky:background: [432] IQ: Pruning inactive install requests
+05-05 12:24:51.319  7063  7110 I Finsky:background: [424] Device is ineligible for platform Cronet and will use embedded Cronet instead.
+05-05 12:24:51.353  7134  7134 I oid.apps.photo: The ClassLoaderContext is a special shared library.
+05-05 12:24:51.361  7063  7110 D HttpFlagsLoader: Not loading HTTP flags because they are disabled in the manifest
+05-05 12:24:51.464  1998  2776 D ConnectivityService: requestNetwork for uid/pid:10107/7063 NetworkRequest [ TRACK_DEFAULT id=59, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10107] ]
+05-05 12:24:51.467  1998  2098 D WifiNetworkFactory: got request NetworkRequest [ TRACK_DEFAULT id=59, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10107] ] with score 60 and serial -1
+05-05 12:24:51.467  1998  2098 D UntrustedWifiNetworkFactory: got request NetworkRequest [ TRACK_DEFAULT id=59, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10107] ] with score 60 and serial -1
+05-05 12:24:51.472  2232  2232 D PhoneSwitcherNetworkRequstListener: got request NetworkRequest [ TRACK_DEFAULT id=59, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED Uid: 10107] ] with score 60 and serial -1
+05-05 12:24:51.572  7063  7104 I Finsky:background: [418] IQ: 0 scheduled install statuses found to proceed. 
+05-05 12:24:51.605  7063  7110 I cn_CronetLibraryLoader: Cronet version: 147.0.7727.49, arch: i686
+05-05 12:24:51.690  7063  7110 I Finsky:background: [424] CronetEngine is present. Using Cronet for the networking stack.
+05-05 12:24:51.864  1748  1748 D Zygote  : Forked child process 7175
+05-05 12:24:51.886  1998  2026 W ActivityManager: Slow operation: 78ms so far, now at startProcess: returned from zygote!
+05-05 12:24:51.887  1998  2026 W ActivityManager: Slow operation: 79ms so far, now at startProcess: done updating battery stats
+05-05 12:24:51.887  1998  2026 W ActivityManager: Slow operation: 79ms so far, now at startProcess: building log message
+05-05 12:24:51.887  1998  2026 I ActivityManager: Start proc 7175:com.google.android.apps.docs/u0a145 for content provider {com.google.android.apps.docs/com.google.android.apps.docs.storagebackend.StorageBackendContentProvider}
+05-05 12:24:51.887  1998  2026 W ActivityManager: Slow operation: 79ms so far, now at startProcess: starting to update pids map
+05-05 12:24:51.887  7175  7175 W droid.apps.doc: Unexpected CPU variant for X86 using defaults: x86
+05-05 12:24:51.889  1998  2026 W ActivityManager: Slow operation: 81ms so far, now at startProcess: done updating pids map
+05-05 12:24:51.920  1754  1754 W audio_hw_generic: Not supplying enough data to HAL, expected position 221058 , only wrote 220774
+05-05 12:24:51.949  7094  7094 D ICU     : Time zone APEX file found: /apex/com.android.tzdata/etc/icu/icu_tzdata.dat
+05-05 12:24:51.951  7175  7175 E droid.apps.doc: Not starting debugger since process cannot load the jdwp agent.
+05-05 12:24:51.986  7094  7094 W app_process: Unexpected CPU variant for X86 using defaults: x86
+05-05 12:24:51.993  7063  7110 I Finsky:background: [424] Subscription detail: DataSubscriptionInfo{groupIdLevel1=null, serviceProviderName=[Zr1R7g28S8p7iucp_gnNJJtsRl-pgO3Y6eIkCh24Iy0], simCarrierId=1}
+05-05 12:24:52.009  7063  7063 I Finsky:background: [2] onSubscriptionsChanged
+05-05 12:24:52.009  7094  7094 I app_process: The ClassLoaderContext is a special shared library.
+05-05 12:24:52.041  7094  7094 W app_process: JNI RegisterNativeMethods: attempt to register 0 native methods for android.media.AudioAttributes
+05-05 12:24:52.051  7094  7094 D AndroidRuntime: Calling main entry com.android.commands.am.Am
+05-05 12:24:52.059  7175  7175 I droid.apps.doc: The ClassLoaderContext is a special shared library.
+05-05 12:24:52.068  7175  7175 I droid.apps.doc: The ClassLoaderContext is a special shared library.
+05-05 12:24:52.078  7063  7149 I Finsky:background: [432] Resetting scheduler db
+05-05 12:24:52.080  1998  2263 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10149 user=0: start instr
+05-05 12:24:52.095  7063  7104 I Finsky:background: [418] SCH: Scheduling phonesky job Id: 3-15, CT: 1777961688096, Constraints: [{ L: 47711905, D: 58511905, C: CHARGING_NONE, I: IDLE_REQUIRED, N: NET_UNMETERED, B: BATTERY_ANY }]
+05-05 12:24:52.095  7063  7104 I Finsky:background: [418] SCH: Scheduling phonesky job Id: 3-16, CT: 1777961688221, Constraints: [{ L: 0, D: 86400000, C: CHARGING_REQUIRED, I: IDLE_REQUIRED, N: NET_UNMETERED, B: BATTERY_ANY }]
+05-05 12:24:52.095  7063  7104 I Finsky:background: [418] SCH: Scheduling phonesky job Id: 3-17, CT: 1777961688221, Constraints: [{ L: 0, D: 86400000, C: CHARGING_REQUIRED, I: IDLE_REQUIRED, N: NET_UNMETERED, B: BATTERY_ANY }]
+05-05 12:24:52.095  7063  7104 I Finsky:background: [418] SCH: Scheduling phonesky job Id: 47-15, CT: 1777950923213, Constraints: [{ L: 3255547, D: 24855546, C: CHARGING_NONE, I: IDLE_REQUIRED, N: NET_NONE, B: BATTERY_ANY }]
+05-05 12:24:52.104  1748  1748 D Zygote  : Forked child process 7211
+05-05 12:24:52.107  7211  7211 I tomator2.serve: Late-enabling -Xcheck:jni
+05-05 12:24:52.117  1998  2026 I ActivityManager: Start proc 7211:io.appium.uiautomator2.server/u0a149 for added application io.appium.uiautomator2.server
+05-05 12:24:52.153  7063  7110 I Finsky:background: [424] SCH: Scheduling 0 system job(s)
+05-05 12:24:52.202  1748  1748 D Zygote  : Forked child process 7224
+05-05 12:24:52.205  1998  2026 I ActivityManager: Start proc 7224:com.google.android.permissioncontroller/u0a73 for broadcast {com.google.android.permissioncontroller/com.android.packageinstaller.permission.service.LocationAccessCheck$PackageResetHandler}
+05-05 12:24:52.209  7224  7224 W ssioncontrolle: Unexpected CPU variant for X86 using defaults: x86
+05-05 12:24:52.213  2522  7223 I Fitness : (REDACTED) FitCleanupIntentOperation received Intent %s
+05-05 12:24:52.227  7224  7224 E ssioncontrolle: Not starting debugger since process cannot load the jdwp agent.
+05-05 12:24:52.237  2698  7242 I Blockstore: [PackageIntentOperation] Checking the restore timespan. [CONTEXT service_id=258 ]
+05-05 12:24:52.238  7211  7211 E tomator2.serve: Unknown bits set in runtime_flags: 0x8000
+05-05 12:24:52.240  7211  7211 W tomator2.serve: Unexpected CPU variant for X86 using defaults: x86
