@@ -1,1 +1,1 @@
-[]
+[{"uid":"a12e4deb049c0685","name":"Complete Diary Activity Entry Flow","time":{"start":1778087459553,"stop":1778087660542,"duration":200989},"status":"passed","severity":"normal"},{"uid":"10b72a3b6cd556f7","name":"Verify user can login with valid credentials","time":{"start":1778087415982,"stop":1778087455459,"duration":39477},"status":"passed","severity":"normal"}]
