@@ -1,0 +1,24 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","32295","Verify user can login with valid credentials","tests.test_cases.regular_farmer_test_cases","Wed May 06 18:26:37 IST 2026","passed","Wed May 06 18:27:09 IST 2026","TestLogin","test_login_pytest","",""
+"
+        Complete flow:
+        1. Click on farm card
+        2. Click navigation button
+        3. Android back
+        4. Verify crop health screen
+        5. Click diary icon
+        6. Click Add Activity button
+        7. Enter activity name ""Ram""
+        8. Click cost field
+        9. Enter cost ""10000/-""
+        10. Submit
+        11. Android back
+        ","0","Complete Diary Activity Entry Flow","tests.test_cases.regular_farmer_test_cases","Wed May 06 18:27:11 IST 2026","broken","Wed May 06 18:27:11 IST 2026","TestCropHealth","Crophealth","",""
+"
+        Extended flow to test multiple activity entries:
+        1. Click on farm card
+        2. Navigate and return
+        3. Enter first activity
+        4. Add another activity
+        5. Verify both entries
+        ","0","Crop health diary activity with multiple entries","tests.test_cases.regular_farmer_test_cases","Wed May 06 18:27:14 IST 2026","broken","Wed May 06 18:27:14 IST 2026","TestCropHealth","Crophealth","",""
