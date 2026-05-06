@@ -1,0 +1,1 @@
+{"8a1e78b40f85b617ff35a407e6934136":{"statistic":{"failed":0,"broken":1,"skipped":0,"passed":0,"unknown":0,"total":1},"items":[{"uid":"54fca478c6a01fb1","status":"broken","statusDetails":"AttributeError: 'TestFarmer' object has no attribute 'crop_info_xpath'. Did you mean: 'crop_info_icon_xpath'?","time":{"start":1778071780224,"stop":1778071980226,"duration":200002}}]}}
