@@ -1,5 +1,5 @@
 {
-  "ticket_id": "RUN-20260506-215328",
+  "ticket_id": "RUN-20260506-220156",
   "issue_id": "ISS-001",
   "app_name": "Krishivaas Farmer",
   "app_version": "1.3.96",
@@ -17,8 +17,8 @@
   ],
   "developer_name": "@Anuj",
   "description": "pytest.fail(\"Could not find or click the 'calendar date'.\")\nFailed: Could not find or click the 'calendar date'.\n\nSteps Executed:\n1. Click on farm card\n2. Click navigation button\n3. Click diary icon\n4. Click activity placeholder\n5. Click cost field",
-  "start_date": "2026-05-06T21:54:24.820179",
-  "end_date": "2026-05-06T21:56:35.792893",
+  "start_date": "2026-05-06T22:02:52.802422",
+  "end_date": "2026-05-06T22:04:57.440658",
   "sprint": "Automation",
   "fix_version": [
     "Production"
