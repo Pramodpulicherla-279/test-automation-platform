@@ -1,0 +1,1 @@
+{"a030bb4e965b3580b4112e865ebbc118":{"statistic":{"failed":0,"broken":1,"skipped":0,"passed":0,"unknown":0,"total":1},"items":[{"uid":"86669598a8b0298","status":"broken","statusDetails":"AttributeError: 'TestOnboarding' object has no attribute 'click_on_crop_health_xpath'","time":{"start":1778069843452,"stop":1778069845480,"duration":2028}}]}}

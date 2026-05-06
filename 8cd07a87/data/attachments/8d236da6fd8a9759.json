@@ -1,0 +1,23 @@
+{
+  "ticket_id": "RUN-20260506-174708",
+  "issue_id": "ISS-001",
+  "app_name": "Krishivaas Farmer",
+  "app_version": "1.3.97",
+  "module": "Onboarding",
+  "feature": "Authentication",
+  "issue_summary": "Automation Failure: test_addfarm",
+  "title": "Automation Failure: test_addfarm",
+  "test_name": "test_addfarm",
+  "steps_executed": [],
+  "developer_name": "@Anuj",
+  "description": "AttributeError: 'TestOnboarding' object has no attribute 'click_on_crop_health_xpath'",
+  "start_date": "2026-05-06T17:47:09.743448",
+  "end_date": "2026-05-06T17:47:39.497544",
+  "sprint": "Automation",
+  "fix_version": [
+    "Production"
+  ],
+  "affects_version": [
+    "Krishivaas Farmer"
+  ]
+}
