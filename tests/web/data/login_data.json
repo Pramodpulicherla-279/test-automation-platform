@@ -1,0 +1,6 @@
+{
+  "url": "https://staging.krishivaas.ai/login",
+  "username": "devqa@yopmail.com",
+  "password": "Devqa@2025",
+  "expected_text": "Dashboard"
+}

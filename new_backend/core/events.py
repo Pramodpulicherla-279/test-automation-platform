@@ -1,9 +1,9 @@
 import asyncio
 from contextlib import asynccontextmanager
-from core.websocket import manager
-from modules.api_testing.db_service import db
-from core.logger import setup_logger
-from core.state import state
+from new_backend.core.websocket import manager
+from new_backend.modules.api_testing.db_service import db
+from new_backend.core.logger import setup_logger
+from new_backend.core.state import state
 
 logger = setup_logger()
 

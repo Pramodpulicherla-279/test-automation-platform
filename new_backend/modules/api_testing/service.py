@@ -12,8 +12,8 @@ from datetime import datetime
 from typing import Optional, Dict, Any
 from pathlib import Path
 
-from modules.api_testing.models import TestRun, RunStatus, APILog
-from modules.api_testing.db_service import db
+from new_backend.modules.api_testing.models import TestRun, RunStatus, APILog
+from new_backend.modules.api_testing.db_service import db
 
 
 # ============================================================================

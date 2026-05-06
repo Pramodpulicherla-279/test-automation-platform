@@ -8,29 +8,29 @@ import threading
 from fastapi.responses import JSONResponse
 from typing import Dict, List
 # import core.state as state
-from core.state import (
+from new_backend.core.state import (
     test_steps_store,
     current_test_name,
     pending_payloads,
     dismissed_keys,
     PAYLOAD_PREFIXES
 )
-from core.state import reset_run_state, runs, appium_proc, APPIUM_PORT
-from core.utils import pick_free_port, parse_step_from_message
-from core.constants import ALLURE_CMD, ALLURE_REPORT_DIR
+from new_backend.core.state import reset_run_state, runs, appium_proc, APPIUM_PORT
+from new_backend.core.utils import pick_free_port, parse_step_from_message
+from new_backend.core.constants import ALLURE_CMD, ALLURE_REPORT_DIR
 from fastapi import HTTPException
-from core.websocket import manager
-from core.logger import logger
-from core.events import broadcast_async
-from modules.slack.service import APP_DEVELOPER_MAP, new_run, detect_app_variant, run_post_notify
-from core.constants import SLACK_NOTIFY_CHANNEL
+from new_backend.core.websocket import manager
+from new_backend.core.logger import logger
+from new_backend.core.events import broadcast_async
+from new_backend.modules.slack.service import APP_DEVELOPER_MAP, new_run, detect_app_variant, run_post_notify
+from new_backend.core.constants import SLACK_NOTIFY_CHANNEL
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../"))
 sys.path.insert(0, PROJECT_ROOT)
 from tests.test_runner import (
     stop_current_tests,
     generate_report
 )
-from modules.slack.config import APP_VARIANTS, APP_DEVELOPER_MAP
+from new_backend.modules.slack.config import APP_VARIANTS, APP_DEVELOPER_MAP
 from .gdrive_loader import download_apk, extract_app_icon, get_apk_info
 
 

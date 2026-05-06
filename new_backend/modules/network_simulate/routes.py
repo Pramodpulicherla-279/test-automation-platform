@@ -1,7 +1,7 @@
 from fastapi import APIRouter
-from modules.network_simulate.service import apply_network_config
-from modules.network_simulate.models import NetworkConfig
-from core.state import runs
+from new_backend.modules.network_simulate.service import apply_network_config
+from new_backend.modules.network_simulate.models import NetworkConfig
+from new_backend.core.state import runs
 
 router = APIRouter()
 

@@ -637,8 +637,8 @@ def pytest_runtest_makereport(item, call):
 
 # ── Session finish ────────────────────────────────────────────────────────────
 def pytest_sessionfinish(session, exitstatus):
-    print(f"\n{'='*50}")
-    print(f"TEST SESSION FINISHED  |  Run ID: {_ticket_id}")
+    # print(f"\n{'='*50}")
+    # print(f"TEST SESSION FINISHED  |  Run ID: {_ticket_id}")
     if _session_issues:
         print(f"Failures ({len(_session_issues)}):")
         for iss in _session_issues:
@@ -646,8 +646,8 @@ def pytest_sessionfinish(session, exitstatus):
                 f"  [#{iss['issue_id']}] {iss['module']} — "
                 f"{iss['test_name']} ({iss['steps']} steps)"
             )
-    print("Review failures in IssuePanel and click 'Create' to file Jira tickets.")
-    print(f"{'='*50}\n")
+    # print("Review failures in IssuePanel and click 'Create' to file Jira tickets.")
+    # print(f"{'='*50}\n")
 
 
 def notReportFailed(report):

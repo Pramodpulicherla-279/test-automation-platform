@@ -4,14 +4,14 @@ import sys
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from modules.test_runner.routes import router as test_router
-from modules.jira.routes import router as jira_router
-from modules.llm.routes import router as llm_router
-from modules.api_testing.routes import router as api_testing_router
-from core.websocket import router as websocket_router
-from modules.slack.routes import router as slack_router
-from modules.network_simulate.routes import router as network_simulate_router
-from core.events import lifespan
+from new_backend.modules.test_runner.routes import router as test_router
+from new_backend.modules.jira.routes import router as jira_router
+from new_backend.modules.llm.routes import router as llm_router
+from new_backend.modules.api_testing.routes import router as api_testing_router
+from new_backend.core.websocket import router as websocket_router
+from new_backend.modules.slack.routes import router as slack_router
+from new_backend.modules.network_simulate.routes import router as network_simulate_router
+from new_backend.core.events import lifespan
 
 if sys.platform == "win32":
     asyncio.set_event_loop_policy(

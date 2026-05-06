@@ -8,14 +8,14 @@ FastAPI routes for:
 
 from fastapi import APIRouter, HTTPException, Query, Body
 from typing import Optional
-from modules.api_testing.models import (
+from new_backend.modules.api_testing.models import (
     APILog, CreateScriptRequest, UpdateScriptRequest, StartRunRequest,
     TestScript, TestRun, RunStatus,
     MessageResponse, ErrorResponse,
     ScriptsListResponse, RunsListResponse, RunDetailResponse, Metric
 )
-from modules.api_testing.db_service import db
-from modules.api_testing.service import run_api_test_flow, save_api_log, get_api_logs
+from new_backend.modules.api_testing.db_service import db
+from new_backend.modules.api_testing.service import run_api_test_flow, save_api_log, get_api_logs
 import asyncio
 
 router = APIRouter()

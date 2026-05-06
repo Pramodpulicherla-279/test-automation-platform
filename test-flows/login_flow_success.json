@@ -29,7 +29,7 @@
         "status": "Success"
     },
     {
-        "step": "Verify OTP",
+        "step": "Click Verify OTP",
         "status": "Success"
     }
 ]

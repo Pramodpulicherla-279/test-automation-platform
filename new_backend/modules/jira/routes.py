@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from .service import health_flow, jira_test_connection_flow, get_steps_flow, add_step_flow, reset_steps_flow, receive_jira_payload_flow, get_pending_payloads_flow, dismiss_payload_flow, jira_create_flow, add_comment_flow, jira_history_api_flow, list_jira_tickets_flow, jira_stats_slow
 from .models import JiraPayloadRequest, JiraCreateRequest
-from core.state import jira_history, jira_comments
+from new_backend.core.state import jira_history, jira_comments
 
 router = APIRouter()
 

@@ -1,5 +1,5 @@
 import requests
-from jira_integration.jira_config import config
+from new_backend.modules.jira.jira_config import config
 
 
 def attach_screenshot(issue_key, screenshot_path):

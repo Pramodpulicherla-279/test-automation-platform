@@ -1,0 +1,8 @@
+{
+  "hamburger_menu_icon": "xpath=//*[contains(@class, 'nav-link menu-toggle')]",
+  "bell_icon": "#count-notification",
+  "current_season": "text=Current Season",
+  "farmer_list": "text=Farmer List",
+  "add_button": "text=Add",
+  "add_new_farmer": "text=Add New Farmer"
+}

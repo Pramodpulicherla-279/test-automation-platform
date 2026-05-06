@@ -17,7 +17,7 @@ from motor.motor_asyncio import (
 
 from pymongo import ASCENDING, DESCENDING
 
-from modules.api_testing.models import (
+from new_backend.modules.api_testing.models import (
     TestScript,
     TestRun,
     Metric,
