@@ -1,8 +1,3 @@
-
-"""
-MongoDB Database Service
-"""
-
 import os
 from datetime import datetime
 from typing import List, Optional, Dict, Any
@@ -33,7 +28,7 @@ class Database:
 
         self.mongo_url = os.getenv(
             "MONGO_URL",
-            "mongodb://localhost:27017"
+            "mongodb://localhost:2717"
         )
 
         self.db_name = os.getenv(
@@ -61,35 +56,32 @@ class Database:
         ] = None
 
     async def connect(self):
-
-        print(f"🔗 Connecting MongoDB: {self.mongo_url}")
-        print(f"📦 Database: {self.db_name}")
-
-        self.client = AsyncIOMotorClient(
-            self.mongo_url
-        )
-
-        self.db = self.client[self.db_name]
-
-        self.scripts_collection = self.db[
-            "test_scripts"
-        ]
-
-        self.runs_collection = self.db[
-            "test_runs"
-        ]
-
-        self.metrics_collection = self.db[
-            "test_metrics"
-        ]
-
-        self.logs_collection = self.db[
-            "api_logs"
-        ]
-
-        await self.create_indexes()
-
-        print("✅ MongoDB connected")
+        try:
+            print(f"🔗 Connecting MongoDB: {self.mongo_url}")
+            print(f"📦 Database: {self.db_name}")
+    
+            self.client = AsyncIOMotorClient(
+                self.mongo_url,
+                serverSelectionTimeoutMS=5000  # fail fast
+            )
+    
+            # Force connection check
+            await self.client.admin.command("ping")
+    
+            self.db = self.client[self.db_name]
+    
+            self.scripts_collection = self.db["test_scripts"]
+            self.runs_collection = self.db["test_runs"]
+            self.metrics_collection = self.db["test_metrics"]
+            self.logs_collection = self.db["api_logs"]
+    
+            await self.create_indexes()
+    
+            print("✅ MongoDB connected")
+    
+        except Exception as e:
+            print(f"❌ MongoDB connection failed: {e}")
+            self.client = None
 
     async def disconnect(self):
 
