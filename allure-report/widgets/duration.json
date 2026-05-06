@@ -1,1 +1,1 @@
-[]
+[{"uid":"f6ec25e18bd640d3","name":"Verify user can login with valid credentials","time":{"start":1778070923704,"stop":1778070936164,"duration":12460},"status":"broken","severity":"normal"},{"uid":"502cf5f694218c04","name":"Complete Diary Activity Entry Flow","time":{"start":1778070946642,"stop":1778070949969,"duration":3327},"status":"failed","severity":"normal"},{"uid":"5251e2cac1acd6ae","name":"Crop health diary activity with multiple entries","time":{"start":1778070965952,"stop":1778070967962,"duration":2010},"status":"failed","severity":"normal"}]
