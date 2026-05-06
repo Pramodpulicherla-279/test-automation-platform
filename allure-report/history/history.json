@@ -1,1 +1,1 @@
-{"e156a66a9b9e95cf3f62d3c0f12fadb5":{"statistic":{"failed":1,"broken":0,"skipped":0,"passed":0,"unknown":0,"total":1},"items":[{"uid":"e66b4807a93c0aac","status":"failed","statusDetails":"Failed: Could not find or click the 'calendar date'.","time":{"start":1778084041677,"stop":1778084144786,"duration":103109}}]},"6cd4db9cc3c09c9f91c899baebd19817":{"statistic":{"failed":0,"broken":0,"skipped":0,"passed":1,"unknown":0,"total":1},"items":[{"uid":"7184e3438cd524","status":"passed","time":{"start":1778084006239,"stop":1778084037531,"duration":31292}}]}}
+{}

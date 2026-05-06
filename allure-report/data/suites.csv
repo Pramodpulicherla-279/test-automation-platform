@@ -1,3 +1,0 @@
-"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"","103109","Complete Diary Activity Entry Flow","tests.test_cases.regular_farmer_test_cases","Wed May 06 21:44:01 IST 2026","failed","Wed May 06 21:45:44 IST 2026","TestCropHealth","Crophealth","",""
-"","31292","Verify user can login with valid credentials","tests.test_cases.regular_farmer_test_cases","Wed May 06 21:43:26 IST 2026","passed","Wed May 06 21:43:57 IST 2026","TestLogin","test_login_pytest","",""
