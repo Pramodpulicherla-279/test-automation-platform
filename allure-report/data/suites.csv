@@ -1,3 +1,3 @@
 "DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"","40715","Verify user can login with valid credentials","tests.test_cases.regular_farmer_test_cases","Wed May 06 22:02:09 IST 2026","passed","Wed May 06 22:02:50 IST 2026","TestLogin","test_login_pytest","",""
-"","117525","Complete Diary Activity Entry Flow","tests.test_cases.regular_farmer_test_cases","Wed May 06 22:02:54 IST 2026","failed","Wed May 06 22:04:52 IST 2026","TestCropHealth","Crophealth","",""
+"","41007","Verify user can login with valid credentials","tests.test_cases.regular_farmer_test_cases","Wed May 06 22:06:58 IST 2026","passed","Wed May 06 22:07:39 IST 2026","TestLogin","test_login_pytest","",""
+"","134437","Complete Diary Activity Entry Flow","tests.test_cases.regular_farmer_test_cases","Wed May 06 22:07:43 IST 2026","failed","Wed May 06 22:09:58 IST 2026","TestCropHealth","Crophealth","",""
