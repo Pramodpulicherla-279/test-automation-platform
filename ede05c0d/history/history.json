@@ -1,0 +1,1 @@
+{"0010b580524737ff6a5de67f15e97dca":{"statistic":{"failed":0,"broken":1,"skipped":0,"passed":0,"unknown":0,"total":1},"items":[{"uid":"48e75b4bf407fb3f","status":"broken","statusDetails":"AttributeError: 'TestFarmer' object has no attribute '_android_back'","time":{"start":1778163857655,"stop":1778163900903,"duration":43248}}]}}
