@@ -1,0 +1,80 @@
+CRASH START: 05-07 15:41:31.663 16981 16981 I AndroidRuntime: VM exiting with result code 0.
+05-07 15:41:31.664 13842 13842 D CompassHeading: Raw azimuth: 192.31261308328558
+05-07 15:41:31.664 13842 13842 D CompassHeading: Adjusted azimuth after rotation: 192.31261308328558
+05-07 15:41:31.669  4779  4801 D OplusAtlas.OplusAtlasEventDispatch: setEvent:atlas_event_on_process_died info:pid:16994,uid:10769
+05-07 15:41:31.670  4779  7375 D OplusAtlas.OplusMessageHandler: handleMessage: Msg { when=-1ms what=1 obj=com.oplus.atlas.OplusAtlasEvent@5f96962 target=com.oplus.atlas.OplusMessageHandler$MyHandler }
+05-07 15:41:31.670  4779  7191 D OplusAtlas.OplusMessageHandler: handleMessage: Msg { when=-1ms what=1 obj=com.oplus.atlas.OplusAtlasEvent@5f96962 target=com.oplus.atlas.OplusMessageHandler$MyHandler }
+05-07 15:41:31.670  3722  4147 I ProcessManager: onProcessDied pid:16994, uid:10769
+05-07 15:41:31.670  3722  4147 D AppSceneEventManager: handleMessage: 101
+05-07 15:41:31.670  3722  4147 I DispatcherPolicy: onBaseEvent EventId=22	INPUT_PROCESS_DIED	TimeStamp =1778148691670	Intent =null	Content =null	Pid =16994	PkgName =io.appium.uiautomator2.server
+05-07 15:41:31.671  3722  4147 I GamingScene: onInputEvent : INPUT_PROCESS_DIED
+05-07 15:41:31.673  3381  3399 I PluginSeedling--Base: SeedlingPluginService-->onStateChange: Bundle[{pkgName=io.appium.uiautomator2.server, pid=16994, uid=10769, state=onProcessDied}]
+05-07 15:41:31.677  5820 17242 D DebugReportServiceHidlClient: getReport 1.1...
+05-07 15:41:31.679  2282  2598 D AppProfilerExtImpl: Skipped pss collection for CPU busy
+05-07 15:41:31.679 13842 13842 D CompassHeading: Raw azimuth: 192.31243549836717
+05-07 15:41:31.679 13842 13842 D CompassHeading: Adjusted azimuth after rotation: 192.31243549836717
+05-07 15:41:31.683  5820 17242 D DebugReportServiceHidlClient: getReport 1.1 success: true
+05-07 15:41:31.683 13842 13842 D CompassHeading: Raw azimuth: 192.27877632613732
+05-07 15:41:31.683  5820 17242 D DebugReportServiceHidlClient: getReport 1.0 success: true
+05-07 15:41:31.683 13842 13842 D CompassHeading: Adjusted azimuth after rotation: 192.27877632613732
+05-07 15:41:31.690 13842 13842 D CompassHeading: Raw azimuth: 192.2790358733258
+05-07 15:41:31.690 13842 13842 D CompassHeading: Adjusted azimuth after rotation: 192.2790358733258
+05-07 15:41:31.694 13842 13842 D CompassHeading: Raw azimuth: 192.27913149597416
+05-07 15:41:31.694 13842 13842 D CompassHeading: Adjusted azimuth after rotation: 192.27913149597416
+05-07 15:41:31.701  2282  3170 D WifiStaIfaceHidlImpl: getCachedScanData is not implemented by HIDL
+05-07 15:41:31.704 13842 13842 D CompassHeading: Raw azimuth: 192.38577806967476
+05-07 15:41:31.704 13842 13842 D CompassHeading: Adjusted azimuth after rotation: 192.38577806967476
+05-07 15:41:31.705  1164 24922 D vendor.qti.bluetooth@1.0-wake_lock: Release wakelock is released 
+05-07 15:41:31.706 13842 13842 D CompassHeading: Raw azimuth: 192.3858600319448
+05-07 15:41:31.707 13842 13842 D CompassHeading: Adjusted azimuth after rotation: 192.3858600319448
+05-07 15:41:31.716 13842 13842 D CompassHeading: Raw azimuth: 192.38594199421482
+05-07 15:41:31.716 13842 13842 D CompassHeading: Adjusted azimuth after rotation: 192.38594199421482
+05-07 15:41:31.718  3336  3336 D DistributedDeviceService: android.intent.action.PACKAGE_RESTARTED
+05-07 15:41:31.722  2282  2282 D NotificationService--OplusNotificationManagerServiceExtImpl: notifyDelayRemovedLocked,reason:10020 isGroup:false
+05-07 15:41:31.722  2282  2282 D NotificationService--OplusNotificationManagerServiceExtImpl: notifyDelayRemovedLocked,reason:10020 isGroup:false
+05-07 15:41:31.722  3689  3689 D CarrierSvcBindHelper: onHandleForceStop: [io.appium.uiautomator2.server]
+05-07 15:41:31.723 13842 13842 D CompassHeading: Raw azimuth: 192.47463883077663
+05-07 15:41:31.723 13842 13842 D CompassHeading: Adjusted azimuth after rotation: 192.47463883077663
+05-07 15:41:31.724  2282  2282 D NotificationService--OplusNotificationManagerServiceExtImpl: notifyDelayRemovedLocked sbnList isEmpty
+05-07 15:41:31.724  2282  2282 D NotificationService--OplusNotificationManagerServiceExtImpl: notifyDelayRemovedLocked sbnList isEmpty
+05-07 15:41:31.725 13842 13842 D CompassHeading: Raw azimuth: 192.4739831326163
+05-07 15:41:31.725 13842 13842 D CompassHeading: Adjusted azimuth after rotation: 192.4739831326163
+05-07 15:41:31.726  2282  3665 W ActivityManager: pid 2282 system sent binder code 1 with flags 1 to frozen apps and got error -32
+05-07 15:41:31.727  3689  3689 D CarrierSvcBindHelper: No carrier app for: 0
+05-07 15:41:31.727  3689  3689 D CarrierSvcBindHelper: No carrier app for: 1
+05-07 15:41:31.727  2282  3665 V AccessibilityManagerService: onUserStateChangedLocked for user 0 with forceUpdate: false mEnabledServices = [] mCrashedServices = []
+05-07 15:41:31.730  2282  3665 I AccessibilityManagerService: updateAccessibilityEnabledSettingLocked:false
+05-07 15:41:31.731  4652  4652 I adbd    : Remote process closed the socket (on MSG_PEEK)
+05-07 15:41:31.732  2282  3665 W MagnificationConnectionManager: requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+05-07 15:41:31.732  2282  3665 V UiAutomationManager: UiAutomation service owner died
+05-07 15:41:31.732  2282  3082 I OMG_Observer: updateSettings, needRegisterGesture:true, accessibilityEnabled:false, mTalkBackEnable:false, mTouchExplorationState:false, mThreePointersScreenshot:true, mThreePointersAreaScreenshot:true, mThreePointersSplitScreen:true, mSplitScreenEnable:true, mConfineMode:0x0, mSuperPowerEnter: false, mRepeatShowToast: false, mBreathModeOn: false
+05-07 15:41:31.732  2282  3082 D OMG_Observer: updateGlobalGestureObserver, gesture = 0x2, threeScreenshotEnable = true, threeAreaScreenshotEnable = true, threeSplitScreenEnable = true, phoneMode = 0
+05-07 15:41:31.733  2282  3664 I ActivityManager: Force stopping io.appium.uiautomator2.server.test appid=10768 user=0: from pid 18958
+05-07 15:41:31.736 13842 13842 D CompassHeading: Raw azimuth: 192.47340939672603
+05-07 15:41:31.736 13842 13842 D CompassHeading: Adjusted azimuth after rotation: 192.47340939672603
+05-07 15:41:31.738  2282  4502 I OplusProxyWakeLock:  handleWakeLockDeathlock:157591948 SCREEN_DIM_WAKE_LOCK              'UiAut' (uid=10769 pid=16994)
+05-07 15:41:31.738  2282  4502 E AppOps  : Operation not started: uid=10769 pkg=io.appium.uiautomator2.server(null) op=WAKE_LOCK
+05-07 15:41:31.739  1015  1015 I Zygote  : Process 16994 exited due to signal 9 (Killed)
+05-07 15:41:31.739  2282  2406 I system_server: Background young concurrent copying GC freed 22MB AllocSpace bytes, 6(148KB) LOS objects, 14% free, 126MB/147MB, paused 470us,137us total 125.388ms
+05-07 15:41:31.742  2282  2632 I libprocessgroup: Removed cgroup /sys/fs/cgroup/uid_10769/pid_16994
+05-07 15:41:31.744 13842 13842 D CompassHeading: Raw azimuth: 192.47323181180758
+05-07 15:41:31.744 13842 13842 D CompassHeading: Adjusted azimuth after rotation: 192.47323181180758
+05-07 15:41:31.744 13842 13842 D CompassHeading: Raw azimuth: 192.48950132241058
+05-07 15:41:31.744 13842 13842 D CompassHeading: Adjusted azimuth after rotation: 192.48950132241058
+05-07 15:41:31.746  2282  2282 I OplusBinderProxy: pb uid: 10320 pid: 18229 desc: android.view.accessibility.IAccessibilityManagerClient/3
+05-07 15:41:31.749  2282  3082 D OMG_Policy: registerGlobalGesture, return:10000002 has already registered!
+05-07 15:41:31.754  2282  3662 I ActivityManager: Death received, pid = 0, processName = io.appium.uiautomator2.server for thread android.os.BinderProxy@f81c6a0
+05-07 15:41:31.755  2282  3664 I AppsFilter: interaction: PackageSetting{e4f06d7 com.android.microdroid.empty_payload/10278} -> PackageSetting{e713aad io.appium.uiautomator2.server.test/10768} BLOCKED
+05-07 15:41:31.755  2282  3664 I AppsFilter: interaction: PackageSetting{4e4e1e2 com.oplus.locationproxy/10181} -> PackageSetting{e713aad io.appium.uiautomator2.server.test/10768} BLOCKED
+05-07 15:41:31.755  2282  3664 I AppsFilter: interaction: PackageSetting{9133973 com.android.certinstaller/10227} -> PackageSetting{e713aad io.appium.uiautomator2.server.test/10768} BLOCKED
+05-07 15:41:31.755  2282  3664 I AppsFilter: interaction: PackageSetting{aa2b030 com.oplus.location/10241} -> PackageSetting{e713aad io.appium.uiautomator2.server.test/10768} BLOCKED
+05-07 15:41:31.755  2282  3664 I AppsFilter: interaction: PackageSetting{e13d4a9 io.appium.settings/10767} -> PackageSetting{e713aad io.appium.uiautomator2.server.test/10768} BLOCKED
+05-07 15:41:31.755  6136  6442 I OplusGestureObserver:  onChange uri = content://settings/secure/accessibility_enabled
+05-07 15:41:31.757  2282  2282 I OplusBinderProxy: pb uid: 10320 pid: 18229 desc: android.view.accessibility.IAccessibilityManagerClient/1
+05-07 15:41:31.760 13842 13842 D CompassHeading: Raw azimuth: 192.48911883181705
+05-07 15:41:31.760 13842 13842 D CompassHeading: Adjusted azimuth after rotation: 192.48911883181705
+05-07 15:41:31.762 13842 13842 D CompassHeading: Raw azimuth: 192.6265422379177
+05-07 15:41:31.762 13842 13842 D CompassHeading: Adjusted azimuth after rotation: 192.6265422379177
+05-07 15:41:31.763  2282  3286 D OplusWifiPower_TriggerCenter: mComponentCallback: wifistat
+05-07 15:41:31.765  3805  3805 D VendorWifiService: onEvent event:9,action:1
+05-07 15:41:31.765 13842 13842 D CompassHeading: Raw azimuth: 192.62629635110758
