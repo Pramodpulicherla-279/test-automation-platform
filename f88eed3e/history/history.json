@@ -1,0 +1,1 @@
+{"8a1e78b40f85b617ff35a407e6934136":{"statistic":{"failed":1,"broken":0,"skipped":0,"passed":0,"unknown":0,"total":1},"items":[{"uid":"3be11d2a782ecc96","status":"failed","statusDetails":"Failed: Could not find or click the 'active farms' button.","time":{"start":1778148938976,"stop":1778148951429,"duration":12453}}]}}
