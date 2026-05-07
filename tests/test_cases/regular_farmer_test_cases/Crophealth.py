@@ -80,7 +80,7 @@ class TestCropHealth:
         request.cls.leaf_moisture_maximise_icon_xpath = leaf_moisture_xpaths.get("leaf_moisture_maximise_icon")
         request.cls.leaf_moisture_share_popup_xpath = leaf_moisture_xpaths.get("leaf_moisture_share_popup")
 
-        # Soil Moisture screen
+        # Soil Moisture screen----------
         request.cls.soil_moisture_navigation_xpath = soil_moisture_xpaths.get("soil_moisture_navigation")
         request.cls.soil_moisture_share_icon_xpath = soil_moisture_xpaths.get("soil_moisture_share_icon")
         request.cls.soil_moisture_maximise_icon_xpath = soil_moisture_xpaths.get("soil_moisture_maximise_icon")
