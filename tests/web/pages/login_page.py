@@ -32,25 +32,40 @@ class LoginPage:
         # ✅ Click and wait for navigation together
         async with self.page.expect_navigation(timeout=15000):
             await self.page.click(self.locators["login_button"])
+
+            # Wait for URL change instead of navigation
+            await self.page.wait_for_url("**/home-4", timeout=15000)
     
         print(f"[LOGIN] Navigation complete, current URL: {self.page.url}", flush=True)
 
     async def get_dashboard_text(self):
         selector = self.locators["dashboard_text"]
-        print(f"\n[LOGIN] Waiting for URL to change from /login...", flush=True)
+        print(f"\n[LOGIN] Waiting for dashboard page...", flush=True)
     
-        # ✅ Wait for navigation away from login page first
-        await self.page.wait_for_url("**/login", state="hidden")  # wrong — use below
-        await self.page.wait_for_function("window.location.pathname !== '/login'", timeout=15000)
-        print(f"[LOGIN] URL changed to: {self.page.url}", flush=True)
+        # ✅ Ensure we are on dashboard
+        await self.page.wait_for_url("**/home-4", timeout=15000)
+        print(f"[LOGIN] URL confirmed: {self.page.url}", flush=True)
     
-        # ✅ Now wait for page to fully load
-        await self.page.wait_for_load_state("networkidle")
-        print(f"[LOGIN] Page settled at: {self.page.url}", flush=True)
+        # ❌ Remove domcontentloaded (not useful for SPA)
     
-        # ✅ Now find the dashboard element
-        print(f"[LOGIN] Waiting for dashboard element: {selector}", flush=True)
-        await self.page.wait_for_selector(selector, state="visible", timeout=15000)
-        text = await self.page.inner_text(selector)
-        print(f"[LOGIN] Dashboard element found, text: '{text}'", flush=True)
-        return text
+        # ✅ Retry logic (VERY IMPORTANT)
+        for attempt in range(3):
+            try:
+                print(f"[LOGIN] {attempt+1}: Waiting for element {selector}", flush=True)    
+                element = self.page.locator(selector)
+
+                await element.wait_for(state="visible", timeout=5000)
+                text = await element.inner_text()
+                print(f"[LOGIN] ✅ Dashboard text: {text}", flush=True)
+
+                return text
+    
+            except Exception as e:
+                print(f"[RETRY] Attempt {attempt+1} failed: {e}", flush=True)
+                await self.page.wait_for_timeout(2000)
+    
+        # Debugging
+        await self.page.screenshot(path="dashboard_failure.png")
+        print(await self.page.content())
+    
+        raise Exception("❌ Dashboard element not found")

@@ -2,7 +2,18 @@
   "hamburger_menu_icon": "xpath=//*[contains(@class, 'nav-link menu-toggle')]",
   "bell_icon": "#count-notification",
   "current_season": "text=Current Season",
-  "farmer_list": "text=Farmer List",
-  "add_button": "text=Add",
-  "add_new_farmer": "text=Add New Farmer"
+  "farmer_list": "text=Farmers List",
+  "add_button": "xpath=//*[contains(@class, 'btn add-new btn-primary mt-50 addfmrbtn add-new-farmer')]",
+  "add_new_farmer": "text=Add New Farmer",
+  "add_farmer" :{
+    "add_farmer_text": "Farmer Details",
+    "farmer_name": "[name='first_name']",
+    "email": "#txtFarmerEmail",
+    "field_agent_input": "[name='agent']",
+    "field_agent_option": "text=Ahmed003",
+    "mobile_number": "#mobile_number",
+    "business_unit_input": "#business_unit",
+    "save_button" : "#submitBtn",
+    "business_unit_option": "text=QA BU (335)"
+  }
 }
