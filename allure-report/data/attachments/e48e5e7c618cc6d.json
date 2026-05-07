@@ -1,5 +1,5 @@
 {
-  "ticket_id": "RUN-20260507-184136",
+  "ticket_id": "RUN-20260507-191222",
   "issue_id": "ISS-001",
   "app_name": "Krishivaas Farmer",
   "app_version": "1.3.96",
@@ -27,9 +27,9 @@
     "Click crop stress"
   ],
   "developer_name": "@Anuj",
-  "description": "pytest.fail(\"Could not scroll to Leaf Moisture section.\")\nFailed: Could not scroll to Leaf Moisture section.\n\nSteps Executed:\n1. Click on farm card\n2. Click navigation button\n3. Click diary icon\n4. Click activity placeholder\n5. Click cost field\n6. Click weather icon\n7. Click weather alert\n8. Click forecast\n9. Click hours button\n10. Click days button\n11. Click close icon\n12. Click share icon\n13. Click maximise icon\n14. Click notification icon\n15. Click expert comments\n16. Click crop stress",
-  "start_date": "2026-05-07T18:42:25.461057",
-  "end_date": "2026-05-07T18:46:25.789401",
+  "description": "pytest.fail(\"Could not scroll to Soil Moisture section.\")\nFailed: Could not scroll to Soil Moisture section.\n\nSteps Executed:\n1. Click on farm card\n2. Click navigation button\n3. Click diary icon\n4. Click activity placeholder\n5. Click cost field\n6. Click weather icon\n7. Click weather alert\n8. Click forecast\n9. Click hours button\n10. Click days button\n11. Click close icon\n12. Click share icon\n13. Click maximise icon\n14. Click notification icon\n15. Click expert comments\n16. Click crop stress",
+  "start_date": "2026-05-07T19:13:14.027180",
+  "end_date": "2026-05-07T19:17:59.056485",
   "sprint": "Automation",
   "fix_version": [
     "Production"
