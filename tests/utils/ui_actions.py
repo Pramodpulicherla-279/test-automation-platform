@@ -6,6 +6,8 @@ from selenium.webdriver.common.actions import interaction
 from selenium.webdriver.common.actions.action_builder import ActionBuilder
 from selenium.webdriver.common.actions.pointer_input import PointerInput
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
+from selenium.common.exceptions import WebDriverException
+
 import time
 
 def _ensure_locator_is_tuple(locator):
@@ -147,3 +149,18 @@ def scroll_and_tap_by_text(driver, text_to_find, max_swipes=5):
 
     print(f"   -> Failed to find '{text_to_find}' after scrolling.")
     return False
+
+def android_back_func(driver) -> bool:
+    """Navigate back on Android (driver.back() + fallback to KEYCODE_BACK)."""
+    try:
+        driver.back()
+        return True
+    except WebDriverException:
+        pass
+    except Exception:
+        pass
+    try:
+        driver.press_keycode(4)  # KEYCODE_BACK
+        return True
+    except Exception:
+        return False

@@ -1,26 +1,26 @@
 [
     {
-        "step": "Click Verify OTP",
+        "step": "Click on active farms",
         "status": "Success"
     },
     {
-        "step": "Click Verify OTP",
+        "step": "Navigation button",
         "status": "Success"
     },
     {
-        "step": "Click Verify OTP",
+        "step": "Start Audio Recording",
         "status": "Success"
     },
     {
-        "step": "Click Crop Name input",
+        "step": "Stop Audio Recording",
         "status": "Success"
     },
     {
-        "step": "Click Crop Name item",
+        "step": "Start Video Recording",
         "status": "Success"
     },
     {
-        "step": "Click Inter Crop Name input",
+        "step": "Stop Video Recording",
         "status": "Success"
     }
 ]
