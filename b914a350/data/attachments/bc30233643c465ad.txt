@@ -1,0 +1,80 @@
+CRASH START: 05-07 16:33:08.691 12944 12944 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+05-07 16:33:08.724  7639 11388 D androidtc: Initializing SystemTextClassifier, type = System
+05-07 16:33:08.726 32663 32663 I AiAiTextClassifier: onCreateTextClassificationSession = TextClassificationSessionId {9006595c-af90-4d93-aff3-73e87d6d8b4a}
+05-07 16:33:08.737 32663 32663 I AiAiTextClassifier: AiaiTextClassifierService.onSuggestConversationActions
+05-07 16:33:08.748 12975 12975 D nativeloader: Load /data/app/~~8kWJ1PqpD8Kg8P58I9zLJQ==/com.google.android.apps.maps-6rQWbPK6oyL_7gUN9V4eNg==/split_config.arm64_v8a.apk!/lib/arm64-v8a/libbridge_native.so using class loader ns clns-9 (caller=/data/app/~~8kWJ1PqpD8Kg8P58I9zLJQ==/com.google.android.apps.maps-6rQWbPK6oyL_7gUN9V4eNg==/base.apk!classes2.dex): ok
+05-07 16:33:08.780  7639 11388 D androidtc: Initializing SystemTextClassifier, type = System
+05-07 16:33:08.781 32663 32663 I AiAiTextClassifier: onDestroyTextClassificationSession = TextClassificationSessionId {9006595c-af90-4d93-aff3-73e87d6d8b4a}
+05-07 16:33:08.784 32663 32663 I AiAiTextClassifier: onCreateTextClassificationSession = TextClassificationSessionId {2f3bb37d-9a82-4bcc-b4e2-85a70de3b84f}
+05-07 16:33:08.787 32663 32663 I AiAiTextClassifier: AiaiTextClassifierService.onSuggestConversationActions
+05-07 16:33:08.799 12975 13029 D nativeloader: Load /data/app/~~8kWJ1PqpD8Kg8P58I9zLJQ==/com.google.android.apps.maps-6rQWbPK6oyL_7gUN9V4eNg==/split_config.arm64_v8a.apk!/lib/arm64-v8a/libflagging_native.so using class loader ns clns-9 (caller=/data/app/~~8kWJ1PqpD8Kg8P58I9zLJQ==/com.google.android.apps.maps-6rQWbPK6oyL_7gUN9V4eNg==/base.apk!classes2.dex): ok
+05-07 16:33:08.806 12975 13033 D nativeloader: Load /data/app/~~8kWJ1PqpD8Kg8P58I9zLJQ==/com.google.android.apps.maps-6rQWbPK6oyL_7gUN9V4eNg==/split_config.arm64_v8a.apk!/lib/arm64-v8a/libnative_crash_handler_jni.so using class loader ns clns-9 (caller=/data/app/~~8kWJ1PqpD8Kg8P58I9zLJQ==/com.google.android.apps.maps-6rQWbPK6oyL_7gUN9V4eNg==/base.apk!classes2.dex): ok
+05-07 16:33:08.830 12975 13029 D nativeloader: Load /data/app/~~8kWJ1PqpD8Kg8P58I9zLJQ==/com.google.android.apps.maps-6rQWbPK6oyL_7gUN9V4eNg==/split_config.arm64_v8a.apk!/lib/arm64-v8a/libfilesystem_native.so using class loader ns clns-9 (caller=/data/app/~~8kWJ1PqpD8Kg8P58I9zLJQ==/com.google.android.apps.maps-6rQWbPK6oyL_7gUN9V4eNg==/base.apk!classes2.dex): ok
+05-07 16:33:08.846  7639 11388 D androidtc: Initializing SystemTextClassifier, type = System
+05-07 16:33:08.849 12975 13035 W Settings: Setting device_provisioned has moved from android.provider.Settings.System to android.provider.Settings.Global, returning read-only value.
+05-07 16:33:08.849 32663 32663 I AiAiTextClassifier: onDestroyTextClassificationSession = TextClassificationSessionId {2f3bb37d-9a82-4bcc-b4e2-85a70de3b84f}
+05-07 16:33:08.852 32663 32663 I AiAiTextClassifier: onCreateTextClassificationSession = TextClassificationSessionId {bebc07b6-f093-4379-b836-65f0f1a86767}
+05-07 16:33:08.852 12975 13035 E ashmem  : Pinning is deprecated since Android Q. Please use trim or other methods.
+05-07 16:33:08.853 32663 32663 I AiAiTextClassifier: AiaiTextClassifierService.onSuggestConversationActions
+05-07 16:33:08.928 32663 32663 I AiAiTextClassifier: onDestroyTextClassificationSession = TextClassificationSessionId {bebc07b6-f093-4379-b836-65f0f1a86767}
+05-07 16:33:08.941 24742 24742 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~BkzBssZknVrzkpLqX_lK_w==/com.google.android.apps.tachyon-0KIyUTsd_yyuiuljZoMRBw==/oat/arm64/base.odex) is kOatUpToDate with filter 'speed-profile' executable 'false'
+05-07 16:33:08.949 29115 29134 I adbd    : jdwp connection from 13041
+05-07 16:33:08.951 29115 29115 I adbd    : Remote process closed the socket (on MSG_PEEK)
+05-07 16:33:08.977 11514 11514 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.gmscompliance.service.START dat=chimera-action:/... xflg=0x4 cmp=com.google.android.gms/.chimera.PersistentBoundBrokerService }
+05-07 16:33:08.979 29526 29526 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.safetynet.service.START xflg=0x4 pkg=com.google.android.gms }
+05-07 16:33:09.001 29526  4368 D SQLiteQueryBuilder: SELECT value FROM partner WHERE ((name=?))
+05-07 16:33:09.037 27022 27022 D NLService: The notifications buffer size has reached its maximum size of 100 items. Shrinking it in order to satisfy the constraints.
+05-07 16:33:09.038 27022 27022 D NLService: Successfully stored the newly arrived notification identified by 1
+05-07 16:33:09.053 27022 27022 D NLService: The notifications buffer size has reached its maximum size of 100 items. Shrinking it in order to satisfy the constraints.
+05-07 16:33:09.053 27022 27022 D NLService: Successfully stored the newly arrived notification identified by -1101378904
+05-07 16:33:09.063  5637  5674 I appium  : channel read: GET /session/18141b2b-6aa5-4cf7-8ee8-2925b964255a/screenshot
+05-07 16:33:09.066  5637  5674 I appium  : CaptureScreenshot command
+05-07 16:33:09.085 29526  4368 D SQLiteQueryBuilder: SELECT value FROM partner WHERE ((name=?))
+05-07 16:33:09.101 27022 27022 D NLService: The notifications buffer size has reached its maximum size of 100 items. Shrinking it in order to satisfy the constraints.
+05-07 16:33:09.103 27022 27022 D NLService: Successfully stored the newly arrived notification identified by -1387577223
+05-07 16:33:09.108 11514 11514 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.udc.service.START xflg=0x4 pkg=com.google.android.gms }
+05-07 16:33:09.108 11514 11514 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.udc.service.START xflg=0x4 pkg=com.google.android.gms }
+05-07 16:33:09.130 29526  4368 D SQLiteQueryBuilder: SELECT value FROM partner WHERE ((name=?))
+05-07 16:33:09.140 27022 27022 D NLService: The notifications buffer size has reached its maximum size of 100 items. Shrinking it in order to satisfy the constraints.
+05-07 16:33:09.140 27022 27022 D NLService: Successfully stored the newly arrived notification identified by -1279165635
+05-07 16:33:09.177 29526  4368 D SQLiteQueryBuilder: SELECT value FROM partner WHERE ((name=?))
+05-07 16:33:09.184 27576 30223 I eija    : (REDACTED) HDM. appOpsListener %s %s
+05-07 16:33:09.185 27576 30223 I eija    : (REDACTED) HDM. Ignoring irrelevant audio permission changes for package %s
+05-07 16:33:09.185 27576 30223 I eija    : (REDACTED) HDM. appOpsListener %s %s
+05-07 16:33:09.185 27576 30223 I eija    : (REDACTED) HDM. Ignoring irrelevant audio permission changes for package %s
+05-07 16:33:09.217 13056 13056 E screencap: BBinder_init Processname  screencap  
+05-07 16:33:09.218 13056 13056 E screencap: BBinder_init hasGetProcessName  screencap
+05-07 16:33:09.225 27576 30223 I eija    : (REDACTED) HDM. appOpsListener %s %s
+05-07 16:33:09.225 27576 30223 I eija    : (REDACTED) HDM. Ignoring irrelevant audio permission changes for package %s
+05-07 16:33:09.252 13056 13056 W screencap: Thread Pool max thread count is 0. Cannot cache binder as linkToDeath cannot be implemented. serviceName: SurfaceFlingerAIDL
+05-07 16:33:09.252 13056 13056 W BpBinder: Linking to death on android.gui.ISurfaceComposer but there are no threads (yet?) listening to incoming transactions. See ProcessState::startThreadPool and ProcessState::setThreadPoolMaxThreadCount. Generally you should setup the binder threadpool before other initialization steps.
+05-07 16:33:09.252 13056 13056 W ProcessState: Extra binder thread started, but 0 threads requested. Do not use *startThreadPool when zero threads are requested.
+05-07 16:33:09.293 29526 29526 D BoundBrokerSvc: onRebind: Intent { act=com.google.android.gms.semanticlocationhistory.service.START dat=chimera-action:/... xflg=0x4 cmp=com.google.android.gms/.chimera.GmsApiService }
+05-07 16:33:09.333  7639 11388 D androidtc: Initializing SystemTextClassifier, type = System
+05-07 16:33:09.336 29526 29526 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.onboardingconsent.api.ConsentManagerApiService.START dat=chimera-action:/... xflg=0x4 cmp=com.google.android.gms/.chimera.GmsApiService }
+05-07 16:33:09.344 32663 32663 I AiAiTextClassifier: onCreateTextClassificationSession = TextClassificationSessionId {89a95e1e-9de3-4b81-bd15-303daf44a284}
+05-07 16:33:09.350 32663 32663 I AiAiTextClassifier: AiaiTextClassifierService.onSuggestConversationActions
+05-07 16:33:09.431 11514 11524 I FontLog : (REDACTED) Received query %s, URI %s
+05-07 16:33:09.433 11514 11524 I FontLog : (REDACTED) Query [%s] resolved to %s
+05-07 16:33:09.502 32663 32663 I AiAiTextClassifier: onDestroyTextClassificationSession = TextClassificationSessionId {89a95e1e-9de3-4b81-bd15-303daf44a284}
+05-07 16:33:09.514  7639 11388 D androidtc: Initializing SystemTextClassifier, type = System
+05-07 16:33:09.524 32663 32663 I AiAiTextClassifier: onCreateTextClassificationSession = TextClassificationSessionId {66881922-34f9-4e11-8a01-8cadd0961832}
+05-07 16:33:09.525 32663 32663 I AiAiTextClassifier: AiaiTextClassifierService.onSuggestConversationActions
+05-07 16:33:09.623 29526  4368 D SQLiteQueryBuilder: SELECT value FROM partner WHERE ((name=?))
+05-07 16:33:09.640 29526 29526 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.constellation.service.START xflg=0x4 pkg=com.google.android.gms }
+05-07 16:33:09.640 29526 29526 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.constellation.service.START xflg=0x4 pkg=com.google.android.gms }
+05-07 16:33:09.728  5714  5881 D PipelineWatcher: onInputBufferReleased: frameIndex not found (102); ignored
+05-07 16:33:09.732 19297 19301 I com.vivo.ai.aie: Background young concurrent copying GC freed 3722KB AllocSpace bytes, 88(2280KB) LOS objects, 69% free, 2605KB/8519KB, paused 23.082ms,52us total 93.980ms
+05-07 16:33:09.733  7639 11388 D androidtc: Initializing SystemTextClassifier, type = System
+05-07 16:33:09.736 32663 32663 I AiAiTextClassifier: onDestroyTextClassificationSession = TextClassificationSessionId {66881922-34f9-4e11-8a01-8cadd0961832}
+05-07 16:33:09.736 32663 32663 I AiAiTextClassifier: onCreateTextClassificationSession = TextClassificationSessionId {681c095a-ccb7-4804-b5ce-91fdb1d02fef}
+05-07 16:33:09.737 32663 32663 I AiAiTextClassifier: AiaiTextClassifierService.onSuggestConversationActions
+05-07 16:33:09.738 27576 30223 I eija    : (REDACTED) HDM. appOpsListener %s %s
+05-07 16:33:09.738 27576 30223 I eija    : (REDACTED) HDM. Ignoring irrelevant audio permission changes for package %s
+05-07 16:33:09.750 11514 11577 I FontLog : (REDACTED) Updating from directory version %d to %d from disk
+05-07 16:33:09.754 24742 24742 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~8kWJ1PqpD8Kg8P58I9zLJQ==/com.google.android.apps.maps-6rQWbPK6oyL_7gUN9V4eNg==/oat/arm64/base.odex) is kOatUpToDate with filter 'speed-profile' executable 'false'
+05-07 16:33:09.757 11514 11524 I FontLog : (REDACTED) Fetch %s end status %s
+05-07 16:33:09.760 11514 11576 I FontLog : (REDACTED) Using directory in FlatBuffer format
+05-07 16:33:09.763 13123 13123 I ecovery_process: Using CollectorTypeCC GC.
+05-07 16:33:09.769 11514 11524 I FontLog : (REDACTED) Pulling font file for id = %d, cache size = %d
+05-07 16:33:09.770 29115 29134 I adbd    : jdwp connection from 13123
