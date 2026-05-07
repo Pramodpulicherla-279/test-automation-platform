@@ -17,7 +17,8 @@ const APP_VARIANTS = {
         label: "Krishivaas Farmer (Regular)",
         modules: [
             { name: 'Login', path: 'tests/test_cases/regular_farmer_test_cases/test_login_pytest.py' },
-            { name: 'Onboarding', path: 'tests/test_cases/regular_farmer_test_cases/TestOnboarding.py' },
+            // { name: 'Onboarding', path: 'tests/test_cases/regular_farmer_test_cases/TestOnboarding.py' },
+            { name: 'Crophealth', path: 'tests/test_cases/regular_farmer_test_cases/Crophealth.py' },
             { name: 'Add Updates', path: 'tests/farmer/test_updates.py' },
         ]
     },
