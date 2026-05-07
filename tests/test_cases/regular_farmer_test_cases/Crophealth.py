@@ -74,7 +74,7 @@ class TestCropHealth:
         request.cls.expert_comments_xpath = weather_xpaths.get("expert_comments")
         request.cls.crop_stress_xpath = weather_xpaths.get("crop_stress")
 
-        # Leaf Moisture screen
+        # Leaf Moisture screen------------
         request.cls.leaf_moisture_navigation_xpath = leaf_moisture_xpaths.get("leaf_moisture_navigation")
         request.cls.leaf_moisture_share_icon_xpath = leaf_moisture_xpaths.get("leaf_moisture_share_icon")
         request.cls.leaf_moisture_maximise_icon_xpath = leaf_moisture_xpaths.get("leaf_moisture_maximise_icon")
