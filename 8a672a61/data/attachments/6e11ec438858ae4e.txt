@@ -1,0 +1,80 @@
+CRASH START: 05-07 17:06:10.012 29029 29029 I AndroidRuntime: VM exiting with result code 0.
+05-07 17:06:10.093 30363 22059 I NearbyDiscovery: (REDACTED) BloomFilterAdvManager: Detected bloom filter but too far away, ignoring. %sm, %s
+05-07 17:06:10.138 30854  7157 I eija    : (REDACTED) HDM. appOpsListener %s %s
+05-07 17:06:10.138 30854  7157 I eija    : (REDACTED) HDM. Ignoring irrelevant audio permission changes for package %s
+05-07 17:06:10.204  1157  1157 W chbox:googleapp: type=1400 audit(0.0:416144): avc:  denied  { read } for  name="u:object_r:vendor_display_prop:s0" dev="tmpfs" ino=14755 scontext=u:r:priv_app:s0:c512,c768 tcontext=u:object_r:vendor_display_prop:s0 tclass=file permissive=0 app=com.google.android.googlequicksearchbox
+05-07 17:06:10.208  1157  1157 W libc    : Access denied finding property "vendor.display.enable_optimal_refresh_rate"
+05-07 17:06:10.218  1157  1198 E OpenGLRenderer: Unable to match the desired swap behavior.
+05-07 17:06:10.239  1157  1157 I bwmt    : onStart
+05-07 17:06:10.246  1157  1157 I buhd    : (REDACTED) [%s] onStart()
+05-07 17:06:10.246  1157  1157 I bujo    : Reloading theme data
+05-07 17:06:10.249  1157  1157 E NetworkErrorMessage: (REDACTED) Invalid connectivity state: %s
+05-07 17:06:10.252  1157  1157 I bwmt    : onResume
+05-07 17:06:10.328 13640 13640 I GoogleInputMethodService: GoogleInputMethodService.onFinishInput():2259 
+05-07 17:06:10.329 13640 13640 I Module  : DeviceLockedStatusModuleProvider$Module.updateDeviceLockedStatus():103 repeatCheckTimes = 0, locked = false
+05-07 17:06:10.330 13640 13640 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():1446 onStartInput(EditorInfo{EditorInfo{packageName=com.android.launcher3, inputType=0, inputTypeString=NULL, enableLearning=false, autoCorrection=false, autoComplete=false, imeOptions=0, privateImeOptions=null, actionName=UNSPECIFIED, actionLabel=null, initialSelStart=-1, initialSelEnd=-1, initialCapsMode=0, label=null, fieldId=0, fieldName=null, extras=null, hintText=null, hintLocales=[]}}, false)
+05-07 17:06:10.330 13640 13640 I AndroidIME: LatinIMEBase.updateInputViewCoverNavigation():322 Update input view padding, isNavbarOverInputWindow=false, bottom inset=0
+05-07 17:06:10.330 13640 13640 I Module  : DeviceLockedStatusModuleProvider$Module.updateDeviceLockedStatus():103 repeatCheckTimes = 1, locked = false
+05-07 17:06:10.330 13640 13640 I ShortcutsDataManager: AbstractContentDataManager.startImportContentTask():241 startImportContentTask()
+05-07 17:06:10.331 13640 14528 I ShortcutsDataManager: AbstractContentDataManager$ImportContentTask.doInBackground():257 doInBackground()
+05-07 17:06:10.332 13640 14528 I PersonalDictionaryDataHandler: PersonalDictionaryDataHandler.beginProcess():114 LanguageTags = [te-IN, hi-XT, en-US, te-XT, hi-XA]
+05-07 17:06:10.358 13640 14528 I ShortcutsDataManager: AbstractContentDataManager.importRecords():348 importRecords() : Success : Count = 0
+05-07 17:06:10.363 13640 14528 I ShortcutsDataManager: AbstractContentDataManager.importContentData():297 importContentData() : Ending import process
+05-07 17:06:10.377 13640 14528 I PersonalLanguageModelUpdater: PersonalLanguageModelUpdater$UpdateOperation.performInternal():165 run() : Added 1 words and 1 shortcuts
+05-07 17:06:10.378 13640 14528 I DynamicLanguageModelOperation: DynamicLanguageModelOperation.perform():43 perform() : 4 : exo : Completed
+05-07 17:06:10.390 13640 14528 I PersonalLanguageModelUpdater: PersonalLanguageModelUpdater$UpdateOperation.performInternal():165 run() : Added 1 words and 1 shortcuts
+05-07 17:06:10.390 13640 14528 I DynamicLanguageModelOperation: DynamicLanguageModelOperation.perform():43 perform() : 4 : exo : Completed
+05-07 17:06:10.400 13640 14528 I PersonalLanguageModelUpdater: PersonalLanguageModelUpdater$UpdateOperation.performInternal():165 run() : Added 1 words and 1 shortcuts
+05-07 17:06:10.400 13640 14528 I DynamicLanguageModelOperation: DynamicLanguageModelOperation.perform():43 perform() : 4 : exo : Completed
+05-07 17:06:10.400 13640 14502 I Delight5Decoder: Delight5DecoderWrapper.unloadLanguageModel():1011 unloadLanguageModel() : 4, version [n/a]
+05-07 17:06:10.401 13640 14502 I native  : I0000 00:00:1778153770.401137   14502 dynamic-lm-manager.cc:49] Dynamic LM has already been unloaded: /data/user/0/com.google.android.inputmethod.latin/files/personal/Personal.en_US.dict
+05-07 17:06:10.408 13640 14528 I PersonalLanguageModelUpdater: PersonalLanguageModelUpdater$UpdateOperation.performInternal():165 run() : Added 1 words and 1 shortcuts
+05-07 17:06:10.408 13640 14528 I DynamicLanguageModelOperation: DynamicLanguageModelOperation.perform():43 perform() : 4 : exo : Completed
+05-07 17:06:10.409 13640 14528 I Delight5Decoder: Delight5DecoderWrapper.asyncLoadLanguageModel():767 asyncLoadLanguageModel() : en
+05-07 17:06:10.409 13640 14502 I Delight5Decoder: Delight5DecoderWrapper.loadLanguageModel():798 loadLanguageModel() : 4, version [n/a]
+05-07 17:06:10.409 13640 14502 I Delight5Decoder: Delight5DecoderWrapper.loadLanguageModel():843 Loaded dynamic LM 4.en
+05-07 17:06:10.409 13640 14502 I Delight5Decoder: Delight5DecoderWrapper.unloadLanguageModel():1011 unloadLanguageModel() : 4, version [n/a]
+05-07 17:06:10.409 13640 14502 I native  : I0000 00:00:1778153770.409807   14502 dynamic-lm-manager.cc:49] Dynamic LM has already been unloaded: /data/user/0/com.google.android.inputmethod.latin/files/personal/Personal.hi_XA.dict
+05-07 17:06:10.414 28750 19325 I TokenRefreshBackgroundWorker: ProcessId: 28750, Thread: Pool-WorkManager-Thread-6, TokenRefreshBackgroundWorker: Refreshing tokens for resources: []
+05-07 17:06:10.423 13640 14528 I PersonalLanguageModelUpdater: PersonalLanguageModelUpdater$UpdateOperation.performInternal():165 run() : Added 1 words and 1 shortcuts
+05-07 17:06:10.424 13640 14528 I DynamicLanguageModelOperation: DynamicLanguageModelOperation.perform():43 perform() : 4 : exo : Completed
+05-07 17:06:10.424 13640 14528 I Delight5Decoder: Delight5DecoderWrapper.asyncLoadLanguageModel():767 asyncLoadLanguageModel() : hi
+05-07 17:06:10.425 13640 14502 I Delight5Decoder: Delight5DecoderWrapper.loadLanguageModel():798 loadLanguageModel() : 4, version [n/a]
+05-07 17:06:10.425 13640 14502 I Delight5Decoder: Delight5DecoderWrapper.loadLanguageModel():843 Loaded dynamic LM 4.hi
+05-07 17:06:10.425 13640 13640 I ShortcutsDataManager: AbstractContentDataManager$ImportContentTask.onPostExecute():268 onPostExecute() : Result = [2,1]
+05-07 17:06:10.425 13640 13640 I ShortcutsDataManager: ShortcutsDataManager.onImportFinished():82 onImportFinished() : Result = 2 : Count = 1
+05-07 17:06:10.432 28750 28880 I WM-WorkerWrapper: Worker result SUCCESS for Work [ id=fa75d209-8590-4c45-9b8c-07a14c5d93e3, tags={ com.microsoft.skype.teams.token.TokenRefreshBackgroundWorker, TOKEN_REFRESH, TeamsWorker } ]
+05-07 17:06:10.480 18212 18221 I gle.android.gms: CollectorTransition concurrent copying GC freed 11MB AllocSpace bytes, 30(1560KB) LOS objects, 36% free, 41MB/65MB, paused 569us,47us total 310.719ms
+05-07 17:06:11.648 10476 11915 I System.out: [[Dispatchers.Default.limitedParallelism(1)][bolt-manager][debug][bolt-v2][BoltControlManager]:message[bolt clock triggered, queue operations will be executed now..]
+05-07 17:06:11.650 10476 32378 I System.out: [[Dispatchers.Default][bolt-default][debug][bolt-v2][BoltControlManager]:message[bolt clock is registered for [2000] delay]
+05-07 17:06:11.653 10476 11915 I System.out: [[Dispatchers.Default.limitedParallelism(1)][bolt-manager][debug][bolt-v2][BoltControlManager]:message[execution called for name [StateValidationQueueOperation and item [StateInactiveTimeQueueOperation(uniqueName=StateValidationQueueOperation, retryConfig=com.phonepe.boltV2Sdk.external.RetryConfiguration@93818ae, logger=com.phonepe.boltV2Sdk.internal.logger.core.DebugLogger@8fbb64f, analyticManager=com.phonepe.boltV2Sdk.internal.BoltAnalyticManager@4d2e1dc, immediateExecute=true, queueOperationType=STATE_INACTIVE_TIME_QUEUE_OPERATION, block=(com.phonepe.boltV2Sdk.internal.boltctl.queueOperations.QueueOperation) -> kotlin.Boolean)]]
+05-07 17:06:11.653 10476 11915 I System.out: [[Dispatchers.Default.limitedParallelism(1)][bolt-manager][debug][bolt-v2][StateInactiveTimeQueueOperation]:message[Queue operation with name [StateValidationQueueOperation retry started, checking for retry limits..]
+05-07 17:06:11.654 10476 11915 I System.out: [[Dispatchers.Default.limitedParallelism(1)][bolt-manager][debug][bolt-v2][StateInactiveTimeQueueOperation]:message[Queue operation with name [StateValidationQueueOperation retry limits not reached, checking for waiting window before execution..]
+05-07 17:06:11.654 10476 11915 I System.out: [[Dispatchers.Default.limitedParallelism(1)][bolt-manager][debug][bolt-v2][StateInactiveTimeQueueOperation]:message[Queue operation with name [StateValidationQueueOperation retry limits not reached, waiting window is completed, ready to execute in 3.2.1..]
+05-07 17:06:11.656 10476 11915 I System.out: [[BlockingEventLoop@5c64fae][unknown][info][bolt-v2][BoltManager]:message[state validation operation running]
+05-07 17:06:11.656 10476 11915 I System.out: [[Dispatchers.Default.limitedParallelism(1)][bolt-manager][debug][bolt-v2][StateInactiveTimeQueueOperation]:message[Queue operation with name [StateValidationQueueOperation] retried.]
+05-07 17:06:11.659 10476 11915 I System.out: [[Dispatchers.Default.limitedParallelism(1)][bolt-manager][debug][bolt-v2][BoltControlManager]:message[execution completed for name [StateValidationQueueOperation and item [StateInactiveTimeQueueOperation(uniqueName=StateValidationQueueOperation, retryConfig=com.phonepe.boltV2Sdk.external.RetryConfiguration@93818ae, logger=com.phonepe.boltV2Sdk.internal.logger.core.DebugLogger@8fbb64f, analyticManager=com.phonepe.boltV2Sdk.internal.BoltAnalyticManager@4d2e1dc, immediateExecute=true, queueOperationType=STATE_INACTIVE_TIME_QUEUE_OPERATION, block=(com.phonepe.boltV2Sdk.internal.boltctl.queueOperations.QueueOperation) -> kotlin.Boolean)], checking for GC status]
+05-07 17:06:11.660 10476 11915 I System.out: [[Dispatchers.Default.limitedParallelism(1)][bolt-manager][debug][bolt-v2][BoltControlManager]:message[execution called for name [BoltCtl and item [PeriodicCheckQueueOperation(uniqueName=BoltCtl, retryConfig=com.phonepe.boltV2Sdk.external.RetryConfiguration@b0e8f86, logger=com.phonepe.boltV2Sdk.internal.logger.core.DebugLogger@c922047, analyticManager=com.phonepe.boltV2Sdk.internal.BoltAnalyticManager@4d2e1dc, immediateExecute=false, queueOperationType=BOLT_PERIODIC_OPERATION, block=(com.phonepe.boltV2Sdk.internal.boltctl.queueOperations.QueueOperation) -> kotlin.Boolean)]]
+05-07 17:06:11.660 10476 11915 I System.out: [[Dispatchers.Default.limitedParallelism(1)][bolt-manager][debug][bolt-v2][PeriodicCheckQueueOperation]:message[Queue operation with name [BoltCtl retry started, checking for retry limits..]
+05-07 17:06:11.661 10476 11915 I System.out: [[Dispatchers.Default.limitedParallelism(1)][bolt-manager][debug][bolt-v2][PeriodicCheckQueueOperation]:message[Queue operation with name [BoltCtl retry limits not reached, checking for waiting window before execution..]
+05-07 17:06:11.661 10476 11915 I System.out: [[Dispatchers.Default.limitedParallelism(1)][bolt-manager][debug][bolt-v2][PeriodicCheckQueueOperation]:message[Queue operation with name [BoltCtl retry limits not reached, waiting window is not completed, skipping the execution this time...]
+05-07 17:06:11.662 10476 11915 I System.out: [[Dispatchers.Default.limitedParallelism(1)][bolt-manager][debug][bolt-v2][BoltControlManager]:message[execution completed for name [BoltCtl and item [PeriodicCheckQueueOperation(uniqueName=BoltCtl, retryConfig=com.phonepe.boltV2Sdk.external.RetryConfiguration@b0e8f86, logger=com.phonepe.boltV2Sdk.internal.logger.core.DebugLogger@c922047, analyticManager=com.phonepe.boltV2Sdk.internal.BoltAnalyticManager@4d2e1dc, immediateExecute=false, queueOperationType=BOLT_PERIODIC_OPERATION, block=(com.phonepe.boltV2Sdk.internal.boltctl.queueOperations.QueueOperation) -> kotlin.Boolean)], checking for GC status]
+05-07 17:06:12.242 30363 22059 I NearbyDiscovery: (REDACTED) BloomFilterAdvManager: Detected bloom filter but too far away, ignoring. %sm, %s
+05-07 17:06:12.606 30363 27687 I FusedLocation: (REDACTED) location delivery to %s blocked - too close
+05-07 17:06:12.608 30363 27687 I FusedLocation: (REDACTED) location delivery to %s blocked - too close
+05-07 17:06:12.611 30363 27687 I FusedLocation: (REDACTED) location delivery to %s blocked - too fast
+05-07 17:06:12.613 25881 25881 D LocationTracker: Got a location update from Play Services
+05-07 17:06:12.616 30363 27687 I FusedLocation: (REDACTED) location delivery to %s blocked - too close
+05-07 17:06:12.743 30363 29652 I TFLite-in-PlayServices: Created interpreter.
+05-07 17:06:12.766 30363 29652 I TFLite-in-PlayServices: Created interpreter.
+05-07 17:06:12.785 30363 29652 I SemanticLocation: (REDACTED) [Inferrer] %s%s
+05-07 17:06:13.107 30363 29652 I TFLite-in-PlayServices: Created interpreter.
+05-07 17:06:13.127 30363 30363 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.common.telemetry.service.START dat=chimera-action:/... cmp=com.google.android.gms/.chimera.PersistentApiService }
+05-07 17:06:13.129 30363 29652 I TFLite-in-PlayServices: Created interpreter.
+05-07 17:06:13.134 24496 24774 D WM-SystemJobScheduler: Scheduling work ID ac7375d5-6155-481b-b4bc-1dad598f07d5Job ID 582274
+05-07 17:06:13.145 30363 29652 I SemanticLocation: (REDACTED) [Inferrer] %s%s
+05-07 17:06:13.145 24496 24774 D WM-GreedyScheduler: Starting tracking for ac7375d5-6155-481b-b4bc-1dad598f07d5
+05-07 17:06:13.148 24496 24496 D WM-SystemJobService: onStartJob for WorkGenerationalId(workSpecId=ac7375d5-6155-481b-b4bc-1dad598f07d5, generation=0)
+05-07 17:06:13.149 24496 24774 D WM-Processor: Processor: processing WorkGenerationalId(workSpecId=ac7375d5-6155-481b-b4bc-1dad598f07d5, generation=0)
+05-07 17:06:13.154 24496 24496 D WM-WorkerWrapper: Starting work for slack.telemetry.internal.FlushTelemetryEventsWork
+05-07 17:06:13.154 24496 24775 D WM-WorkConstraintsTrack: NetworkRequestConstraintController register shared callback
