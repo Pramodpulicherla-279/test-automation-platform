@@ -33,6 +33,7 @@ Step capture — four-layer strategy (most reliable first):
 import sys
 sys.dont_write_bytecode = True          # Prevent Python writing NEW .pyc files
 import sys, os
+import logging
 
 import os
 os.environ["PYTHONDONTWRITEBYTECODE"] = "1"   # Propagate to child processes
@@ -337,6 +338,13 @@ def _fetch_developer_name_from_jira() -> str:
 #  PYTEST HOOKS
 # ════════════════════════════════════════════════════════════════════════════
 def pytest_configure(config):
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s  %(message)s",
+        datefmt="%H:%M:%S",
+        stream=sys.stdout,
+        force=True          # overrides any existing handlers
+    )
     """
     Earliest pytest hook — before collection, before any test module is imported.
     1. Wipe stale pycache

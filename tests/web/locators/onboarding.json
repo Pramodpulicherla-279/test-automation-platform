@@ -8,11 +8,11 @@
   "add_new_farmer": "text=Add New Farmer",
   "select_farmer": "text=Samad Farmer",
   "pending_farms_btn": "text=Pending Farms",
-  "type_dropdown": "#farm_crop_type",
+  "farm_type_dropdown": "#farm_crop_type",
   "only_farms_option": "text=Only Farms (No Crop & No Boundary)",
   "search_pending_farms_btn": "#searchBtn",
   "three_dots_pending_farm": "#dropdown-action1",
-  "add_crop_btn": "Add Crop",
+  "add_crop_btn": "xpath=//*[contains(@class, 'dropdown-item add-crop-button-farmer-listing')]",
   "add_boundary_btn": "#showBoundaryScreen",
   "add_farmer" :{
     "add_farmer_text": "Farmer Details",
@@ -43,6 +43,8 @@
   },
   "add_boundary": {
     "map_canvas": "xpath=//*[contains(@class, 'mapbox-gl-draw_ctrl-draw-btn mapbox-gl-draw_polygon')]",
-    "save_boundary_btn": "#btnUpdFarmCropBoundry"
+    "save_boundary_btn": "#btnUpdFarmCropBoundry",
+    "cancel_boundary_btn": "#redirectToFarmerDetails"
+    
   } 
 }
