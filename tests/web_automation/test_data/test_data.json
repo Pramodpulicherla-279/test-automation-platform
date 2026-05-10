@@ -1,0 +1,14 @@
+{
+  "base_url": "https://staging.krishivaas.ai/login",
+
+  "login": {
+    "username":"devqa@yopmail.com",
+    "password":"Devqa@2025",
+    "expected_dashboard_text":"Real Time Monitoring Dashboard"
+  },
+
+  "onboarding": {
+    "farmer_name":"pramod",
+    "field_agent":"Ahmed033"
+  }
+}
