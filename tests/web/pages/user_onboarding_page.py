@@ -119,8 +119,8 @@ class UserOnboardingPage:
         print("User role option clicked", flush=True)
 
     async def click_save(self):
-        await self.page.wait_for_selector(self.locators["add_user"]["save_button"], state="visible")
-        await self.page.click(self.locators["add_user"]["save_button"])
+        await self.page.wait_for_selector(self.locators["add_user"]["save_btn"], state="visible")
+        await self.page.click(self.locators["add_user"]["save_btn"])
         print("Save button clicked", flush=True)
 
 #######################################################################################

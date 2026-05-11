@@ -11,7 +11,7 @@
     "business_unit_option": "text=Cluster B",
     "mobile_number": "#mobile_number",
     "user_role_input": "xpath=//*[contains(@class, 'select2-selection select2-selection--multiple')]",
-     "user_role_option": "text=Manager",
-    "save_btn": "#submitBtn"
+    "user_role_option": "text=Field Agent",
+    "save_btn": "#addStaffUserSubmitBtn"
   }
 }
