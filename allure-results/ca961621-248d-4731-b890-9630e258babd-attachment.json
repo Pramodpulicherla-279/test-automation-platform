@@ -1,0 +1,23 @@
+{
+  "ticket_id": "RUN-20260511-113539",
+  "issue_id": "ISS-002",
+  "app_name": "Krishivaas Farmer",
+  "app_version": "1.3.96",
+  "module": "TestCropHealth",
+  "feature": "Weather and Moisture Validation",
+  "issue_summary": "Automation Failure: test_crop_health_diary_activity_flow",
+  "title": "Automation Failure: test_crop_health_diary_activity_flow",
+  "test_name": "test_crop_health_diary_activity_flow",
+  "steps_executed": [],
+  "developer_name": "@Anuj",
+  "description": "AttributeError: 'TestCropHealth' object has no attribute 'active_farms_xpath'. Did you mean: 'active_card_xpath'?",
+  "start_date": "2026-05-11T11:36:31.362369",
+  "end_date": "2026-05-11T11:36:47.950687",
+  "sprint": "Automation",
+  "fix_version": [
+    "Production"
+  ],
+  "affects_version": [
+    "Krishivaas Farmer"
+  ]
+}
