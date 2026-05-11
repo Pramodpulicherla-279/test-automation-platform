@@ -34,6 +34,7 @@
 import json
 import pytest
 from browser_manager import BrowserManager
+from tests.web.pages.user_onboarding_page import UserOnboardingPage
 from web.pages.login_page import LoginPage
 from web.pages.onboarding_page import OnboardingPage
 from pathlib import Path
@@ -59,9 +60,13 @@ async def test_login_and_onboarding():
         assert data["expected_text"] in dashboard_text
 
         # --- Step 2: Onboarding (reuses same logged-in page) ---
-        onboarding = OnboardingPage(page)
-        await onboarding.complete_onboarding_flow()
+        #onboarding = OnboardingPage(page)
+        #await onboarding.complete_onboarding_flow()
         # await page.wait_for_selector("text=Add New Farmer")
+
+        # # --- Step 3: Onboarding (reuses same logged-in page) ---
+        onboarding = UserOnboardingPage(page)
+        await onboarding.complete_user_onboarding_flow()
 
     finally:
         await browser.stop()  # ✅ always closes even if test fails
