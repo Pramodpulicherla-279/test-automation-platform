@@ -1,0 +1,38 @@
+{
+  "ticket_id": "RUN-20260511-182120",
+  "issue_id": "ISS-002",
+  "app_name": "Krishivaas Farmer",
+  "app_version": "1.3.92",
+  "module": "TestFarmer",
+  "feature": "Authentication",
+  "issue_summary": "Automation Failure: test_add_video",
+  "title": "Automation Failure: test_add_video",
+  "test_name": "test_add_video",
+  "steps_executed": [
+    "Humberger menu",
+    "Historical farms",
+    "Click on active farms",
+    "Navigation button",
+    "Start video",
+    "Stop video",
+    "Save",
+    "Profile",
+    "Profile button",
+    "Field Images",
+    "Media Files",
+    "Crop Info",
+    "Cross icon",
+    "Download icon"
+  ],
+  "developer_name": "@Anuj",
+  "description": "pytest.fail(\"Could not click Stop video\")\nFailed: Could not click Stop video\n\nSteps Executed:\n1. Humberger menu\n2. Historical farms\n3. Click on active farms\n4. Navigation button\n5. Start video\n6. Stop video\n7. Save\n8. Profile\n9. Profile button\n10. Field Images\n11. Media Files\n12. Crop Info\n13. Cross icon\n14. Download icon",
+  "start_date": "2026-05-11T18:24:44.150680",
+  "end_date": "2026-05-11T18:27:05.031064",
+  "sprint": "Automation",
+  "fix_version": [
+    "Production"
+  ],
+  "affects_version": [
+    "Krishivaas Farmer"
+  ]
+}
