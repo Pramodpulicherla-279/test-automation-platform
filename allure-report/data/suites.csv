@@ -1,3 +1,3 @@
 "DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"","32250","Verify user can login with valid credentials","tests.test_cases.regular_farmer_test_cases","Mon May 11 14:43:22 IST 2026","passed","Mon May 11 14:43:55 IST 2026","TestLogin","test_login_pytest","",""
-"","31168","FC_001 -- Crop Health Diary, Weather & Moisture Flow","tests.test_cases.regular_farmer_test_cases","Mon May 11 14:43:59 IST 2026","broken","Mon May 11 14:44:30 IST 2026","TestCropHealth","Crophealth","",""
+"","32543","Verify user can login with valid credentials","tests.test_cases.regular_farmer_test_cases","Mon May 11 16:08:34 IST 2026","failed","Mon May 11 16:09:06 IST 2026","TestLogin","test_login_pytest","",""
+"","51696","FC_001 -- Crop Health Diary, Weather & Moisture Flow","tests.test_cases.regular_farmer_test_cases","Mon May 11 16:09:16 IST 2026","failed","Mon May 11 16:10:07 IST 2026","TestCropHealth","Crophealth","",""
