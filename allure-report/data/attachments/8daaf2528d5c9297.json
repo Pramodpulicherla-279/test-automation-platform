@@ -1,5 +1,5 @@
 {
-  "ticket_id": "RUN-20260512-125846",
+  "ticket_id": "RUN-20260512-130230",
   "issue_id": "ISS-001",
   "app_name": "Krishivaas Farmer",
   "app_version": "1.3.96",
@@ -15,9 +15,9 @@
     "Click navigation button"
   ],
   "developer_name": "@Anuj",
-  "description": "TypeError: android_back() missing 2 required positional arguments: 'obj' and 'test_flow_steps'\n\nSteps Executed:\n1. Click on humberger menu\n2. Click on historical farms\n3. Click on farm card\n4. Click navigation button",
-  "start_date": "2026-05-12T12:59:33.875438",
-  "end_date": "2026-05-12T13:00:16.539998",
+  "description": "AttributeError: 'TestCropHealth' object has no attribute 'android_back_xpath'\n\nSteps Executed:\n1. Click on humberger menu\n2. Click on historical farms\n3. Click on farm card\n4. Click navigation button",
+  "start_date": "2026-05-12T13:03:23.676839",
+  "end_date": "2026-05-12T13:04:06.678246",
   "sprint": "Automation",
   "fix_version": [
     "Production"
