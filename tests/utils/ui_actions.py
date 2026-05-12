@@ -6,6 +6,8 @@ from selenium.webdriver.common.actions import interaction
 from selenium.webdriver.common.actions.action_builder import ActionBuilder
 from selenium.webdriver.common.actions.pointer_input import PointerInput
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
+from selenium.common.exceptions import WebDriverException
+
 import time
 
 def _ensure_locator_is_tuple(locator):
@@ -147,3 +149,97 @@ def scroll_and_tap_by_text(driver, text_to_find, max_swipes=5):
 
     print(f"   -> Failed to find '{text_to_find}' after scrolling.")
     return False
+
+def scroll_to_element(self, driver, element_xpath=None, text=None, max_scrolls=10):
+        """
+        Scroll until element/text becomes visible.
+        Works for Soil Moisture & Leaf Moisture cards.
+        """
+    
+        for scroll in range(max_scrolls):
+    
+            try:
+                # Priority 1 → XPath
+                if element_xpath:
+                    elements = driver.find_elements(AppiumBy.XPATH, element_xpath)
+    
+                    for el in elements:
+                        if el.is_displayed():
+                            print(f"[INFO] Element found after {scroll} scrolls")
+                            return True
+    
+                # Priority 2 → Visible text
+                if text:
+                    text_xpath = f"//*[contains(@text,'{text}')]"
+    
+                    elements = driver.find_elements(AppiumBy.XPATH, text_xpath)
+    
+                    for el in elements:
+                        if el.is_displayed():
+                            print(f"[INFO] Text '{text}' found after {scroll} scrolls")
+                            return True
+    
+            except Exception as e:
+                print(f"[WARNING] Element search failed: {str(e)}")
+    
+            # Scroll
+            try:
+                size = driver.get_window_size()
+    
+                start_x = size["width"] // 2
+                start_y = int(size["height"] * 0.85)
+    
+                end_x = size["width"] // 2
+                end_y = int(size["height"] * 0.25)
+    
+                driver.swipe(start_x, start_y, end_x, end_y, 1200)
+    
+                print(f"[INFO] Scroll attempt {scroll + 1}")
+    
+                time.sleep(2)
+    
+            except Exception as e:
+                print(f"[WARNING] Scroll failed: {str(e)}")
+                return False
+    
+        print(f"[WARNING] Element/Text not found after {max_scrolls} scrolls")
+        return False
+
+def wait_for_popup(self, driver, popup_xpath, timeout=10):
+    """Wait for popup to appear."""
+    try:
+        popup = WebDriverWait(driver, timeout).until(
+            EC.visibility_of_element_located((AppiumBy.XPATH, popup_xpath))
+        )
+        print("[INFO] Share popup appeared")
+        return True
+    except Exception as e:
+        print(f"[WARNING] Share popup did not appear: {str(e)}")
+        return False
+def wait_for_maximize_screen(self, driver, timeout=10):
+    """Wait for maximize screen to appear."""
+    try:
+        time.sleep(2)
+        print("[INFO] Maximize screen displayed")
+        return True
+    except Exception as e:
+        print(f"[WARNING] Maximize screen wait failed: {str(e)}")
+        return False
+        
+
+
+def android_back(driver) -> bool:
+    try:
+        driver.back()
+        time.sleep(1)
+        return True
+    except WebDriverException:
+        pass
+    except Exception:
+        pass
+    try:
+        driver.press_keycode(4)  # KEYCODE_BACK
+        time.sleep(1)
+        return True
+    except Exception:
+        return False

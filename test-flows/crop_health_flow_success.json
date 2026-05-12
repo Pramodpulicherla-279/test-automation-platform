@@ -1,5 +1,13 @@
 [
     {
+        "step": "Click on hamburger menu",
+        "status": "Success"
+    },
+    {
+        "step": "Click on historical farms",
+        "status": "Success"
+    },
+    {
         "step": "Click on farm card",
         "status": "Success"
     },
@@ -13,6 +21,10 @@
     },
     {
         "step": "Click diary icon",
+        "status": "Success"
+    },
+    {
+        "step": "Click Add Activity button",
         "status": "Success"
     },
     {
@@ -46,10 +58,6 @@
         "status": "Success"
     },
     {
-        "step": "Click weather alert",
-        "status": "Success"
-    },
-    {
         "step": "Click forecast",
         "status": "Success"
     },
@@ -70,7 +78,7 @@
         "status": "Success"
     },
     {
-        "step": "Android back button pressed after share",
+        "step": "Android back button pressed",
         "status": "Success"
     },
     {
@@ -78,7 +86,7 @@
         "status": "Success"
     },
     {
-        "step": "Android back button pressed after weather screen",
+        "step": "Android back button pressed",
         "status": "Success"
     },
     {
@@ -94,7 +102,7 @@
         "status": "Success"
     },
     {
-        "step": "Android back button pressed after share",
+        "step": "Android back button pressed",
         "status": "Success"
     }
 ]

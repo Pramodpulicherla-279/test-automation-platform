@@ -103,8 +103,8 @@
         "stop_video": "//android.widget.HorizontalScrollView/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[1]/android.view.ViewGroup/android.view.ViewGroup[3]/android.view.ViewGroup[1]/android.widget.ImageView"
     },
     "offline_farmer_updates": {
-        "active_farms": "//android.view.ViewGroup[@content-desc=\"DSR Paddy  , Maloth Ram Farm 2, 1.03 Acre\"]/android.view.ViewGroup",
-        "navigation_button": "//android.view.ViewGroup[@content-desc=\"Navigation\"]/com.horcrux.svg.SvgView/com.horcrux.svg.GroupView/com.horcrux.svg.RectView",
+        "active_farms": "//android.view.ViewGroup[@content-desc=\"DSR Paddy  , Maloth Ram Farm 2, 1.03 Acre\"]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[1]/android.widget.ImageView",
+        "navigation_button": "//android.view.ViewGroup[@content-desc=\"Navigation\"]",
         "start_audio": "//android.view.ViewGroup[@content-desc=\"Audio\"]/com.horcrux.svg.SvgView/com.horcrux.svg.GroupView/com.horcrux.svg.PathView[1]",
         "stop_audio": "//android.view.ViewGroup[@content-desc=\"Audio\"]/com.horcrux.svg.SvgView/com.horcrux.svg.GroupView/com.horcrux.svg.PathView[1]",
         "start_video_recording": "//android.view.ViewGroup[@content-desc=\"Video\"]/com.horcrux.svg.SvgView/com.horcrux.svg.GroupView/com.horcrux.svg.PathView[2]",
@@ -162,8 +162,11 @@
         "farms_with_no_boundary": "//android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup[4]/android.view.ViewGroup"
     },
     "crop_health": {
+        "hamburger_menu": "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[1]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[3]/android.widget.ImageView",
+        "historical_farms": "//android.widget.TextView[@text=\"Historical Farms\"]",
         "active_farms": "//android.view.ViewGroup[@content-desc=\"DSR Paddy  , Maloth Ram Farm 2, 1.03 Acre\"]/android.view.ViewGroup",
         "navigation_button": "//android.view.ViewGroup[@content-desc=\"Navigation\"]/com.horcrux.svg.SvgView/com.horcrux.svg.GroupView/com.horcrux.svg.RectView",
+        "navigation_back_button": "//android.view.ViewGroup[@content-desc=\"Back\"]",
         "diary_icon": "//android.view.ViewGroup[@content-desc=\"Diary\"]"
     },
     "diary_screen": {
@@ -176,33 +179,29 @@
         "back_button": "//android.view.ViewGroup[@content-desc=\"Back\"]"
     },
     "weather_screen": {
-        "weather_icon": "//android.view.ViewGroup[@content-desc=\"Weather\"]",
-        "calendar_date": "//android.view.ViewGroup[@content-desc=\"Mon, 4 July 2025\"]",
-        "weather_alert": "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup/android.widget.ScrollView/android.view.ViewGroup/android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup",
-        "forecast": "//android.widget.TextView[@text=\"Forecast\"]",
-        "hours_button": "//android.widget.TextView[@text=\"48 Hours\"]",
-        "days_button": "//android.widget.TextView[@text=\"15 Days\"]",
-        "close_icon": "//com.horcrux.svg.PathView",
-        "share_icon": "(//android.view.ViewGroup[@content-desc=\"\"])[2]",
-        "maximise_icon": "//android.widget.TextView[@text=\"\"]",
-        "notification_icon": "//android.view.ViewGroup[@content-desc='Notification']",
-        "expert_comments": "//android.widget.TextView[@text='Expert Comments']",
-        "crop_stress": "//android.widget.TextView[@text='Crop Stress']"
-    },
-    "leaf_moisture_screen": {
-        "leaf_moisture_label": "//android.widget.TextView[@text=\"Leaf Moisture\"]",
-        "leaf_moisture_navigation": "//android.view.ViewGroup[@content-desc=\"Leaf Moisture Navigation\"]/com.horcrux.svg.SvgView/com.horcrux.svg.GroupView/com.horcrux.svg.RectView",
-        "leaf_moisture_share_icon": "//android.view.ViewGroup[@content-desc=\"Leaf Moisture Share\"]/com.horcrux.svg.SvgView/com.horcrux.svg.GroupView/com.horcrux.svg.PathView",
-        "leaf_moisture_maximise_icon": "//android.view.ViewGroup[@content-desc=\"Leaf Moisture Maximize\"]/android.widget.ImageView",
-        "leaf_moisture_share_popup": "//android.view.ViewGroup[@content-desc=\"Share Popup Leaf Moisture\"]",
-        "leaf_moisture_data_display": "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup/android.widget.ScrollView/android.view.ViewGroup/android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup"
-    },
+    "weather_icon": "//android.view.ViewGroup[@content-desc=\"Weather\"]",
+    "calendar_date": "//android.view.ViewGroup[@content-desc=\"Mon, 4 July 2025\"]",
+    "weather_alert": "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup/android.widget.ScrollView/android.view.ViewGroup/android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup",
+    "forecast": "//android.widget.TextView[@text=\"Forecast\"]",
+    "hours_button": "//android.widget.TextView[@text=\"48 Hours\"]",
+    "days_button": "//android.widget.TextView[@text=\"15 Days\"]",
+    "close_icon": "//com.horcrux.svg.PathView",
+    "share_icon": "(//android.view.ViewGroup[@content-desc=\"\"])[2]",
+    "maximise_icon": "//android.widget.TextView[@text=\"\"]",
+    "notification_icon": "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/com.horcrux.svg.SvgView/com.horcrux.svg.GroupView/com.horcrux.svg.PathView",
+    "expert_comments": "//android.widget.TextView[@text=\"Expert Comments\"]",
+    "crop_stress": "//android.widget.TextView[@text=\"Crop Stress\"]"
+},
     "soil_moisture_screen": {
-        "soil_moisture_label": "//android.widget.TextView[@text=\"Soil Moisture\"]",
-        "soil_moisture_navigation": "//android.view.ViewGroup[@content-desc=\"Soil Moisture Navigation\"]/com.horcrux.svg.SvgView/com.horcrux.svg.GroupView/com.horcrux.svg.RectView",
-        "soil_moisture_share_icon": "//android.view.ViewGroup[@content-desc=\"Soil Moisture Share\"]/com.horcrux.svg.SvgView/com.horcrux.svg.GroupView/com.horcrux.svg.PathView",
-        "soil_moisture_maximise_icon": "//android.view.ViewGroup[@content-desc=\"Soil Moisture Maximize\"]/android.widget.ImageView",
-        "soil_moisture_share_popup": "//android.view.ViewGroup[@content-desc=\"Share Popup Soil Moisture\"]",
-        "soil_moisture_data_display": "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup/android.widget.ScrollView/android.view.ViewGroup/android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup"
-    }
+    "soil_moisture_navigation": "//android.widget.TextView[@text=\"Soil Moisture (Last Updated Date : 07-05-2026)\"]",
+    "soil_moisture_share_icon": "(//android.widget.TextView[@text=\"\"])[2]",
+    "soil_moisture_maximise_icon": "//android.widget.TextView[@text=\"\"]",
+    "soil_moisture_data_display": "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup/android.widget.ScrollView/android.view.ViewGroup/android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup"
+},
+    "leaf_moisture_screen": {
+    "leaf_moisture_navigation": "//android.widget.TextView[@text=\"Leaf Moisture (Last Updated Date : 07-05-2026)\"]",
+    "leaf_moisture_share_icon": "(//android.widget.TextView[@text=\"\"])[2]",
+    "leaf_moisture_maximise_icon": "//android.widget.TextView[@text=\"\"]",
+    "leaf_moisture_data_display": "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup/android.widget.ScrollView/android.view.ViewGroup/android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup"
+}
 }
