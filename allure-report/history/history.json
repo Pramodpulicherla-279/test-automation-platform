@@ -1,1 +1,1 @@
-{}
+{"9d6ec16e34e152260abb7abfd3fecc27":{"statistic":{"failed":0,"broken":1,"skipped":0,"passed":0,"unknown":0,"total":1},"items":[{"uid":"2b3104fdc24a4a93","status":"broken","statusDetails":"AttributeError: 'TestDiagnosisUpdates' object has no attribute 'active_farms_xpath'. Did you mean: 'click_active_farms_xpath'?","time":{"start":1778580823241,"stop":1778580825281,"duration":2040}}]}}
