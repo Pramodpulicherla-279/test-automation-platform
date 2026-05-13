@@ -1,0 +1,80 @@
+CRASH START: 05-13 21:04:31.807 26510 26510 I AndroidRuntime: VM exiting with result code 0.
+05-13 21:04:31.811  1217  1217 I SurfaceFlinger: destroyed WindowToken{f115884 type=2032 android.os.Binder@9f4be97}#353369
+05-13 21:04:31.812  1217  1217 I Layer   : id=353369 Destroyed WindowToken{f115884 type=2032 android.os.Binder@9f4be97}#353369
+05-13 21:04:31.812 19214 19214 D CompassHeading: Raw azimuth: 116.79597526002958
+05-13 21:04:31.812 19214 19214 D CompassHeading: Adjusted azimuth after rotation: 116.79597526002958
+05-13 21:04:31.818  1423  4132 W WindowManager: Cannot find window which accessibility connection is added to
+05-13 21:04:31.820 19214 19214 D CompassHeading: Raw azimuth: 116.79538786376096
+05-13 21:04:31.820 19214 19214 D CompassHeading: Adjusted azimuth after rotation: 116.79538786376096
+05-13 21:04:31.823  1423  1423 D BatterySaverPolicy: accessibility changed to false, updating policy.
+05-13 21:04:31.823 31252 24040 I HoneySpace.GlobalSettingDataSourceImpl: Setting accessibility_enabled changed to 0
+05-13 21:04:31.824  1423  4135 W WindowManager: Cannot find window which accessibility connection is added to
+05-13 21:04:31.825  1423  3072 W WindowManager: Cannot find window which accessibility connection is added to
+05-13 21:04:31.825 31252 31252 I HoneySpace.TaskbarView@267052516: updateTaskbarViewTalkback enabled = false
+05-13 21:04:31.828  1423  4135 W WindowManager: Cannot find window which accessibility connection is added to
+05-13 21:04:31.829 19214 19214 D CompassHeading: Raw azimuth: 116.80326990206315
+05-13 21:04:31.830 19214 19214 D CompassHeading: Adjusted azimuth after rotation: 116.80326990206315
+05-13 21:04:31.830 19214 19214 D CompassHeading: Raw azimuth: 116.80404854362854
+05-13 21:04:31.830 19214 19214 D CompassHeading: Adjusted azimuth after rotation: 116.80404854362854
+05-13 21:04:31.832  1423  4116 W WindowManager: Cannot find window which accessibility connection is added to
+05-13 21:04:31.833  2203  2203 D SettingsHelper: onChange() COMPLETED elapsed= 10
+05-13 21:04:31.836  2203  2203 D SRotationLockTile:  OnChangedCallback : 
+05-13 21:04:31.837 19214 19214 D CompassHeading: Raw azimuth: 116.80324258130648
+05-13 21:04:31.837 19214 19214 D CompassHeading: Adjusted azimuth after rotation: 116.80324258130648
+05-13 21:04:31.837  1423  3815 V ActivityManager: Got obituary of 26529:io.appium.uiautomator2.server
+05-13 21:04:31.838  3199  3199 I adbd    : Remote process closed the socket (on MSG_PEEK)
+05-13 21:04:31.839  2203  2455 D SRotationLockTile:  mRotationLocked: true handleUpdateState: false orientation = true
+05-13 21:04:31.840  1112  1112 I Zygote  : Process 26529 exited due to signal 9 (Killed)
+05-13 21:04:31.842  2203  2203 D Navbar.Store: handleEvent(0) OnRotationLockedChanged(rotationLocked=true) [Module] NavBarStoreImpl
+05-13 21:04:31.842  2203  2203 D Navbar.Store: --[Band]TASKBAR_PACK_ROTATION_LOCKED_CHANGED
+05-13 21:04:31.842  2203  2203 D Navbar.Store: ----apply(0) NavBarStoreAction$UpdateTaskBarNavBarEvents
+05-13 21:04:31.843 31252 31380 I HoneySpace.TaskbarEventTracker: invokeEvent() called with: event = HandleNavigationBarEvent(eventData=NavBarEvents(eventType=ON_ROTATION_LOCKED_CHANGED, iconType=null, remoteViewBundle=null, iconBitmapBundle=null, orderDefault=true, position=0, rotationLocked=true, transientShowing=false, appearance=0, pluginBundle=null, hiddenByKnox=false, insetsBundle=null, displayId=0))
+05-13 21:04:31.843 31252 31252 I HoneySpace.TaskbarPot@8142229@OneUI: HandleNavigationBarEvent: ON_ROTATION_LOCKED_CHANGED
+05-13 21:04:31.844 31252 31252 I HoneySpace.TaskbarPot@8142229@OneUI: rotationLocked: true
+05-13 21:04:31.845  1423  1584 I libprocessgroup: Removed cgroup /sys/fs/cgroup/apps/uid_10324/pid_26529
+05-13 21:04:31.847 19214 19214 D CompassHeading: Raw azimuth: 116.80452665687044
+05-13 21:04:31.847 19214 19214 D CompassHeading: Adjusted azimuth after rotation: 116.80452665687044
+05-13 21:04:31.847 19214 19214 D CompassHeading: Raw azimuth: 116.8064937513514
+05-13 21:04:31.847 19214 19214 D CompassHeading: Adjusted azimuth after rotation: 116.8064937513514
+05-13 21:04:31.847  2203  2455 D SRotationLockTile:  mRotationLocked: true handleUpdateState: false orientation = true
+05-13 21:04:31.853 19214 19214 D CompassHeading: Raw azimuth: 116.80641178908137
+05-13 21:04:31.853 19214 19214 D CompassHeading: Adjusted azimuth after rotation: 116.80641178908137
+05-13 21:04:31.861 19214 19214 D CompassHeading: Raw azimuth: 116.80805103448216
+05-13 21:04:31.861 19214 19214 D CompassHeading: Adjusted azimuth after rotation: 116.80805103448216
+05-13 21:04:31.866 19214 19214 D CompassHeading: Raw azimuth: 116.79072967474701
+05-13 21:04:31.866 19214 19214 D CompassHeading: Adjusted azimuth after rotation: 116.79072967474701
+05-13 21:04:31.869 19214 19214 D CompassHeading: Raw azimuth: 116.79112582571886
+05-13 21:04:31.869 19214 19214 D CompassHeading: Adjusted azimuth after rotation: 116.79112582571886
+05-13 21:04:31.877 19214 19214 D CompassHeading: Raw azimuth: 116.7897051463715
+05-13 21:04:31.877 19214 19214 D CompassHeading: Adjusted azimuth after rotation: 116.7897051463715
+05-13 21:04:31.882  1205  1213 E HeatmapThread: ECT Thread time in milliseconds: 1778686471
+05-13 21:04:31.883  1205  1213 D HeatmapThread: !@ batteryplugType : 2
+05-13 21:04:31.883  1205  1213 D HeatmapThread: !@ batteryLevel : 18  batteryTemperature : 354 
+05-13 21:04:31.883  1205  1213 D HeatmapThread: !@ Heatmap currtime: 29644774
+05-13 21:04:31.883  1205  1213 D HeatmapThread: !@ Heatmap prevtime: 29644758
+05-13 21:04:31.883  1205  1213 D HeatmapThread: !@ Heatmap plugstarttime: 29644771
+05-13 21:04:31.883  1205  1213 D HeatmapThread: !@ Heatmap prevv_dsoh_update_time: 29637650
+05-13 21:04:31.883  1205  1213 E HeatmapThread: !@ CAM New BSOH: 100
+05-13 21:04:31.885 19214 25619 I MediaCodec: setCodecState state(0), called in 6, domain 1, 0
+05-13 21:04:31.886 19214 19214 D CompassHeading: Raw azimuth: 116.78913141048123
+05-13 21:04:31.886 19214 19214 D CompassHeading: Adjusted azimuth after rotation: 116.78913141048123
+05-13 21:04:31.886 19214 19214 D CompassHeading: Raw azimuth: 116.7747197113325
+05-13 21:04:31.886 19214 19214 D CompassHeading: Adjusted azimuth after rotation: 116.7747197113325
+05-13 21:04:31.886  4616  4616 I SemMediaResourceHelper: onState
+05-13 21:04:31.894 19214 19214 D CompassHeading: Raw azimuth: 116.77277993760822
+05-13 21:04:31.894 19214 19214 D CompassHeading: Adjusted azimuth after rotation: 116.77277993760822
+05-13 21:04:31.902 19214 19214 D CompassHeading: Raw azimuth: 116.77213789982623
+05-13 21:04:31.902 19214 19214 D CompassHeading: Adjusted azimuth after rotation: 116.77213789982623
+05-13 21:04:31.906 19214 19214 D CompassHeading: Raw azimuth: 116.75470725706437
+05-13 21:04:31.906 19214 19214 D CompassHeading: Adjusted azimuth after rotation: 116.75470725706437
+05-13 21:04:31.910 19214 19214 D CompassHeading: Raw azimuth: 116.75275382296174
+05-13 21:04:31.910 19214 19214 D CompassHeading: Adjusted azimuth after rotation: 116.75275382296174
+05-13 21:04:31.918 19214 19214 D CompassHeading: Raw azimuth: 116.75469359668602
+05-13 21:04:31.918 19214 19214 D CompassHeading: Adjusted azimuth after rotation: 116.75469359668602
+05-13 21:04:31.927 19214 19214 D CompassHeading: Raw azimuth: 116.75616891754674
+05-13 21:04:31.927 19214 19214 D CompassHeading: Adjusted azimuth after rotation: 116.75616891754674
+05-13 21:04:31.927 19214 19214 D CompassHeading: Raw azimuth: 116.72983170810718
+05-13 21:04:31.927 19214 19214 D CompassHeading: Adjusted azimuth after rotation: 116.72983170810718
+05-13 21:04:31.934 19214 19214 D CompassHeading: Raw azimuth: 116.72869789670496
+05-13 21:04:31.935 19214 19214 D CompassHeading: Adjusted azimuth after rotation: 116.72869789670496
+05-13 21:04:31.943 19214 19214 D CompassHeading: Raw azimuth: 116.73095185913105

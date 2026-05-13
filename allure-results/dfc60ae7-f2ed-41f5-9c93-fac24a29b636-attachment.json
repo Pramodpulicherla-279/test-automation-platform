@@ -1,5 +1,5 @@
 {
-  "ticket_id": "RUN-20260513-205804",
+  "ticket_id": "RUN-20260513-210242",
   "issue_id": "ISS-001",
   "app_name": "Krishivaas Farmer",
   "app_version": "0.13.22",
@@ -22,8 +22,8 @@
   ],
   "developer_name": "@Anuj",
   "description": "selenium.common.exceptions.TimeoutException: Message:\nStacktrace:\nNoSuchElementError: An element could not be located on the page using the given search parameters.\nat AndroidUiautomator2Driver.findElOrEls (C:\\Users\\ABDUL SAMAD\\node_modules\\appium-uiautomator2-driver\\node_modules\\appium-android-driver\\build\\lib\\commands\\find.js:62:15)\nat process.processTicksAndRejections (node:internal/process/task_queues:105:5)\nat async AndroidUiautomator2Driver.findElOrElsWithProcessing (C:\\Users\\ABDUL SAMAD\\node_modules\\appium-uiautomator2-driver\\node_modules\\@appium\\base-driver\\build\\lib\\basedriver\\commands\\find.js:12:16)\nat async AndroidUiautomator2Driver.findElement (C:\\Users\\ABDUL SAMAD\\node_modules\\appium-uiautomator2-driver\\node_modules\\@appium\\base-driver\\build\\lib\\basedriver\\commands\\find.js:27:16)\n\nSteps Executed:\n1. Active Farms\n2. Diagnosis Button\n3. First OK Button\n4. Symptom OK Button\n5. Secondary Symptom OK Button\n6. Disease Confirm Button\n7. Curative OK Button\n8. Audio Start\n9. Audio Stop\n10. Camera Icon",
-  "start_date": "2026-05-13T20:58:05.063575",
-  "end_date": "2026-05-13T21:00:11.113156",
+  "start_date": "2026-05-13T21:02:45.425871",
+  "end_date": "2026-05-13T21:04:33.455205",
   "sprint": "Automation",
   "fix_version": [
     "Production"
