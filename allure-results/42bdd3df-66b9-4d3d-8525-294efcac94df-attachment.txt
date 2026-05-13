@@ -1,0 +1,80 @@
+CRASH START: 05-13 23:02:06.119  6941  6941 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+05-13 23:02:06.132 31327 31327 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.safebrowsing.SafeBrowsingService.START dat=chimera-action:/... xflg=0x4 cmp=com.google.android.gms/.chimera.GmsBoundBrokerService }
+05-13 23:02:06.134  7682  7682 I Finsky:background: [2] Process created at version: 51.3.24-31 [0] [PR] 910186993
+05-13 23:02:06.137  7682  7682 I Finsky:background: [2] [BGP] Initializing early flags...
+05-13 23:02:06.137  7682  7682 I Finsky:background: [2] [BGP] Initializing Gservices...
+05-13 23:02:06.138 32252 32589 D PipelineWatcher: onInputBufferReleased: frameIndex not found (47681); ignored
+05-13 23:02:06.138  7682  7682 I Finsky:background: [2] [BGP] Initializing flags...
+05-13 23:02:06.146 32252 32589 D PipelineWatcher: onInputBufferReleased: frameIndex not found (47682); ignored
+05-13 23:02:06.147  7682  7682 I Finsky:background: [2] Finished reading experiment flags from file [0tGUNCGIkbk4o6-fQ335kUYSKwVj4lusnHT-A5Dsy08] numFlags=2321.
+05-13 23:02:06.158  7682  7750 D nativeloader: Load /data/app/~~ZKJNnttjL4fjGjUZ54XPrA==/com.android.vending-0elZUMKEqccx3gxJpD4TdQ==/split_config.arm64_v8a.apk!/lib/arm64-v8a/libmappedcountercacheversionjni.so using class loader ns clns-9 (caller=/data/app/~~ZKJNnttjL4fjGjUZ54XPrA==/com.android.vending-0elZUMKEqccx3gxJpD4TdQ==/base.apk): ok
+05-13 23:02:06.159 32252 32589 D PipelineWatcher: onInputBufferReleased: frameIndex not found (47683); ignored
+05-13 23:02:06.174  7682  7682 E ashmem  : Pinning is deprecated since Android Q. Please use trim or other methods.
+05-13 23:02:06.181 32252 32589 D PipelineWatcher: onInputBufferReleased: frameIndex not found (47684); ignored
+05-13 23:02:06.190  7682  7682 I Finsky:background: [2] Finished reading experiment flags from file [lwkFi8gQAyARnCC0VS2dhXrctBYad7BMSM49yWIqnQs] numFlags=2010.
+05-13 23:02:06.191  9674  9674 I Zygote  : Process 6941 exited cleanly (0)
+05-13 23:02:06.197  7682  7682 I Finsky:background: [2] Finished reading experiment flags from file [75J_y9apxETp2Kti5Rwpxdqe4JKzHq7iuHo2XNla0kA] numFlags=2010.
+05-13 23:02:06.198 32252 32589 D PipelineWatcher: onInputBufferReleased: frameIndex not found (47685); ignored
+05-13 23:02:06.200  7682  7682 I Finsky:background: [2] Finished reading experiment flags from file [Lhb_sI6wDTX7hCnw41QokC_oXM3pvJWFfPvxsY-yy18] numFlags=2010.
+05-13 23:02:06.201  7682  7682 I Finsky:background: [2] [BGP] Initializing crash detector...
+05-13 23:02:06.205  7682  7682 I Finsky:background: [2] ajlz - Registering in memory receiver for android.intent.action.PACKAGE_ADDED and android.intent.action.PACKAGE_REMOVED
+05-13 23:02:06.221 32252 32589 D PipelineWatcher: onInputBufferReleased: frameIndex not found (47686); ignored
+05-13 23:02:06.239  7682  7682 I Finsky:background: [2] This process start was not selected for Play memory metrics collection.
+05-13 23:02:06.242 32252 32589 D PipelineWatcher: onInputBufferReleased: frameIndex not found (47687); ignored
+05-13 23:02:06.250  7682  7769 W Settings: Setting download_manager_max_bytes_over_mobile has moved from android.provider.Settings.Secure to android.provider.Settings.Global.
+05-13 23:02:06.252  7682  7769 I Finsky:background: [5871] SettingNotFoundException, fall through to G.downloadBytesOverMobileMaximum
+05-13 23:02:06.252  7682  7769 W Settings: Setting download_manager_recommended_max_bytes_over_mobile has moved from android.provider.Settings.Secure to android.provider.Settings.Global.
+05-13 23:02:06.260  7682  7769 I Finsky:background: [5871] SettingNotFoundException, fall through to G.downloadBytesOverMobileRecommended
+05-13 23:02:06.261  7682  7769 I Finsky:background: [5871] registerListener
+05-13 23:02:06.264  7682  7769 I Finsky:background: [5871] DFS: Listener added for slc@1d26d3f
+05-13 23:02:06.264  7682  7769 I Finsky:background: [5871] registerListener
+05-13 23:02:06.264 32252 32589 D PipelineWatcher: onInputBufferReleased: frameIndex not found (47688); ignored
+05-13 23:02:06.264  7682  7769 I Finsky:background: [5871] registerListener
+05-13 23:02:06.265  7682  7769 I Finsky:background: [5871] DFS: Listener added for anwu@43ff236
+05-13 23:02:06.278 32252 32589 D PipelineWatcher: onInputBufferReleased: frameIndex not found (47689); ignored
+05-13 23:02:06.302  7682  7769 I Finsky:background: [5871] IV2: IQv2 is disabled. Recovering all active installs: []
+05-13 23:02:06.310  7682  7765 I Finsky:background: [5868] IQ: start evaluating install requests.
+05-13 23:02:06.310  7682  7765 I Finsky:background: [5868] IQ: no jobs active. Skipping
+05-13 23:02:06.311 32252 32589 D PipelineWatcher: onInputBufferReleased: frameIndex not found (47690); ignored
+05-13 23:02:06.319  7682  7774 I Finsky:background: [5876] Device is eligible for platform Cronet and will attempt to use it.
+05-13 23:02:06.332  7682  7776 I Finsky:background: [5878] IQ: Pruning inactive install requests
+05-13 23:02:06.340  7682  7789 D HttpFlagsLoader: Not loading HTTP flags because they are disabled in the manifest
+05-13 23:02:06.345 32252 32589 D PipelineWatcher: onInputBufferReleased: frameIndex not found (47691); ignored
+05-13 23:02:06.355  7682  7774 I cn_CronetLibraryLoader: Cronet version: 144.0.7500.8, arch: aarch64
+05-13 23:02:06.366  7682  7765 I Finsky:background: [5868] IQ: 0 scheduled install statuses found to proceed. 
+05-13 23:02:06.368  7682  7774 I Finsky:background: [5876] CronetEngine is present. Using Cronet for the networking stack.
+05-13 23:02:06.378 32252 32589 D PipelineWatcher: onInputBufferReleased: frameIndex not found (47692); ignored
+05-13 23:02:06.384  7682  7774 I Finsky:background: [5876] Finished reading experiment flags from file [Se-xCc4LzNyh3UrKMIU2sUf-PUKz4oQEbpKZDMuaFno] numFlags=1999.
+05-13 23:02:06.396  7682  7776 I Finsky:background: [5878] Resetting scheduler db
+05-13 23:02:06.399  7682  7774 I Finsky:background: [5876] Subscription detail: DataSubscriptionInfo{groupIdLevel1=FFFFFFFF, serviceProviderName=[hwNCO29L08SXpBqVtNdP6xmLtzD0IBvlOrAQYFrxU5M], simCarrierId=1961}
+05-13 23:02:06.403  7682  7682 I Finsky:background: [2] onSubscriptionsChanged
+05-13 23:02:06.407  6139  6507 I appium  : channel read: POST /session/d8b397c4-acd5-49a9-99cb-7797c33ec684/element
+05-13 23:02:06.408  6139  6507 I appium  : FindElement command
+05-13 23:02:06.409  6139  6507 I appium  : method: 'xpath', selector: '//android.widget.FrameLayout[@resource-id="android:id/content"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[1]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup'
+05-13 23:02:06.410  6139  6507 I appium  : Waiting up to 10000ms for the device to idle
+05-13 23:02:06.414 32252 32589 D PipelineWatcher: onInputBufferReleased: frameIndex not found (47693); ignored
+05-13 23:02:06.418  7682  7765 I Finsky:background: [5868] SCH: Scheduling phonesky job Id: 3-13977, CT: 1778693519492, Constraints: [{ L: 7080510, D: 17880510, C: CHARGING_NONE, I: IDLE_REQUIRED, N: NET_UNMETERED, B: BATTERY_ANY }]
+05-13 23:02:06.418  7682  7765 I Finsky:background: [5868] SCH: Scheduling phonesky job Id: 3-13978, CT: 1778693519502, Constraints: [{ L: 0, D: 86400000, C: CHARGING_REQUIRED, I: IDLE_REQUIRED, N: NET_UNMETERED, B: BATTERY_ANY }]
+05-13 23:02:06.418  7682  7765 I Finsky:background: [5868] SCH: Scheduling phonesky job Id: 47-15, CT: 1778677042912, Constraints: [{ L: 15296438, D: 36896429, C: CHARGING_NONE, I: IDLE_REQUIRED, N: NET_NONE, B: BATTERY_ANY }]
+05-13 23:02:06.434  7682  7774 I Finsky:background: [5876] SCH: Scheduling 0 system job(s)
+05-13 23:02:06.441  7682  7820 I Finsky:background: [5892] SCH: Canceling job 3-13977
+05-13 23:02:06.442  7682  7820 I Finsky:background: [5892] WM::SCH: Logging work end for 3-13977
+05-13 23:02:06.446  7682  7767 I Finsky:background: [5870] SCH: no pending jobs to schedule.
+05-13 23:02:06.449 32252 32589 D PipelineWatcher: onInputBufferReleased: frameIndex not found (47694); ignored
+05-13 23:02:06.454  7682  7820 I Finsky:background: [5892] SCH: Canceling job 3-13978
+05-13 23:02:06.454  7682  7820 I Finsky:background: [5892] WM::SCH: Logging work end for 3-13978
+05-13 23:02:06.456  7682  7762 I Finsky:background: [5866] SCH: no pending jobs to schedule.
+05-13 23:02:06.464  7682  7776 I Finsky:background: [5878] IQ: Creating job 13979, for (REQ_DEVICE_IDLE, REQ_GEARHEAD_PROJECTION_OFF, MIN_BATTERY=20, SHOULD_APPLY_BUDGET=true, IGNORE_HOLDOFF=true, NETWORK=UNMETERED, PROVISIONING_STATE=PROVISIONED, BACKUP_MANAGER_STATE=BACKUP_READY, TIME=[2026-05-13T19:30:00Z-2026-05-13T22:30:00Z], AUTHENTICATION_REQUIRED)
+05-13 23:02:06.464  7682  7776 I Finsky:background: [5878] IQ: Creating job 13980, for (REQ_CHARGING, REQ_DEVICE_IDLE, REQ_GEARHEAD_PROJECTION_OFF, IGNORE_HOLDOFF=true, NETWORK=UNMETERED, PROVISIONING_STATE=PROVISIONED, BACKUP_MANAGER_STATE=BACKUP_READY, AUTHENTICATION_REQUIRED)
+05-13 23:02:06.465  7682  7776 I Finsky:background: [5878] IQ: Bulk scheduling created jobs
+05-13 23:02:06.465  7682  7776 I Finsky:background: [5878] SCH: Received scheduling request: Id: 3-13979, Constraints: [{ L: 7073536, D: 17873536, C: CHARGING_NONE, I: IDLE_REQUIRED, N: NET_UNMETERED, B: BATTERY_ANY }]
+05-13 23:02:06.475  7682  7776 D WM-PackageManagerHelper: Skipping component enablement for androidx.work.impl.background.systemjob.SystemJobService
+05-13 23:02:06.475  7682  7776 D WM-Schedulers: Created SystemJobScheduler and enabled SystemJobService
+05-13 23:02:06.476  7682  7774 D WM-ForceStopRunnable: Is default app process = true
+05-13 23:02:06.477  7682  7774 D WM-ForceStopRunnable: Performing cleanup operations.
+05-13 23:02:06.481 32252 32589 D PipelineWatcher: onInputBufferReleased: frameIndex not found (47695); ignored
+05-13 23:02:06.489  7682  7776 I Finsky:background: [5878] SCH: Received scheduling request: Id: 3-13980, Constraints: [{ L: 0, D: 86400000, C: CHARGING_REQUIRED, I: IDLE_REQUIRED, N: NET_UNMETERED, B: BATTERY_ANY }]
+05-13 23:02:06.496  7682  7767 I Finsky:background: [5870] SSM: Start staged session task with 1 tracked staged sessions
+05-13 23:02:06.500  7682  7765 I Finsky:background: [5868] IQ: start evaluating install requests.
+05-13 23:02:06.500  7682  7765 I Finsky:background: [5868] IQ: no jobs active. Skipping
+05-13 23:02:06.505  7682  7767 I Finsky:background: [5870] AMU: Is primary profile true
