@@ -10,5 +10,9 @@
   "onboarding": {
     "farmer_name":"pramod",
     "field_agent":"Ahmed033"
+  },
+
+  "user_onboarding": {
+    "user_name":"Test User"
   }
 }
