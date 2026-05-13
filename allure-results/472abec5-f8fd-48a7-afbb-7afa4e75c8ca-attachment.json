@@ -1,0 +1,35 @@
+{
+  "ticket_id": "RUN-20260513-203615",
+  "issue_id": "ISS-001",
+  "app_name": "Krishivaas Farmer",
+  "app_version": "0.13.22",
+  "module": "TestDiagnosisUpdates",
+  "feature": "Authentication",
+  "issue_summary": "Automation Failure: test_diagnosis_updates",
+  "title": "Automation Failure: test_diagnosis_updates",
+  "test_name": "test_diagnosis_updates",
+  "steps_executed": [
+    "Active Farms",
+    "Diagnosis Button",
+    "First OK Button",
+    "Symptom OK Button",
+    "Secondary Symptom OK Button",
+    "Disease Confirm Button",
+    "Curative OK Button",
+    "Audio Start",
+    "Audio Stop",
+    "Camera Icon",
+    "Video Start"
+  ],
+  "developer_name": "@Anuj",
+  "description": "selenium.common.exceptions.WebDriverException: Message: Must provide a selector when finding elements\nStacktrace:\nUnknownError: Must provide a selector when finding elements\nat getResponseForW3CError (C:\\Users\\ABDUL SAMAD\\AppData\\Roaming\\npm\\node_modules\\appium\\node_modules\\@appium\\base-driver\\build\\lib\\protocol\\errors.js:824:36)\nat asyncHandler (C:\\Users\\ABDUL SAMAD\\AppData\\Roaming\\npm\\node_modules\\appium\\node_modules\\@appium\\base-driver\\build\\lib\\protocol\\protocol.js:476:77)\nThe above error is caused by\nError: Must provide a selector when finding elements\nat AndroidUiautomator2Driver.findElOrEls (C:\\Users\\ABDUL SAMAD\\node_modules\\appium-uiautomator2-driver\\node_modules\\appium-android-driver\\build\\lib\\commands\\find.js:13:15)\nat AndroidUiautomator2Driver.findElOrElsWithProcessing (C:\\Users\\ABDUL SAMAD\\node_modules\\appium-uiautomator2-driver\\node_modules\\@appium\\base-driver\\build\\lib\\basedriver\\commands\\find.js:12:27)\nat AndroidUiautomator2Driver.findElement (C:\\Users\\ABDUL SAMAD\\node_modules\\appium-uiautomator2-driver\\node_modules\\@appium\\base-driver\\build\\lib\\basedriver\\commands\\find.js:27:27)\nat runCommandPromise (C:\\Users\\ABDUL SAMAD\\node_modules\\appium-uiautomator2-driver\\node_modules\\@appium\\base-driver\\build\\lib\\basedriver\\driver.js:121:30)\nat C:\\Users\\ABDUL SAMAD\\node_modules\\appium-uiautomator2-driver\\node_modules\\async-lock\\lib\\index.js:171:12\nat AsyncLock._promiseTry (C:\\Users\\ABDUL SAMAD\\node_modules\\appium-uiautomator2-driver\\node_modules\\async-lock\\lib\\index.js:306:31)\nat exec (C:\\Users\\ABDUL SAMAD\\node_modules\\appium-uiautomator2-driver\\node_modules\\async-lock\\lib\\index.js:170:9)\nat AsyncLock.acquire (C:\\Users\\ABDUL SAMAD\\node_modules\\appium-uiautomator2-driver\\node_modules\\async-lock\\lib\\index.js:189:3)\nat AndroidUiautomator2Driver.executeCommand (C:\\Users\\ABDUL SAMAD\\node_modules\\appium-uiautomator2-driver\\node_modules\\@appium\\base-driver\\build\\lib\\basedriver\\driver.js:161:45)\nat process.processTicksAndRejections (node:internal/process/task_queues:105:5)\nat async defaultBehavior (C:\\Users\\ABDUL SAMAD\\AppData\\Roaming\\npm\\node_modules\\appium\\build\\lib\\appium.js:574:20)\nat async AppiumDriver.executeWrappedCommand (C:\\Users\\ABDUL SAMAD\\AppData\\Roaming\\npm\\node_modules\\appium\\build\\lib\\appium.js:675:22)\nat async AppiumDriver.executeCommand (C:\\Users\\ABDUL SAMAD\\AppData\\Roaming\\npm\\node_modules\\appium\\build\\lib\\appium.js:585:21)\nat async asyncHandler (C:\\Users\\ABDUL SAMAD\\AppData\\Roaming\\npm\\node_modules\\appium\\node_modules\\@appium\\base-driver\\build\\lib\\protocol\\protocol.js:399:25)\n\nSteps Executed:\n1. Active Farms\n2. Diagnosis Button\n3. First OK Button\n4. Symptom OK Button\n5. Secondary Symptom OK Button\n6. Disease Confirm Button\n7. Curative OK Button\n8. Audio Start\n9. Audio Stop\n10. Camera Icon\n11. Video Start",
+  "start_date": "2026-05-13T20:36:17.239528",
+  "end_date": "2026-05-13T20:38:11.407729",
+  "sprint": "Automation",
+  "fix_version": [
+    "Production"
+  ],
+  "affects_version": [
+    "Krishivaas Farmer"
+  ]
+}
