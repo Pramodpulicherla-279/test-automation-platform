@@ -1,5 +1,5 @@
 {
-  "ticket_id": "RUN-20260514-230148",
+  "ticket_id": "RUN-20260514-230812",
   "issue_id": "ISS-001",
   "app_name": "Krishivaas Farmer",
   "app_version": "1.3.96",
@@ -15,9 +15,9 @@
     "Click navigation button"
   ],
   "developer_name": "@Anuj",
-  "description": "TypeError: scroll_and_click_card_icon_precise() got an unexpected keyword argument 'object_xpath'\n\nSteps Executed:\n1. Click on hamburger menu\n2. Click on historical farms\n3. Click on farm card\n4. Click navigation button",
-  "start_date": "2026-05-14T23:02:43.055819",
-  "end_date": "2026-05-14T23:03:33.427590",
+  "description": "pytest.fail(\"Navigation icon failed\")\nFailed: Navigation icon failed\n\nSteps Executed:\n1. Click on hamburger menu\n2. Click on historical farms\n3. Click on farm card\n4. Click navigation button",
+  "start_date": "2026-05-14T23:09:00.309429",
+  "end_date": "2026-05-14T23:10:32.084572",
   "sprint": "Automation",
   "fix_version": [
     "Production"
