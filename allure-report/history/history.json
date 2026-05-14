@@ -1,1 +1,1 @@
-{"e156a66a9b9e95cf3f62d3c0f12fadb5":{"statistic":{"failed":1,"broken":0,"skipped":0,"passed":0,"unknown":0,"total":1},"items":[{"uid":"c3588c1022b39e0e","status":"failed","statusDetails":"Failed: Could not find or click the 'leaf moisture share icon'.","time":{"start":1778696126302,"stop":1778696319547,"duration":193245}}]},"6cd4db9cc3c09c9f91c899baebd19817":{"statistic":{"failed":0,"broken":0,"skipped":0,"passed":1,"unknown":0,"total":1},"items":[{"uid":"45bbeba050e1b507","status":"passed","time":{"start":1778696088975,"stop":1778696122118,"duration":33143}}]}}
+{}
