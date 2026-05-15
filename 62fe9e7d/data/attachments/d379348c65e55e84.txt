@@ -1,0 +1,80 @@
+CRASH START: 05-15 09:55:06.895 28099 28099 I AndroidRuntime: VM exiting with result code 0.
+05-15 09:55:06.901  7361 28218 D ShellSubscriberWorkerThread: the first 8 bytes empty, and RestData length > 8 
+05-15 09:55:06.905  2282  4193 I OplusHansManager : onUidGone(), 10773 io.appium.uiautomator2.server exit SM
+05-15 09:55:06.905  2282  3723 I OplusHansManager : uid=10773, pkg=io.appium.uiautomator2.server R exit SM
+05-15 09:55:06.905  2282  3723 I OplusHansManager : uid=10773, pkg=io.appium.uiautomator2.server R exit(), R stay=68
+05-15 09:55:06.905  2282  4193 I OplusHansManager : onUidGone(),  keep: 10773 io.appium.uiautomator2.server alarm
+05-15 09:55:06.909  2282  2282 D BatterySaverPolicy: accessibility changed to false, updating policy.
+05-15 09:55:06.915  3722 32328 E PackageUidManager: pkgs is empty for uid 10773
+05-15 09:55:06.915  2282  2569 D DisplayManagerService: Drop pending events for gone uid 10773
+05-15 09:55:06.916  4779  4801 D OplusAtlas.OplusAtlasEventDispatch: setEvent:atlas_event_on_process_died info:pid:28110,uid:10773
+05-15 09:55:06.916  3722  4147 I ProcessManager: onProcessDied pid:28110, uid:10773
+05-15 09:55:06.916  3722  4147 D AppSceneEventManager: handleMessage: 101
+05-15 09:55:06.916  3722  4147 I DispatcherPolicy: onBaseEvent EventId=22	INPUT_PROCESS_DIED	TimeStamp =1778819106916	Intent =null	Content =null	Pid =28110	PkgName =io.appium.uiautomator2.server
+05-15 09:55:06.916  3722  4147 I GamingScene: onInputEvent : INPUT_PROCESS_DIED
+05-15 09:55:06.917  4779  7375 D OplusAtlas.OplusMessageHandler: handleMessage: Msg { when=0 what=1 obj=com.oplus.atlas.OplusAtlasEvent@63317c7 target=com.oplus.atlas.OplusMessageHandler$MyHandler }
+05-15 09:55:06.917  4779  7191 D OplusAtlas.OplusMessageHandler: handleMessage: Msg { when=0 what=1 obj=com.oplus.atlas.OplusAtlasEvent@63317c7 target=com.oplus.atlas.OplusMessageHandler$MyHandler }
+05-15 09:55:06.917  3381  8025 I PluginSeedling--Base: SeedlingPluginService-->onStateChange: Bundle[{pkgName=io.appium.uiautomator2.server, pid=28110, uid=10773, state=onProcessDied}]
+05-15 09:55:06.921  2282  2969 D VRR [OPlusExternalRefreshRateManager]: isPkgTfcEnable: pkgName = com.google.android.apps.messaging, enable = false
+05-15 09:55:06.921  2282  2969 D VRR [OPlusExternalRefreshRateManager]: getTfcMinFramerate: pkgName = com.google.android.apps.messaging, min framerate = 0
+05-15 09:55:06.922  2282  2598 D AppProfilerExtImpl: Skipped pss collection for CPU busy
+05-15 09:55:06.923 28536 28536 I DynamicFramerate [FRTCConfigManager]: initFrameRateConfig: 
+05-15 09:55:06.923 28536 28536 I DynamicFramerate [FRTCConfigManager]: 	levels: [120, 60]
+05-15 09:55:06.923 28536 28536 I DynamicFramerate [FRTCConfigManager]: 	thresholds: [200]
+05-15 09:55:06.924 28536 28536 I DynamicFramerate [FRTCConfigManager]: FRTCConfigManager: FRTC_CAPABILITY = 120, package name = com.google.android.apps.messaging, WINDOW_ANIMATION_SPEED_RATE = 10, SCROLL_ANIMATION_SPEED_RATE = 20, PACKAGE_ENABLE = false
+05-15 09:55:06.925 28536 28536 I DynamicFramerate [DynamicFrameRateController]: init info: mPackageName = com.google.android.apps.messaging, mIsEnabled = false
+05-15 09:55:06.938  4652  4652 I adbd    : Remote process closed the socket (on MSG_PEEK)
+05-15 09:55:06.939  2282  2969 I ActivityManager: Death received, pid = 0, processName = io.appium.uiautomator2.server for thread android.os.BinderProxy@d63e958
+05-15 09:55:06.939  2282  3558 V ActivityManager: Got obituary of 28110:io.appium.uiautomator2.server
+05-15 09:55:06.940  2282  2632 I libprocessgroup: Removed cgroup /sys/fs/cgroup/uid_10773/pid_28110
+05-15 09:55:06.941  1015  1015 I Zygote  : Process 28110 exited due to signal 9 (Killed)
+05-15 09:55:06.962 28536 28561 I ForwardSyncCache: reclaimMemory: Clearing caches
+05-15 09:55:06.963 28536 28561 I BugleSpam: HadesBitmapStore: Purged 0 images during memory reclamation
+05-15 09:55:06.965 28536 28561 W Bugle   : TextClassifierLibManagerImpl: Reclaiming memory at level: 40
+05-15 09:55:07.133  2282  3170 D WifiStaIfaceHidlImpl: getCachedScanData is not implemented by HIDL
+05-15 09:55:07.143  2282  3286 D OplusWifiPower_TriggerCenter: mComponentCallback: wifistat
+05-15 09:55:07.145  3805  3805 D VendorWifiService: onEvent event:9,action:1
+05-15 09:55:07.170  2282  2968 I ActivityManager: Force stopping io.appium.uiautomator2.server appid=10773 user=0: from pid 30015
+05-15 09:55:07.174  2282  2968 I AppsFilter: interaction: PackageSetting{839c5f7 com.android.microdroid.empty_payload/10278} -> PackageSetting{8c5e8f1 io.appium.uiautomator2.server/10773} BLOCKED
+05-15 09:55:07.174  2282  2968 I AppsFilter: interaction: PackageSetting{ed98382 com.oplus.locationproxy/10181} -> PackageSetting{8c5e8f1 io.appium.uiautomator2.server/10773} BLOCKED
+05-15 09:55:07.174  2282  2968 I AppsFilter: interaction: PackageSetting{13aca93 com.android.certinstaller/10227} -> PackageSetting{8c5e8f1 io.appium.uiautomator2.server/10773} BLOCKED
+05-15 09:55:07.174  2282  2968 I AppsFilter: interaction: PackageSetting{733ad0 com.oplus.location/10241} -> PackageSetting{8c5e8f1 io.appium.uiautomator2.server/10773} BLOCKED
+05-15 09:55:07.174  2282  2968 I AppsFilter: interaction: PackageSetting{9db9ac9 io.appium.settings/10767} -> PackageSetting{8c5e8f1 io.appium.uiautomator2.server/10773} BLOCKED
+05-15 09:55:07.175  2282  2969 I ActivityManager: Force stopping io.appium.uiautomator2.server.test appid=10774 user=0: from pid 30016
+05-15 09:55:07.184  2282  2969 I AppsFilter: interaction: PackageSetting{839c5f7 com.android.microdroid.empty_payload/10278} -> PackageSetting{8f2decd io.appium.uiautomator2.server.test/10774} BLOCKED
+05-15 09:55:07.185  2282  2969 I AppsFilter: interaction: PackageSetting{ed98382 com.oplus.locationproxy/10181} -> PackageSetting{8f2decd io.appium.uiautomator2.server.test/10774} BLOCKED
+05-15 09:55:07.185  2282  2969 I AppsFilter: interaction: PackageSetting{13aca93 com.android.certinstaller/10227} -> PackageSetting{8f2decd io.appium.uiautomator2.server.test/10774} BLOCKED
+05-15 09:55:07.185  2282  2969 I AppsFilter: interaction: PackageSetting{733ad0 com.oplus.location/10241} -> PackageSetting{8f2decd io.appium.uiautomator2.server.test/10774} BLOCKED
+05-15 09:55:07.185  2282  2969 I AppsFilter: interaction: PackageSetting{9db9ac9 io.appium.settings/10767} -> PackageSetting{8f2decd io.appium.uiautomator2.server.test/10774} BLOCKED
+05-15 09:55:07.198  2282  2282 D NotificationService--OplusNotificationManagerServiceExtImpl: notifyDelayRemovedLocked,reason:10020 isGroup:false
+05-15 09:55:07.198  2282  2282 D NotificationService--OplusNotificationManagerServiceExtImpl: notifyDelayRemovedLocked,reason:10020 isGroup:false
+05-15 09:55:07.199  2282  2282 D NotificationService--OplusNotificationManagerServiceExtImpl: notifyDelayRemovedLocked sbnList isEmpty
+05-15 09:55:07.199  2282  2282 D NotificationService--OplusNotificationManagerServiceExtImpl: notifyDelayRemovedLocked sbnList isEmpty
+05-15 09:55:07.202  3336  3336 D DistributedDeviceService: android.intent.action.PACKAGE_RESTARTED
+05-15 09:55:07.204  3689  3689 D CarrierSvcBindHelper: onHandleForceStop: [io.appium.uiautomator2.server]
+05-15 09:55:07.206  3689  3689 D CarrierSvcBindHelper: No carrier app for: 0
+05-15 09:55:07.207  3689  3689 D CarrierSvcBindHelper: No carrier app for: 1
+05-15 09:55:07.210  2282  2282 D NotificationService--OplusNotificationManagerServiceExtImpl: notifyDelayRemovedLocked,reason:10020 isGroup:false
+05-15 09:55:07.210  2282  2282 D NotificationService--OplusNotificationManagerServiceExtImpl: notifyDelayRemovedLocked,reason:10020 isGroup:false
+05-15 09:55:07.211  2282  2282 D NotificationService--OplusNotificationManagerServiceExtImpl: notifyDelayRemovedLocked sbnList isEmpty
+05-15 09:55:07.211  2282  2282 D NotificationService--OplusNotificationManagerServiceExtImpl: notifyDelayRemovedLocked sbnList isEmpty
+05-15 09:55:07.212  3689  3689 D CarrierSvcBindHelper: onHandleForceStop: [io.appium.uiautomator2.server.test]
+05-15 09:55:07.213  3336  3336 D DistributedDeviceService: android.intent.action.PACKAGE_RESTARTED
+05-15 09:55:07.213  3689  3689 D CarrierSvcBindHelper: No carrier app for: 0
+05-15 09:55:07.214  3689  3689 D CarrierSvcBindHelper: No carrier app for: 1
+05-15 09:55:07.217  4652  4652 E adbd    : failed to connect to socket 'tcp:6790': Connection refused
+05-15 09:55:07.274  1179 24219 I WifiHAL : event received NL80211_CMD_VENDOR, vendor_id = 0x1374, subcmd = 0xd
+05-15 09:55:07.365  2282  3421 I Osense-BaseDecisionMaker: notifySceneToAthenaPolicy: SCENE_RES_IO_PSI, bundle: Bundle[{ioLevel=3}]
+05-15 09:55:07.365  2282  3421 I Osense-BaseDecisionMaker: OSense not supported scene! SCENE_RES_IO_PSI
+05-15 09:55:07.366  2282  3723 I OplusHansManager : uid=10344, pkg=com.whatsapp F enter(), M stay=10
+05-15 09:55:07.371  2282  3723 I OplusHansManager : freeze uid: 10344 com.whatsapp pids: [18902] scene: LcdOn
+05-15 09:55:07.372  2282  3728 I OplusHansManager : p_BC uid=10344 pkg=com.whatsapp
+05-15 09:55:07.372  2282  3728 I OplusBinderProxy: proxyBinder uid: 10344 pkg: com.whatsapp proxy: true calling: OFreezer
+05-15 09:55:07.372  8073 10612 D IHansComunication: HANS sendMessageToKernel: threadId = 530595630192, netLinkSetup = 1, type = PKG, targetUid = 10344, pkgCmd = ADD_ONE_UID
+05-15 09:55:07.405 30021 30021 E libEGL  : No entry found in platform lookup table for eglSurfaceAttribMTK
+05-15 09:55:07.406 30021 30021 D ExtensionsLoader: createInstance(64bit) : createExtendedFactory
+05-15 09:55:07.406 30021 30021 D ExtensionsLoader: Opened libguiextimpl.so
+05-15 09:55:07.430 30021 30021 D OplusUtils: OplusUtils [89]: 
+05-15 09:55:07.434 30021 30021 E app_process: createInstance(64bit) : createExtendedFactory
+05-15 09:55:07.434 30021 30021 E app_process: createInstance(64bit) : createExtendedFactory
+05-15 09:55:07.434 30021 30021 E app_process: Opened libinputextensionsimpl.so
