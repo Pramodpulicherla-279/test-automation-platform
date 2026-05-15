@@ -1,1 +1,1 @@
-{}
+{"e156a66a9b9e95cf3f62d3c0f12fadb5":{"statistic":{"failed":0,"broken":1,"skipped":0,"passed":0,"unknown":0,"total":1},"items":[{"uid":"224f969db2c9bacf","status":"broken","statusDetails":"NameError: name 'soil_moisture_card' is not defined","time":{"start":1778842466037,"stop":1778842507294,"duration":41257}}]},"6cd4db9cc3c09c9f91c899baebd19817":{"statistic":{"failed":0,"broken":0,"skipped":0,"passed":1,"unknown":0,"total":1},"items":[{"uid":"2b87d9b266bf8d5d","status":"passed","time":{"start":1778842429424,"stop":1778842461939,"duration":32515}}]}}
