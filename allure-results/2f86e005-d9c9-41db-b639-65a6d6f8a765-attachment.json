@@ -1,0 +1,36 @@
+{
+  "ticket_id": "RUN-20260515-175257",
+  "issue_id": "ISS-001",
+  "app_name": "Krishivaas Farmer",
+  "app_version": "0.13.22",
+  "module": "TestFarmer",
+  "feature": "Authentication",
+  "issue_summary": "Automation Failure: test_add_video",
+  "title": "Automation Failure: test_add_video",
+  "test_name": "test_add_video",
+  "steps_executed": [
+    "Click on active farms",
+    "Navigation button",
+    "Start video",
+    "Stop video",
+    "Save",
+    "Profile",
+    "Profile button",
+    "Field Images",
+    "Media Files",
+    "Crop Info",
+    "Cross icon",
+    "Download icon"
+  ],
+  "developer_name": "@Anuj",
+  "description": "pytest.fail(\"Could not click on video while playing\")\nFailed: Could not click on video while playing\n\nSteps Executed:\n1. Click on active farms\n2. Navigation button\n3. Start video\n4. Stop video\n5. Save\n6. Profile\n7. Profile button\n8. Field Images\n9. Media Files\n10. Crop Info\n11. Cross icon\n12. Download icon",
+  "start_date": "2026-05-15T18:00:10.634234",
+  "end_date": "2026-05-15T18:05:12.552264",
+  "sprint": "Automation",
+  "fix_version": [
+    "Production"
+  ],
+  "affects_version": [
+    "Krishivaas Farmer"
+  ]
+}
