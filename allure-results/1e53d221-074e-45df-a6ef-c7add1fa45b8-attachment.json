@@ -1,5 +1,5 @@
 {
-  "ticket_id": "RUN-20260515-094746",
+  "ticket_id": "RUN-20260515-095349",
   "issue_id": "ISS-003",
   "app_name": "Krishivaas Farmer",
   "app_version": "0.13.22",
@@ -8,11 +8,13 @@
   "issue_summary": "Automation Failure: test_add_video",
   "title": "Automation Failure: test_add_video",
   "test_name": "test_add_video",
-  "steps_executed": [],
+  "steps_executed": [
+    "Network log saved:', 'fast'"
+  ],
   "developer_name": "@Anuj",
-  "description": "pytest.fail(\"Could not find or click the 'active farms' button.\")\nFailed: Could not find or click the 'active farms' button.",
-  "start_date": "2026-05-15T09:48:42.052201",
-  "end_date": "2026-05-15T09:49:09.291726",
+  "description": "pytest.fail(\"Could not find or click the 'active farms' button.\")\nFailed: Could not find or click the 'active farms' button.\n\nSteps Executed:\n1. Network log saved:', 'fast'",
+  "start_date": "2026-05-15T09:54:50.112027",
+  "end_date": "2026-05-15T09:55:15.750485",
   "sprint": "Automation",
   "fix_version": [
     "Production"

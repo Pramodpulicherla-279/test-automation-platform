@@ -1,4 +1,4 @@
 "DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"","12040","FC_002 -- Farmer Updates Flow -- Adding Audio","tests.test_cases.regular_farmer_test_cases","2026-05-15","failed","2026-05-15","TestFarmer","farmer_updates","",""
-"","7640","FC_001 -- farmer updates flow -- adding audio, video & image with comment and without comment","tests.test_cases.regular_farmer_test_cases","2026-05-15","broken","2026-05-15","TestFarmer","farmer_updates","",""
-"","12587","FC_003 -- Farmer Updates Flow -- Adding Video","tests.test_cases.regular_farmer_test_cases","2026-05-15","failed","2026-05-15","TestFarmer","farmer_updates","",""
+"","12059","FC_002 -- Farmer Updates Flow -- Adding Audio","tests.test_cases.regular_farmer_test_cases","2026-05-15","failed","2026-05-15","TestFarmer","farmer_updates","",""
+"","13755","FC_001 -- farmer updates flow -- adding audio, video & image with comment and without comment","tests.test_cases.regular_farmer_test_cases","2026-05-15","broken","2026-05-15","TestFarmer","farmer_updates","",""
+"","12094","FC_003 -- Farmer Updates Flow -- Adding Video","tests.test_cases.regular_farmer_test_cases","2026-05-15","failed","2026-05-15","TestFarmer","farmer_updates","",""
