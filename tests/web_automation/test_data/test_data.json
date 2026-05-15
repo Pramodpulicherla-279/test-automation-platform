@@ -10,5 +10,9 @@
   "onboarding": {
     "farmer_name":"pramod",
     "field_agent":"Ahmed033"
+  },
+  "field_update": {
+    "date":"2024-06-30",
+    "notes":"This is a test field update note."
   }
 }
