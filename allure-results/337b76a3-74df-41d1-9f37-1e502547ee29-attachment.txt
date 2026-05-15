@@ -1,0 +1,77 @@
+CRASH START: 05-15 18:23:50.858 30014 30014 I AndroidRuntime: VM exiting with result code 0.
+05-15 18:23:51.069  3716  3729 I ejla    : (REDACTED) HDM. appOpsListener %s %s
+05-15 18:23:51.069  3716  3729 I ejla    : (REDACTED) HDM. Ignoring irrelevant audio permission changes for package %s
+05-15 18:23:51.084 30655 30655 E cmd     : BBinder_init Processname  cmd  
+05-15 18:23:51.084 30655 30655 E cmd     : BBinder_init hasGetProcessName  cmd
+05-15 18:23:51.094 30654 30654 E cmd     : BBinder_init Processname  cmd  
+05-15 18:23:51.094 30654 30654 E cmd     : BBinder_init hasGetProcessName  cmd
+05-15 18:23:51.236 30662 30662 W libprocessgroup: JoinCgroup: controller schedtune is not found
+05-15 18:23:51.237 30662 30662 W libprocessgroup: JoinCgroup: controller schedtune is not found
+05-15 18:23:51.237 30662 30662 W libprocessgroup: JoinCgroup: controller schedtune is not found
+05-15 18:23:51.237 30662 30662 W libprocessgroup: JoinCgroup: controller schedtune is not found
+05-15 18:23:51.237 30662 30662 W libprocessgroup: JoinCgroup: controller schedtune is not found
+05-15 18:23:51.238 30662 30662 W libprocessgroup: SetCgroup::ExecuteForTask: failed to open /dev/cpuctl/top-app/tasks: Permission denied
+05-15 18:23:51.238 30662 30662 W libprocessgroup: SetCgroup::ExecuteForTask: failed to open /dev/cpuctl/top-app/tasks: Permission denied
+05-15 18:23:51.238 30662 30662 W libprocessgroup: SetCgroup::ExecuteForTask: failed to open /dev/blkio/top/tasks: Permission denied
+05-15 18:23:51.238 30662 30662 E libprocessgroup: set_timerslack_ns write failed: Operation not permitted
+05-15 18:23:51.646  7705  7705 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~ymRO0Q3KWEyCGn7o_FcbiA==/io.appium.uiautomator2.server-b1JxLP8EpumzgRVtzy8dyA==/oat/arm64/base.odex) is kOatUpToDate with filter 'verify' executable 'false'
+05-15 18:23:51.651 30673 30673 I tomator2.server: Late-enabling -Xcheck:jni
+05-15 18:23:51.685 30673 30673 I tomator2.server: Using CollectorTypeCC GC.
+05-15 18:23:51.697 30673 30673 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+05-15 18:23:51.700 30673 30673 E tomator2.server: BBinder_init Processname  io.appium.uiautomator2.server  
+05-15 18:23:51.700 30673 30673 E tomator2.server: BBinder_init hasGetProcessName  io.appium.uiautomator2.server
+05-15 18:23:51.778 30673 30673 D CompatChangeReporter: Compat change id reported: 242716250; UID 11750; state: ENABLED
+05-15 18:23:51.848 30673 30673 W tomator2.server: ClassLoaderContext classpath size mismatch. expected=0, found=3 (PCL[]{PCL[/system/framework/android.test.base.jar*2789897741]#PCL[/system/framework/android.test.mock.jar*3361312393]#PCL[/system/framework/android.test.runner.jar*895143020]{PCL[/system/framework/android.test.base.jar*2789897741]#PCL[/system/framework/android.test.mock.jar*3361312393]}} | PCL[/system/framework/android.test.runner.jar*895143020:/system/framework/android.test.mock.jar*3361312393:/system/framework/android.test.base.jar*2789897741])
+05-15 18:23:51.854 30673 30673 W tomator2.server: ClassLoaderContext classpath size mismatch. expected=0, found=4 (PCL[] | PCL[/system/framework/android.test.runner.jar*895143020:/system/framework/android.test.mock.jar*3361312393:/system/framework/android.test.base.jar*2789897741:/data/app/~~6yL-S_IU-vV0qr6OFykH0w==/io.appium.uiautomator2.server.test-MU2e_g2u4vzaB4L-_6mE4w==/base.apk*1037597362])
+05-15 18:23:51.859 30673 30673 D nativeloader: Configuring clns-9 for other apk /system/framework/android.test.runner.jar:/system/framework/android.test.mock.jar:/system/framework/android.test.base.jar:/data/app/~~6yL-S_IU-vV0qr6OFykH0w==/io.appium.uiautomator2.server.test-MU2e_g2u4vzaB4L-_6mE4w==/base.apk:/data/app/~~ymRO0Q3KWEyCGn7o_FcbiA==/io.appium.uiautomator2.server-b1JxLP8EpumzgRVtzy8dyA==/base.apk. target_sdk_version=34, uses_libraries=, library_path=/data/app/~~6yL-S_IU-vV0qr6OFykH0w==/io.appium.uiautomator2.server.test-MU2e_g2u4vzaB4L-_6mE4w==/lib/arm64:/data/app/~~ymRO0Q3KWEyCGn7o_FcbiA==/io.appium.uiautomator2.server-b1JxLP8EpumzgRVtzy8dyA==/lib/arm64, permitted_path=/data:/mnt/expand:/data/user/0/io.appium.uiautomator2.server
+05-15 18:23:51.874 30673 30673 I tomator2.server: AssetManager2(0xb4000072a23a1f78) locale list changing from [] to [en-US]
+05-15 18:23:51.884 30673 30673 W Bundle  : Key enable expected ArrayList<java.lang.String> but value was of a different type.  The default value <null> was returned.
+05-15 18:23:51.888 30673 30673 W Bundle  : Attempt to cast generated internal exception:
+05-15 18:23:51.888 30673 30673 W Bundle  : java.lang.ClassCastException: Cannot cast java.lang.Boolean to java.util.ArrayList
+05-15 18:23:51.888 30673 30673 W Bundle  : 	at java.lang.Class.cast(Class.java:4178)
+05-15 18:23:51.888 30673 30673 W Bundle  : 	at android.os.BaseBundle.getValueAt(BaseBundle.java:439)
+05-15 18:23:51.888 30673 30673 W Bundle  : 	at android.os.BaseBundle.getValue(BaseBundle.java:401)
+05-15 18:23:51.888 30673 30673 W Bundle  : 	at android.os.BaseBundle.getArrayList(BaseBundle.java:1569)
+05-15 18:23:51.888 30673 30673 W Bundle  : 	at android.os.BaseBundle.getStringArrayList(BaseBundle.java:1599)
+05-15 18:23:51.888 30673 30673 W Bundle  : 	at android.os.Bundle.getStringArrayList(Bundle.java:1385)
+05-15 18:23:51.888 30673 30673 W Bundle  : 	at com.vivo.vspa.VspaManager.parseBundles(VspaManager.java:201)
+05-15 18:23:51.888 30673 30673 W Bundle  : 	at com.vivo.vspa.VspaManager.initialize(VspaManager.java:105)
+05-15 18:23:51.888 30673 30673 W Bundle  : 	at android.app.VivoActivityThreadImpl.initialize(VivoActivityThreadImpl.java:142)
+05-15 18:23:51.888 30673 30673 W Bundle  : 	at android.app.ActivityThread.handleBindApplication(ActivityThread.java:8835)
+05-15 18:23:51.888 30673 30673 W Bundle  : 	at android.app.ActivityThread.-$$Nest$mhandleBindApplication(Unknown Source:0)
+05-15 18:23:51.888 30673 30673 W Bundle  : 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:3062)
+05-15 18:23:51.888 30673 30673 W Bundle  : 	at android.os.Handler.dispatchMessage(Handler.java:114)
+05-15 18:23:51.888 30673 30673 W Bundle  : 	at android.os.Looper.loopOnce(Looper.java:266)
+05-15 18:23:51.888 30673 30673 W Bundle  : 	at android.os.Looper.loop(Looper.java:361)
+05-15 18:23:51.888 30673 30673 W Bundle  : 	at android.app.ActivityThread.main(ActivityThread.java:10381)
+05-15 18:23:51.888 30673 30673 W Bundle  : 	at java.lang.reflect.Method.invoke(Native Method)
+05-15 18:23:51.888 30673 30673 W Bundle  : 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:675)
+05-15 18:23:51.888 30673 30673 W Bundle  : 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1002)
+05-15 18:23:51.913 30673 30673 V GraphicsEnvironment: Currently set values for:
+05-15 18:23:51.913 30673 30673 V GraphicsEnvironment:   angle_gl_driver_selection_pkgs=[com.android.angle, com.linecorp.b612.android, com.campmobile.snow, com.google.android.apps.tachyon]
+05-15 18:23:51.913 30673 30673 V GraphicsEnvironment:   angle_gl_driver_selection_values=[angle, native, native, native]
+05-15 18:23:51.913 30673 30673 V GraphicsEnvironment: io.appium.uiautomator2.server is not listed in per-application setting
+05-15 18:23:51.913 30673 30673 V GraphicsEnvironment: ANGLE allowlist from config: 
+05-15 18:23:51.913 30673 30673 V GraphicsEnvironment: io.appium.uiautomator2.server is not listed in ANGLE allowlist or settings, returning default
+05-15 18:23:51.914 30673 30673 V GraphicsEnvironment: Neither updatable production driver nor prerelease driver is supported.
+05-15 18:23:51.926 30673 30673 D ApplicationLoaders: Returning zygote-cached class loader: /system/framework/android.test.base.jar
+05-15 18:23:51.933 30673 30673 D nativeloader: Configuring clns-10 for other apk /system/framework/android.test.mock.jar. target_sdk_version=34, uses_libraries=ALL, library_path=/data/app/~~6yL-S_IU-vV0qr6OFykH0w==/io.appium.uiautomator2.server.test-MU2e_g2u4vzaB4L-_6mE4w==/lib/arm64:/data/app/~~ymRO0Q3KWEyCGn7o_FcbiA==/io.appium.uiautomator2.server-b1JxLP8EpumzgRVtzy8dyA==/lib/arm64, permitted_path=/data:/mnt/expand
+05-15 18:23:51.933 30673 30673 D nativeloader: Extending system_exposed_libraries: libbinauralrenderer_wrapper.qti.so:libhoaeffects.qti.so:librealm-jni.vivo.so:libupdateprof.qti.so:libthermalclient.qti.so:libdiag_system.qti.so:libqape.qti.so:liblistenjni.qti.so
+05-15 18:23:51.935 30673 30673 D ApplicationLoaders: Returning zygote-cached class loader: /system/framework/android.test.base.jar
+05-15 18:23:51.942 30673 30673 D nativeloader: Configuring clns-11 for other apk /system/framework/android.test.runner.jar. target_sdk_version=34, uses_libraries=ALL, library_path=/data/app/~~6yL-S_IU-vV0qr6OFykH0w==/io.appium.uiautomator2.server.test-MU2e_g2u4vzaB4L-_6mE4w==/lib/arm64:/data/app/~~ymRO0Q3KWEyCGn7o_FcbiA==/io.appium.uiautomator2.server-b1JxLP8EpumzgRVtzy8dyA==/lib/arm64, permitted_path=/data:/mnt/expand
+05-15 18:23:51.942 30673 30673 D nativeloader: Extending system_exposed_libraries: libbinauralrenderer_wrapper.qti.so:libhoaeffects.qti.so:librealm-jni.vivo.so:libupdateprof.qti.so:libthermalclient.qti.so:libdiag_system.qti.so:libqape.qti.so:liblistenjni.qti.so
+05-15 18:23:51.957 30673 30673 W tomator2.server: ClassLoaderContext classpath size mismatch. expected=0, found=3 (PCL[]{PCL[/system/framework/android.test.base.jar*2789897741]#PCL[/system/framework/android.test.mock.jar*3361312393]#PCL[/system/framework/android.test.runner.jar*895143020]{PCL[/system/framework/android.test.base.jar*2789897741]#PCL[/system/framework/android.test.mock.jar*3361312393]}} | PCL[/system/framework/android.test.runner.jar*895143020:/system/framework/android.test.mock.jar*3361312393:/system/framework/android.test.base.jar*2789897741]{PCL[/system/framework/android.test.base.jar*2789897741]#PCL[/system/framework/android.test.mock.jar*3361312393]#PCL[/system/framework/android.test.runner.jar*895143020]{PCL[/system/framework/android.test.base.jar*2789897741]#PCL[/system/framework/android.test.mock.jar*3361312393]}};PCL[/system/framework/android.test.runner.jar*895143020:/system/framework/android.test.mock.jar*3361312393:/system/framework/android.test.base.jar*2789897741:/data/app/~~6yL-S_IU-vV0qr6OFykH0w==/io.appium.uiautomator2.server.test-MU2e_g2u4vzaB4L-_6mE4w==/base.apk*1037597362:/data/app/~~ymRO0Q3KWEyCGn7o_FcbiA==/io.appium.uiautomator2.server-b1JxLP8EpumzgRVtzy8dyA==/base.apk*2538310392])
+05-15 18:23:51.964 30673 30673 W tomator2.server: ClassLoaderContext classpath size mismatch. expected=0, found=4 (PCL[] | PCL[/system/framework/android.test.runner.jar*895143020:/system/framework/android.test.mock.jar*3361312393:/system/framework/android.test.base.jar*2789897741:/data/app/~~6yL-S_IU-vV0qr6OFykH0w==/io.appium.uiautomator2.server.test-MU2e_g2u4vzaB4L-_6mE4w==/base.apk*1037597362]{PCL[/system/framework/android.test.base.jar*2789897741]#PCL[/system/framework/android.test.mock.jar*3361312393]#PCL[/system/framework/android.test.runner.jar*895143020]{PCL[/system/framework/android.test.base.jar*2789897741]#PCL[/system/framework/android.test.mock.jar*3361312393]}};PCL[/system/framework/android.test.runner.jar*895143020:/system/framework/android.test.mock.jar*3361312393:/system/framework/android.test.base.jar*2789897741:/data/app/~~6yL-S_IU-vV0qr6OFykH0w==/io.appium.uiautomator2.server.test-MU2e_g2u4vzaB4L-_6mE4w==/base.apk*1037597362:/data/app/~~ymRO0Q3KWEyCGn7o_FcbiA==/io.appium.uiautomator2.server-b1JxLP8EpumzgRVtzy8dyA==/base.apk*2538310392])
+05-15 18:23:51.973 30673 30673 I tomator2.server: AssetManager2(0xb4000072a23a8698) locale list changing from [] to [en-US]
+05-15 18:23:51.988 30673 30673 I AndroidJUnitRunner: newApplication android.app.Application
+05-15 18:23:51.993 30673 30673 I AndroidJUnitRunner: onCreate Bundle[mParcelledData.dataSize=64]
+05-15 18:23:51.996 30673 30673 D AndroidJUnitRunner: Use the raw file system for managing file I/O.
+05-15 18:23:52.445 30673 30673 V TestEventClient: No service name argument was given (testDiscoveryService, testRunEventService or orchestratorService)
+05-15 18:23:52.447 30673 30688 D AndroidJUnitRunner: onStart is called.
+05-15 18:23:52.470 30673 30688 I InstrConnection: Could not send broadcast or register receiver (isolatedProcess?)
+05-15 18:23:52.474 30673 30688 D TestRequestBuilder: Using class path scanning to discover tests
+05-15 18:23:52.475 30673 30688 I TestRequestBuilder: Scanning classpath to find tests in paths [/data/app/~~6yL-S_IU-vV0qr6OFykH0w==/io.appium.uiautomator2.server.test-MU2e_g2u4vzaB4L-_6mE4w==/base.apk]
+05-15 18:23:52.477 30673 30688 W tomator2.server: Opening an oat file without a class loader. Are you using the deprecated DexFile APIs?
+05-15 18:23:52.722 30673 30688 I TestRunner: run started: 1 tests
+05-15 18:23:52.725 30673 30688 I TestRunner: started: startServer(io.appium.uiautomator2.server.test.AppiumUiAutomator2Server)
+05-15 18:23:52.736 30673 30688 I appium  : [AppiumUiAutomator2Server] Starting Server
