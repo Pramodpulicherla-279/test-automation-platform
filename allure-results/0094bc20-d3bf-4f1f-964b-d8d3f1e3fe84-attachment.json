@@ -1,5 +1,5 @@
 {
-  "ticket_id": "RUN-20260515-173251",
+  "ticket_id": "RUN-20260515-174145",
   "issue_id": "ISS-001",
   "app_name": "Krishivaas Farmer",
   "app_version": "0.13.22",
@@ -17,9 +17,9 @@
     "Stop video"
   ],
   "developer_name": "@Anuj",
-  "description": "pytest.fail(\"Could not click 'stop video'.\")\nFailed: Could not click 'stop video'.\n\nSteps Executed:\n1. Click on active farms\n2. Navigation button\n3. Start audio\n4. Stop audio\n5. Start video\n6. Stop video",
-  "start_date": "2026-05-15T17:32:52.006213",
-  "end_date": "2026-05-15T17:37:10.730784",
+  "description": "pytest.fail(\"Could not click 'Photo Capture'\")\nFailed: Could not click 'Photo Capture'\n\nSteps Executed:\n1. Click on active farms\n2. Navigation button\n3. Start audio\n4. Stop audio\n5. Start video\n6. Stop video",
+  "start_date": "2026-05-15T17:41:46.205606",
+  "end_date": "2026-05-15T17:45:18.913595",
   "sprint": "Automation",
   "fix_version": [
     "Production"
