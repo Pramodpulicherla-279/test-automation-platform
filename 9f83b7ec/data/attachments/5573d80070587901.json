@@ -1,0 +1,37 @@
+{
+  "ticket_id": "RUN-20260515-182558",
+  "issue_id": "ISS-001",
+  "app_name": "Krishivaas Farmer",
+  "app_version": "0.13.22",
+  "module": "TestDiagnosisUpdates",
+  "feature": "Authentication",
+  "issue_summary": "Automation Failure: test_diagnosis_updates",
+  "title": "Automation Failure: test_diagnosis_updates",
+  "test_name": "test_diagnosis_updates",
+  "steps_executed": [
+    "Active Farms",
+    "Diagnosis Button",
+    "First OK Button",
+    "Symptom OK Button",
+    "Secondary Symptom OK Button",
+    "Disease Confirm Button",
+    "Curative OK Button",
+    "Audio Start",
+    "Audio Stop",
+    "Camera Icon",
+    "Video Stop",
+    "Image Capture Icon",
+    "Save Photo"
+  ],
+  "developer_name": "@Anuj",
+  "description": "pytest.fail(\"Could not click Image Save Button\")\nFailed: Could not click Image Save Button\n\nSteps Executed:\n1. Active Farms\n2. Diagnosis Button\n3. First OK Button\n4. Symptom OK Button\n5. Secondary Symptom OK Button\n6. Disease Confirm Button\n7. Curative OK Button\n8. Audio Start\n9. Audio Stop\n10. Camera Icon\n11. Video Stop\n12. Image Capture Icon\n13. Save Photo",
+  "start_date": "2026-05-15T18:25:59.242128",
+  "end_date": "2026-05-15T18:28:40.266696",
+  "sprint": "Automation",
+  "fix_version": [
+    "Production"
+  ],
+  "affects_version": [
+    "Krishivaas Farmer"
+  ]
+}
