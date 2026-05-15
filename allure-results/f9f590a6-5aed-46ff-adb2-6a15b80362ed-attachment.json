@@ -1,5 +1,5 @@
 {
-  "ticket_id": "RUN-20260515-095349",
+  "ticket_id": "RUN-20260515-100037",
   "issue_id": "ISS-002",
   "app_name": "Krishivaas Farmer",
   "app_version": "0.13.22",
@@ -11,8 +11,8 @@
   "steps_executed": [],
   "developer_name": "@Anuj",
   "description": "pytest.fail(\"Could not find or click the 'active farms' button.\")\nFailed: Could not find or click the 'active farms' button.",
-  "start_date": "2026-05-15T09:54:21.463446",
-  "end_date": "2026-05-15T09:54:48.080991",
+  "start_date": "2026-05-15T10:01:23.746457",
+  "end_date": "2026-05-15T10:01:58.095409",
   "sprint": "Automation",
   "fix_version": [
     "Production"
