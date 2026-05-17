@@ -1,0 +1,80 @@
+CRASH START: 05-17 12:21:02.816 31304 31304 I AndroidRuntime: VM exiting with result code 0.
+05-17 12:21:02.816   650  7153 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.biometrics.fingerprint@2.1::IBiometricsFingerprint/default": PROP_ERROR_HANDLE_CONTROL_MESSAGE (0x20)
+05-17 12:21:02.816  2102  3309 W HidlToAidlSensorAdapter: NoSuchElementException
+05-17 12:21:02.816  2102  3309 W HidlToAidlSensorAdapter: java.util.NoSuchElementException
+05-17 12:21:02.816  2102  3309 W HidlToAidlSensorAdapter: 	at android.os.HwBinder.getService(Native Method)
+05-17 12:21:02.816  2102  3309 W HidlToAidlSensorAdapter: 	at android.os.HwBinder.getService(HwBinder.java:93)
+05-17 12:21:02.816  2102  3309 W HidlToAidlSensorAdapter: 	at android.hardware.biometrics.fingerprint.V2_1.IBiometricsFingerprint.getService(IBiometricsFingerprint.java:74)
+05-17 12:21:02.816  2102  3309 W HidlToAidlSensorAdapter: 	at android.hardware.biometrics.fingerprint.V2_1.IBiometricsFingerprint.getService(IBiometricsFingerprint.java:84)
+05-17 12:21:02.816  2102  3309 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.fingerprint.hidl.HidlToAidlSensorAdapter.getIBiometricsFingerprint(HidlToAidlSensorAdapter.java:209)
+05-17 12:21:02.816  2102  3309 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.fingerprint.hidl.HidlToAidlSensorAdapter$$ExternalSyntheticLambda2.get(D8$$SyntheticClass:0)
+05-17 12:21:02.816  2102  3309 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.fingerprint.hidl.HidlToAidlSessionAdapter.setCallback(HidlToAidlSessionAdapter.java:311)
+05-17 12:21:02.816  2102  3309 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.fingerprint.hidl.HidlToAidlSessionAdapter.<init>(HidlToAidlSessionAdapter.java:87)
+05-17 12:21:02.816  2102  3309 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.fingerprint.aidl.AidlSession.<init>(AidlSession.java:48)
+05-17 12:21:02.816  2102  3309 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.fingerprint.hidl.HidlToAidlSensorAdapter.getSession(HidlToAidlSensorAdapter.java:182)
+05-17 12:21:02.816  2102  3309 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.fingerprint.hidl.HidlToAidlSensorAdapter.lambda$getFingerprintUpdateActiveUserClient$3(HidlToAidlSensorAdapter.java:271)
+05-17 12:21:02.816  2102  3309 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.fingerprint.hidl.HidlToAidlSensorAdapter.$r8$lambda$hzKCz0gy8JwjgnnYzUAAoIgGgh4(Unknown Source:0)
+05-17 12:21:02.816  2102  3309 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.fingerprint.hidl.HidlToAidlSensorAdapter$$ExternalSyntheticLambda3.get(D8$$SyntheticClass:0)
+05-17 12:21:02.816  2102  3309 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.HalClientMonitor.getFreshDaemon(HalClientMonitor.java:68)
+05-17 12:21:02.816  2102  3309 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.fingerprint.hidl.FingerprintUpdateActiveUserClient.startHalOperation(FingerprintUpdateActiveUserClient.java:146)
+05-17 12:21:02.816  2102  3309 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.fingerprint.hidl.FingerprintUpdateActiveUserClient.start(FingerprintUpdateActiveUserClient.java:130)
+05-17 12:21:02.816  2102  3309 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.BiometricScheduler.checkCurrentUserAndStartNextOperation(BiometricScheduler.java:344)
+05-17 12:21:02.816  2102  3309 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.BiometricScheduler$UserSwitchClientCallback.lambda$onClientFinished$0(BiometricScheduler.java:192)
+05-17 12:21:02.816  2102  3309 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.BiometricScheduler$UserSwitchClientCallback.$r8$lambda$9uToF41kHgR_T4eWN0T0wXyfa5w(Unknown Source:0)
+05-17 12:21:02.816  2102  3309 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.BiometricScheduler$UserSwitchClientCallback$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)
+05-17 12:21:02.816  2102  3309 W HidlToAidlSensorAdapter: 	at android.os.Handler.handleCallback(Handler.java:973)
+05-17 12:21:02.816  2102  3309 W HidlToAidlSensorAdapter: 	at android.os.Handler.dispatchMessage(Handler.java:100)
+05-17 12:21:02.816  2102  3309 W HidlToAidlSensorAdapter: 	at android.os.Looper.loopOnce(Looper.java:282)
+05-17 12:21:02.816  2102  3309 W HidlToAidlSensorAdapter: 	at android.os.Looper.loop(Looper.java:387)
+05-17 12:21:02.816  2102  3309 W HidlToAidlSensorAdapter: 	at android.os.HandlerThread.run(HandlerThread.java:85)
+05-17 12:21:02.816  2102  3309 W HidlToAidlSensorAdapter: Fingerprint HAL not available
+05-17 12:21:02.816  2102  3309 E HidlToAidlSessionAdapter: Unable to set HIDL callback. HIDL daemon is null.
+05-17 12:21:02.817 28422 28422 D CompassHeading: Raw azimuth: 176.01769053413707
+05-17 12:21:02.817 28422 28422 D CompassHeading: Adjusted azimuth after rotation: 176.01769053413707
+05-17 12:21:02.818  2102  3309 W HidlToAidlSensorAdapter: NoSuchElementException
+05-17 12:21:02.818  2102  3309 W HidlToAidlSensorAdapter: java.util.NoSuchElementException
+05-17 12:21:02.818  2102  3309 W HidlToAidlSensorAdapter: 	at android.os.HwBinder.getService(Native Method)
+05-17 12:21:02.818  2102  3309 W HidlToAidlSensorAdapter: 	at android.os.HwBinder.getService(HwBinder.java:93)
+05-17 12:21:02.818  2102  3309 W HidlToAidlSensorAdapter: 	at android.hardware.biometrics.fingerprint.V2_1.IBiometricsFingerprint.getService(IBiometricsFingerprint.java:74)
+05-17 12:21:02.818  2102  3309 W HidlToAidlSensorAdapter: 	at android.hardware.biometrics.fingerprint.V2_1.IBiometricsFingerprint.getService(IBiometricsFingerprint.java:84)
+05-17 12:21:02.818  2102  3309 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.fingerprint.hidl.HidlToAidlSensorAdapter.getIBiometricsFingerprint(HidlToAidlSensorAdapter.java:209)
+05-17 12:21:02.818  2102  3309 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.fingerprint.hidl.HidlToAidlSensorAdapter$$ExternalSyntheticLambda2.get(D8$$SyntheticClass:0)
+05-17 12:21:02.818  2102  3309 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.fingerprint.hidl.HidlToAidlSessionAdapter.setActiveGroup(HidlToAidlSessionAdapter.java:270)
+05-17 12:21:02.818  2102  3309 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.fingerprint.hidl.FingerprintUpdateActiveUserClient.startHalOperation(FingerprintUpdateActiveUserClient.java:151)
+05-17 12:21:02.818  2102  3309 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.fingerprint.hidl.FingerprintUpdateActiveUserClient.start(FingerprintUpdateActiveUserClient.java:130)
+05-17 12:21:02.818  2102  3309 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.BiometricScheduler.checkCurrentUserAndStartNextOperation(BiometricScheduler.java:344)
+05-17 12:21:02.818  2102  3309 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.BiometricScheduler$UserSwitchClientCallback.lambda$onClientFinished$0(BiometricScheduler.java:192)
+05-17 12:21:02.818  2102  3309 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.BiometricScheduler$UserSwitchClientCallback.$r8$lambda$9uToF41kHgR_T4eWN0T0wXyfa5w(Unknown Source:0)
+05-17 12:21:02.818  2102  3309 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.BiometricScheduler$UserSwitchClientCallback$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)
+05-17 12:21:02.818  2102  3309 W HidlToAidlSensorAdapter: 	at android.os.Handler.handleCallback(Handler.java:973)
+05-17 12:21:02.818  2102  3309 W HidlToAidlSensorAdapter: 	at android.os.Handler.dispatchMessage(Handler.java:100)
+05-17 12:21:02.818  2102  3309 W HidlToAidlSensorAdapter: 	at android.os.Looper.loopOnce(Looper.java:282)
+05-17 12:21:02.818  2102  3309 W HidlToAidlSensorAdapter: 	at android.os.Looper.loop(Looper.java:387)
+05-17 12:21:02.818  2102  3309 W HidlToAidlSensorAdapter: 	at android.os.HandlerThread.run(HandlerThread.java:85)
+05-17 12:21:02.818  2102  3309 W HidlToAidlSensorAdapter: Fingerprint HAL not available
+05-17 12:21:02.818  2102  3309 E HidlToAidlSessionAdapter: Unable to set HIDL setActiveGroup. HIDL daemon is null.
+05-17 12:21:02.820  2102  3309 W HidlToAidlSensorAdapter: NoSuchElementException
+05-17 12:21:02.820  2102  3309 W HidlToAidlSensorAdapter: java.util.NoSuchElementException
+05-17 12:21:02.820  2102  3309 W HidlToAidlSensorAdapter: 	at android.os.HwBinder.getService(Native Method)
+05-17 12:21:02.820  2102  3309 W HidlToAidlSensorAdapter: 	at android.os.HwBinder.getService(HwBinder.java:93)
+05-17 12:21:02.820  2102  3309 W HidlToAidlSensorAdapter: 	at android.hardware.biometrics.fingerprint.V2_1.IBiometricsFingerprint.getService(IBiometricsFingerprint.java:74)
+05-17 12:21:02.820  2102  3309 W HidlToAidlSensorAdapter: 	at android.hardware.biometrics.fingerprint.V2_1.IBiometricsFingerprint.getService(IBiometricsFingerprint.java:84)
+05-17 12:21:02.820  2102  3309 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.fingerprint.hidl.HidlToAidlSensorAdapter.getIBiometricsFingerprint(HidlToAidlSensorAdapter.java:209)
+05-17 12:21:02.820  2102  3309 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.fingerprint.hidl.HidlToAidlSensorAdapter$$ExternalSyntheticLambda2.get(D8$$SyntheticClass:0)
+05-17 12:21:02.820  2102  3309 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.fingerprint.hidl.HidlToAidlSessionAdapter.getAuthenticatorIdForUpdateClient(HidlToAidlSessionAdapter.java:266)
+05-17 12:21:02.820  2102  3309 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.fingerprint.hidl.FingerprintUpdateActiveUserClient.startHalOperation(FingerprintUpdateActiveUserClient.java:154)
+05-17 12:21:02.820  2102  3309 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.fingerprint.hidl.FingerprintUpdateActiveUserClient.start(FingerprintUpdateActiveUserClient.java:130)
+05-17 12:21:02.820  2102  3309 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.BiometricScheduler.checkCurrentUserAndStartNextOperation(BiometricScheduler.java:344)
+05-17 12:21:02.820  2102  3309 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.BiometricScheduler$UserSwitchClientCallback.lambda$onClientFinished$0(BiometricScheduler.java:192)
+05-17 12:21:02.820  2102  3309 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.BiometricScheduler$UserSwitchClientCallback.$r8$lambda$9uToF41kHgR_T4eWN0T0wXyfa5w(Unknown Source:0)
+05-17 12:21:02.820  2102  3309 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.BiometricScheduler$UserSwitchClientCallback$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)
+05-17 12:21:02.820  2102  3309 W HidlToAidlSensorAdapter: 	at android.os.Handler.handleCallback(Handler.java:973)
+05-17 12:21:02.820  2102  3309 W HidlToAidlSensorAdapter: 	at android.os.Handler.dispatchMessage(Handler.java:100)
+05-17 12:21:02.820  2102  3309 W HidlToAidlSensorAdapter: 	at android.os.Looper.loopOnce(Looper.java:282)
+05-17 12:21:02.820  2102  3309 W HidlToAidlSensorAdapter: 	at android.os.Looper.loop(Looper.java:387)
+05-17 12:21:02.820  2102  3309 W HidlToAidlSensorAdapter: 	at android.os.HandlerThread.run(HandlerThread.java:85)
+05-17 12:21:02.820  2102  3309 W HidlToAidlSensorAdapter: Fingerprint HAL not available
+05-17 12:21:02.820  2102  3309 E FingerprintUpdateActiveUserClient: Failed to setActiveGroup: java.lang.NullPointerException: Attempt to invoke interface method 'long android.hardware.biometrics.fingerprint.V2_1.IBiometricsFingerprint.getAuthenticatorId()' on a null object reference
+05-17 12:21:02.820  2102  3309 D BiometricScheduler: [Client finished] {[3366316] com.android.server.biometrics.sensors.fingerprint.hidl.FingerprintUpdateActiveUserClient, proto=1, owner=android, cookie=0, requestId=-1, userId=0}, success: false
+05-17 12:21:02.820 17252 17340 D OplusAtlas.OplusAtlasEventDispatch: setEvent:atlas_event_on_process_died info:pid:31620,uid:10773
+05-17 12:21:02.821  2102  3309 D BiometricScheduler: [Starting User] {[3366317] com.android.server.biometrics.sensors.fingerprint.hidl.FingerprintUpdateActiveUserClient, proto=1, owner=android, cookie=0, requestId=-1, userId=0}
