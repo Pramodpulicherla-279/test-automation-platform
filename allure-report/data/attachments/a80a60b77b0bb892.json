@@ -1,0 +1,31 @@
+{
+  "ticket_id": "RUN-20260517-175356",
+  "issue_id": "ISS-001",
+  "app_name": "Krishivaas Telangana Farmer",
+  "app_version": "0.9.2",
+  "module": "TestDiagnosisUpdates",
+  "feature": "Authentication",
+  "issue_summary": "Automation Failure: test_diagnosis_updates",
+  "title": "Automation Failure: test_diagnosis_updates",
+  "test_name": "test_diagnosis_updates",
+  "steps_executed": [
+    "Active Farms",
+    "Diagnosis Button",
+    "First OK Button",
+    "Symptom OK Button",
+    "Secondary Symptom OK Button",
+    "Disease Confirm Button",
+    "Curative OK Button"
+  ],
+  "developer_name": "@Anuj",
+  "description": "selenium.common.exceptions.InvalidSelectorException: Message: org.eclipse.wst.xml.xpath2.processor.XPathParserException: CUP parser error: Parser error: line 1 col 461: ViewGroup; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidselectorexception\nStacktrace:\nio.appium.uiautomator2.common.exceptions.InvalidSelectorException: org.eclipse.wst.xml.xpath2.processor.XPathParserException: CUP parser error: Parser error: line 1 col 461: ViewGroup\nat io.appium.uiautomator2.core.AccessibilityNodeInfoDumper.findNodesUsingXpath2(AccessibilityNodeInfoDumper.java:319)\nat io.appium.uiautomator2.core.AccessibilityNodeInfoDumper.findNodes(AccessibilityNodeInfoDumper.java:378)\nat io.appium.uiautomator2.utils.ElementLocationHelpers.getXPathNodeMatch(ElementLocationHelpers.java:124)\nat io.appium.uiautomator2.utils.ElementLocationHelpers.findElement(ElementLocationHelpers.java:151)\nat io.appium.uiautomator2.handler.FindElement.safeHandle(FindElement.java:60)\nat io.appium.uiautomator2.handler.request.SafeRequestHandler.handle(SafeRequestHandler.java:59)\nat io.appium.uiautomator2.server.AppiumServlet.handleRequest(AppiumServlet.java:267)\nat io.appium.uiautomator2.server.AppiumServlet.handleHttpRequest(AppiumServlet.java:261)\nat io.appium.uiautomator2.http.ServerHandler.channelRead(ServerHandler.java:77)\nat io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:356)\nat io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:107)\nat io.netty.channel.CombinedChannelDuplexHandler$DelegatingChannelHandlerContext.fireChannelRead(CombinedChannelDuplexHandler.java:434)\nat io.netty.handler.codec.ByteToMessageDecoder.fireChannelRead(ByteToMessageDecoder.java:361)\nat io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:325)\nat io.netty.channel.CombinedChannelDuplexHandler.channelRead(CombinedChannelDuplexHandler.java:249)\nat io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:354)\nat io.netty.handler.timeout.IdleStateHandler.channelRead(IdleStateHandler.java:293)\nat io.netty.channel.DefaultChannelPipeline$HeadContext.channelRead(DefaultChannelPipeline.java:1429)\nat io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:918)\nat io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:172)\nat io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.handle(AbstractNioChannel.java:445)\nat io.netty.channel.nio.NioIoHandler$DefaultNioRegistration.handle(NioIoHandler.java:388)\nat io.netty.channel.nio.NioIoHandler.processSelectedKey(NioIoHandler.java:596)\nat io.netty.channel.nio.NioIoHandler.processSelectedKeysOptimized(NioIoHandler.java:571)\nat io.netty.channel.nio.NioIoHandler.processSelectedKeys(NioIoHandler.java:512)\nat io.netty.channel.nio.NioIoHandler.run(NioIoHandler.java:484)\nat io.netty.channel.SingleThreadIoEventLoop.runIo(SingleThreadIoEventLoop.java:225)\nat io.netty.channel.SingleThreadIoEventLoop.run(SingleThreadIoEventLoop.java:196)\nat io.netty.util.concurrent.SingleThreadEventExecutor$5.run(SingleThreadEventExecutor.java:1195)\nat io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)\nat io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)\nat java.lang.Thread.run(Thread.java:1564)\nCaused by: org.eclipse.wst.xml.xpath2.processor.XPathParserException: CUP parser error: Parser error: line 1 col 461: ViewGroup\nat org.eclipse.wst.xml.xpath2.processor.internal.InternalXPathParser.parse(InternalXPathParser.java:69)\nat org.eclipse.wst.xml.xpath2.processor.JFlexCupParser.parse(JFlexCupParser.java:35)\nat org.eclipse.wst.xml.xpath2.processor.Engine.parseExpression(Engine.java:29)\nat io.appium.uiautomator2.core.AccessibilityNodeInfoDumper.findNodesUsingXpath2(AccessibilityNodeInfoDumper.java:317)\n... 33 more\n\nSteps Executed:\n1. Active Farms\n2. Diagnosis Button\n3. First OK Button\n4. Symptom OK Button\n5. Secondary Symptom OK Button\n6. Disease Confirm Button\n7. Curative OK Button",
+  "start_date": "2026-05-17T17:53:57.723197",
+  "end_date": "2026-05-17T17:59:28.548681",
+  "sprint": "Automation",
+  "fix_version": [
+    "Production"
+  ],
+  "affects_version": [
+    "Krishivaas Telangana Farmer"
+  ]
+}
