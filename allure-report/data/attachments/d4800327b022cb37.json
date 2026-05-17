@@ -1,0 +1,23 @@
+{
+  "ticket_id": "RUN-20260517-152757",
+  "issue_id": "ISS-002",
+  "app_name": "Krishivaas Telangana Farmer",
+  "app_version": "0.9.2",
+  "module": "TestFarmer",
+  "feature": "Authentication",
+  "issue_summary": "Automation Failure: test_add_audio",
+  "title": "Automation Failure: test_add_audio",
+  "test_name": "test_add_audio",
+  "steps_executed": [],
+  "developer_name": "@Anuj",
+  "description": "selenium.common.exceptions.WebDriverException: Message: 'POST /element' cannot be proxied to UiAutomator2 server because the instrumentation process is not running (probably crashed). Check the server log and/or the logcat output for more details\nStacktrace:\nUnknownError: 'POST /element' cannot be proxied to UiAutomator2 server because the instrumentation process is not running (probably crashed). Check the server log and/or the logcat output for more details\nat UIA2Proxy.command (C:\\Users\\ABDUL SAMAD\\node_modules\\appium-uiautomator2-driver\\node_modules\\@appium\\base-driver\\build\\lib\\jsonwp-proxy\\proxy.js:310:19)\nat process.processTicksAndRejections (node:internal/process/task_queues:105:5)\nat async AndroidUiautomator2Driver.doFindElementOrEls (C:\\Users\\ABDUL SAMAD\\node_modules\\appium-uiautomator2-driver\\build\\lib\\commands\\find.js:24:13)\nat async doFind (C:\\Users\\ABDUL SAMAD\\node_modules\\appium-uiautomator2-driver\\node_modules\\appium-android-driver\\build\\lib\\commands\\find.js:24:23)\nat async wrappedCondFn (C:\\Users\\ABDUL SAMAD\\node_modules\\appium-uiautomator2-driver\\node_modules\\@appium\\base-driver\\build\\lib\\basedriver\\commands\\timeout.js:97:20)\nat async spin (C:\\Users\\ABDUL SAMAD\\node_modules\\appium-uiautomator2-driver\\node_modules\\@appium\\base-driver\\node_modules\\asyncbox\\build\\lib\\asyncbox.js:166:24)\nat async waitForCondition (C:\\Users\\ABDUL SAMAD\\node_modules\\appium-uiautomator2-driver\\node_modules\\@appium\\base-driver\\node_modules\\asyncbox\\build\\lib\\asyncbox.js:184:12)\nat async AndroidUiautomator2Driver.implicitWaitForCondition (C:\\Users\\ABDUL SAMAD\\node_modules\\appium-uiautomator2-driver\\node_modules\\@appium\\base-driver\\build\\lib\\basedriver\\commands\\timeout.js:99:16)\nat async AndroidUiautomator2Driver.findElOrEls (C:\\Users\\ABDUL SAMAD\\node_modules\\appium-uiautomator2-driver\\node_modules\\appium-android-driver\\build\\lib\\commands\\find.js:45:9)\nat async AndroidUiautomator2Driver.findElOrElsWithProcessing (C:\\Users\\ABDUL SAMAD\\node_modules\\appium-uiautomator2-driver\\node_modules\\@appium\\base-driver\\build\\lib\\basedriver\\commands\\find.js:12:16)\nat async AndroidUiautomator2Driver.findElement (C:\\Users\\ABDUL SAMAD\\node_modules\\appium-uiautomator2-driver\\node_modules\\@appium\\base-driver\\build\\lib\\basedriver\\commands\\find.js:27:16)",
+  "start_date": "2026-05-17T15:31:51.835671",
+  "end_date": "2026-05-17T15:32:07.224372",
+  "sprint": "Automation",
+  "fix_version": [
+    "Production"
+  ],
+  "affects_version": [
+    "Krishivaas Telangana Farmer"
+  ]
+}
