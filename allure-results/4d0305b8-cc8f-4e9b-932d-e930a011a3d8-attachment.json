@@ -1,5 +1,5 @@
 {
-  "ticket_id": "RUN-20260517-181011",
+  "ticket_id": "RUN-20260517-182543",
   "issue_id": "ISS-002",
   "app_name": "Krishivaas Telangana Farmer",
   "app_version": "0.9.2",
@@ -13,8 +13,8 @@
   ],
   "developer_name": "@Anuj",
   "description": "pytest.fail(\"Could not click Diagnosis Button\")\nFailed: Could not click Diagnosis Button\n\nSteps Executed:\n1. Active Farms",
-  "start_date": "2026-05-17T18:15:49.697175",
-  "end_date": "2026-05-17T18:16:53.328852",
+  "start_date": "2026-05-17T18:31:18.612359",
+  "end_date": "2026-05-17T18:32:22.289718",
   "sprint": "Automation",
   "fix_version": [
     "Production"
