@@ -1,3 +1,0 @@
-"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"","148637","DC_001 -- Diagnosis Updates Flow","tests.test_cases.regular_farmer_test_cases","2026-05-15","failed","2026-05-15","TestDiagnosisUpdates","diagnosis_updates","",""
-"","0","DC_002 -- Diagnosis Updates audio recording ","tests.test_cases.regular_farmer_test_cases","2026-05-15","broken","2026-05-15","","diagnosis_updates","",""
