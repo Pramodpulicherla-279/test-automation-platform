@@ -1,5 +1,5 @@
 {
-  "ticket_id": "RUN-20260517-123326",
+  "ticket_id": "RUN-20260517-142037",
   "issue_id": "ISS-001",
   "app_name": "Krishivaas Telangana Farmer",
   "app_version": "0.9.2",
@@ -13,13 +13,12 @@
     "Navigation button",
     "Start audio",
     "Stop audio",
-    "Start video",
-    "Stop video"
+    "Start video"
   ],
   "developer_name": "@Anuj",
-  "description": "pytest.fail(\"Could not click 'stop video'.\")\nFailed: Could not click 'stop video'.\n\nSteps Executed:\n1. Click on active farms\n2. Navigation button\n3. Start audio\n4. Stop audio\n5. Start video\n6. Stop video",
-  "start_date": "2026-05-17T12:33:26.618914",
-  "end_date": "2026-05-17T12:37:29.108854",
+  "description": "pytest.fail(\"Could not click stop video\")\nFailed: Could not click stop video\n\nSteps Executed:\n1. Click on active farms\n2. Navigation button\n3. Start audio\n4. Stop audio\n5. Start video",
+  "start_date": "2026-05-17T14:20:37.638911",
+  "end_date": "2026-05-17T14:25:54.053685",
   "sprint": "Automation",
   "fix_version": [
     "Production"
