@@ -1,2 +1,4 @@
 "DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"","13826","FC_001 -- farmer updates flow -- adding audio, video & image with comment and without comment","","2026-05-17","passed","2026-05-17","","","",""
+"","10100","FC_002 -- Farmer Updates Flow -- Adding Audio","tests.test_cases.state_farmer_test_cases","2026-05-17","broken","2026-05-17","TestFarmer","farmer_updates","",""
+"","2015","FC_003 -- Farmer Updates Flow -- Adding Video","tests.test_cases.state_farmer_test_cases","2026-05-17","broken","2026-05-17","TestFarmer","farmer_updates","",""
+"","152243","FC_001 -- farmer updates flow -- adding audio, video & image with comment and without comment","tests.test_cases.state_farmer_test_cases","2026-05-17","failed","2026-05-17","TestFarmer","farmer_updates","",""
