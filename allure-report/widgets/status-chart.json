@@ -1,1 +1,1 @@
-[{"uid":"4647a14530077b54","name":"DC_001 -- Diagnosis Updates Flow","time":{"start":1779017336613,"stop":1779017349518,"duration":12905},"status":"passed","severity":"normal"}]
+[{"uid":"e34ec2685ea8f5ba","name":"DC_002 -- Diagnosis Updates audio recording ","time":{"start":1779017873161,"stop":1779017873161,"duration":0},"status":"broken","severity":"normal"},{"uid":"9c7351745fa669b3","name":"DC_001 -- Diagnosis Updates Flow","time":{"start":1779017692819,"stop":1779017866617,"duration":173798},"status":"broken","severity":"normal"}]
