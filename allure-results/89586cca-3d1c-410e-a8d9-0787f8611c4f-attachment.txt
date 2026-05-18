@@ -1,0 +1,80 @@
+CRASH START: 05-18 22:20:20.586 13161 13161 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+05-18 22:20:20.591 13161 13161 I AndroidRuntime: Using default boot image
+05-18 22:20:20.591 13161 13161 I AndroidRuntime: Leaving lock profiling enabled
+05-18 22:20:20.594 13161 13161 I app_process: Using CollectorTypeCC GC.
+05-18 22:20:20.594 13161 13161 I app_process: MMAP_TRYLOCK is supported in uffd errno:2 addr:0x766eff8000 size:4096
+05-18 22:20:20.687 13161 13161 D nativeloader: InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+05-18 22:20:20.696 13161 13161 D nativeloader: Load libicu_jni.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+05-18 22:20:20.696 13161 13161 D app_process: u_setTimeZoneFilesDirectory("/apex/com.android.tzdata/etc/tz/versioned/9/icu") succeeded. 
+05-18 22:20:20.696 13161 13161 D app_process: I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt76l.dat
+05-18 22:20:20.697 13161 13161 D nativeloader: Load libjavacore.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+05-18 22:20:20.698 13161 13161 D nativeloader: Load libopenjdk.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+05-18 22:20:20.700 13161 13161 I app_process: Priority-to-niceness mapping: 19, 16, 13, 10, 0, -2, -4, -5, -6, -8
+05-18 22:20:20.712 13161 13161 E VivoConfigStore: it is Zygote,don't need init
+05-18 22:20:20.713 13161 13161 E VivoConfigStore: the feature vivo.software.commonradius is used in zygote, but you did't add attribute is_support_zygote=1 in vivo_config.ini ,please play attention to check your vivo_config.ini for the feature!!!
+05-18 22:20:20.713 13161 13161 I VivoSystemFrameworkFactory: Instance implClass com.vivo.VivoSystemFrameworkFactoryImpl
+05-18 22:20:20.724 13161 13161 W libc    : Access denied finding property "ro.vendor.mtk.hbt_binfmt_misc_support"
+05-18 22:20:20.724 13161 13161 E VivoConfigStore: it is Zygote,don't need init
+05-18 22:20:20.725 13161 13161 E VivoConfigStore: the feature vivo.hardware.display.xdr is used in zygote, but you did't add attribute is_support_zygote=1 in vivo_config.ini ,please play attention to check your vivo_config.ini for the feature!!!
+05-18 22:20:20.738 13161 13161 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+05-18 22:20:20.738 13161 13161 D AndroidRuntime: Calling main entry com.android.commands.content.Content
+05-18 22:20:20.744 13161 13161 W PlatformAconfigPackage: android.os.flagging.AconfigStorageReadException: ERROR_CANNOT_READ_STORAGE_FILE: Fail to mmap storage
+05-18 22:20:20.745 13161 13161 I AconfigPackage: com.android.tethering.mainline.beta is mapped to com.android.tethering
+05-18 22:20:20.745 13161 13161 I AconfigPackage: android.net.http is mapped to com.android.tethering
+05-18 22:20:20.745 13161 13161 I AconfigPackage: com.android.tethering.readonly.flags is mapped to com.android.tethering
+05-18 22:20:20.745 13161 13161 I AconfigPackage: android.net.vcn is mapped to com.android.tethering
+05-18 22:20:20.745 13161 13161 I AconfigPackage: com.android.net.flags is mapped to com.android.tethering
+05-18 22:20:20.745 13161 13161 I AconfigPackage: com.android.tethering.flags is mapped to com.android.tethering
+05-18 22:20:20.745 13161 13161 I AconfigPackage: com.android.tethering.beta.test is mapped to com.android.tethering
+05-18 22:20:20.745 13161 13161 I AconfigPackage: com.android.nearby.flags is mapped to com.android.tethering
+05-18 22:20:20.745 13161 13161 I AconfigPackage: com.android.net.thread.flags is mapped to com.android.tethering
+05-18 22:20:20.745 13161 13161 I AconfigPackage: com.android.net.ct.flags is mapped to com.android.tethering
+05-18 22:20:20.746 13161 13161 I AconfigPackage: android.provider.flags is mapped to com.android.configinfrastructure
+05-18 22:20:20.746 13161 13161 I AconfigPackage: com.android.server.deviceconfig is mapped to com.android.configinfrastructure
+05-18 22:20:20.746 13161 13161 I AconfigPackage: com.android.org.conscrypt.flags is mapped to com.android.conscrypt
+05-18 22:20:20.746 13161 13161 I AconfigPackage: com.android.org.conscrypt.net.flags is mapped to com.android.conscrypt
+05-18 22:20:20.746 13161 13161 I AconfigPackage: com.android.healthfitness.flags is mapped to com.android.healthfitness
+05-18 22:20:20.746 13161 13161 I AconfigPackage: com.android.media.extractor.flags is mapped to com.android.media
+05-18 22:20:20.746 13161 13161 I AconfigPackage: com.android.media.mainline.flags is mapped to com.android.media
+05-18 22:20:20.747 13161 13161 I AconfigPackage: com.android.adservices.ondevicepersonalization.flags is mapped to com.android.ondevicepersonalization
+05-18 22:20:20.747 13161 13161 I AconfigPackage: com.android.wifi.flags is mapped to com.android.wifi
+05-18 22:20:20.747 13161 13161 I AconfigPackage: com.android.icu is mapped to com.android.i18n
+05-18 22:20:20.747 13161 13161 I AconfigPackage: android.graphics.pdf.flags is mapped to com.android.mediaprovider
+05-18 22:20:20.747 13161 13161 I AconfigPackage: com.android.providers.media.flags is mapped to com.android.mediaprovider
+05-18 22:20:20.747 13161 13161 I AconfigPackage: android.graphics.pdf.flags.readonly is mapped to com.android.mediaprovider
+05-18 22:20:20.747 13161 13161 I AconfigPackage: com.android.permission.flags is mapped to com.android.permission
+05-18 22:20:20.747 13161 13161 I AconfigPackage: com.android.permissioncontroller.flags is mapped to com.android.permission
+05-18 22:20:20.748 13161 13161 I AconfigPackage: android.media.swcodec.flags is mapped to com.android.media.swcodec
+05-18 22:20:20.748 13161 13161 I AconfigPackage: android.uprobestats.mainline.flags is mapped to com.android.uprobestats
+05-18 22:20:20.748 13161 13161 I AconfigPackage: com.android.bluetooth.flags is mapped to com.android.bt
+05-18 22:20:20.748 13161 13161 I AconfigPackage: com.android.art.flags is mapped to com.android.art
+05-18 22:20:20.748 13161 13161 I AconfigPackage: com.android.art.rw.flags is mapped to com.android.art
+05-18 22:20:20.748 13161 13161 I AconfigPackage: com.android.libcore is mapped to com.android.art
+05-18 22:20:20.748 13161 13161 I AconfigPackage: com.android.uwb.flags is mapped to com.android.uwb
+05-18 22:20:20.748 13161 13161 I AconfigPackage: com.android.ranging.flags is mapped to com.android.uwb
+05-18 22:20:20.749 13161 13161 I AconfigPackage: android.os.profiling is mapped to com.android.profiling
+05-18 22:20:20.749 13161 13161 I AconfigPackage: com.android.cellbroadcastreceiver.flags is mapped to com.android.cellbroadcast
+05-18 22:20:20.749 13161 13161 I AconfigPackage: com.android.os.statsd.flags is mapped to com.android.os.statsd
+05-18 22:20:20.749 13161 13161 I AconfigPackage: com.android.adbd.flags is mapped to com.android.adbd
+05-18 22:20:20.750 13161 13161 I AconfigPackage: com.android.adservices.flags is mapped to com.android.adservices
+05-18 22:20:20.750 13161 13161 I AconfigPackage: com.android.sdksandbox.flags is mapped to com.android.adservices
+05-18 22:20:20.750 13161 13161 I AconfigPackage: com.android.rkpd.flags is mapped to com.android.rkpd
+05-18 22:20:20.750 13161 13161 I AconfigPackage: com.android.devicelock.flags is mapped to com.android.devicelock
+05-18 22:20:20.750 13161 13161 I AconfigPackage: com.android.appsearch.flags is mapped to com.android.appsearch
+05-18 22:20:20.750 13161 13161 I AconfigPackage: com.android.ipsec.flags is mapped to com.android.ipsec
+05-18 22:20:20.751 13161 13161 I AconfigPackage: com.android.system.virtualmachine.flags is mapped to com.android.virt
+05-18 22:20:20.751 13161 13161 E FeatureFlagsImplExport: android.os.flagging.AconfigStorageReadException: ERROR_PACKAGE_NOT_FOUND: package android.xr cannot be found on the device
+05-18 22:20:20.755 13161 13161 E VivoConfigStore: it is Zygote,don't need init
+05-18 22:20:20.755 13161 13161 E VivoConfigStore: it is Zygote,don't need init
+05-18 22:20:20.775 13161 13180 W IPCThreadState: call to talkWithDriver in joinThreadPool returned error: -9 (Bad file descriptor), FD: -1
+05-18 22:20:20.775 13161 13179 W IPCThreadState: call to talkWithDriver in joinThreadPool returned error: -9 (Bad file descriptor), FD: -1
+05-18 22:20:20.775 13161 13161 D AndroidRuntime: Shutting down VM
+05-18 22:20:20.986 12566 12566 W binder:12566_1: type=1400 audit(0.0:4081248): avc:  denied  { ioctl } for  path="/proc/fas/render" dev="proc" ino=4026532499 ioctlcmd=0x6609 scontext=u:r:untrusted_app:s0:c245,c262,c512,c768 tcontext=u:object_r:proc_fas:s0 tclass=file permissive=0 app=com.krishivaas
+05-18 22:20:21.022 12566 12566 W binder:12566_1: type=1400 audit(0.0:4081249): avc:  denied  { ioctl } for  path="/proc/fas/render" dev="proc" ino=4026532499 ioctlcmd=0x6609 scontext=u:r:untrusted_app:s0:c245,c262,c512,c768 tcontext=u:object_r:proc_fas:s0 tclass=file permissive=0 app=com.krishivaas
+05-18 22:20:21.054 12566 12566 W binder:12566_1: type=1400 audit(0.0:4081250): avc:  denied  { ioctl } for  path="/proc/fas/render" dev="proc" ino=4026532499 ioctlcmd=0x6609 scontext=u:r:untrusted_app:s0:c245,c262,c512,c768 tcontext=u:object_r:proc_fas:s0 tclass=file permissive=0 app=com.krishivaas
+05-18 22:20:22.240 20691 11861 I AlarmManager: setExactAndAllowWhileIdle [name: EQMon type: 2 triggerAtMillis: 1]
+05-18 22:20:22.345 12472 12533 I appium  : channel read: POST /session/3566fe15-0149-42bd-b97f-f645b171a83b/element
+05-18 22:20:22.348 12472 12533 I appium  : FindElement command
+05-18 22:20:22.353 12472 12533 I appium  : method: 'xpath', selector: '//*[contains(@text, 'Apple') or contains(@content-desc, 'Apple')]'
+05-18 22:20:22.353 12472 12533 I appium  : Waiting up to 10000ms for the device to idle
+05-18 22:20:22.358 12472 12533 I appium  : The following attributes will be included to the page source: [text, content-desc]
