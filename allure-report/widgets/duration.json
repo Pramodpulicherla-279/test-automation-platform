@@ -1,1 +1,1 @@
-[]
+[{"uid":"75a3c1da968e90bd","name":"FC_001 -- Crop Health Diary, Weather & Moisture Flow","time":{"start":1779125896311,"stop":1779125909457,"duration":13146},"status":"failed","severity":"normal"},{"uid":"43b2948525113010","name":"FC_001 -- Farm Crop Boundary Validation Flow","time":{"start":1779125820173,"stop":1779125887071,"duration":66898},"status":"failed","severity":"normal"},{"uid":"f758122c01d0caa9","name":"Verify user can login with valid credentials","time":{"start":1779125784176,"stop":1779125816086,"duration":31910},"status":"passed","severity":"normal"}]
