@@ -1,1 +1,1 @@
-{}
+{"6cd4db9cc3c09c9f91c899baebd19817":{"statistic":{"failed":0,"broken":0,"skipped":0,"passed":1,"unknown":0,"total":1},"items":[{"uid":"b5f5221929062158","status":"passed","time":{"start":1779120071959,"stop":1779120103373,"duration":31414}}]},"1687e5d5548d8dcaa8e633da15400aa6":{"statistic":{"failed":1,"broken":0,"skipped":0,"passed":0,"unknown":0,"total":1},"items":[{"uid":"2d22241593a91f0f","status":"failed","statusDetails":"Failed: Could not select the crop name via OCR.","time":{"start":1779120107501,"stop":1779120143137,"duration":35636}}]}}
