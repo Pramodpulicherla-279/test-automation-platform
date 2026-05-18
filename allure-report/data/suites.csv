@@ -1,3 +1,0 @@
-"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"","309267","FC_001 -- Farm Crop Boundary Validation Flow","tests.test_cases.regular_farmer_test_cases","Mon May 18 22:51:41 IST 2026","failed","Mon May 18 22:56:50 IST 2026","TestOnboarding","test_onboarding_pytest","",""
-"","33268","Verify user can login with valid credentials","tests.test_cases.regular_farmer_test_cases","Mon May 18 22:51:04 IST 2026","passed","Mon May 18 22:51:37 IST 2026","TestLogin","test_login_pytest","",""
