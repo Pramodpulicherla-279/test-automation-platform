@@ -1,3 +1,3 @@
 "DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"","31541","Verify user can login with valid credentials","tests.test_cases.regular_farmer_test_cases","Mon May 18 21:06:19 IST 2026","passed","Mon May 18 21:06:50 IST 2026","TestLogin","test_login_pytest","",""
-"","38690","FC_001 -- Farm Crop Boundary Validation Flow","tests.test_cases.regular_farmer_test_cases","Mon May 18 21:06:54 IST 2026","failed","Mon May 18 21:07:33 IST 2026","TestCropHealth","test_onboarding_pytest","",""
+"","36393","FC_001 -- Farm Crop Boundary Validation Flow","tests.test_cases.regular_farmer_test_cases","Mon May 18 21:13:46 IST 2026","failed","Mon May 18 21:14:22 IST 2026","TestOnboarding","test_onboarding_pytest","",""
+"","31005","Verify user can login with valid credentials","tests.test_cases.regular_farmer_test_cases","Mon May 18 21:13:11 IST 2026","passed","Mon May 18 21:13:42 IST 2026","TestLogin","test_login_pytest","",""
