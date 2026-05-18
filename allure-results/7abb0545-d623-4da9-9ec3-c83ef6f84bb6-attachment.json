@@ -1,0 +1,30 @@
+{
+  "ticket_id": "RUN-20260518-215418",
+  "issue_id": "ISS-001",
+  "app_name": "Krishivaas Farmer",
+  "app_version": "1.3.96",
+  "module": "Onboarding",
+  "feature": "Farm crop Boundary Validation",
+  "issue_summary": "Automation Failure: test_crop_health_diary_activity_flow",
+  "title": "Automation Failure: test_crop_health_diary_activity_flow",
+  "test_name": "test_crop_health_diary_activity_flow",
+  "steps_executed": [
+    "Add Farm button",
+    "Draw on map (determine boundary modal)",
+    "Submit farm",
+    "Crop name input",
+    "Plantation date input",
+    "OK button on calendar"
+  ],
+  "developer_name": "@Anuj",
+  "description": "selenium.common.exceptions.WebDriverException: Message: An unknown server-side error occurred while processing the command. Original error: Must provide a selector when finding elements\nStacktrace:\nUnknownError: An unknown server-side error occurred while processing the command. Original error: Must provide a selector when finding elements\nat getResponseForW3CError (C:\\Users\\ram\\AppData\\Roaming\\npm\\node_modules\\appium\\node_modules\\@appium\\base-driver\\lib\\protocol\\errors.js:1143:9)\nat asyncHandler (C:\\Users\\ram\\AppData\\Roaming\\npm\\node_modules\\appium\\node_modules\\@appium\\base-driver\\lib\\protocol\\protocol.js:487:57)\n\nSteps Executed:\n1. Add Farm button\n2. Draw on map (determine boundary modal)\n3. Submit farm\n4. Crop name input\n5. Plantation date input\n6. OK button on calendar",
+  "start_date": "2026-05-18T21:55:03.824042",
+  "end_date": "2026-05-18T21:55:56.062916",
+  "sprint": "Automation",
+  "fix_version": [
+    "Production"
+  ],
+  "affects_version": [
+    "Krishivaas Farmer"
+  ]
+}
