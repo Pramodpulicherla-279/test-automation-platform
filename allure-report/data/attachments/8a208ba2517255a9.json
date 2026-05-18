@@ -1,5 +1,5 @@
 {
-  "ticket_id": "RUN-20260518-180829",
+  "ticket_id": "RUN-20260518-184048",
   "issue_id": "ISS-001",
   "app_name": "Krishivaas Farmer",
   "app_version": "0.13.22",
@@ -14,8 +14,8 @@
   ],
   "developer_name": "@Anuj",
   "description": "pytest.fail(\"Could not click First OK Button\")\nFailed: Could not click First OK Button\n\nSteps Executed:\n1. Active Farms\n2. Diagnosis Button",
-  "start_date": "2026-05-18T18:08:33.698554",
-  "end_date": "2026-05-18T18:09:15.393788",
+  "start_date": "2026-05-18T18:40:49.702695",
+  "end_date": "2026-05-18T18:41:33.035310",
   "sprint": "Automation",
   "fix_version": [
     "Production"
