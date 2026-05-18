@@ -1,0 +1,25 @@
+{
+  "ticket_id": "RUN-20260518-205238",
+  "issue_id": "ISS-001",
+  "app_name": "Krishivaas Farmer",
+  "app_version": "1.3.96",
+  "module": "Onboarding",
+  "feature": "Farm crop Boundary Validation",
+  "issue_summary": "Automation Failure: test_crop_health_diary_activity_flow",
+  "title": "Automation Failure: test_crop_health_diary_activity_flow",
+  "test_name": "test_crop_health_diary_activity_flow",
+  "steps_executed": [
+    "Add Farm button"
+  ],
+  "developer_name": "@Anuj",
+  "description": "selenium.common.exceptions.TimeoutException: Message:\npytest.fail(\nFailed: Farm name did not auto-populate within timeout. XPath used: '//android.widget.EditText[@content-desc=\"Farm Name input field, mandatory\"]'. Error: Message:\n\nSteps Executed:\n1. Add Farm button",
+  "start_date": "2026-05-18T20:53:52.793488",
+  "end_date": "2026-05-18T20:54:34.313493",
+  "sprint": "Automation",
+  "fix_version": [
+    "Production"
+  ],
+  "affects_version": [
+    "Krishivaas Farmer"
+  ]
+}
