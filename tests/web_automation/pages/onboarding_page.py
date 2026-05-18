@@ -100,37 +100,37 @@ class OnboardingPage:
     def click_add_farm_btn(self):
         with allure.step("Click Add Farm button"):
             self.page.wait_for_selector(self.locators["add_farm"]["add_farm_btn"], state="visible")
-            self.page.wait_for_timeout(2000)
+            self.page.wait_for_timeout(3000)
             self.page.click(self.locators["add_farm"]["add_farm_btn"])
 
     def click_farmer(self):
         with allure.step("Click Farmer row"):
             self.page.wait_for_selector(self.locators["select_farmer"], state="visible")
-            self.page.wait_for_timeout(2000)
+            self.page.wait_for_timeout(3000)
             self.page.click(self.locators["select_farmer"])
 
     def click_crop_input(self):
         with allure.step("Click Crop input"):
-            self.page.wait_for_timeout(2000)
+            self.page.wait_for_timeout(3000)
             self.page.wait_for_selector(self.locators["add_crop"]["crop_input"], state="visible")
             self.page.click(self.locators["add_crop"]["crop_input"])
 
     def click_crop_option(self):
         with allure.step("Select Crop option"):
             self.page.wait_for_selector(self.locators["add_crop"]["crop_option"], state="visible")
-            self.page.wait_for_timeout(2000)
+            self.page.wait_for_timeout(3000)
             self.page.click(self.locators["add_crop"]["crop_option"])
 
     def click_crop_duration_input(self):
         with allure.step("Click Crop Duration input"):
             self.page.wait_for_selector(self.locators["add_crop"]["crop_duration_input"], state="visible")
-            self.page.wait_for_timeout(2000)
+            self.page.wait_for_timeout(3000)
             self.page.click(self.locators["add_crop"]["crop_duration_input"])
 
     def click_crop_duration_option(self):
         with allure.step("Select Crop Duration option"):
             self.page.wait_for_selector(self.locators["add_crop"]["crop_duration_option"], state="visible")
-            self.page.wait_for_timeout(2000)
+            self.page.wait_for_timeout(3000)
             self.page.click(self.locators["add_crop"]["crop_duration_option"])
 
     def click_sowing_date_input(self):
@@ -247,7 +247,7 @@ class OnboardingPage:
     def click_three_dots_pending_farm(self):
         with allure.step("Click Three Dots on Pending Farm"):
             self.page.wait_for_selector(self.locators["three_dots_pending_farm"], state="visible")
-            self.page.wait_for_timeout(2000)
+            self.page.wait_for_timeout(4000)
             self.page.click(self.locators["three_dots_pending_farm"])
 
     def click_add_crop_btn_pending_farms(self):
@@ -285,7 +285,7 @@ class OnboardingPage:
             self.page.click(self.locators["add_boundary"]["save_boundary_btn"])
 
     # ── Shared flows ──────────────────────────────────────────────────
-    def _flow_add_farmer(self, name="pramod", field_agent="Ahmed033"):
+    def _flow_add_farmer(self, name="pramod", field_agent="Ram User"):
         self.click_farmer_list()
         self.click_add()
         self.click_add_new_farmer()

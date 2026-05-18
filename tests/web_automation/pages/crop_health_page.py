@@ -1,115 +1,138 @@
-import cv2
-import numpy as np
+import json
+import os
+import allure
 from pathlib import Path
 
-# ─────────────────────────────────────────────
-# Load Image
-# ─────────────────────────────────────────────
 
-BASE_DIR = Path(__file__).resolve().parent
+class Crop_Health_Page:
+    def __init__(self, page):
+        self.page = page
+        self.a_locators = self.a_load_locators()
+        self.c_locators = self.c_load_locators()
+        os.makedirs("screenshots", exist_ok=True)
 
-image_path = BASE_DIR / "crop_health.png"
+    # ---------------------------------------------------
+    # Load Locator Files
+    # ---------------------------------------------------
 
-img = cv2.imread(str(image_path))
+    def a_load_locators(self):
+        path = Path(__file__).parents[1] / "locators" / "onboarding.json"
+        with open(path) as f:
+            return json.load(f)
+        
+    def c_load_locators(self):
+        path = Path(__file__).parents[1] / "locators" / "crop_health.json"
+        with open(path) as f:
+            return json.load(f)
 
-if img is None:
-    raise Exception(f"Image not found: {image_path}")
+    # ---------------------------------------------------
+    # Screenshot Utility
+    # ---------------------------------------------------
 
-# ─────────────────────────────────────────────
-# Crop Required Area (Adjust if needed)
-# ─────────────────────────────────────────────
+    def _shot(self, name: str):
+        path = f"screenshots/{name}.png"
+        self.page.screenshot(path=path)
+        with open(path, "rb") as f:
+            allure.attach(
+                f.read(), name=name, attachment_type=allure.attachment_type.PNG
+            )
 
-crop = img[100:700, 500:1200]
+    # ---------------------------------------------------
+    # Navigation Flow
+    # ---------------------------------------------------
 
-# Convert BGR → HSV
-hsv = cv2.cvtColor(crop, cv2.COLOR_BGR2HSV)
+    def open_hamburger_menu(self):
+        with allure.step("Open hamburger menu"):
+            self.page.wait_for_selector(self.a_locators["hamburger_menu_icon"], state="visible")
+            self.page.wait_for_timeout(4000)
+            self.page.click(self.a_locators["hamburger_menu_icon"])
 
-# ─────────────────────────────────────────────
-# COLOR RANGES
-# ─────────────────────────────────────────────
+    def click_historical_tab(self):
+        with allure.step("Click Historical tab"):
+            self.page.locator(self.a_locators["sidebar"]["historical_tab"]).wait_for(state="visible", timeout=10000)
+            self.page.wait_for_timeout(4000)
+            self.page.click(self.a_locators["sidebar"]["historical_tab"])
 
-# YELLOW → Caution
-lower_yellow = np.array([20, 100, 100])
-upper_yellow = np.array([35, 255, 255])
+    def click_farmer_list(self):
+        with allure.step("Click Farmer List"):
+            self.page.wait_for_selector(self.a_locators["sidebar"]["historical_farmers"], state="visible")
+            self.page.wait_for_timeout(3000)
+            self.page.click(self.a_locators["sidebar"]["historical_farmers"])
 
-# ORANGE → Warning
-lower_orange = np.array([10, 120, 120])
-upper_orange = np.array([20, 255, 255])
+    def click_farmer(self):
+        with allure.step("Click Farmer row"):
+            self.page.wait_for_selector(
+                self.a_locators["ram_farmer"], state="visible"
+            )
+            self.page.wait_for_timeout(2000)
+            self.page.click(self.a_locators["ram_farmer"])
+    # ---------------------------------------------------
+    # Crop Health Navigation
+    # ---------------------------------------------------
 
-# PINK → Stressed
-lower_pink = np.array([140, 50, 50])
-upper_pink = np.array([170, 255, 255])
+    def click_crop_health_button(self):
+        with allure.step("Click Crop Health Button"):
+            self.page.wait_for_selector(
+                self.c_locators["crop_health_btn"], state="visible"
+            )
+            self.page.wait_for_timeout(3000)
+            self.page.click(self.c_locators["crop_health_btn"])
 
-# RED → Severe Stress
-lower_red1 = np.array([0, 120, 120])
-upper_red1 = np.array([10, 255, 255])
+    def wait_for_crop_health_page_load(self):
+        with allure.step(
+            "Wait for Crop Health page to load"
+        ):
+            # Wait for network requests
+            self.page.wait_for_load_state(
+                "networkidle"
+            )
+            # Wait for unique element
+            self.page.wait_for_selector(
+                self.c_locators["data_1"]["crop_name"],
+                state="visible",
+                timeout=30000
+            )
+            # Optional small stabilization
+            self.page.wait_for_timeout(2000)
 
-lower_red2 = np.array([170, 120, 120])
-upper_red2 = np.array([180, 255, 255])
+    # ---------------------------------------------------
+    # Generic Get Text Method
+    # ---------------------------------------------------
 
-# ─────────────────────────────────────────────
-# CREATE MASKS
-# ─────────────────────────────────────────────
+    def get_text(self, locator):
+        self.page.wait_for_selector(locator, state="visible")
+        return self.page.locator(locator).inner_text().strip()
 
-yellow_mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
+    # ---------------------------------------------------
+    # Crop Health Data
+    # ---------------------------------------------------
 
-orange_mask = cv2.inRange(hsv, lower_orange, upper_orange)
+    def get_crop_health_data(self):
+        with allure.step("Get Crop Health screen data"):
+            return {
+                "crop_name": self.get_text(self.c_locators["data_1"]["crop_name"]),
+                "farmer_name": self.get_text(self.c_locators["data_1"]["farmer_name"]),
+                "crop_id": self.get_text(self.c_locators["data_1"]["crop_id"]),
+                "acreage": self.get_text(self.c_locators["data_1"]["acreage"]),
+                "sowing_date": self.get_text(self.c_locators["data_1"]["sowing_date"]),
+                "last_clear_image": self.get_text(self.c_locators["data_1"]["last_clear_image"]),
+                "last_update_date": self.get_text(self.c_locators["data_1"]["last_update_date"]),
+                "caution": self.get_text(self.c_locators["data_1"]["caution_percentage"]),
+                "warnings": self.get_text(self.c_locators["data_1"]["warning_percentage"]),
+                "stressed": self.get_text(self.c_locators["data_1"]["stressed_percentage"]),
+                "severely_stressed": self.get_text(self.c_locators["data_1"]["severely_stressed_percentage"]),
+                "crop_stage": self.get_text(self.c_locators["data_1"]["crop_stage"]),
+                "wind_speed": self.get_text(self.c_locators["data_1"]["wind_speed"]),
+                "date": self.get_text(self.c_locators["data_1"]["date"]),
+            }
 
-pink_mask = cv2.inRange(hsv, lower_pink, upper_pink)
+    # ---------------------------------------------------
+    # Common Navigation Flow
+    # ---------------------------------------------------
 
-red_mask1 = cv2.inRange(hsv, lower_red1, upper_red1)
-red_mask2 = cv2.inRange(hsv, lower_red2, upper_red2)
-
-red_mask = red_mask1 + red_mask2
-
-# ─────────────────────────────────────────────
-# COUNT PIXELS
-# ─────────────────────────────────────────────
-
-yellow_pixels = cv2.countNonZero(yellow_mask)
-orange_pixels = cv2.countNonZero(orange_mask)
-pink_pixels = cv2.countNonZero(pink_mask)
-red_pixels = cv2.countNonZero(red_mask)
-
-# ─────────────────────────────────────────────
-# TOTAL DETECTED PIXELS
-# ─────────────────────────────────────────────
-
-total = (
-    yellow_pixels +
-    orange_pixels +
-    pink_pixels +
-    red_pixels
-)
-
-if total == 0:
-    raise Exception("No health pixels detected")
-
-# ─────────────────────────────────────────────
-# PERCENTAGE CALCULATION
-# ─────────────────────────────────────────────
-
-yellow_percent = (yellow_pixels / total) * 100
-orange_percent = (orange_pixels / total) * 100
-pink_percent = (pink_pixels / total) * 100
-red_percent = (red_pixels / total) * 100
-
-# ─────────────────────────────────────────────
-# PRINT RESULTS
-# ─────────────────────────────────────────────
-
-print(f"Caution (Yellow): {yellow_percent:.2f}%")
-print(f"Warning (Orange): {orange_percent:.2f}%")
-print(f"Stressed (Pink): {pink_percent:.2f}%")
-print(f"Severe Stress (Red): {red_percent:.2f}%")
-
-# ─────────────────────────────────────────────
-# OPTIONAL → SAVE DETECTED MASKS
-# ─────────────────────────────────────────────
-
-cv2.imwrite("yellow_mask.png", yellow_mask)
-cv2.imwrite("orange_mask.png", orange_mask)
-cv2.imwrite("pink_mask.png", pink_mask)
-cv2.imwrite("red_mask.png", red_mask)
-
-print("Masks saved successfully")
+    def navigate_to_crop_health_screen(self):
+        # self.open_hamburger_menu()
+        self.click_historical_tab()
+        self.click_farmer_list()
+        self.click_farmer()
+        self.click_crop_health_button()

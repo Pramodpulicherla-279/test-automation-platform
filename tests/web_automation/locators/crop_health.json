@@ -1,0 +1,19 @@
+{
+    "crop_health_btn": "#stress-farm-CH",
+    "data_1": {
+      "crop_name":"//*[@id=\"header_crop_name\"]",
+      "farmer_name":"#header_farmer_name",
+      "crop_id": "#header_crop_id",
+      "acreage":"#header_acreage",
+      "sowing_date":"#header_sowing_date",
+      "last_clear_image": "#header_last_clear",
+      "last_update_date":"#header_last_update",
+      "caution_percentage": "#crp_caution_percentage",
+      "warning_percentage": "#crp_warning_percentage",
+      "stressed_percentage": "#crp_stressed_percentage",
+      "severely_stressed_percentage": "#crp_sevstressed_percentage",
+      "crop_stage":"#hc_display_crop_stage",
+      "wind_speed":"xpath=//*[contains(@class, 'data2 wind-100-120')]",
+      "date":"#hc_displayDates_zoom"
+    }
+}

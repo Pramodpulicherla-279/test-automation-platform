@@ -73,6 +73,10 @@ def field_update_page(shared_page):
     from pages.field_update_page import Field_Update_Page
     return Field_Update_Page(shared_page)
 
+@pytest.fixture(scope="session")
+def crop_health_page(shared_page):
+    from pages.crop_health_page import Crop_Health_Page
+    return Crop_Health_Page(shared_page)
 
 # ── screenshot on failure ─────────────────────────────────────────────
 @pytest.hookimpl(hookwrapper=True)

@@ -9,7 +9,7 @@ class TestFieldUpdate:
     @allure.severity(allure.severity_level.CRITICAL)
     def test_tc_001(self, field_update_page, test_data):
         data = test_data["field_update"]
-        field_update_page.open_hamburger_menu()
+        # field_update_page.open_hamburger_menu()
         field_update_page.click_current_season()
         field_update_page._flow_navigate_farmer_farms()
         field_update_page.click_three_dots()

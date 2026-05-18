@@ -1,4 +1,8 @@
 {
+  "sidebar": {
+    "historical_tab": "text=Historical",
+    "historical_farmers": "//*[@id=\"main-menu-navigation\"]/li[4]/ul/li[1]/a/span"
+  },
   "hamburger_menu_icon": "xpath=//*[contains(@class, 'nav-link menu-toggle')]",
   "bell_icon": "#count-notification",
   "current_season": "text=Current Season",
@@ -7,6 +11,7 @@
   "add_button": "xpath=//*[contains(@class, 'btn add-new btn-primary mt-50 addfmrbtn add-new-farmer')]",
   "add_new_farmer": "text=Add New Farmer",
   "select_farmer": "text=Samad Farmer",
+  "ram_farmer": "text=Maloth Ram",
   "pending_farms_btn": "text=Pending Farms",
   "farm_type_dropdown": "#farm_crop_type",
   "only_farms_option": "text=Only Farms (No Crop & No Boundary)",
@@ -19,11 +24,11 @@
     "farmer_name": "[name='first_name']",
     "email": "#txtFarmerEmail",
     "field_agent_input": "[name='agent']",
-    "field_agent_option": "text=Ahmed003",
+    "field_agent_option": "text=Ram User",
     "mobile_number": "#mobile_number",
     "business_unit_input": "#business_unit",
     "save_button" : "#submitBtn",
-    "business_unit_option": "text=QA BU (335)"
+    "business_unit_option": "text=bu1 (315)"
   },
   "add_farm":{
     "add_farm_btn": "#add-farm",
