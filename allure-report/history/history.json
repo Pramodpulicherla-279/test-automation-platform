@@ -1,1 +1,1 @@
-{}
+{"6cd4db9cc3c09c9f91c899baebd19817":{"statistic":{"failed":0,"broken":0,"skipped":0,"passed":1,"unknown":0,"total":1},"items":[{"uid":"ca874f85a5034e62","status":"passed","time":{"start":1779122046393,"stop":1779122078107,"duration":31714}}]},"1687e5d5548d8dcaa8e633da15400aa6":{"statistic":{"failed":1,"broken":0,"skipped":0,"passed":0,"unknown":0,"total":1},"items":[{"uid":"173d7c095d164bf6","status":"failed","statusDetails":"Failed: Could not select the intercrop name via OCR.","time":{"start":1779122082238,"stop":1779122145711,"duration":63473}}]}}

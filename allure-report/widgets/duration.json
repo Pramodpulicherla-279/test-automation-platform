@@ -1,1 +1,1 @@
-[]
+[{"uid":"ca874f85a5034e62","name":"Verify user can login with valid credentials","time":{"start":1779122046393,"stop":1779122078107,"duration":31714},"status":"passed","severity":"normal"},{"uid":"173d7c095d164bf6","name":"FC_001 -- Farm Crop Boundary Validation Flow","time":{"start":1779122082238,"stop":1779122145711,"duration":63473},"status":"failed","severity":"normal"}]
