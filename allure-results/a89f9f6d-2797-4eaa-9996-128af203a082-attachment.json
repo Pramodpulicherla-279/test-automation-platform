@@ -1,0 +1,37 @@
+{
+  "ticket_id": "RUN-20260519-163106",
+  "issue_id": "ISS-001",
+  "app_name": "Krishivaas Farmer",
+  "app_version": "0.13.22",
+  "module": "TestDiagnosisUpdates",
+  "feature": "Authentication",
+  "issue_summary": "Automation Failure: test_diagnosis_updates",
+  "title": "Automation Failure: test_diagnosis_updates",
+  "test_name": "test_diagnosis_updates",
+  "steps_executed": [
+    "Active Farms",
+    "Diagnosis Button",
+    "First OK Button",
+    "Symptom OK Button",
+    "Secondary Symptom OK Button",
+    "Disease Confirm Button",
+    "Curative OK Button",
+    "Audio Start",
+    "Audio Stop",
+    "Camera Icon",
+    "Video Stop",
+    "Image Capture Icon",
+    "Save Photo"
+  ],
+  "developer_name": "@Anuj",
+  "description": "selenium.common.exceptions.NoSuchElementException: Message: An element could not be located on the page using the given search parameters.; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#nosuchelementexception\nStacktrace:\nNoSuchElementError: An element could not be located on the page using the given search parameters.\nat AndroidUiautomator2Driver.findElOrEls (C:\\Users\\ABDUL SAMAD\\node_modules\\appium-uiautomator2-driver\\node_modules\\appium-android-driver\\build\\lib\\commands\\find.js:62:15)\nat process.processTicksAndRejections (node:internal/process/task_queues:105:5)\nat async AndroidUiautomator2Driver.findElOrElsWithProcessing (C:\\Users\\ABDUL SAMAD\\node_modules\\appium-uiautomator2-driver\\node_modules\\@appium\\base-driver\\build\\lib\\basedriver\\commands\\find.js:12:16)\nat async AndroidUiautomator2Driver.findElement (C:\\Users\\ABDUL SAMAD\\node_modules\\appium-uiautomator2-driver\\node_modules\\@appium\\base-driver\\build\\lib\\basedriver\\commands\\find.js:27:16)\n\nSteps Executed:\n1. Active Farms\n2. Diagnosis Button\n3. First OK Button\n4. Symptom OK Button\n5. Secondary Symptom OK Button\n6. Disease Confirm Button\n7. Curative OK Button\n8. Audio Start\n9. Audio Stop\n10. Camera Icon\n11. Video Stop\n12. Image Capture Icon\n13. Save Photo",
+  "start_date": "2026-05-19T16:31:06.868143",
+  "end_date": "2026-05-19T16:33:31.178434",
+  "sprint": "Automation",
+  "fix_version": [
+    "Production"
+  ],
+  "affects_version": [
+    "Krishivaas Farmer"
+  ]
+}
