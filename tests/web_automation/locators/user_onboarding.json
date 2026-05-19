@@ -3,7 +3,7 @@
 "bell_icon": "#count-notification",
 "organization": "//span[normalize-space()='Organization']",
 "users": "text=Users",
-"add_button": "text=Add",
+"add_button": "text=add",
 "add_single_user": "//span[normalize-space()='Single User']",
 "add_user":{
     "user_name":"#user_name",
@@ -11,7 +11,6 @@
     "business_unit_option": "text=Cluster B",
     "mobile_number": "#mobile_number",
     "user_role_input": "xpath=//*[contains(@class, 'select2-selection select2-selection--multiple')]",
-    "user_role_option": "text=Field Agent",
     "save_btn": "#addStaffUserSubmitBtn"
   }
 }

@@ -68,6 +68,11 @@ def onboarding_page(shared_page):
     from pages.onboarding_page import OnboardingPage
     return OnboardingPage(shared_page)
 
+@pytest.fixture(scope="session")
+def user_onboarding_page(shared_page):
+    from pages.user_onboarding_page import UserOnboardingPage
+    return UserOnboardingPage(shared_page)
+
 
 # ── screenshot on failure ─────────────────────────────────────────────
 @pytest.hookimpl(hookwrapper=True)
