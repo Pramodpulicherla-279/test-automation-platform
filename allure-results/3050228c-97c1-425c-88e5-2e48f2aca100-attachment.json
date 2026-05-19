@@ -1,5 +1,5 @@
 {
-  "ticket_id": "RUN-20260519-164450",
+  "ticket_id": "RUN-20260519-165040",
   "issue_id": "ISS-001",
   "app_name": "Krishivaas Farmer",
   "app_version": "0.13.22",
@@ -26,8 +26,8 @@
   ],
   "developer_name": "@Anuj",
   "description": "pytest.fail(\"Could not click Submit Button\")\nFailed: Could not click Submit Button\n\nSteps Executed:\n1. Active Farms\n2. Diagnosis Button\n3. First OK Button\n4. Symptom OK Button\n5. Secondary Symptom OK Button\n6. Disease Confirm Button\n7. Curative OK Button\n8. Audio Start\n9. Audio Stop\n10. Camera Icon\n11. Video Stop\n12. Image Capture Icon\n13. Save Photo\n14. General Remarks Input",
-  "start_date": "2026-05-19T16:44:50.661387",
-  "end_date": "2026-05-19T16:47:41.836319",
+  "start_date": "2026-05-19T16:50:40.875380",
+  "end_date": "2026-05-19T16:53:19.265171",
   "sprint": "Automation",
   "fix_version": [
     "Production"
