@@ -1,1 +1,1 @@
-[]
+[{"uid":"bdd91817d9227ff6","name":"FC_001 -- Crop Health Diary, Weather & Moisture Flow","time":{"start":1779180715812,"stop":1779180715812,"duration":0},"status":"skipped","severity":"normal"},{"uid":"a0c4e6c53899bfdb","name":"Verify user can login with valid credentials","time":{"start":1779180691701,"stop":1779180707952,"duration":16251},"status":"broken","severity":"normal"}]
