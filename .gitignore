@@ -2,8 +2,8 @@
 *.apks
 /frontend/test-platform/node_modules/
 /backend/static/icons
-allure-results
-allure-report
+allure-results/
+allure-report/
 *.part
 # *.pyc
 

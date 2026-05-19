@@ -18,8 +18,8 @@ const APP_VARIANTS = {
         modules: [
             { name: 'Login', path: 'tests/test_cases/regular_farmer_test_cases/test_login_pytest.py' },
             { name: 'Onboarding', path: 'tests/test_cases/regular_farmer_test_cases/TestOnboarding.py' },
-            { name: 'Farmer Updates ', path: 'tests/test_cases/regular_farmer_test_cases/farmer_updates.py' },
-            { name: 'Diagnosis Updates', path: 'tests/test_cases/regular_farmer_test_cases/diagnosis_updates.py' },
+            { name: 'Farmer Updates ', path: 'tests/test_cases/regular_farmer_test_cases/test_farmer_updates.py' },
+            { name: 'Diagnosis Updates', path: 'tests/test_cases/regular_farmer_test_cases/test_diagnosis_updates.py' },
         ]
     },
     CLIENT: {

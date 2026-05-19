@@ -6,10 +6,9 @@ import sys
 from androguard.core.apk import APK
 sys.dont_write_bytecode = True
 
-# Base directory of the backend package (this file)
-BASE_DIR = os.path.dirname(__file__)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
-# Config: Where to store downloaded APKs
+# APK storage folder under new_backend
 DOWNLOAD_DIR = os.path.join(BASE_DIR, "temp_apks")
 # Config for where to save extracted icons
 ICON_DIR = os.path.join(BASE_DIR, "static", "icons")

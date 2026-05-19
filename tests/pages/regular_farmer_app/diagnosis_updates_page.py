@@ -29,7 +29,6 @@ def load_locators_once(self, request):
         xpaths = json.load(f)
 
     diagnosis_xpaths = xpaths.get("Diagnosis_updates", {})
-
     request.cls.click_active_farms_xpath = diagnosis_xpaths.get("active_farms")
     # request.cls.hamburger_menu_xpath = diagnosis_xpaths.get("hamburger_menu")
     # request.cls.historical_farms_xpath = diagnosis_xpaths.get("historical_farms")
@@ -39,38 +38,27 @@ def load_locators_once(self, request):
     request.cls.click_secondary_symptom_ok_button_xpath = diagnosis_xpaths.get("click_secondary_sysmptom_ok_button")
     request.cls.click_disease_confirm_button_xpath = diagnosis_xpaths.get("click_Disease_confirm_button")
     request.cls.click_curative_ok_button_xpath = diagnosis_xpaths.get("click_curative_ok_button")
-
     request.cls.image_desc_audio_input_xpath = diagnosis_xpaths.get("main_audio_start")
     request.cls.image_desc_audio_stop_xpath = diagnosis_xpaths.get("main_audio_stop")
     request.cls.camera_icon_xpath = diagnosis_xpaths.get("camera_icon")
     request.cls.image_desc_video_start_xpath = diagnosis_xpaths.get("video_start")
     request.cls.image_desc_video_stop_xpath = diagnosis_xpaths.get("video_stop")
-
     request.cls.image_desc_photo_capture_xpath = diagnosis_xpaths.get("image_capture_icon")
     request.cls.image_desc_photo_capture_comment_xpath = diagnosis_xpaths.get("image_comment_input")
     request.cls.image_desc_photo_capture_save_xpath = diagnosis_xpaths.get("image_save_button")
-
     request.cls.image_desc_general_remarks_xpath = diagnosis_xpaths.get("general_remarks_commentbox")
-
     request.cls.image_desc_submit_button_xpath = diagnosis_xpaths.get("submit_button")
-
     request.cls.profile_button_xpath = diagnosis_xpaths.get("profile_button")
-    request.cls.profile_
-
     request.cls.profile_diagnosis_tab_xpath = diagnosis_xpaths.get("profile_diagnosis_tab")
     request.cls.profile_diagnosis_dropdown_xpath = diagnosis_xpaths.get("profile_diagnosis_dropdown")
-
 
 # ─────────────────────────────────────────────────────────────
 # Active Farms
 # ─────────────────────────────────────────────────────────────
 
 # def click_humburger_menu(driver, obj, test_flow_steps):
-
 #     with allure.step("Click Hamburger Menu"):
-
 #         time.sleep(2)
-
 #         if not smart_click(driver, "Hamburger Menu", obj.hamburger_menu_xpath):
 #             pytest.fail("Could not click Hamburger Menu")
 
@@ -93,16 +81,11 @@ def load_locators_once(self, request):
 
 
 def click_active_farms(driver, obj, test_flow_steps):
-
     with allure.step("Click Active Farms"):
-
         time.sleep(2)
-
         if not smart_click(driver, "Active Farms", obj.click_active_farms_xpath):
             pytest.fail("Could not click Active Farms")
-
         time.sleep(2)
-
         test_flow_steps.append({"step": "Click Active Farms", "status": "Success"})
 
 
@@ -111,20 +94,12 @@ def click_active_farms(driver, obj, test_flow_steps):
 # ─────────────────────────────────────────────────────────────
 
 def click_diagnosis_button(driver, obj, test_flow_steps):
-
     with allure.step("Click Diagnosis Button"):
-
         time.sleep(2)
-
         if not smart_click(driver, "Diagnosis Button", obj.click_diagnosis_xpath):
             pytest.fail("Could not click Diagnosis Button")
-
         time.sleep(2)
-
-        test_flow_steps.append({
-            "step": "Click Diagnosis Button",
-            "status": "Success"
-        })
+        test_flow_steps.append({"step": "Click Diagnosis Button", "status": "Success"})
 
 
 # ─────────────────────────────────────────────────────────────
@@ -132,83 +107,48 @@ def click_diagnosis_button(driver, obj, test_flow_steps):
 # ─────────────────────────────────────────────────────────────
 
 def click_first_ok_button(driver, obj, test_flow_steps):
-
     with allure.step("Click First OK Button"):
-
         time.sleep(2)
-
         if not smart_click(driver, "First OK Button", obj.click_first_ok_button_xpath):
             pytest.fail("Could not click First OK Button")
-
         time.sleep(2)
-
-        test_flow_steps.append({
-            "step": "Click First OK Button",
-            "status": "Success"
-        })
-
+        test_flow_steps.append({ "step": "Click First OK Button", "status": "Success"})
 
 # ─────────────────────────────────────────────────────────────
 # Symptom OK Button
 # ─────────────────────────────────────────────────────────────
 
 def click_symptom_ok_button(driver, obj, test_flow_steps):
-
     with allure.step("Click Symptom OK Button"):
-
         time.sleep(2)
-
         if not smart_click(driver, "Symptom OK Button", obj.click_symptom_ok_button_xpath):
             pytest.fail("Could not click Symptom OK Button")
-
         time.sleep(2)
-
-        test_flow_steps.append({
-            "step": "Click Symptom OK Button",
-            "status": "Success"
-        })
-
+        test_flow_steps.append({ "step": "Click Symptom OK Button", "status": "Success" })
 
 # ─────────────────────────────────────────────────────────────
 # Secondary Symptom OK Button
 # ─────────────────────────────────────────────────────────────
 
 def click_secondary_symptom_ok_button(driver, obj, test_flow_steps):
-
     with allure.step("Click Secondary Symptom OK Button"):
-
         time.sleep(2)
-
         if not smart_click(driver, "Secondary Symptom OK Button", obj.click_secondary_symptom_ok_button_xpath):
             pytest.fail("Could not click Secondary Symptom OK Button")
-
         time.sleep(2)
-
-        test_flow_steps.append({
-            "step": "Click Secondary Symptom OK Button",
-            "status": "Success"
-        })
-
+        test_flow_steps.append({ "step": "Click Secondary Symptom OK Button", "status": "Success" })
 
 # ─────────────────────────────────────────────────────────────
 # Disease Confirm Button
 # ─────────────────────────────────────────────────────────────
 
 def click_disease_confirm_button(driver, obj, test_flow_steps):
-
     with allure.step("Click Disease Confirm Button"):
-
         time.sleep(2)
-
         if not smart_click(driver, "Disease Confirm Button", obj.click_disease_confirm_button_xpath):
             pytest.fail("Could not click Disease Confirm Button")
-
         time.sleep(2)
-
-        test_flow_steps.append({
-            "step": "Click Disease Confirm Button",
-            "status": "Success"
-        })
+        test_flow_steps.append({"step": "Click Disease Confirm Button", "status": "Success"  })
 
 
 # ─────────────────────────────────────────────────────────────
@@ -216,9 +156,7 @@ def click_disease_confirm_button(driver, obj, test_flow_steps):
 # ─────────────────────────────────────────────────────────────
 
 def click_curative_ok_button(driver, obj, test_flow_steps):
-
     with allure.step("Click Curative OK Button"):
-
         time.sleep(2)
 
         if not smart_click(driver, "Curative OK Button", obj.click_curative_ok_button_xpath):
@@ -352,6 +290,17 @@ def image_capture_icon(driver, obj, test_flow_steps):
 
         test_flow_steps.append({
             "step": "Click Image Capture Icon",
+            "status": "Success"
+        })
+
+def photo_capture(driver, obj, test_flow_steps):
+    with allure.step("Photo Capture"):
+        time.sleep(2)
+        if not smart_click(driver, "Save Photo", obj.image_desc_photo_capture_save_xpath):
+            pytest.fail("Could not save photo")
+
+        test_flow_steps.append({
+            "step": "Photo Capture With Comment",
             "status": "Success"
         })
 
@@ -513,13 +462,8 @@ def select_audio_from_dropdown(driver, obj, test_flow_steps):
 # ─────────────────────────────────────────────────────────────
 
 def android_back(driver, obj, test_flow_steps):
-
-    with allure.step("Android Back"):
-
+    with allure.step("Android back"):
         if not android_back_func(driver):
-            pytest.fail("Failed Android Back")
-
-        test_flow_steps.append({
-            "step": "Android Back",
-            "status": "Success"
-        })
+            pytest.fail("Failed Android back")
+    
+        test_flow_steps.append({"step": "Android back", "status": "Success"})
