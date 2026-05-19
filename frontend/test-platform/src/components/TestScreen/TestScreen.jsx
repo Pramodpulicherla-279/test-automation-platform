@@ -18,7 +18,8 @@ const APP_VARIANTS = {
         modules: [
             { name: 'Login', path: 'tests/test_cases/regular_farmer_test_cases/test_login_pytest.py' },
             { name: 'Onboarding', path: 'tests/test_cases/regular_farmer_test_cases/TestOnboarding.py' },
-            { name: 'Add Updates', path: 'tests/farmer/test_updates.py' },
+            { name: 'Farmer Updates ', path: 'tests/test_cases/regular_farmer_test_cases/farmer_updates.py' },
+            { name: 'Diagnosis Updates', path: 'tests/test_cases/regular_farmer_test_cases/diagnosis_updates.py' },
         ]
     },
     CLIENT: {
@@ -26,24 +27,25 @@ const APP_VARIANTS = {
         label: "Krishivaas Client (Regular)",
         modules: [
             { name: 'Login', path: 'tests/test_cases/regular_client_test_cases/login_pytest.py' },
-            { name: 'Marketplace', path: 'tests/client/test_marketplace.py' },
-            { name: 'Cart', path: 'tests/client/test_cart.py' },
+            { name: 'Marketplace', path: 'tests/test_cases/regular_client_test_cases/test_marketplace.py' },
+            { name: 'Cart', path: 'tests/test_cases/regular_client_test_cases/test_cart.py' },
         ]
     },
     STATE_FARMER: {
         id: "state_farmer",
         label: "State Farmer App",
         modules: [
-            { name: 'Login', path: 'tests/state_farmer/test_login.py' },
-            { name: 'Schemes', path: 'tests/state_farmer/test_schemes.py' },
+            { name: 'Login', path: 'tests/test_cases/state_farmer_test_cases/test_login.py' },
+            {name: 'Farmer Updates', path: 'tests/test_cases/state_farmer_test_cases/farmer_updates.py'},
+            {name: 'Diagnosis Updates', path: 'tests/test_cases/state_farmer_test_cases/diagnosis_updates.py'},
         ]
     },
     STATE_CLIENT: {
         id: "state_client",
         label: "State Client App",
         modules: [
-            { name: 'Login', path: 'tests/state_client/test_login.py' },
-            { name: 'Tenders', path: 'tests/state_client/test_tenders.py' },
+            { name: 'Login', path: 'tests/test_cases/state_client_test_cases/test_login.py' },
+            { name: 'Tenders', path: 'tests/test_cases/state_client_test_cases/test_tenders.py' },
         ]
     }
 };

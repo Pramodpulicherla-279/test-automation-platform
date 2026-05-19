@@ -409,11 +409,15 @@ def driver(request):
     options.platform_name = "Android"
     options.device_name   = "AndroidDevice"
     options.app           = apk_path
-    options.set_capability("appium:ignoreHiddenApiPolicyError", True)
+
+    options.set_capability("appium:noReset", True)
+    options.set_capability("appium:fullReset", False)
+
+    options.set_capability("appium:ignoreHiddenApiPolicyError", False)
     options.set_capability("appium:uiautomator2ServerLaunchTimeout", 60000)
     options.set_capability("appium:adbExecTimeout",                  50000)
     options.set_capability("appium:newCommandTimeout",                300)
-    options.set_capability("appium:autoGrantPermissions",             False)
+    options.set_capability("appium:autoGrantPermissions",             True)
 
     drv = webdriver.Remote("http://127.0.0.1:4723", options=options)
     try:
