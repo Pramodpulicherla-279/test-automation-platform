@@ -1,0 +1,29 @@
+{
+  "ticket_id": "RUN-20260519-164744",
+  "issue_id": "ISS-001",
+  "app_name": "Krishivaas Telangana Farmer",
+  "app_version": "0.8.6",
+  "module": "Login",
+  "feature": "Authentication",
+  "issue_summary": "Automation Failure: test_login_success",
+  "title": "Automation Failure: test_login_success",
+  "test_name": "test_login_success",
+  "steps_executed": [
+    "While using the app (allow picture)",
+    "While using (allow location)",
+    "While using the app (allow audio)",
+    "Allow notifications",
+    "Next Button (Language)"
+  ],
+  "developer_name": "@Anuj",
+  "description": "pytest.fail(f\"Could not enter phone number: {str(e)}\")\nUnboundLocalError: cannot access local variable 'e' where it is not associated with a value\n\nSteps Executed:\n1. While using the app (allow picture)\n2. While using (allow location)\n3. While using the app (allow audio)\n4. Allow notifications\n5. Next Button (Language)",
+  "start_date": "2026-05-19T16:47:45.713493",
+  "end_date": "2026-05-19T16:48:21.117762",
+  "sprint": "Automation",
+  "fix_version": [
+    "Production"
+  ],
+  "affects_version": [
+    "Krishivaas Telangana Farmer"
+  ]
+}
