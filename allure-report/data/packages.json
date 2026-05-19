@@ -1,1 +1,1 @@
-{"uid":"83edc06c07f9ae9e47eb6dd1b683e4e2","name":"packages","children":[{"name":"Verify user can login with valid credentials","uid":"e97a1ba6444cc115","parentUid":"83edc06c07f9ae9e47eb6dd1b683e4e2","status":"passed","time":{"start":1779174846319,"stop":1779174904122,"duration":57803},"flaky":false,"newFailed":false,"newPassed":false,"newBroken":false,"retriesCount":0,"retriesStatusChange":false,"parameters":[],"tags":[]}]}
+{"uid":"83edc06c07f9ae9e47eb6dd1b683e4e2","name":"packages","children":[]}
