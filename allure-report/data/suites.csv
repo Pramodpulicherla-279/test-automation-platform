@@ -1,2 +1,2 @@
 "DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"","133622","DC_001 -- Diagnosis Updates Flow","tests.test_cases.regular_farmer_test_cases","2026-05-19","failed","2026-05-19","TestDiagnosisUpdates","diagnosis_updates","",""
+"","147426","DC_001 -- Diagnosis Updates Flow","tests.test_cases.regular_farmer_test_cases","2026-05-19","failed","2026-05-19","TestDiagnosisUpdates","diagnosis_updates","",""
