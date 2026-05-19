@@ -1,6 +1,6 @@
 {
-  "ticket_id": "RUN-20260519-182738",
-  "issue_id": "ISS-002",
+  "ticket_id": "RUN-20260519-183508",
+  "issue_id": "ISS-001",
   "app_name": "Krishivaas Telangana Farmer",
   "app_version": "0.8.6",
   "module": "TestCropHealth",
@@ -11,8 +11,8 @@
   "steps_executed": [],
   "developer_name": "@Anuj",
   "description": "pytest.fail(\"Could not find or click the 'hamburger menu'.\")\nFailed: Could not find or click the 'hamburger menu'.",
-  "start_date": "2026-05-19T18:28:15.626365",
-  "end_date": "2026-05-19T18:28:41.995816",
+  "start_date": "2026-05-19T18:36:08.863204",
+  "end_date": "2026-05-19T18:36:36.704417",
   "sprint": "Automation",
   "fix_version": [
     "Production"
