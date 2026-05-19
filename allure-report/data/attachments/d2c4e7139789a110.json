@@ -1,5 +1,5 @@
 {
-  "ticket_id": "RUN-20260519-151022",
+  "ticket_id": "RUN-20260519-151557",
   "issue_id": "ISS-002",
   "app_name": "Krishivaas Telangana Farmer",
   "app_version": "0.8.6",
@@ -11,8 +11,8 @@
   "steps_executed": [],
   "developer_name": "@Anuj",
   "description": "selenium.common.exceptions.WebDriverException: Message: An unknown server-side error occurred while processing the command. Original error: Must provide a selector when finding elements\nStacktrace:\nUnknownError: An unknown server-side error occurred while processing the command. Original error: Must provide a selector when finding elements\nat getResponseForW3CError (C:\\Users\\ram\\AppData\\Roaming\\npm\\node_modules\\appium\\node_modules\\@appium\\base-driver\\lib\\protocol\\errors.js:1143:9)\nat asyncHandler (C:\\Users\\ram\\AppData\\Roaming\\npm\\node_modules\\appium\\node_modules\\@appium\\base-driver\\lib\\protocol\\protocol.js:487:57)",
-  "start_date": "2026-05-19T15:11:01.327330",
-  "end_date": "2026-05-19T15:11:18.121807",
+  "start_date": "2026-05-19T15:16:35.754760",
+  "end_date": "2026-05-19T15:16:52.554532",
   "sprint": "Automation",
   "fix_version": [
     "Production"
