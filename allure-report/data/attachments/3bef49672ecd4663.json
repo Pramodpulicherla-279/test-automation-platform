@@ -1,0 +1,27 @@
+{
+  "ticket_id": "RUN-20260519-205047",
+  "issue_id": "ISS-001",
+  "app_name": "Krishivaas Telangana Farmer",
+  "app_version": "0.8.6",
+  "module": "TestCropHealth",
+  "feature": "Weather and Moisture Validation",
+  "issue_summary": "Automation Failure: test_crop_health_diary_activity_flow",
+  "title": "Automation Failure: test_crop_health_diary_activity_flow",
+  "test_name": "test_crop_health_diary_activity_flow",
+  "steps_executed": [
+    "Click on farm card",
+    "Click navigation button",
+    "Click diary icon"
+  ],
+  "developer_name": "@Anuj",
+  "description": "pytest.fail(\"Could not find or click the activity placeholder.\")\nFailed: Could not find or click the activity placeholder.\n\nSteps Executed:\n1. Click on farm card\n2. Click navigation button\n3. Click diary icon",
+  "start_date": "2026-05-19T20:51:56.714990",
+  "end_date": "2026-05-19T20:54:46.803583",
+  "sprint": "Automation",
+  "fix_version": [
+    "Production"
+  ],
+  "affects_version": [
+    "Krishivaas Telangana Farmer"
+  ]
+}
