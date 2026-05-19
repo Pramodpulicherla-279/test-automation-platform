@@ -1,5 +1,5 @@
 {
-  "ticket_id": "RUN-20260519-213525",
+  "ticket_id": "RUN-20260519-214411",
   "issue_id": "ISS-001",
   "app_name": "Krishivaas Telangana Farmer",
   "app_version": "0.8.6",
@@ -10,12 +10,16 @@
   "test_name": "test_crop_health_diary_activity_flow",
   "steps_executed": [
     "Click on farm card",
-    "Click navigation button"
+    "Click navigation button",
+    "Click diary icon",
+    "Click activity placeholder",
+    "Click cost field",
+    "Click weather icon"
   ],
   "developer_name": "@Anuj",
-  "description": "pytest.fail(\"Could not find or click the 'diary icon'.\")\nFailed: Could not find or click the 'diary icon'.\n\nSteps Executed:\n1. Click on farm card\n2. Click navigation button",
-  "start_date": "2026-05-19T21:36:29.724634",
-  "end_date": "2026-05-19T21:38:26.709988",
+  "description": "pytest.fail(\"Could not find or click the 'forecast'.\")\nFailed: Could not find or click the 'forecast'.\n\nSteps Executed:\n1. Click on farm card\n2. Click navigation button\n3. Click diary icon\n4. Click activity placeholder\n5. Click cost field\n6. Click weather icon",
+  "start_date": "2026-05-19T21:45:12.932907",
+  "end_date": "2026-05-19T21:49:08.910640",
   "sprint": "Automation",
   "fix_version": [
     "Production"
