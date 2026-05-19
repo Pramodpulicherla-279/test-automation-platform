@@ -11,8 +11,9 @@ import os
 from selenium.common.exceptions import WebDriverException
 from utils.wait_utils import find_and_click, smart_click
 import sys
-from pages.regular_farmer_app.farmer_update_page import load_locators_once
-from pages.regular_farmer_app.farmer_update_page import (
+from pages.state_farmer_app.farmer_updates_pages import  load_locators_once, start_video, stop_video, tab_on_video_play
+from pages.state_farmer_app.farmer_updates_pages import (
+    
     click_active_farms,
     click_navigation_button,
     start_audio_recording,
@@ -73,7 +74,77 @@ class TestFarmer:
             download_icon(driver, self, test_flow_steps)
             play_audio_icon(driver, self, test_flow_steps)
             pause_audio_icon(driver, self, test_flow_steps)
+            android_back(driver, self, test_flow_steps)
+            android_back(driver, self, test_flow_steps)
+            android_back(driver, self, test_flow_steps)
+            android_back(driver, self, test_flow_steps)
+        
                     
+        finally:
+            os.makedirs("test-flows", exist_ok=True)
+            with open("test-flows/onboarding_flow_success.json", "w") as f:
+                json.dump(test_flow_steps, f, indent=4)
+
+
+    @allure.title("FC_002 -- Farmer Updates Flow -- Adding Audio")
+    def test_add_audio(self, driver):
+        test_flow_steps = []
+
+        try:
+           
+            click_active_farms(driver, self, test_flow_steps)
+            click_navigation_button(driver, self, test_flow_steps)
+            start_audio_recording(driver, self, test_flow_steps)
+            stop_audio_recording(driver, self, test_flow_steps)
+            save_updates(driver, self, test_flow_steps)
+            android_back(driver, self, test_flow_steps)
+            profile_icon(driver, self, test_flow_steps)
+            profile_button(driver, self, test_flow_steps)
+            field_images(driver, self, test_flow_steps)
+            media_files(driver, self, test_flow_steps)
+            crop_info_icon(driver, self, test_flow_steps)
+            cross_icon(driver, self, test_flow_steps)
+            download_icon(driver, self, test_flow_steps)
+            play_audio_icon(driver, self, test_flow_steps)
+            pause_audio_icon(driver, self, test_flow_steps)
+            android_back(driver, self, test_flow_steps)
+            android_back(driver, self, test_flow_steps)
+            android_back(driver, self, test_flow_steps)
+
+        finally:
+            os.makedirs("test-flows", exist_ok=True)
+            with open("test-flows/onboarding_flow_success.json", "w") as f:
+                json.dump(test_flow_steps, f, indent=4)
+
+
+    @allure.title("FC_003 -- Farmer Updates Flow -- Adding Video")
+    def test_add_video(self, driver):
+        test_flow_steps = []
+
+        try:
+          
+            click_active_farms(driver, self, test_flow_steps)
+            click_navigation_button(driver, self, test_flow_steps)
+            start_video_recording(driver, self, test_flow_steps)
+            stop_video_recording(driver, self, test_flow_steps)
+            save_updates(driver, self, test_flow_steps)
+            android_back(driver, self, test_flow_steps)
+            profile_icon(driver, self, test_flow_steps)
+            profile_button(driver, self, test_flow_steps)
+            field_images(driver, self, test_flow_steps)
+            media_files(driver, self, test_flow_steps)
+            crop_info_icon(driver, self, test_flow_steps)
+            cross_icon(driver, self, test_flow_steps)
+            download_icon(driver, self, test_flow_steps)
+            # play_audio_icon(driver, self, test_flow_steps)
+            # pause_audio_icon(driver, self, test_flow_steps)
+            start_video(driver, self, test_flow_steps)
+            tab_on_video_play(driver, self, test_flow_steps)
+            stop_video(driver, self, test_flow_steps)
+            android_back(driver, self, test_flow_steps)
+            android_back(driver, self, test_flow_steps)
+            android_back(driver, self, test_flow_steps)
+
         finally:
             os.makedirs("test-flows", exist_ok=True)
             with open("test-flows/onboarding_flow_success.json", "w") as f:

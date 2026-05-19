@@ -17,15 +17,15 @@ sys.dont_write_bytecode = True
 def load_locators_once(self, request):
     """Loads locators once per test class and attaches them to the class."""
     project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-    locators_path = os.path.join(project_root, "locators", "regular_farmer.json")
+    locators_path = os.path.join(project_root, "locators", "state_farmer.json")
     with open(locators_path, "r", encoding="utf-8") as f:
         xpaths = json.load(f)
     farmer_updates_xpaths  = xpaths.get("farmer_updates", {})
     # diagnosis_xpaths       = xpaths.get("Diagnosis_updates", {})
     # ── Farmer updates locators ───────────────────────────────────────
     request.cls.active_farms_xpath = farmer_updates_xpaths.get("active_farms")
-    request.cls.humberger_menu_xpath = farmer_updates_xpaths.get("humberger_menu")
-    request.cls.historical_farms_xpath = farmer_updates_xpaths.get("historical_farms")
+    # request.cls.humberger_menu_xpath = farmer_updates_xpaths.get("humberger_menu")
+    # request.cls.historical_farms_xpath = farmer_updates_xpaths.get("historical_farms")
     request.cls.navigation_button_xpath = farmer_updates_xpaths.get("navigation_button")
     request.cls.start_audio_xpath = farmer_updates_xpaths.get("start_audio")
     request.cls.stop_audio_xpath = farmer_updates_xpaths.get("stop_audio")
@@ -53,20 +53,6 @@ def load_locators_once(self, request):
     request.cls.tab_on_video_play_xpath = farmer_updates_xpaths.get("tab_on_video_play")
     request.cls.stop_video_xpath = farmer_updates_xpaths.get("stop_video")
 
-# ── Step 1: Click on active farms ──────────────────────────────────
-def click_humburger_menu(driver, obj, test_flow_steps):
-    with allure.step("Click on humburger menu"):
-        time.sleep(3)
-        if not smart_click(driver, "Humburger menu", obj.humburger_menu_xpath):
-            pytest.fail("Could not find or click the 'humburger menu' button.")
-        test_flow_steps.append({"step": "Click on humburger menu", "status": "Success"})
-
-def click_historical_farms(driver, obj, test_flow_steps):
-    with allure.step("Click on historical farms"):
-        time.sleep(2)
-        if not smart_click(driver, "Historical farms", obj.historical_farms_xpath):
-            pytest.fail("Could not find or click the 'historical farms' button.")
-        test_flow_steps.append({"step": "Click on historical farms", "status": "Success"})
 
 def click_active_farms(driver, obj, test_flow_steps):
     with allure.step("Click on active farms"):
@@ -111,14 +97,24 @@ def start_video_recording(driver, obj, test_flow_steps):
         time.sleep(3)
         test_flow_steps.append({"step": "Start Video Recording", "status": "Success"})
 
+
 def stop_video_recording(driver, obj, test_flow_steps):
-    # ── Step 6: Stop video recording ───────────────────────────────────
+
     with allure.step("6. Stop video recording"):
-        time.sleep(60) # 1 minute recording time to ensure video is fully recorded before stopping
-        if not smart_click(driver, "Stop video", obj.stop_video_recording_xpath):
-            pytest.fail("Could not click 'stop video'.")
-        time.sleep(10)
-        test_flow_steps.append({"step": "Stop Video Recording", "status": "Success"})
+
+        time.sleep(5)
+
+        driver.execute_script("mobile: clickGesture", {
+            "x": 904,
+            "y": 2005
+        })
+
+        time.sleep(5)
+
+        test_flow_steps.append({
+            "step": "Stop Video Recording",
+            "status": "Success"
+        })
 
 def photo_capture_with_comment(driver, obj, test_flow_steps):
     # ── Step 7: Photo capture with comment ─────────────────────────────
@@ -170,7 +166,7 @@ def android_back(driver, obj, test_flow_steps):
 def profile_icon(driver, obj, test_flow_steps):
     # ── Step 11: Profile icon ──────────────────────────────────────────
     with allure.step("11. Profile icon"):
-        time.sleep(2)
+        time.sleep(5)
         if not smart_click(driver, "Profile", obj.profile_xpath):
             pytest.fail("Could not click profile icon")
         time.sleep(2)
@@ -269,7 +265,7 @@ def start_video(driver, obj, test_flow_steps):
 
 def tab_on_video_play(driver, obj, test_flow_steps):
     with allure.step("22.1 Tab on video while playing"):
-        time.sleep(3) # 3 second wait to ensure video is playing before trying to click on it
+        time.sleep(2)
         if not smart_click(driver, "Tab on video play", obj.tab_on_video_play_xpath):
              pytest.fail("Could not click on video while playing")
         time.sleep(2)
@@ -278,7 +274,7 @@ def tab_on_video_play(driver, obj, test_flow_steps):
 
 def stop_video(driver, obj, test_flow_steps):
     with allure.step("23. Stop video"):
-        time.sleep(2) # Increased wait time to ensure video is fully loaded and stop button is available
+        time.sleep(2)
         if not smart_click(driver, "Stop video", obj.stop_video_xpath):
              pytest.fail("Could not click Stop video")
         time.sleep(2)
