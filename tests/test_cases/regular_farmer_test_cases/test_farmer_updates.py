@@ -51,7 +51,7 @@ class TestFarmer:
     # ─────────────────────────────────────────────────────────────────────────
     @allure.story("Successful Farmer Updates")
     @allure.title("FC_001 -- farmer updates flow -- adding audio, video & image with comment and without comment")
-    def test_addfarm(self, driver):
+    def test_tc_001(self, driver):
         test_flow_steps = []
 
         try:
@@ -84,7 +84,7 @@ class TestFarmer:
                     
         finally:
             os.makedirs("test-flows", exist_ok=True)
-            with open("test-flows/onboarding_flow_success.json", "w") as f:
+            with open("test-flows/farmer_updates_flow_success.json", "w") as f:
                 json.dump(test_flow_steps, f, indent=4)
 
 
@@ -116,7 +116,7 @@ class TestFarmer:
 
         finally:
             os.makedirs("test-flows", exist_ok=True)
-            with open("test-flows/onboarding_flow_success.json", "w") as f:
+            with open("test-flows/farmer_updates_flow_success.json", "w") as f:
                 json.dump(test_flow_steps, f, indent=4)
 
 
@@ -151,7 +151,7 @@ class TestFarmer:
 
         finally:
             os.makedirs("test-flows", exist_ok=True)
-            with open("test-flows/onboarding_flow_success.json", "w") as f:
+            with open("test-flows/farmer_updates_flow_success.json", "w") as f:
                 json.dump(test_flow_steps, f, indent=4)
 
     # ─────────────────────────────────────────────────────────────────────────
@@ -215,6 +215,6 @@ class TestFarmer:
 
     #     finally:
     #         os.makedirs("test-flows", exist_ok=True)
-    #         with open("test-flows/onboarding_flow_success.json", "w") as f:
+    #         with open("test-flows/farmer_updates_flow_success.json", "w") as f:
     #             json.dump(test_flow_steps, f, indent=4)
    

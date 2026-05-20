@@ -52,7 +52,7 @@ class TestDiagnosisUpdates:
 
     @allure.story("Successful Diagnosis Updates")
     @allure.title("TC_001 -- Diagnosis Updates with image, audio, and video")
-    def tc_001(self, driver):
+    def test_tc_001(self, driver):
         test_flow_steps = []
         try:
             # click_humburger_menu(driver, self, test_flow_steps)
@@ -90,7 +90,7 @@ class TestDiagnosisUpdates:
 
 
     @allure.title("TC_002 -- Diagnosis Updates with audio ")
-    def tc_002(self, driver):
+    def test_tc_002(self, driver):
         test_flow_steps = []
         try:
             click_active_farms(driver, self, test_flow_steps)
@@ -116,7 +116,7 @@ class TestDiagnosisUpdates:
                 json.dump(test_flow_steps, f, indent=4)
 
     @allure.title("TC_003 -- Diagnosis Updates with video ")
-    def tc_003(self, driver):
+    def test_tc_003(self, driver):
         test_flow_steps = []
         try:
             click_active_farms(driver, self, test_flow_steps)
@@ -137,7 +137,7 @@ class TestDiagnosisUpdates:
                 json.dump(test_flow_steps, f, indent=4)
 
     @allure.title("TC_004 -- Diagnosis Updates with image without comment ")
-    def tc_004(self, driver):
+    def test_tc_004(self, driver):
         test_flow_steps = []
         try:
             click_diagnosis_button(driver, self, test_flow_steps)
@@ -157,7 +157,7 @@ class TestDiagnosisUpdates:
                 json.dump(test_flow_steps, f, indent=4)
 
     @allure.title("TC_005 -- Diagnosis Updates with image with comment ")
-    def tc_005(self, driver):
+    def test_tc_005(self, driver):
         test_flow_steps = []
         try:
             click_diagnosis_button(driver, self, test_flow_steps)
@@ -178,7 +178,7 @@ class TestDiagnosisUpdates:
                 json.dump(test_flow_steps, f, indent=4)     
 
     @allure.title("TC_005 -- Diagnosis Updates without general remarks ")
-    def tc_006(self, driver):
+    def test_tc_006(self, driver):
         test_flow_steps = []
         try:
             click_diagnosis_button(driver, self, test_flow_steps)
