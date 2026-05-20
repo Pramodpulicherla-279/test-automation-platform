@@ -1,0 +1,8 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","12883","TC_001 -- Diagnosis Updates with image, audio, and video","tests.test_cases.regular_farmer_test_cases","2026-05-20","failed","2026-05-20","TestDiagnosisUpdates","test_diagnosis_updates","",""
+"","12563","TC_002 -- Diagnosis Updates with audio ","tests.test_cases.regular_farmer_test_cases","2026-05-20","failed","2026-05-20","TestDiagnosisUpdates","test_diagnosis_updates","",""
+"","12925","TC_003 -- Diagnosis Updates with video ","tests.test_cases.regular_farmer_test_cases","2026-05-20","failed","2026-05-20","TestDiagnosisUpdates","test_diagnosis_updates","",""
+"","2024","TC_005 -- Diagnosis Updates with image with comment ","tests.test_cases.regular_farmer_test_cases","2026-05-20","broken","2026-05-20","TestDiagnosisUpdates","test_diagnosis_updates","",""
+"","31692","Verify user can login with valid credentials","tests.test_cases.regular_farmer_test_cases","2026-05-20","passed","2026-05-20","TestLogin","test_login_pytest","",""
+"","2012","TC_005 -- Diagnosis Updates without general remarks ","tests.test_cases.regular_farmer_test_cases","2026-05-20","broken","2026-05-20","TestDiagnosisUpdates","test_diagnosis_updates","",""
+"","12119","TC_004 -- Diagnosis Updates with image without comment ","tests.test_cases.regular_farmer_test_cases","2026-05-20","failed","2026-05-20","TestDiagnosisUpdates","test_diagnosis_updates","",""

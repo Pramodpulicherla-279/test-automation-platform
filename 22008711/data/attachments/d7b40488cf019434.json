@@ -1,0 +1,25 @@
+{
+  "ticket_id": "RUN-20260520-100039",
+  "issue_id": "ISS-003",
+  "app_name": "Krishivaas Farmer",
+  "app_version": "0.13.26",
+  "module": "TestDiagnosisUpdates",
+  "feature": "Authentication",
+  "issue_summary": "Automation Failure: test_tc_003",
+  "title": "Automation Failure: test_tc_003",
+  "test_name": "test_tc_003",
+  "steps_executed": [
+    "Network log saved:', 'fast'"
+  ],
+  "developer_name": "@Anuj",
+  "description": "pytest.fail(\"Could not click Active Farms\")\nFailed: Could not click Active Farms\n\nSteps Executed:\n1. Network log saved:', 'fast'",
+  "start_date": "2026-05-20T10:02:41.080705",
+  "end_date": "2026-05-20T10:03:08.292712",
+  "sprint": "Automation",
+  "fix_version": [
+    "Production"
+  ],
+  "affects_version": [
+    "Krishivaas Farmer"
+  ]
+}
