@@ -1,0 +1,25 @@
+{
+  "ticket_id": "RUN-20260520-215639",
+  "issue_id": "ISS-001",
+  "app_name": "Krishivaas Telangana Farmer",
+  "app_version": "0.8.6",
+  "module": "TestCropHealth",
+  "feature": "Weather and Moisture Validation",
+  "issue_summary": "Automation Failure: test_crop_health_diary_activity_flow",
+  "title": "Automation Failure: test_crop_health_diary_activity_flow",
+  "test_name": "test_crop_health_diary_activity_flow",
+  "steps_executed": [
+    "https://api.telangana.krishivaas.in/api/v1/state-farmer-register-login?mobile_number=9618574550&country_code=91&hash_key=LlBumUfeqbf took 246 ms"
+  ],
+  "developer_name": "@Anuj",
+  "description": "pytest.fail(\"Could not find or click the 'farm card'.\")\nFailed: Could not find or click the 'farm card'.\n\nSteps Executed:\n1. https://api.telangana.krishivaas.in/api/v1/state-farmer-register-login?mobile_number=9618574550&country_code=91&hash_key=LlBumUfeqbf took 246 ms",
+  "start_date": "2026-05-20T21:57:59.192948",
+  "end_date": "2026-05-20T21:58:26.825473",
+  "sprint": "Automation",
+  "fix_version": [
+    "Production"
+  ],
+  "affects_version": [
+    "Krishivaas Telangana Farmer"
+  ]
+}
