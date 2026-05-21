@@ -1,5 +1,5 @@
 {
-  "ticket_id": "RUN-20260521-163238",
+  "ticket_id": "RUN-20260521-172130",
   "issue_id": "ISS-001",
   "app_name": "Krishivaas Telangana Farmer",
   "app_version": "0.8.6",
@@ -24,8 +24,8 @@
   ],
   "developer_name": "@Anuj",
   "description": "selenium.common.exceptions.TimeoutException: Message:\nStacktrace:\nNoSuchElementError: An element could not be located on the page using the given search parameters.\nat AndroidUiautomator2Driver.findElOrEls (C:\\Users\\ram\\.appium\\node_modules\\appium-uiautomator2-driver\\node_modules\\appium-android-driver\\lib\\commands\\find.ts:86:11)\nat processTicksAndRejections (node:internal/process/task_queues:103:5)\nat AndroidUiautomator2Driver.findElOrElsWithProcessing (C:\\Users\\ram\\AppData\\Roaming\\npm\\node_modules\\appium\\node_modules\\@appium\\base-driver\\lib\\basedriver\\commands\\find.ts:60:12)\nat AndroidUiautomator2Driver.findElement (C:\\Users\\ram\\AppData\\Roaming\\npm\\node_modules\\appium\\node_modules\\@appium\\base-driver\\lib\\basedriver\\commands\\find.ts:75:12)\npytest.fail(f\"Could not click notification icon: {str(e)}\")\nFailed: Could not click notification icon: Message:\n\nSteps Executed:\n1. Click on farm card\n2. Click navigation button\n3. Click diary icon\n4. Click activity placeholder\n5. Click cost field\n6. Click weather icon\n7. Click forecast\n8. Click hours button\n9. Click days button\n10. Click close icon\n11. Click maximise icon\n12. Click close tab icon",
-  "start_date": "2026-05-21T16:33:37.627268",
-  "end_date": "2026-05-21T16:44:00.364149",
+  "start_date": "2026-05-21T17:22:36.533454",
+  "end_date": "2026-05-21T17:32:39.252061",
   "sprint": "Automation",
   "fix_version": [
     "Production"
