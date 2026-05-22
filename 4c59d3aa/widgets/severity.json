@@ -1,0 +1,1 @@
+[{"uid":"29e6350f321996f5","name":"Verify user can login with valid credentials","time":{"start":1779457776863,"stop":1779457808837,"duration":31974},"status":"passed","severity":"normal"},{"uid":"31fb09879fa22c1c","name":"TC_001 -- add farm > add crop > add boundary","time":{"start":1779457813110,"stop":1779457903683,"duration":90573},"status":"passed","severity":"normal"}]

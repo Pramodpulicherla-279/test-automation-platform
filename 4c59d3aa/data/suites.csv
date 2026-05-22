@@ -1,0 +1,3 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","90573","TC_001 -- add farm > add crop > add boundary","tests.test_cases.regular_farmer_test_cases","2026-05-22","passed","2026-05-22","TestOnboarding","test_onboarding_pytest","",""
+"","31974","Verify user can login with valid credentials","tests.test_cases.regular_farmer_test_cases","2026-05-22","passed","2026-05-22","TestLogin","test_login_pytest","",""
