@@ -75,7 +75,7 @@ class TestLogin:
                     EC.presence_of_element_located((AppiumBy.XPATH, phone_number_input_xpath))
                 )
                 phone_input.clear()
-                phone_input.send_keys("7660852538")
+                phone_input.send_keys("9618574550")
                 test_flow_steps.append({"step": "Enter valid phone number", "status": "Success", "value": "9618574550"})
 
             with allure.step("7. Tap next button"):

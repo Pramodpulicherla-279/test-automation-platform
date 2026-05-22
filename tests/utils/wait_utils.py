@@ -263,8 +263,12 @@ def smart_find_element(
         )
         _console_log(f"[FOUND] name='{name}' via XPATH")
         return element, False
+    
     except TimeoutException:
         print(f"[{name}] Not found via Primary XPath.")
+
+    if not xpath:
+       raise ValueError(f"XPath is empty for element: {name}")
 
     # If user explicitly wants OCR, skip scroll/DOM strategies.
     if force_ocr:
