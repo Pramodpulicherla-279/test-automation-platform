@@ -11,7 +11,7 @@ from tests.conftest import driver
 import json
 import os
 from selenium.common.exceptions import WebDriverException
-from utils.wait_utils import find_and_click, smart_click
+from utils.wait_utils import find_and_click, smart_click, scroll_until_element_visible
 from utils.ui_actions import android_back_func
 import sys
 sys.dont_write_bytecode = True
@@ -29,6 +29,7 @@ def load_locators_once(self, request):
         xpaths = json.load(f)
 
     diagnosis_xpaths = xpaths.get("Diagnosis_updates", {})
+    farmer_xpaths = xpaths.get("farmer_updates", {})
     request.cls.click_active_farms_xpath = diagnosis_xpaths.get("active_farms")
     # request.cls.hamburger_menu_xpath = diagnosis_xpaths.get("hamburger_menu")
     # request.cls.historical_farms_xpath = diagnosis_xpaths.get("historical_farms")
@@ -51,6 +52,7 @@ def load_locators_once(self, request):
     request.cls.profile_button_xpath = diagnosis_xpaths.get("profile_button")
     request.cls.profile_diagnosis_tab_xpath = diagnosis_xpaths.get("profile_diagnosis_tab")
     request.cls.profile_diagnosis_dropdown_xpath = diagnosis_xpaths.get("profile_diagnosis_dropdown")
+    request.cls.profile_icon_xpath = farmer_xpaths.get("profile")
 
 # ─────────────────────────────────────────────────────────────
 # Active Farms
@@ -80,14 +82,27 @@ def load_locators_once(self, request):
 #         test_flow_steps.append({"step": "Click Historical Farms", "status": "Success"})
 
 
+# def click_active_farms(driver, obj, test_flow_steps):
+#     with allure.step("Click Active Farms"):
+#         time.sleep(2)
+#         if not smart_click(driver, "Active Farms", obj.click_active_farms_xpath, enable_scroll=True):
+#             pytest.fail("Could not click Active Farms")
+#         time.sleep(2)
+#         test_flow_steps.append({"step": "Click Active Farms", "status": "Success"})
+
 def click_active_farms(driver, obj, test_flow_steps):
     with allure.step("Click Active Farms"):
         time.sleep(2)
-        if not smart_click(driver, "Active Farms", obj.click_active_farms_xpath):
-            pytest.fail("Could not click Active Farms")
+
+        element = scroll_until_element_visible(driver, obj.click_active_farms_xpath)
+
+        if element is None:
+            pytest.fail("Could not find 'Active Farms' after scrolling")
+
+        element.click()  # ✅ Actually click the element
+
         time.sleep(2)
         test_flow_steps.append({"step": "Click Active Farms", "status": "Success"})
-
 
 # ─────────────────────────────────────────────────────────────
 # Diagnosis Button
@@ -95,10 +110,9 @@ def click_active_farms(driver, obj, test_flow_steps):
 
 def click_diagnosis_button(driver, obj, test_flow_steps):
     with allure.step("Click Diagnosis Button"):
-        time.sleep(2)
+        time.sleep(4)
         if not smart_click(driver, "Diagnosis Button", obj.click_diagnosis_xpath):
             pytest.fail("Could not click Diagnosis Button")
-        time.sleep(2)
         test_flow_steps.append({"step": "Click Diagnosis Button", "status": "Success"})
 
 
@@ -362,13 +376,10 @@ def click_submit_button(driver, obj, test_flow_steps):
 # ─────────────────────────────────────────────────────────────
 
 def click_profile_icon(driver, obj, test_flow_steps):
-
     with allure.step("Click Profile Icon"):
-
+        time.sleep(5)
         if not smart_click(driver, "Profile Icon", obj.profile_icon_xpath):
             pytest.fail("Could not click Profile Icon")
-
-        time.sleep(2)
 
         test_flow_steps.append({
             "step": "Click Profile Icon",
@@ -381,21 +392,11 @@ def click_profile_icon(driver, obj, test_flow_steps):
 # ─────────────────────────────────────────────────────────────
 
 def click_profile_button(driver, obj, test_flow_steps):
-
     with allure.step("Click Profile Button"):
-
-        time.sleep(2)
-
+        time.sleep(3)
         if not smart_click(driver, "Profile Button", obj.profile_button_xpath):
             pytest.fail("Could not click Profile Button")
-
-        time.sleep(2)
-
-        test_flow_steps.append({
-            "step": "Click Profile Button",
-            "status": "Success"
-        })
-
+        test_flow_steps.append({ "step": "Click Profile Button", "status": "Success" })
 
 # ─────────────────────────────────────────────────────────────
 # Diagnosis Tab

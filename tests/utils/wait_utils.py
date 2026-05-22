@@ -11,12 +11,14 @@ from appium.webdriver.common.appiumby import AppiumBy
 from selenium.webdriver.common.actions.action_builder import ActionBuilder
 import sys
 from selenium.webdriver.common.by import By
+
 sys.dont_write_bytecode = True
 
 
 def _console_log(msg: str) -> None:
     # flush=True is important when output is piped (subprocess -> backend -> UI)
     print(msg, flush=True)
+
 
 def _auto_ui_shot(driver, label: str) -> None:
     """
@@ -33,6 +35,7 @@ def _auto_ui_shot(driver, label: str) -> None:
         except Exception:
             # Never break test flow because screenshots failed
             pass
+
 
 def find_and_click(driver, by, value, fallback_text=None, timeout=20):
     """
@@ -60,14 +63,16 @@ def find_and_click(driver, by, value, fallback_text=None, timeout=20):
         return True
     except TimeoutException:
         print(f"Primary locator failed. Trying fallback text: '{fallback_text}'")
-        
+
         # 2. If primary locator fails, try the fallback text
         if fallback_text:
             try:
                 # Construct a generic XPath to find any element containing the text
                 fallback_xpath = f"//*[contains(@text, '{fallback_text}')]"
-                print(f"Attempting to click element with fallback locator: xpath='{fallback_xpath}'")
-                
+                print(
+                    f"Attempting to click element with fallback locator: xpath='{fallback_xpath}'"
+                )
+
                 element = WebDriverWait(driver, 5).until(
                     EC.element_to_be_clickable((AppiumBy.XPATH, fallback_xpath))
                 )
@@ -109,6 +114,7 @@ def find_and_click(driver, by, value, fallback_text=None, timeout=20):
 
 #         return None, False
 
+
 def _xpath_literal(s: str) -> str:
     """Return an XPath string literal that safely handles quotes."""
     if s is None:
@@ -117,9 +123,12 @@ def _xpath_literal(s: str) -> str:
         return f"'{s}'"
     # concat('foo', "'", 'bar')
     parts = s.split("'")
-    return "concat(" + ", \"'\", ".join([f"'{p}'" for p in parts]) + ")"
+    return "concat(" + ', "\'", '.join([f"'{p}'" for p in parts]) + ")"
 
-def _swipe_vertical_w3c(driver, start_y_ratio=0.8, end_y_ratio=0.2, x_ratio=0.5, pause_s=0.05):
+
+def _swipe_vertical_w3c(
+    driver, start_y_ratio=0.8, end_y_ratio=0.2, x_ratio=0.5, pause_s=0.05
+):
     """Reliable vertical swipe using W3C actions (works in parallel / modern Appium)."""
     size = driver.get_window_size()
     start_x = int(size["width"] * x_ratio)
@@ -135,9 +144,11 @@ def _swipe_vertical_w3c(driver, start_y_ratio=0.8, end_y_ratio=0.2, x_ratio=0.5,
     finger.pointer_up()
     actions.perform()
 
+
 def _escape_uiautomator_text(s: str) -> str:
     """Escape for embedding inside UiAutomator Java string literals."""
     return (s or "").replace("\\", "\\\\").replace('"', '\\"')
+
 
 # def _android_scroll_into_view(driver, text: str):
 
@@ -151,7 +162,10 @@ def _escape_uiautomator_text(s: str) -> str:
 #     parts = s.split("'")
 #     return "concat(" + ", \"'\", ".join([f"'{p}'" for p in parts]) + ")"
 
-def _swipe_vertical_w3c(driver, start_y_ratio=0.8, end_y_ratio=0.2, x_ratio=0.5, pause_s=0.05):
+
+def _swipe_vertical_w3c(
+    driver, start_y_ratio=0.8, end_y_ratio=0.2, x_ratio=0.5, pause_s=0.05
+):
     """Reliable vertical swipe using W3C actions (works in parallel / modern Appium)."""
     size = driver.get_window_size()
     start_x = int(size["width"] * x_ratio)
@@ -167,9 +181,11 @@ def _swipe_vertical_w3c(driver, start_y_ratio=0.8, end_y_ratio=0.2, x_ratio=0.5,
     finger.pointer_up()
     actions.perform()
 
+
 def _escape_uiautomator_text(s: str) -> str:
     """Escape for embedding inside UiAutomator Java string literals."""
     return (s or "").replace("\\", "\\\\").replace('"', '\\"')
+
 
 def _android_scroll_into_view(driver, text: str):
     """
@@ -180,7 +196,7 @@ def _android_scroll_into_view(driver, text: str):
 
     # Try textContains first
     ua_text = (
-        'new UiScrollable(new UiSelector().scrollable(true))'
+        "new UiScrollable(new UiSelector().scrollable(true))"
         f'.scrollIntoView(new UiSelector().textContains("{t}"));'
     )
     try:
@@ -192,7 +208,7 @@ def _android_scroll_into_view(driver, text: str):
 
     # Then descriptionContains (content-desc)
     ua_desc = (
-        'new UiScrollable(new UiSelector().scrollable(true))'
+        "new UiScrollable(new UiSelector().scrollable(true))"
         f'.scrollIntoView(new UiSelector().descriptionContains("{t}"));'
     )
     try:
@@ -204,6 +220,7 @@ def _android_scroll_into_view(driver, text: str):
 
     return None
 
+
 def _ocr_screenshot_path(driver, name: str, attempt: int) -> str:
     """
     Prefer saving OCR screenshots into the same per-test ui_screenshots folder.
@@ -213,6 +230,7 @@ def _ocr_screenshot_path(driver, name: str, attempt: int) -> str:
     if callable(fn):
         return fn(f"ocr__{name}__attempt_{attempt}")
     return "screenshots/ocr_fallback.png"
+
 
 def smart_find_element(
     driver,
@@ -255,7 +273,9 @@ def smart_find_element(
 
     # 2) Secondary Strategy (Android): UiScrollable (only if enabled)
     if fallback_text and enable_scroll:
-        print(f"   -> Attempting Android UiScrollable scrollIntoView for {fallback_text!r}...")
+        print(
+            f"   -> Attempting Android UiScrollable scrollIntoView for {fallback_text!r}..."
+        )
         el = _android_scroll_into_view(driver, fallback_text)
         if el:
             print(f"   -> Found {fallback_text!r} via UiScrollable! Skipping OCR.")
@@ -264,7 +284,9 @@ def smart_find_element(
     # 3) Secondary Strategy: DOM Text Search (only if enabled)
     if fallback_text and enable_dom_fallback:
         literal = _xpath_literal(fallback_text)
-        text_xpath = f"//*[contains(@text, {literal}) or contains(@content-desc, {literal})]"
+        text_xpath = (
+            f"//*[contains(@text, {literal}) or contains(@content-desc, {literal})]"
+        )
         print(f"   -> Attempting DOM fallback for text {fallback_text!r}...")
 
         last_source = None
@@ -283,13 +305,17 @@ def smart_find_element(
                     try:
                         source = driver.page_source
                         if last_source is not None and source == last_source:
-                            print("   -> Page source did not change after swipe; stopping DOM scroll search.")
+                            print(
+                                "   -> Page source did not change after swipe; stopping DOM scroll search."
+                            )
                             break
                         last_source = source
                     except Exception:
                         pass
 
-                print(f"   -> Not visible yet (attempt {i+1}/{max_swipes}). Scrolling down...")
+                print(
+                    f"   -> Not visible yet (attempt {i + 1}/{max_swipes}). Scrolling down..."
+                )
                 _swipe_vertical_w3c(driver)
 
     # 4) OCR Strategy (Last Resort or Forced)
@@ -319,10 +345,13 @@ def smart_find_element(
                 print(f"OCR clicked on '{fallback_text}' successfully.")
                 return None, True
 
-            print(f"OCR did not find '{fallback_text}' (attempt {attempt}/{ocr_attempts}).")
+            print(
+                f"OCR did not find '{fallback_text}' (attempt {attempt}/{ocr_attempts})."
+            )
             time.sleep(ocr_wait_s)
 
     return None, False
+
 
 def smart_click(
     driver,
@@ -375,6 +404,7 @@ def smart_click(
     _auto_ui_shot(driver, f"after__click__{name}__not_found")
     return False
 
+
 def scroll_and_click_by_text_robust(driver, text_to_find, max_swipes=5):
     """
     Scrolls down to find an element with specific text, then attempts to click it.
@@ -385,19 +415,23 @@ def scroll_and_click_by_text_robust(driver, text_to_find, max_swipes=5):
             # First, find the element by its text
             element_xpath = f"//*[contains(@text, '{text_to_find}')]"
             text_element = driver.find_element(AppiumBy.XPATH, element_xpath)
-            
+
             # --- THE CRITICAL LOGIC ---
             # Check if the element itself is clickable. If not, find its ancestor.
-            if text_element.get_attribute('clickable') == 'true':
-                print(f"Text element '{text_to_find}' is directly clickable. Clicking it.")
+            if text_element.get_attribute("clickable") == "true":
+                print(
+                    f"Text element '{text_to_find}' is directly clickable. Clicking it."
+                )
                 text_element.click()
                 return True
             else:
-                print(f"Element with text '{text_to_find}' is not clickable. Searching for a clickable parent...")
+                print(
+                    f"Element with text '{text_to_find}' is not clickable. Searching for a clickable parent..."
+                )
                 # This XPath finds the first ancestor of the text element that IS clickable.
                 parent_xpath = f"({element_xpath})/ancestor::*[@clickable='true']"
                 clickable_parent = driver.find_element(AppiumBy.XPATH, parent_xpath)
-                
+
                 print("Found a clickable parent. Clicking it.")
                 clickable_parent.click()
                 return True
@@ -406,13 +440,14 @@ def scroll_and_click_by_text_robust(driver, text_to_find, max_swipes=5):
             # If the element isn't on screen, scroll down
             print(f"'{text_to_find}' not found, scrolling...")
             size = driver.get_window_size()
-            start_x = size['width'] / 2
-            start_y = size['height'] * 0.8
-            end_y = size['height'] * 0.2
+            start_x = size["width"] / 2
+            start_y = size["height"] * 0.8
+            end_y = size["height"] * 0.2
             driver.swipe(start_x, start_y, start_x, end_y, 400)
 
     print(f"Failed to find or click '{text_to_find}' after {max_swipes} swipes.")
     return False
+
 
 def scroll_and_tap_by_text(driver, text_to_find, max_swipes=5):
     """
@@ -433,39 +468,44 @@ def scroll_and_tap_by_text(driver, text_to_find, max_swipes=5):
             # 1. Use the universal XPath to find the element (this part is correct)
             universal_xpath = f"//*[contains(@text, '{text_to_find}') or contains(@content-desc, '{text_to_find}')]"
             element = driver.find_element(AppiumBy.XPATH, universal_xpath)
-            
+
             # 2. Dynamically get the element's location (this part is correct)
             location = element.location
             size = element.size
-            center_x = location['x'] + size['width'] / 2
-            center_y = location['y'] + size['height'] / 2
-            
-            print(f"Found '{text_to_find}'. Tapping at dynamic coordinates: ({center_x}, {center_y})")
-            allure.attach(f"Tapping '{text_to_find}' on {driver.capabilities.get('deviceName')} at ({center_x}, {center_y})", 
-                          name="Dynamic Coordinate Tap", attachment_type=allure.attachment_type.TEXT)
-            
+            center_x = location["x"] + size["width"] / 2
+            center_y = location["y"] + size["height"] / 2
+
+            print(
+                f"Found '{text_to_find}'. Tapping at dynamic coordinates: ({center_x}, {center_y})"
+            )
+            allure.attach(
+                f"Tapping '{text_to_find}' on {driver.capabilities.get('deviceName')} at ({center_x}, {center_y})",
+                name="Dynamic Coordinate Tap",
+                attachment_type=allure.attachment_type.TEXT,
+            )
+
             # --- REPLACEMENT for TouchAction ---
             # 3. Perform the raw tap action using W3C Actions
             actions = ActionBuilder(driver)
             finger = actions.pointer_action
             finger.move_to_location(center_x, center_y)
             finger.pointer_down()
-            finger.pause(0.1) # A brief pause improves tap reliability
+            finger.pause(0.1)  # A brief pause improves tap reliability
             finger.pointer_up()
             actions.perform()
             # --- END REPLACEMENT ---
-            
+
             return True
-            
+
         except NoSuchElementException:
             # 4. If not found, scroll down and try again
             if i < max_swipes - 1:
                 print(f"'{text_to_find}' not found, scrolling down...")
                 screen_size = driver.get_window_size()
-                start_x = screen_size['width'] / 2
-                start_y = screen_size['height'] * 0.8
-                end_y = screen_size['height'] * 0.2
-                
+                start_x = screen_size["width"] / 2
+                start_y = screen_size["height"] * 0.8
+                end_y = screen_size["height"] * 0.2
+
                 # --- REPLACEMENT for driver.swipe() ---
                 # 5. Perform the swipe using W3C Actions
                 actions = ActionBuilder(driver)
@@ -476,18 +516,21 @@ def scroll_and_tap_by_text(driver, text_to_find, max_swipes=5):
                 finger.pointer_up()
                 actions.perform()
                 # --- END REPLACEMENT ---
-                
+
             else:
                 # This is the last swipe attempt, and it still wasn't found.
-                print(f"Could not find element '{text_to_find}' after {max_swipes} swipes.")
+                print(
+                    f"Could not find element '{text_to_find}' after {max_swipes} swipes."
+                )
                 return False
-                
+
     return False
+
 
 def wait_for_otp(fetch_otp_func, timeout=30, poll_interval=2):
     """
     Waits dynamically for OTP using polling.
-    
+
     fetch_otp_func → function that returns OTP or None
     """
     start_time = time.time()
@@ -500,6 +543,7 @@ def wait_for_otp(fetch_otp_func, timeout=30, poll_interval=2):
 
     raise TimeoutError("OTP not received within timeout")
 
+
 def wait_for_element(driver, xpath, timeout=20):
     return WebDriverWait(driver, timeout).until(
         EC.visibility_of_element_located((By.XPATH, xpath))
@@ -510,6 +554,7 @@ def wait_and_click(driver, xpath, timeout=20):
     element = wait_for_element(driver, xpath, timeout)
     element.click()
     return True
+
 
 def wait_for_otp_filled(driver, otp_xpath, expected_length=6, timeout=30):
     def otp_ready(driver):
@@ -526,3 +571,27 @@ def wait_for_otp_filled(driver, otp_xpath, expected_length=6, timeout=30):
         return len(otp) == expected_length
 
     return WebDriverWait(driver, timeout).until(otp_ready)
+
+    ######################## Scroller func ######################
+
+
+def scroll_until_element_visible(driver, xpath, max_scrolls=8):
+    for attempt in range(max_scrolls):
+        try:
+            element = driver.find_element(AppiumBy.XPATH, xpath)
+            if element.is_displayed():
+                return element  # ✅ Return the element to the caller
+        except Exception:
+            pass  # Element not in DOM yet, keep scrolling
+
+        # Scroll up (swipe from bottom to top)
+        size = driver.get_window_size()
+        driver.swipe(
+            start_x=size["width"] / 2,
+            start_y=size["height"] * 0.8,
+            end_x=size["width"] / 2,
+            end_y=size["height"] * 0.2,
+            duration=500
+        )
+
+    return None  # ✅ Explicit None so caller's `if not` check works
