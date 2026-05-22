@@ -10,5 +10,13 @@
     {
         "step": "Click farm location",
         "status": "Success"
+    },
+    {
+        "step": "Click current farm location",
+        "status": "Success"
+    },
+    {
+        "step": "Android back button pressed",
+        "status": "Success"
     }
 ]
