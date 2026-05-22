@@ -1,5 +1,5 @@
 {
-  "ticket_id": "RUN-20260522-153140",
+  "ticket_id": "RUN-20260522-154118",
   "issue_id": "ISS-001",
   "app_name": "Krishivaas Telangana Farmer",
   "app_version": "0.8.6",
@@ -10,13 +10,12 @@
   "test_name": "test_crop_health_diary_activity_flow",
   "steps_executed": [
     "Click on farm card",
-    "Click navigation button",
-    "Click current farm location"
+    "Click navigation button"
   ],
   "developer_name": "@Anuj",
-  "description": "pytest.fail(\"Could not find or click the 'current farm location'.\")\nFailed: Could not find or click the 'current farm location'.\n\nSteps Executed:\n1. Click on farm card\n2. Click navigation button\n3. Click current farm location",
-  "start_date": "2026-05-22T15:32:41.280900",
-  "end_date": "2026-05-22T15:34:59.685790",
+  "description": "NameError: name '_swipe_vertical_w3c_top' is not defined\n\nSteps Executed:\n1. Click on farm card\n2. Click navigation button",
+  "start_date": "2026-05-22T15:42:19.892058",
+  "end_date": "2026-05-22T15:45:32.688871",
   "sprint": "Automation",
   "fix_version": [
     "Production"

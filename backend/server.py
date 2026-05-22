@@ -58,7 +58,8 @@ PACKAGE_VARIANT_MAP = {
 APP_VARIANTS = {
     "regular_farmer": [
         {"name": "Login",       "path": "tests/test_cases/regular_farmer_test_cases/test_login_pytest.py"},
-        {"name": "Dashboard",   "path": "tests/test_cases/regular_farmer_test_cases/TestOnboarding.py"},
+        {"name": "Dashboard",   "path": "tests/test_cases/regular_farmer_test_cases/test_onboarding_pytest.py"},
+        {"name": "Crop Health", "path": "tests/test_cases/regular_farmer_test_cases/test_crop_health_pytest.py"},
         {"name": "Add Updates", "path": "tests/farmer/test_updates.py"},
     ],
     "regular_client": [

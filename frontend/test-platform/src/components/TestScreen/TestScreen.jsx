@@ -17,8 +17,8 @@ const APP_VARIANTS = {
         label: "Krishivaas Farmer (Regular)",
         modules: [
             { name: 'Login', path: 'tests/test_cases/regular_farmer_test_cases/test_login_pytest.py' },
-            // { name: 'Onboarding', path: 'tests/test_cases/regular_farmer_test_cases/TestOnboarding.py' },
-            { name: 'Crophealth', path: 'tests/test_cases/regular_farmer_test_cases/Crophealth.py' },
+            { name: 'Onboarding', path: 'tests/test_cases/regular_farmer_test_cases/test_onboarding_pytest.py' },
+            { name: 'Crophealth', path: 'tests/test_cases/regular_farmer_test_cases/test_crop_health_pytest.py' },
             { name: 'Add Updates', path: 'tests/farmer/test_updates.py' },
         ]
     },
@@ -35,8 +35,8 @@ const APP_VARIANTS = {
         id: "state_farmer",
         label: "State Farmer App",
         modules: [
-            { name: 'Login', path: 'tests/state_farmer/test_login.py' },
-            { name: 'Schemes', path: 'tests/state_farmer/test_schemes.py' },
+            { name: 'Login', path: 'tests/test_cases/state_farmer_test_cases/test_login_pytest.py' },
+            { name: 'Crophealth', path: 'tests/test_cases/state_farmer_test_cases/test_crop_health_pytest.py' },
         ]
     },
     STATE_CLIENT: {
@@ -358,10 +358,13 @@ function TestScreen({ onHistoryUpdate }) {
     const prevAppKeyRef = useRef(selectedAppKey);
 
     const [modules, setModules] = useState(() => {
-        const saved = sessionStorage.getItem('modules');
-        if (saved) return JSON.parse(saved);
         const variant = APP_VARIANTS[selectedAppKey] || APP_VARIANTS['FARMER'];
-        return variant.modules.map(m => ({ ...m, status: 'pending', isSelected: true }));
+
+        return variant.modules.map(m => ({
+            ...m,
+            status: 'pending',
+            isSelected: true
+        }));
     });
 
     // Persist state
@@ -387,7 +390,17 @@ function TestScreen({ onHistoryUpdate }) {
 
     useEffect(() => {
         if (prevAppKeyRef.current !== selectedAppKey) {
-            setModules(APP_VARIANTS[selectedAppKey].modules.map(m => ({ ...m, status: 'pending', isSelected: true })));
+
+            sessionStorage.removeItem('modules');
+
+            setModules(
+                APP_VARIANTS[selectedAppKey].modules.map(m => ({
+                    ...m,
+                    status: 'pending',
+                    isSelected: true
+                }))
+            );
+
             prevAppKeyRef.current = selectedAppKey;
         }
     }, [selectedAppKey]);
@@ -526,13 +539,13 @@ function TestScreen({ onHistoryUpdate }) {
     };
 
     const handleStopTest = async () => {
-        try { 
-            await fetch(`${API_URL}/test/stop-test`, { 
-                method: 'POST' 
+        try {
+            await fetch(`${API_URL}/test/stop-test`, {
+                method: 'POST'
             });
-         } catch { }
+        } catch { }
 
-        setIsRunning(false); 
+        setIsRunning(false);
         setIsDownloading(false);
         setShowNewTestButton(true);
         handleIncomingData({ type: 'LOG', payload: { message: 'Test stopped by user.', status: 'FAILED' } });

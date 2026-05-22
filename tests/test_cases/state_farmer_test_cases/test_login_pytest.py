@@ -12,15 +12,15 @@ from socket import timeout
 from selenium.common.exceptions import WebDriverException
 from utils.wait_utils import find_and_click
 import sys
-from pages.regular_farmer_app.login import (
-    login_success,
-    login_permissions,
-    login_permissions_location,
-    login_permissions_audio,
-    login_permissions_notifications,
-    login_enter_phone,
-    login_submit_phone,
-    login_verify_otp,
+from pages.state_farmer_app.login_page import (
+    language_next,
+    permissions,
+    permissions_location,
+    permissions_audio,
+    permissions_notifications,
+    enter_phone,
+    next_button_login,
+    verify_otp,
     load_locators_once,
 )
 
@@ -41,15 +41,15 @@ class TestLogin:
         test_flow_steps = []
 
         try:
-            login_success(driver, self, test_flow_steps)
-            login_permissions(driver, self, test_flow_steps)
-            login_permissions_location(driver, self, test_flow_steps)
-            login_permissions_audio(driver, self, test_flow_steps)
-            login_permissions_notifications(driver, self, test_flow_steps)
-            login_enter_phone(driver, self, test_flow_steps)
-            login_submit_phone(driver, self, test_flow_steps)
-            login_verify_otp(driver, self, test_flow_steps)
-
+        
+            permissions(driver, self, test_flow_steps)
+            permissions_location(driver, self, test_flow_steps)
+            permissions_audio(driver, self, test_flow_steps)
+            permissions_notifications(driver, self, test_flow_steps)
+            language_next(driver, self, test_flow_steps)
+            enter_phone(driver, self, test_flow_steps)
+            next_button_login(driver, self, test_flow_steps)
+            verify_otp(driver, self, test_flow_steps)
         finally:
 
             os.makedirs("test-flows", exist_ok=True)

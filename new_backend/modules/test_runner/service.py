@@ -407,15 +407,16 @@ async def start_test_flow(request, background_tasks, manager):
 
         # Start tests in background
         background_tasks.add_task(
-            run_post_notify,
-            run_id=run_id,
-            apk_path=apk_path,
-            tests_to_run=tests_to_run,
-            app_name=info.get("app_name"),
-            app_version=info.get("app_version"),
-            developer_name=developer_name,
-            channel_id=SLACK_NOTIFY_CHANNEL,
-        )
+        run_tests_and_get_suggestions,
+        apk_path=apk_path,
+        tests_to_run=tests_to_run,
+        app_type=variant,
+        module_names=module_names,
+        app_name=app_name,
+        app_version=app_version,
+        developer_name=developer_name,
+        run_id=run_id
+    )
 
         return {
             "status": "success",
@@ -569,7 +570,19 @@ async def run_complete_flow(event):
 
 async def api_generate_report_flow():
     try:
-        threading.Thread(target=generate_report).start()
+        threading.Thread(
+            target=run_tests_and_get_suggestions,
+            kwargs={
+                "apk_path": apk_path,
+                "tests_to_run": tests_to_run,
+                "app_type": variant,
+                "module_names": module_names,
+                "app_name": app_name,
+                "app_version": app_version,
+                "developer_name": developer_name,
+                "run_id": run_id
+            }
+        ).start()
         return {"status": "ok", "message": "Report generation started"}
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})

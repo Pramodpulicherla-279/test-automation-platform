@@ -3,6 +3,7 @@ import allure
 import pytest
 import json
 import os
+import re
 from appium.webdriver.common.appiumby import AppiumBy
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -20,8 +21,10 @@ class TestOnboarding:
         project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
         locators_path = os.path.join(project_root, "locators", "regular_client.json")
 
-        with open(locators_path, "r", encoding="utf-8") as f:
-            xpaths = json.load(f)
+        with open(locators_path, "r", encoding="utf-8", errors="replace") as f:
+            raw = f.read()
+        raw = re.sub(r'\\u(?![0-9a-fA-F]{4})', r'\\\\u', raw)
+        xpaths = json.loads(raw)
 
         dash_x = xpaths.get("dashboard_screen", {})
         farm_x = xpaths.get("farmer_screen", {})

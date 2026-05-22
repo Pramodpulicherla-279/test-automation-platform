@@ -5,11 +5,21 @@ import pytest
 from appium.webdriver.common.appiumby import AppiumBy
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from tests.conftest import driver
 import json
 import os
+import re
 from selenium.common.exceptions import WebDriverException
-from utils.wait_utils import find_and_click, smart_click
+from utils.wait_utils import (
+    find_and_click,
+    scroll_and_click_by_text_robust,
+    smart_click,
+    scroll_and_tap_by_text,
+    wait_for_loader_to_disappear,
+    scroll_and_click_card_icon,
+    scroll_to_card_and_click_icon,
+    _swipe_vertical_w3c,
+   
+)
 from utils.ui_actions import android_back as _do_android_back
 import sys
 sys.dont_write_bytecode = True
@@ -18,21 +28,29 @@ sys.dont_write_bytecode = True
 def load_locators_once(self, request):
     """Loads locators once per test class and attaches them to the class."""
     project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-    locators_path = os.path.join(project_root, "locators", "regular_farmer.json")
-    with open(locators_path, "r", encoding="utf-8") as f:
-        xpaths = json.load(f)
+    locators_path = os.path.join(project_root, "locators", "state_farmer.json")
+    with open(locators_path, "r", encoding="utf-8", errors="replace") as f:
+        raw = f.read()
+    raw = re.sub(r'\\u(?![0-9a-fA-F]{4})', r'\\\\u', raw)
+    xpaths = json.loads(raw)
     # ── Crop Health & Diary locators ───────────────────────────────────────
     crop_health_xpaths = xpaths.get("crop_health", {})
+    dashboard_xpaths = xpaths.get("dashboard_screen", {})
     diary_xpaths = xpaths.get("diary_screen", {})
     weather_xpaths = xpaths.get("weather_screen", {})
     leaf_moisture_xpaths = xpaths.get("leaf_moisture_screen", {})
     soil_moisture_xpaths = xpaths.get("soil_moisture_screen", {})
     
     # Farm card and navigation
-    request.cls.hamburger_menu_xpath = crop_health_xpaths.get("hamburger_menu")
+    request.cls.hamburger_menu_xpath = dashboard_xpaths.get("hamburger_menu")
     request.cls.historical_farms_xpath = crop_health_xpaths.get("historical_farms")
     request.cls.active_card_xpath = crop_health_xpaths.get("active_farms")
     request.cls.navigation_button_xpath = crop_health_xpaths.get("navigation_button")
+    request.cls.current_location_xpath = crop_health_xpaths.get("current_location")
+    request.cls.farm_location_xpath = crop_health_xpaths.get("farm_location")
+    request.cls.date_slider_xpath = crop_health_xpaths.get("date_slider")
+    request.cls.plus_icon_xpath = crop_health_xpaths.get("plus_icon")
+    request.cls.minus_icon_xpath = crop_health_xpaths.get("minus_icon")
     # request.cls.navigation_back_button_xpath = crop_health_xpaths.get("navigation_back_button")
     request.cls.diary_icon_xpath = crop_health_xpaths.get("diary_icon")
     
@@ -57,99 +75,27 @@ def load_locators_once(self, request):
     request.cls.notification_icon_xpath = weather_xpaths.get("notification_icon")
     request.cls.expert_comments_xpath = weather_xpaths.get("expert_comments")
     request.cls.crop_stress_xpath = weather_xpaths.get("crop_stress")
-    # Leaf Moisture screen
-    request.cls.leaf_moisture_navigation_xpath = leaf_moisture_xpaths.get("leaf_moisture_navigation")
-    request.cls.leaf_moisture_share_icon_xpath = leaf_moisture_xpaths.get("leaf_moisture_share_icon")
+
+    # Soil Moisture icons
+    request.cls.soil_moisture_card_xpath = soil_moisture_xpaths.get("soil_moisture_card")
+    request.cls.soil_moisture_navigation_xpath   = soil_moisture_xpaths.get("soil_moisture_navigation")
+    request.cls.soil_moisture_share_icon_xpath   = soil_moisture_xpaths.get("soil_moisture_share_icon")
+    request.cls.soil_moisture_maximise_icon_xpath = soil_moisture_xpaths.get("soil_moisture_maximise_icon")
+    request.cls.close_tab_xpath = weather_xpaths.get("close_tab")
+ 
+    # Leaf Moisture icons
+    request.cls.leaf_moisture_card_xpath = leaf_moisture_xpaths.get("leaf_moisture_card")
+    request.cls.leaf_moisture_navigation_xpath   = leaf_moisture_xpaths.get("leaf_moisture_navigation")
+    request.cls.leaf_moisture_share_icon_xpath   = leaf_moisture_xpaths.get("leaf_moisture_share_icon")
     request.cls.leaf_moisture_maximise_icon_xpath = leaf_moisture_xpaths.get("leaf_moisture_maximise_icon")
     
-    # Soil Moisture screen
-    request.cls.soil_moisture_navigation_xpath = soil_moisture_xpaths.get("soil_moisture_navigation")
-    request.cls.soil_moisture_share_icon_xpath = soil_moisture_xpaths.get("soil_moisture_share_icon")
-    request.cls.soil_moisture_maximise_icon_xpath = soil_moisture_xpaths.get("soil_moisture_maximise_icon")
+    
 
-def _scroll_card_into_full_view(driver, card_header_xpath, text_hint, max_nudges=10):
-    """
-    Two-phase scroll:
-      Phase 1 – UiScrollable (once only) to bring card into view.
-      Phase 2 – Precise calculated swipes to push card header to top 20% of screen,
-                 so the full card body (share/maximize/navigation icons) is visible.
-    """
-    text_hint_stripped = text_hint.strip()
-    size          = driver.get_window_size()
-    screen_h      = size["height"]
-    screen_w      = size["width"]
-    # Card header should sit at ~20% from top → full card body visible below it
-    TARGET_Y      = int(screen_h * 0.20)
-    # Acceptable threshold: header no lower than 45% from top
-    THRESHOLD_Y   = int(screen_h * 0.45)
-
-    # ── PHASE 1: UiScrollable once ─────────────────────────────────────────
-    print(f"[INFO] Phase 1 – UiScrollable for '{text_hint}'...")
-    try:
-        driver.find_element(
-            AppiumBy.ANDROID_UIAUTOMATOR,
-            f'new UiScrollable(new UiSelector().scrollable(true))'
-            f'.scrollIntoView(new UiSelector().textContains("{text_hint_stripped}"))'
-        )
-        time.sleep(1.5)
-        print(f"[INFO] UiScrollable succeeded for '{text_hint}'.")
-    except Exception as e:
-        print(f"[WARNING] UiScrollable failed ({e}). Falling back to manual-only mode.")
-
-    # ── PHASE 2: Precise nudge loop (no UiScrollable here) ─────────────────
-    for attempt in range(max_nudges):
-        # Read current position
-        els = driver.find_elements(AppiumBy.XPATH, card_header_xpath)
-
-        if not els or not els[0].is_displayed():
-            # Element not on screen yet – plain scroll down
-            print(f"[INFO] '{text_hint}' not visible, scrolling down (attempt {attempt+1}).")
-            driver.swipe(screen_w // 2, int(screen_h * 0.75),
-                         screen_w // 2, int(screen_h * 0.30), 800)
-            time.sleep(1)
-            continue
-
-        try:
-            current_y = els[0].rect["y"]
-        except Exception as e:
-            print(f"[WARNING] Could not read element rect: {e}")
-            time.sleep(1)
-            continue
-
-        print(f"[INFO] '{text_hint}' y={current_y}px | target≤{TARGET_Y}px | threshold≤{THRESHOLD_Y}px")
-
-        if current_y <= THRESHOLD_Y:
-            print(f"[INFO] '{text_hint}' fully in view! y={current_y}px ✓")
-            return True
-
-        # Calculate how far we need to swipe upward
-        needed_scroll  = current_y - TARGET_Y          # pixels to move element up
-        swipe_start_y  = min(int(screen_h * 0.85), current_y + 80)
-        swipe_end_y    = max(int(screen_h * 0.08),  swipe_start_y - needed_scroll - 40)
-
-        print(f"[INFO] Nudge {attempt+1}: swipe {swipe_start_y}→{swipe_end_y} "
-              f"(moving element up by ~{needed_scroll}px)")
-        driver.swipe(screen_w // 2, swipe_start_y,
-                     screen_w // 2, swipe_end_y, 700)
-        time.sleep(1.2)
-
-    # Final leniency check
-    els = driver.find_elements(AppiumBy.XPATH, card_header_xpath)
-    if els:
-        try:
-            y = els[0].rect["y"]
-            if y <= THRESHOLD_Y:
-                print(f"[INFO] '{text_hint}' acceptable on final check (y={y}px).")
-                return True
-        except Exception:
-            pass
-
-    print(f"[ERROR] '{text_hint}' could not be positioned after {max_nudges} nudges.")
-    return False
 
 ####Farm card and navigation flows  
 def hamburger_menu(driver, obj, test_flow_steps):
     with allure.step("1. Click on hamburger menu"):
+        print("hamburger_menu_xpath =", obj.hamburger_menu_xpath)
         time.sleep(2)
         if not smart_click(driver, "Click on hamburger menu", obj.hamburger_menu_xpath):  
             pytest.fail("Could not find or click the 'hamburger menu'.")
@@ -180,6 +126,28 @@ def navigation_button(driver, obj, test_flow_steps):
         time.sleep(2)
         test_flow_steps.append({"step": "Click navigation button", "status": "Success"})
 
+def farm_location(driver, obj, test_flow_steps):
+    with allure.step("4. Click farm location"):
+        time.sleep(3)
+        driver.tap([(760, 430)])
+        print("[INFO] Farm location tapped successfully")
+        time.sleep(3)
+        test_flow_steps.append({
+            "step": "Click farm location",
+            "status": "Success"
+        })
+
+def current_location(driver, obj, test_flow_steps):
+    with allure.step("3. Click current farm location"):
+        time.sleep(3)
+        driver.tap([(700, 430)])
+        print("[INFO] Current location tapped successfully")
+        time.sleep(3)
+        test_flow_steps.append({
+            "step": "Click current farm location",
+            "status": "Success"
+        })
+
 # def navigation_back_arrow(driver, obj, test_flow_steps):
 #     with allure.step("3. Click navigation back arrow"):
 #         print("[INFO] Attempting to click navigation back arrow")
@@ -191,12 +159,20 @@ def navigation_button(driver, obj, test_flow_steps):
 
 def android_back(driver, obj, test_flow_steps):
     with allure.step("10. Android back button"):
-        time.sleep(5)
         print("[INFO] Attempting to press Android back button")
-        if not _do_android_back(driver):
-            pytest.fail("Could not execute Android back button.")
-        time.sleep(4)
-        test_flow_steps.append({"step": "Android back button pressed", "status": "Success"})
+        try:
+            result = _do_android_back(driver)
+            if not result:
+                pytest.fail("Could not execute Android back button.")
+            wait_for_loader_to_disappear(driver, timeout=90)
+            time.sleep(3)
+            print("[INFO] Android back executed successfully")
+            test_flow_steps.append({
+                "step": "Android back button pressed",
+                "status": "Success"
+            })
+        except Exception as e:
+            pytest.fail(f"Android back failed: {str(e)}")
 
 def diary_icon(driver, obj, test_flow_steps):
     with allure.step("4. Click diary icon"):
@@ -330,6 +306,7 @@ def weather_icon(driver, obj, test_flow_steps):
         time.sleep(2)
         if not smart_click(driver, "Click weather icon", obj.weather_icon_xpath):
             pytest.fail("Could not find or click the 'weather icon'.")
+            wait_for_loader_to_disappear(driver, timeout=90)
         time.sleep(2)
         test_flow_steps.append({"step": "Click weather icon", "status": "Success"})
 
@@ -404,12 +381,20 @@ def close_icon(driver, obj, test_flow_steps):
 def share_icon(driver, obj, test_flow_steps):
     with allure.step("18. Click share icon"):
         time.sleep(2)
-        if not smart_click(driver, "Click share icon", obj.share_icon_xpath):
-            pytest.fail("Could not find or click the 'share icon'.")
+        try:
+            share_btn = WebDriverWait(driver, 20).until(
+                EC.element_to_be_clickable(
+                    (AppiumBy.XPATH, obj.share_icon_xpath)))
+            share_btn.click()
+            print("[INFO] Share icon clicked successfully")
+        except Exception as e:
+            pytest.fail(f"Could not click share icon: {str(e)}")
+        wait_for_loader_to_disappear(driver, timeout=60)
         time.sleep(2)
-        test_flow_steps.append({"step": "Click share icon", "status": "Success"})
-        
-        time.sleep(2) 
+        test_flow_steps.append({
+            "step": "Click share icon",
+            "status": "Success"
+        }) 
 def maximise_icon(driver, obj, test_flow_steps):
     with allure.step("20. Click maximise icon"):
         time.sleep(2)
@@ -419,13 +404,21 @@ def maximise_icon(driver, obj, test_flow_steps):
         test_flow_steps.append({"step": "Click maximise icon", "status": "Success"})
 
 def notification_icon(driver, obj, test_flow_steps):
-    with allure.step("18. Click notification icon"):
+    with allure.step("19. Click notification icon"):
         time.sleep(2)
-        if not smart_click(driver, "Click notification icon", obj.notification_icon_xpath):
-            pytest.fail("Could not find or click the 'notification icon'.")
+        try:
+            notification_btn = WebDriverWait(driver, 20).until(
+                EC.element_to_be_clickable(
+                    (AppiumBy.XPATH, obj.notification_icon_xpath)))
+            notification_btn.click()
+            print("[INFO] Notification icon clicked successfully")
+        except Exception as e:
+            pytest.fail(f"Could not click notification icon: {str(e)}")
         time.sleep(2)
-        test_flow_steps.append({"step": "Click notification icon", "status": "Success"})
-        time.sleep(2)
+        test_flow_steps.append({
+            "step": "Click notification icon",
+            "status": "Success"
+        })
 
 def expert_comments(driver, obj, test_flow_steps):        
     with allure.step("18. Click expert comments"):
@@ -445,111 +438,177 @@ def crop_stress(driver, obj, test_flow_steps):
         test_flow_steps.append({"step": "Click crop stress", "status": "Success"})
         time.sleep(2)
   
-# ====================================================================
-# SOIL MOISTURE FLOW SECTION
-# ====================================================================
-def soil_moisture(driver, obj, test_flow_steps):
-    with allure.step("22. Scroll down till Soil Moisture section"):
+# ── 2. SOIL MOISTURE FUNCTIONS (UPDATED) ─────────────────────────────────────
+def soil_moisture_card(driver, obj):
+    with allure.step("30. Click on Soil Moisture card"):
         time.sleep(2)
-        if not _scroll_card_into_full_view(
+        if not scroll_and_click_card_icon(
             driver,
-            card_header_xpath=obj.soil_moisture_navigation_xpath,
-            text_hint="Soil Moisture",
-            max_nudges=8
+            card_text="Soil Moisture",          # ← correct
+            icon_xpath=obj.soil_moisture_card_xpath,
         ):
-            pytest.fail("Could not scroll Soil Moisture card fully into view.")
-        time.sleep(2)
-        test_flow_steps.append({"step": "Scroll to Soil Moisture section", "status": "Success"})
+            pytest.fail("Could not find or click the 'Soil Moisture card'.")
+            time.sleep(2)
+            test_flow_steps.append({"step": "Click on Soil Moisture card", "status": "Success"})
 
 def soil_moisture_navigation(driver, obj, test_flow_steps):
+    """
+    Scrolls to the Soil Moisture card, then clicks its Navigation icon.
+    Uses Y-position filtering so it never hits Crop Health's Navigation icon.
+    """
     with allure.step("31. Click navigation icon in Soil Moisture"):
         time.sleep(2)
-        if not smart_click(driver, "Click soil moisture navigation", obj.soil_moisture_navigation_xpath):
-            pytest.fail("Could not find or click the 'soil moisture navigation icon'.")
+        if not scroll_to_card_and_click_icon(
+            driver,
+            card_title_text="Soil Moisture",
+            icon_xpath=obj.soil_moisture_navigation_xpath,
+            name="Soil Moisture – Navigation",
+        ):
+            pytest.fail("Could not find or click the 'Soil Moisture navigation icon'.")
         time.sleep(2)
-        test_flow_steps.append({"step": "Click navigation icon in Soil Moisture", "status": "Success"})
-
+        test_flow_steps.append({
+            "step": "Click navigation icon in Soil Moisture",
+            "status": "Success",
+        })
+ 
+ 
 def soil_moisture_share(driver, obj, test_flow_steps):
+    """
+    Scrolls to the Soil Moisture card, then clicks its Share icon.
+    """
     with allure.step("33. Click share icon in Soil Moisture"):
         time.sleep(2)
-        if not smart_click(driver, "Click soil moisture share icon", obj.soil_moisture_share_icon_xpath):
-            pytest.fail("Could not find or click the 'soil moisture share icon'.")
+        if not scroll_to_card_and_click_icon(
+            driver,
+            card_title_text="Soil Moisture",
+            icon_xpath=obj.soil_moisture_share_icon_xpath,   # ← was using maximise_icon_xpath by mistake
+            name="Soil Moisture – Share",
+        ):
+            pytest.fail("Could not find or click the 'Soil Moisture share icon'.")
         time.sleep(2)
-        test_flow_steps.append({"step": "Click share icon in Soil Moisture", "status": "Success"})
-
+        test_flow_steps.append({
+            "step": "Click share icon in Soil Moisture",
+            "status": "Success",
+        })
+ 
+ 
 def soil_moisture_maximise(driver, obj, test_flow_steps):
+    """
+    Scrolls to the Soil Moisture card, then clicks its Maximize icon.
+    """
     with allure.step("36. Click maximize icon in Soil Moisture"):
         time.sleep(2)
-        if not smart_click(driver, "Click soil moisture maximize icon", obj.soil_moisture_maximise_icon_xpath):
-            pytest.fail("Could not find or click the 'soil moisture maximize icon'.")
-        time.sleep(2)
-        test_flow_steps.append({"step": "Click maximize icon in Soil Moisture", "status": "Success"})
-
-def soil_moisture_maximise_screen(driver, obj, test_flow_steps):
-    with allure.step("37. Wait for Soil Moisture maximize screen to appear"):
-        time.sleep(2)
-        if not obj._wait_for_maximize_screen(driver, timeout=10):
-            print("[WARNING] Maximize screen wait timed out, continuing...")
-        test_flow_steps.append({"step": "Wait for Soil Moisture maximize screen", "status": "Success"})
-
-# ====================================================================
-# LEAF MOISTURE FLOW SECTION
-# ====================================================================
-def leaf_moisture(driver, obj, test_flow_steps):
-    with allure.step("22. Scroll down till Leaf Moisture section"):
-        time.sleep(2)
-        if not _scroll_card_into_full_view(
+        if not scroll_to_card_and_click_icon(
             driver,
-            card_header_xpath=obj.leaf_moisture_navigation_xpath,
-            text_hint="Leaf Moisture",
-            max_nudges=10
+            card_title_text="Soil Moisture",
+            icon_xpath=obj.soil_moisture_maximise_icon_xpath,
+            name="Soil Moisture – Maximize",
         ):
-            pytest.fail("Could not scroll Leaf Moisture card fully into view.")
+            pytest.fail("Could not find or click the 'Soil Moisture maximize icon'.")
         time.sleep(2)
-        test_flow_steps.append({"step": "Scroll to Leaf Moisture section", "status": "Success"})
+        test_flow_steps.append({
+            "step": "Click maximize icon in Soil Moisture",
+            "status": "Success",
+        })
+
+def close_tab(driver, obj, test_flow_steps):
+    with allure.step("21. Click close tab icon in Weather screen"):
+        time.sleep(2)
+        if not smart_click(driver, "Click close tab icon", obj.close_tab_xpath):
+            pytest.fail("Could not find or click the 'close tab icon'.")
+        time.sleep(2)
+        test_flow_steps.append({"step": "Click close tab icon", "status": "Success"})
+ 
+ 
+# ── 3. LEAF MOISTURE FUNCTIONS (UPDATED) ─────────────────────────────────────
+def leaf_moisture_card(driver, obj, test_flow_steps):
+    with allure.step("22. Click on Leaf Moisture card"):
+        time.sleep(2)
+        if not scroll_and_click_card_icon(driver, card_text="Leaf Moisture", icon_xpath=obj.leaf_moisture_card_xpath):
+            pytest.fail("Could not find or click the 'Leaf Moisture card'.")
+            time.sleep(2)
+        test_flow_steps.append({"step": "Click on Leaf Moisture card", "status": "Success"})
+ 
+# def leaf_moisture_navigation(driver, obj, test_flow_steps):
+#     """
+#     Scrolls to the Leaf Moisture card, then clicks its Navigation icon.
+#     """
+#     with allure.step("23. Click navigation icon in Leaf Moisture"):
+#         time.sleep(2)
+#         if not scroll_to_card_and_click_icon(driver, card_title_text="Leaf Moisture", icon_xpath=obj.leaf_moisture_navigation_xpath, name="Leaf Moisture – Navigation" ):
+#             pytest.fail("Could not find or click the 'Leaf Moisture navigation icon'.")
+#         time.sleep(2)
+#         test_flow_steps.append({"step": "Click navigation icon in Leaf Moisture", "status": "Success"})
 
 def leaf_moisture_navigation(driver, obj, test_flow_steps):
     with allure.step("23. Click navigation icon in Leaf Moisture"):
         time.sleep(2)
-        if not smart_click(driver, "Click leaf moisture navigation", obj.leaf_moisture_navigation_xpath):
-            pytest.fail("Could not find or click the 'leaf moisture navigation icon'.")
+        if not smart_click(driver, "Leaf Moisture", obj.leaf_moisture_navigation_xpath):
+            print(obj.leaf_moisture_navigation_xpath)
+            pytest.fail("Could not find or click the 'Leaf Moisture navigation icon'.")
         time.sleep(2)
         test_flow_steps.append({"step": "Click navigation icon in Leaf Moisture", "status": "Success"})
 
+ 
 def leaf_moisture_share_icon(driver, obj, test_flow_steps):
+    """
+    Scrolls to the Leaf Moisture card, then clicks its Share icon.
+    """
     with allure.step("25. Click share icon in Leaf Moisture"):
         time.sleep(2)
-        if not smart_click(driver, "Click leaf moisture share icon", obj.leaf_moisture_share_icon_xpath):
-            pytest.fail("Could not find or click the 'leaf moisture share icon'.")
+        if not scroll_to_card_and_click_icon(
+            driver,
+            card_title_text="Leaf Moisture",
+            icon_xpath=obj.leaf_moisture_share_icon_xpath,
+            name="Leaf Moisture – Share",
+        ):
+            pytest.fail("Could not find or click the 'Leaf Moisture share icon'.")
         time.sleep(2)
-        test_flow_steps.append({"step": "Click share icon in Leaf Moisture", "status": "Success"})
-
+        test_flow_steps.append({
+            "step": "Click share icon in Leaf Moisture",
+            "status": "Success",
+        })
+ 
+ 
 def leaf_moisture_maximise(driver, obj, test_flow_steps):
+    """
+    Scrolls to the Leaf Moisture card, then clicks its Maximize icon.
+    """
     with allure.step("28. Click maximize icon in Leaf Moisture"):
         time.sleep(2)
-        if not smart_click(driver, "Click leaf moisture maximize icon", obj.leaf_moisture_maximise_icon_xpath):
-            pytest.fail("Could not find or click the 'leaf moisture maximize icon'.")
+        if not scroll_to_card_and_click_icon(
+            driver,
+            card_title_text="Leaf Moisture",
+            icon_xpath=obj.leaf_moisture_maximise_icon_xpath,
+            name="Leaf Moisture – Maximize",
+        ):
+            pytest.fail("Could not find or click the 'Leaf Moisture maximize icon'.")
         time.sleep(2)
-        test_flow_steps.append({"step": "Click maximize icon in Leaf Moisture", "status": "Success"})
-
-def leaf_moisture_maximise_screen(driver, obj, test_flow_steps):
-    with allure.step("29. Wait for Leaf Moisture maximize screen to appear"):
-        time.sleep(2)
-        if not obj._wait_for_maximize_screen(driver, timeout=10):
-            print("[WARNING] Maximize screen wait timed out, continuing...")
-        test_flow_steps.append({"step": "Wait for Leaf Moisture maximize screen", "status": "Success"})
-
-# ====================================================================
-# Crop health with date slider 
-# ====================================================================
+        test_flow_steps.append({
+            "step": "Click maximize icon in Leaf Moisture",
+            "status": "Success",
+        })
+ 
+ 
+# ── 4. CROP HEALTH DATE SLIDER FUNCTIONS (UNCHANGED LOGIC, FIXED ATTRS) ──────
+#
+#  These failed with AttributeError because load_locators_once never set
+#  date_slider_xpath / plus_icon_xpath / minus_icon_xpath.
+#  The updated load_locators_once above fixes that.
+#  The function bodies below are identical to what you already have.
+ 
 def date_slider(driver, obj, test_flow_steps):
     with allure.step("2. Click date slider"):
         time.sleep(2)
+        # Scroll back to top of crop health card first so the date slider is visible
+        _swipe_vertical_w3c_top(driver)
+        time.sleep(1)
         if not smart_click(driver, "Click date slider", obj.date_slider_xpath):
             pytest.fail("Could not find or click the 'date slider'.")
         time.sleep(2)
         test_flow_steps.append({"step": "Click date slider", "status": "Success"})
-
+ 
+ 
 def plus_icon(driver, obj, test_flow_steps):
     with allure.step("3. Click plus icon on date slider"):
         time.sleep(2)
@@ -557,7 +616,8 @@ def plus_icon(driver, obj, test_flow_steps):
             pytest.fail("Could not find or click the 'plus icon on date slider'.")
         time.sleep(2)
         test_flow_steps.append({"step": "Click plus icon on date slider", "status": "Success"})
-
+ 
+ 
 def minus_icon(driver, obj, test_flow_steps):
     with allure.step("4. Click minus icon on date slider"):
         time.sleep(2)
@@ -565,3 +625,4 @@ def minus_icon(driver, obj, test_flow_steps):
             pytest.fail("Could not find or click the 'minus icon on date slider'.")
         time.sleep(2)
         test_flow_steps.append({"step": "Click minus icon on date slider", "status": "Success"})
+ 

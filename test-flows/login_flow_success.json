@@ -1,9 +1,5 @@
 [
     {
-        "step": "Click Next button on language selection",
-        "status": "Success"
-    },
-    {
         "step": "Allow picture permission",
         "status": "Success"
     },
@@ -17,6 +13,10 @@
     },
     {
         "step": "Allow notifications permission",
+        "status": "Success"
+    },
+    {
+        "step": "Click Next button on language selection",
         "status": "Success"
     },
     {

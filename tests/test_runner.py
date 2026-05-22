@@ -266,16 +266,17 @@ def run_tests_and_get_suggestions(
     for t in final_test_list:
         path = t.get("path")
         name = t.get("name", path)
+    
         if path and os.path.exists(os.path.join(project_root, path)):
             valid_paths.append(path)
             path_to_name_map[path] = name
             send_module_status(name, "pending", "Waiting in queue...")
         else:
             send_log(f"Script not found: {path}", "WARNING")
-
-    if not valid_paths:
-        send_log("No valid scripts to execute.", "FAILED")
-        return
+    
+        if not valid_paths:
+            send_log("No valid scripts to execute.", "FAILED")
+            return
 
     # Tell frontend a new run is starting
     try:
