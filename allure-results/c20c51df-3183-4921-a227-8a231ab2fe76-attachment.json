@@ -1,0 +1,26 @@
+{
+  "ticket_id": "RUN-20260522-162208",
+  "issue_id": "ISS-001",
+  "app_name": "Krishivaas Telangana Farmer",
+  "app_version": "0.8.6",
+  "module": "TestCropHealth",
+  "feature": "Weather and Moisture Validation",
+  "issue_summary": "Automation Failure: test_crop_health_diary_activity_flow",
+  "title": "Automation Failure: test_crop_health_diary_activity_flow",
+  "test_name": "test_crop_health_diary_activity_flow",
+  "steps_executed": [
+    "API Success] farmer-app/org-setting-farmer?ping_attempt=1 - 0.23s - 0.75KB",
+    "Network log saved:', 'fast'"
+  ],
+  "developer_name": "@Anuj",
+  "description": "pytest.fail(\nFailed: Could not find or click the 'date slider'.\n\nSteps Executed:\n1. API Success] farmer-app/org-setting-farmer?ping_attempt=1 - 0.23s - 0.75KB\n2. Network log saved:', 'fast'",
+  "start_date": "2026-05-22T16:23:10.655114",
+  "end_date": "2026-05-22T16:26:32.268877",
+  "sprint": "Automation",
+  "fix_version": [
+    "Production"
+  ],
+  "affects_version": [
+    "Krishivaas Telangana Farmer"
+  ]
+}
