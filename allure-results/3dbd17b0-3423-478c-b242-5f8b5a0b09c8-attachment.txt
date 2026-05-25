@@ -1,0 +1,80 @@
+CRASH START: 05-25 22:40:52.798  8891  8917 E AndroidRuntime: FATAL EXCEPTION: Instr: androidx.test.runner.AndroidJUnitRunner
+05-25 22:40:52.798  8891  8917 E AndroidRuntime: Process: io.appium.uiautomator2.server, PID: 8891
+05-25 22:40:52.798  8891  8917 E AndroidRuntime: java.lang.RuntimeException: Error while disconnecting UiAutomation@81705f[id=-1, displayId=0, flags=0]
+05-25 22:40:52.798  8891  8917 E AndroidRuntime: 	at android.app.UiAutomation.disconnect(UiAutomation.java:456)
+05-25 22:40:52.798  8891  8917 E AndroidRuntime: 	at android.app.Instrumentation.finish(Instrumentation.java:310)
+05-25 22:40:52.798  8891  8917 E AndroidRuntime: 	at androidx.test.runner.MonitoringInstrumentation.finish(MonitoringInstrumentation.java:409)
+05-25 22:40:52.798  8891  8917 E AndroidRuntime: 	at androidx.test.runner.AndroidJUnitRunner.onStart(AndroidJUnitRunner.java:474)
+05-25 22:40:52.798  8891  8917 E AndroidRuntime: 	at android.app.Instrumentation$InstrumentationThread.run(Instrumentation.java:2631)
+05-25 22:40:52.798  8891  8917 E AndroidRuntime: Caused by: android.os.DeadObjectException
+05-25 22:40:52.798  8891  8917 E AndroidRuntime: 	at android.os.BinderProxy.transactNative(Native Method)
+05-25 22:40:52.798  8891  8917 E AndroidRuntime: 	at android.os.BinderProxy.transact(BinderProxy.java:665)
+05-25 22:40:52.798  8891  8917 E AndroidRuntime: 	at android.app.IUiAutomationConnection$Stub$Proxy.disconnect(IUiAutomationConnection.java:568)
+05-25 22:40:52.798  8891  8917 E AndroidRuntime: 	at android.app.UiAutomation.disconnect(UiAutomation.java:454)
+05-25 22:40:52.798  8891  8917 E AndroidRuntime: 	... 4 more
+05-25 22:40:52.799 22229 22238 I FontLog : (REDACTED) Pulling font file for id = %d, cache size = %d
+05-25 22:40:52.816 13222 13222 I artd    : GetBestInfo: vdex in dalvik-cache (/data/dalvik-cache/arm64/system@priv-app@DeviceIntegrationService@DeviceIntegrationService.apk@classes.vdex) is kOatUpToDate with filter 'verify' executable 'false'
+05-25 22:40:52.816 15175 15175 I egrationservice: Using CollectorTypeCC GC.
+05-25 22:40:52.825  8891  8917 I Process : Sending signal. PID: 8891 SIG: 9
+05-25 22:40:52.838 15175 15175 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+05-25 22:40:52.840 15175 15175 E egrationservice: BBinder_init Processname  com.microsoft.deviceintegrationservice  
+05-25 22:40:52.840 15175 15175 E egrationservice: BBinder_init hasGetProcessName  com.microsoft.deviceintegrationservice
+05-25 22:40:52.857  1413  1717 I ekqi    : (REDACTED) HDM. appOpsListener %s %s
+05-25 22:40:52.857  1413  1717 I ekqi    : (REDACTED) HDM. Ignoring irrelevant audio permission changes for package %s
+05-25 22:40:52.864 15026 15107 I OneAuthLog: [OneAuth:0002:Info:48bf5:00000000] MATS DeviceProfileTelemetryId: bc382bd7e2156c33
+05-25 22:40:52.864 15026 15107 I OneAuthLog: [OneAuth:0002:Info:4md94:00000000] MATS device telemetry disabled.
+05-25 22:40:52.877 15175 15175 D nativeloader: Configuring clns-shared-9 for other apk /system/priv-app/DeviceIntegrationService/DeviceIntegrationService.apk. target_sdk_version=35, uses_libraries=, library_path=/system/priv-app/DeviceIntegrationService/lib/arm64:/system/lib64:/system_ext/lib64, permitted_path=/data:/mnt/expand:/data/user/0/com.microsoft.deviceintegrationservice:/system/priv-app/DeviceIntegrationService:/system/lib64:/system_ext/lib64
+05-25 22:40:52.884 15026 15107 I OneAuthLog: [MSAL:0002]	INFO   	CreateSingletonComponents:143	Starting up MSAL
+05-25 22:40:52.885 15175 15175 D CompatChangeReporter: Compat change id reported: 202956589; UID 10262; state: ENABLED
+05-25 22:40:52.890 15175 15175 I egrationservice: AssetManager2(0xb40000778259bc18) locale list changing from [] to [en-US]
+05-25 22:40:52.894 15026 15107 I OneAuthLog: [MSAL:0002]	INFO   	AddConfigurationWithStorageManager:269	Created a new public client application with ID ''
+05-25 22:40:52.895 15026 15107 I OneAuthLog: [OneAuth:0002:Info:8mqsd:de10ca09] OneAuth Version 10.1.1 (com.microsoft.appmanager)
+05-25 22:40:52.896 15026 15107 I OneAuthLog: [OneAuth:0002:Info:9zj7z:de10ca09] Language code 'en-US' is not supported, fall back to 'en'
+05-25 22:40:52.900 15175 15175 V GraphicsEnvironment: Currently set values for:
+05-25 22:40:52.900 15175 15175 V GraphicsEnvironment:   angle_gl_driver_selection_pkgs=[com.android.angle, com.linecorp.b612.android, com.campmobile.snow, com.google.android.apps.tachyon]
+05-25 22:40:52.900 15175 15175 V GraphicsEnvironment:   angle_gl_driver_selection_values=[angle, native, native, native]
+05-25 22:40:52.900 15175 15175 V GraphicsEnvironment: com.microsoft.deviceintegrationservice is not listed in per-application setting
+05-25 22:40:52.900 15175 15175 V GraphicsEnvironment: ANGLE allowlist from config: 
+05-25 22:40:52.900 15175 15175 V GraphicsEnvironment: com.microsoft.deviceintegrationservice is not listed in ANGLE allowlist or settings, returning default
+05-25 22:40:52.900 15175 15175 V GraphicsEnvironment: Neither updatable production driver nor prerelease driver is supported.
+05-25 22:40:52.947 13222 13222 I artd    : GetBestInfo: odex next to the dex file (/system/app/CrossDeviceServiceBroker/oat/arm64/CrossDeviceServiceBroker.odex) is kOatBootImageOutOfDate with filter 'verify' executable 'false': Image checksum mismatch, expected i;27/d4dc72a5:i;30/dbfe03e5 to start with i;27/5ccf0f5a
+05-25 22:40:52.947 13222 13222 I artd    : GetBestInfo: vdex next to the dex file (/system/app/CrossDeviceServiceBroker/oat/arm64/CrossDeviceServiceBroker.vdex) is kOatUpToDate with filter 'verify' executable 'false'
+05-25 22:40:52.961 15026 15095 I fd.s    : Provider GmsCore_OpenSSL not available
+05-25 22:40:52.967 15222 15222 E cmd     : BBinder_init Processname  cmd  
+05-25 22:40:52.968 15222 15222 E cmd     : BBinder_init hasGetProcessName  cmd
+05-25 22:40:52.991 27144 27144 I adbd    : Remote process closed the socket (on MSG_PEEK)
+05-25 22:40:53.040 15064 15208 W DynamiteModule: Local module descriptor class for com.google.android.gms.providerinstaller.dynamite not found.
+05-25 22:40:53.045 15175 15175 I TetheringManager: registerTetheringEventCallback:com.microsoft.deviceintegrationservice
+05-25 22:40:53.050 27144 27144 E adbd    : failed to connect to socket 'tcp:6790': Connection refused
+05-25 22:40:53.063 15026 15026 I Choreographer: Skipped 34 frames!  The application may be doing too much work on its main thread.
+05-25 22:40:53.092 22229 23555 W ProviderHelper: Unknown dynamite feature providerinstaller.dynamite
+05-25 22:40:53.093 15064 15208 W ProviderInstaller: Failed to load providerinstaller module: No acceptable module com.google.android.gms.providerinstaller.dynamite found. Local version is 0 and remote version is 0.
+05-25 22:40:53.099 22229 23555 I FontLog : (REDACTED) Pulling font file for id = %d, cache size = %d
+05-25 22:40:53.119 15064 15285 E ashmem  : Pinning is deprecated since Android Q. Please use trim or other methods.
+05-25 22:40:53.122 13222 13222 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~7H8ZvkaHFf198bf30-Qbow==/com.vivo.appstore-j6lm0wc7bAbkH9z76TQY_g==/oat/arm64/base.odex) is kOatUpToDate with filter 'speed-profile' executable 'false'
+05-25 22:40:53.145 15064 15208 D ApplicationLoaders: Returning zygote-cached class loader: /system/framework/org.apache.http.legacy.jar
+05-25 22:40:53.145 15064 15208 D ApplicationLoaders: Returning zygote-cached class loader: /system/framework/com.android.location.provider.jar
+05-25 22:40:53.145 15064 15208 D ApplicationLoaders: Returning zygote-cached class loader: /system/framework/com.android.media.remotedisplay.jar
+05-25 22:40:53.165 15064 15208 D nativeloader: Configuring clns-10 for other apk /system_ext/framework/com.android.extensions.appfunctions.jar. target_sdk_version=37, uses_libraries=ALL, library_path=/data/app/~~Z4_UKhK2I9Odt1gCm9Ea8A==/com.google.android.gms-K8HCRGBj_QdhDHQZU28YrA==/lib/arm64:/data/app/~~Z4_UKhK2I9Odt1gCm9Ea8A==/com.google.android.gms-K8HCRGBj_QdhDHQZU28YrA==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/com.google.android.gms
+05-25 22:40:53.165 15064 15208 D nativeloader: Extending system_exposed_libraries: libbinauralrenderer_wrapper.qti.so:libhoaeffects.qti.so:librealm-jni.vivo.so:libupdateprof.qti.so:libthermalclient.qti.so:libdiag_system.qti.so:libqape.qti.so:liblistenjni.qti.so
+05-25 22:40:53.171 27144 27144 E adbd    : failed to connect to socket 'tcp:6790': Connection refused
+05-25 22:40:53.184 15064 15208 D ApplicationLoaders: Returning zygote-cached class loader: /system_ext/framework/androidx.window.extensions.jar
+05-25 22:40:53.184 15064 15208 D ApplicationLoaders: Returning zygote-cached class loader: /system_ext/framework/androidx.window.sidecar.jar
+05-25 22:40:53.198 15331 15331 W libprocessgroup: JoinCgroup: controller schedtune is not found
+05-25 22:40:53.200 15331 15331 W libprocessgroup: JoinCgroup: controller schedtune is not found
+05-25 22:40:53.200 15331 15331 W libprocessgroup: JoinCgroup: controller schedtune is not found
+05-25 22:40:53.200 15331 15331 W libprocessgroup: JoinCgroup: controller schedtune is not found
+05-25 22:40:53.200 15331 15331 W libprocessgroup: JoinCgroup: controller schedtune is not found
+05-25 22:40:53.200 15331 15331 W libprocessgroup: SetCgroup::ExecuteForTask: failed to open /dev/cpuctl/top-app/tasks: Permission denied
+05-25 22:40:53.200 15331 15331 W libprocessgroup: SetCgroup::ExecuteForTask: failed to open /dev/cpuctl/top-app/tasks: Permission denied
+05-25 22:40:53.200 15331 15331 W libprocessgroup: SetCgroup::ExecuteForTask: failed to open /dev/blkio/top/tasks: Permission denied
+05-25 22:40:53.200 15331 15331 E libprocessgroup: set_timerslack_ns write failed: Operation not permitted
+05-25 22:40:53.267 14986 15012 I oid.documentsui: AssetManager2(0xb40000778259db58) locale list changing from [] to [en-US]
+05-25 22:40:53.399 15064 15347 W Authenticator: Failed to fetch token
+05-25 22:40:53.399 15064 15347 W Authenticator: android.accounts.AuthenticatorException
+05-25 22:40:53.399 15064 15347 W Authenticator: 	at ibd.k(PG:277)
+05-25 22:40:53.399 15064 15347 W Authenticator: 	at gov.i(PG:14)
+05-25 22:40:53.399 15064 15347 W Authenticator: 	at otr.b(PG:29)
+05-25 22:40:53.399 15064 15347 W Authenticator: 	at ome.run(PG:290)
+05-25 22:40:53.399 15064 15347 W Authenticator: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1154)
+05-25 22:40:53.399 15064 15347 W Authenticator: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:652)

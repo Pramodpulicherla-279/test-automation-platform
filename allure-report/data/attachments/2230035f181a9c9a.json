@@ -1,0 +1,26 @@
+{
+  "ticket_id": "RUN-20260525-224044",
+  "issue_id": "ISS-001",
+  "app_name": "Krishivaas Telangana Farmer",
+  "app_version": "0.8.6",
+  "module": "Login",
+  "feature": "Authentication",
+  "issue_summary": "Automation Failure: test_login_success",
+  "title": "Automation Failure: test_login_success",
+  "test_name": "test_login_success",
+  "steps_executed": [
+    "https://api.telangana.krishivaas.in/api/v1/farmer-app/state-updated-resp-get-farms-by-survey-farmer?app_type=state-farmer&farm_type=current&page=1&length=10&crop_name= took 2644 ms, size: 105.37 KB",
+    "API Success] farmer-app/state-updated-resp-get-farms-by-survey-farmer?app_type=state-farmer&farm_type=current&page=1&length=10&crop_name= - 2.65s - 0KB"
+  ],
+  "developer_name": "@Anuj",
+  "description": "Application crash detected in logcat\n\nSteps Executed:\n1. https://api.telangana.krishivaas.in/api/v1/farmer-app/state-updated-resp-get-farms-by-survey-farmer?app_type=state-farmer&farm_type=current&page=1&length=10&crop_name= took 2644 ms, size: 105.37 KB\n2. API Success] farmer-app/state-updated-resp-get-farms-by-survey-farmer?app_type=state-farmer&farm_type=current&page=1&length=10&crop_name= - 2.65s - 0KB",
+  "start_date": "2026-05-25T22:40:44.985246",
+  "end_date": "2026-05-25T22:41:57.208771",
+  "sprint": "Automation",
+  "fix_version": [
+    "Production"
+  ],
+  "affects_version": [
+    "Krishivaas Telangana Farmer"
+  ]
+}
