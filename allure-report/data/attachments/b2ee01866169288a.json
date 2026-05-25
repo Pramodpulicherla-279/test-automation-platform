@@ -1,5 +1,5 @@
 {
-  "ticket_id": "RUN-20260525-225840",
+  "ticket_id": "RUN-20260525-231539",
   "issue_id": "ISS-001",
   "app_name": "Krishivaas Telangana Farmer",
   "app_version": "0.8.6",
@@ -10,9 +10,9 @@
   "test_name": "test_crop_health_diary_activity_flow",
   "steps_executed": [],
   "developer_name": "@Anuj",
-  "description": "pytest.fail(\"Could not find or click the 'farm location'.\")\nFailed: Could not find or click the 'farm location'.",
-  "start_date": "2026-05-25T22:59:41.702483",
-  "end_date": "2026-05-25T23:01:41.500030",
+  "description": "pytest.fail(\"Could not find or click the 'date slider'.\")\nFailed: Could not find or click the 'date slider'.",
+  "start_date": "2026-05-25T23:16:40.475215",
+  "end_date": "2026-05-25T23:19:40.093296",
   "sprint": "Automation",
   "fix_version": [
     "Production"
