@@ -1,2 +1,0 @@
-WARNING  test_crop_health_pytest:test_crop_health_pytest.py:86 CALIBRATION NEEDED: LEAF_MOISTURE reference pixel is all zeros. Run calibrate_moisture_pixels() first and update cv_validator.py.
-WARNING  test_crop_health_pytest:test_crop_health_pytest.py:86 CALIBRATION NEEDED: SOIL_MOISTURE reference pixel is all zeros. Run calibrate_moisture_pixels() first and update cv_validator.py.
