@@ -1,0 +1,10 @@
+[
+    {
+        "step": "Click on farm card",
+        "status": "Success"
+    },
+    {
+        "step": "Click navigation button",
+        "status": "Success"
+    }
+]
