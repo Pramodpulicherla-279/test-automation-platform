@@ -1,5 +1,5 @@
 WARNING  test_crop_health_pytest:test_crop_health_pytest.py:89 CALIBRATION NEEDED: LEAF_MOISTURE reference pixel is all zeros. Run calibrate_moisture_pixels() and update cv_validator.py.
 WARNING  test_crop_health_pytest:test_crop_health_pytest.py:89 CALIBRATION NEEDED: SOIL_MOISTURE reference pixel is all zeros. Run calibrate_moisture_pixels() and update cv_validator.py.
-INFO     utils.screenshot_utils:screenshot_utils.py:77 Screenshot saved: screenshots/crop_health\crop_health_farm_load_1779732132.png
+INFO     utils.screenshot_utils:screenshot_utils.py:77 Screenshot saved: screenshots/crop_health\crop_health_farm_load_1779732508.png
 INFO     utils.opencv_crop_health:opencv_crop_health.py:148 Stress level: {'healthy_pct': 59.38, 'moderate_pct': 6.48, 'stressed_pct': 0.04, 'severe_pct': 0.0, 'dominant': 'healthy'}
-INFO     utils.screenshot_utils:screenshot_utils.py:77 Screenshot saved: screenshots/crop_health\before_plus_1779732134.png
+INFO     utils.screenshot_utils:screenshot_utils.py:77 Screenshot saved: screenshots/crop_health\before_plus_1779732509.png
