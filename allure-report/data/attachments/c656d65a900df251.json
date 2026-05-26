@@ -20,7 +20,7 @@
         "status": "Success"
     },
     {
-        "timestamp": "2026-05-26T19:40:08",
+        "timestamp": "2026-05-26T20:03:22",
         "action": "crop_health_pixel_check_initial",
         "result": {
             "screen": "crop_health",
@@ -31,7 +31,7 @@
         }
     },
     {
-        "timestamp": "2026-05-26T19:40:08",
+        "timestamp": "2026-05-26T20:03:22",
         "action": "stress_level_at_latest_date",
         "result": {
             "healthy_pct": 59.38,
@@ -42,7 +42,7 @@
         }
     },
     {
-        "timestamp": "2026-05-26T19:40:09",
+        "timestamp": "2026-05-26T20:03:23",
         "action": "date_slider_before_minus_captured",
         "result": "ok"
     },
@@ -51,7 +51,7 @@
         "status": "Success"
     },
     {
-        "timestamp": "2026-05-26T19:41:29",
+        "timestamp": "2026-05-26T20:04:42",
         "action": "date_slider_minus_map_changed",
         "result": {
             "ssim_score": 0.9661,
@@ -78,7 +78,7 @@
         }
     },
     {
-        "timestamp": "2026-05-26T19:41:29",
+        "timestamp": "2026-05-26T20:04:42",
         "action": "stress_level_at_previous_date",
         "result": {
             "healthy_pct": 61.97,
@@ -89,7 +89,7 @@
         }
     },
     {
-        "timestamp": "2026-05-26T19:41:29",
+        "timestamp": "2026-05-26T20:04:42",
         "action": "date_slider_before_plus_captured",
         "result": "ok"
     },
@@ -98,7 +98,7 @@
         "status": "Success"
     },
     {
-        "timestamp": "2026-05-26T19:42:48",
+        "timestamp": "2026-05-26T20:06:01",
         "action": "date_slider_plus_map_changed",
         "result": {
             "ssim_score": 0.9661,
@@ -125,7 +125,7 @@
         }
     },
     {
-        "timestamp": "2026-05-26T19:42:48",
+        "timestamp": "2026-05-26T20:06:01",
         "action": "stress_level_after_returning_to_latest",
         "result": {
             "healthy_pct": 59.38,
@@ -195,6 +195,18 @@
     },
     {
         "step": "Android back button pressed",
+        "status": "Success"
+    },
+    {
+        "step": "Click maximise icon",
+        "status": "Success"
+    },
+    {
+        "step": "Click close tab icon",
+        "status": "Success"
+    },
+    {
+        "step": "Click notification icon on date slider",
         "status": "Success"
     }
 ]
