@@ -1,0 +1,23 @@
+{
+  "ticket_id": "RUN-20260526-181539",
+  "issue_id": "ISS-001",
+  "app_name": "Krishivaas Telangana Farmer",
+  "app_version": "0.8.6",
+  "module": "TestCropHealth",
+  "feature": "Weather and Moisture Validation",
+  "issue_summary": "Automation Failure: test_crop_health_diary_activity_flow",
+  "title": "Automation Failure: test_crop_health_diary_activity_flow",
+  "test_name": "test_crop_health_diary_activity_flow",
+  "steps_executed": [],
+  "developer_name": "@Anuj",
+  "description": "raise AssertionError(f\"[crop_health] {result['reason']}\")\nAssertionError: [crop_health] green=1.24% (need≥5.0) | blue=1.59% (need<1.0)",
+  "start_date": "2026-05-26T18:16:42.254513",
+  "end_date": "2026-05-26T18:18:37.226191",
+  "sprint": "Automation",
+  "fix_version": [
+    "Production"
+  ],
+  "affects_version": [
+    "Krishivaas Telangana Farmer"
+  ]
+}

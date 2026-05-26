@@ -1,0 +1,22 @@
+[
+    {
+        "step": "Click on farm card",
+        "status": "Success"
+    },
+    {
+        "step": "Click navigation button",
+        "status": "Success"
+    },
+    {
+        "step": "Click farm location",
+        "status": "Success"
+    },
+    {
+        "step": "Click current location",
+        "status": "Success"
+    },
+    {
+        "step": "Android back button pressed",
+        "status": "Success"
+    }
+]
