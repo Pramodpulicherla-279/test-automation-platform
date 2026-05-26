@@ -8,6 +8,8 @@ from selenium.webdriver.common.actions.pointer_input import PointerInput
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.common.exceptions import WebDriverException
 
+from selenium.common.exceptions import WebDriverException
+
 import time
 
 def _ensure_locator_is_tuple(locator):

@@ -1,0 +1,108 @@
+[
+    {
+        "step": "Click on hamburger menu",
+        "status": "Success"
+    },
+    {
+        "step": "Click on historical farms",
+        "status": "Success"
+    },
+    {
+        "step": "Click on farm card",
+        "status": "Success"
+    },
+    {
+        "step": "Click navigation button",
+        "status": "Success"
+    },
+    {
+        "step": "Android back button pressed",
+        "status": "Success"
+    },
+    {
+        "step": "Click diary icon",
+        "status": "Success"
+    },
+    {
+        "step": "Click Add Activity button",
+        "status": "Success"
+    },
+    {
+        "step": "Click Add Activity button",
+        "status": "Success"
+    },
+    {
+        "step": "Enter activity name",
+        "status": "Success",
+        "value": "Ram"
+    },
+    {
+        "step": "Click cost field",
+        "status": "Success"
+    },
+    {
+        "step": "Enter cost amount",
+        "status": "Success",
+        "value": "10000"
+    },
+    {
+        "step": "Click Submit button",
+        "status": "Success"
+    },
+    {
+        "step": "Android back button pressed",
+        "status": "Success"
+    },
+    {
+        "step": "Click weather icon",
+        "status": "Success"
+    },
+    {
+        "step": "Click forecast",
+        "status": "Success"
+    },
+    {
+        "step": "Click hours button",
+        "status": "Success"
+    },
+    {
+        "step": "Click days button",
+        "status": "Success"
+    },
+    {
+        "step": "Click close icon",
+        "status": "Success"
+    },
+    {
+        "step": "Click share icon",
+        "status": "Success"
+    },
+    {
+        "step": "Android back button pressed",
+        "status": "Success"
+    },
+    {
+        "step": "Click maximise icon",
+        "status": "Success"
+    },
+    {
+        "step": "Android back button pressed",
+        "status": "Success"
+    },
+    {
+        "step": "Click notification icon",
+        "status": "Success"
+    },
+    {
+        "step": "Click expert comments",
+        "status": "Success"
+    },
+    {
+        "step": "Click crop stress",
+        "status": "Success"
+    },
+    {
+        "step": "Android back button pressed",
+        "status": "Success"
+    }
+]
