@@ -575,7 +575,7 @@ def wait_for_otp_filled(driver, otp_xpath, expected_length=6, timeout=30):
     ######################## Scroller func ######################
 
 
-def scroll_until_element_visible(driver, xpath, max_scrolls=8):
+def scroll_until_element_visible(driver, xpath, max_scrolls=4):
     for attempt in range(max_scrolls):
         try:
             element = driver.find_element(AppiumBy.XPATH, xpath)
