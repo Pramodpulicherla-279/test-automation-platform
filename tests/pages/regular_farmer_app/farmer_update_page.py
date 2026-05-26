@@ -9,7 +9,7 @@ from tests.conftest import driver
 import json
 import os
 from selenium.common.exceptions import WebDriverException
-from utils.wait_utils import find_and_click, smart_click
+from utils.wait_utils import find_and_click, scroll_until_element_visible, smart_click
 from utils.ui_actions import android_back_func
 import sys
 sys.dont_write_bytecode = True
@@ -54,26 +54,30 @@ def load_locators_once(self, request):
     request.cls.stop_video_xpath = farmer_updates_xpaths.get("stop_video")
 
 # ── Step 1: Click on active farms ──────────────────────────────────
-def click_humburger_menu(driver, obj, test_flow_steps):
-    with allure.step("Click on humburger menu"):
-        time.sleep(3)
-        if not smart_click(driver, "Humburger menu", obj.humburger_menu_xpath):
-            pytest.fail("Could not find or click the 'humburger menu' button.")
-        test_flow_steps.append({"step": "Click on humburger menu", "status": "Success"})
+# def click_humburger_menu(driver, obj, test_flow_steps):
+#     with allure.step("Click on humburger menu"):
+#         time.sleep(3)
+#         if not smart_click(driver, "Humburger menu", obj.humburger_menu_xpath):
+#             pytest.fail("Could not find or click the 'humburger menu' button.")
+#         test_flow_steps.append({"step": "Click on humburger menu", "status": "Success"})
 
-def click_historical_farms(driver, obj, test_flow_steps):
-    with allure.step("Click on historical farms"):
-        time.sleep(2)
-        if not smart_click(driver, "Historical farms", obj.historical_farms_xpath):
-            pytest.fail("Could not find or click the 'historical farms' button.")
-        test_flow_steps.append({"step": "Click on historical farms", "status": "Success"})
+# def click_historical_farms(driver, obj, test_flow_steps):
+#     with allure.step("Click on historical farms"):
+#         time.sleep(2)
+#         if not smart_click(driver, "Historical farms", obj.historical_farms_xpath):
+#             pytest.fail("Could not find or click the 'historical farms' button.")
+#         test_flow_steps.append({"step": "Click on historical farms", "status": "Success"})
 
 def click_active_farms(driver, obj, test_flow_steps):
-    with allure.step("Click on active farms"):
-        time.sleep(2)
-        if not smart_click(driver, "Click on active farms", obj.active_farms_xpath):
-            pytest.fail("Could not find or click the 'active farms' button.")
-        test_flow_steps.append({"step": "Click on active farms", "status": "Success"})
+    with allure.step("Click Active Farms"):
+        time.sleep(5)
+        element = scroll_until_element_visible(driver, obj.active_farms_xpath)
+        if element is None:
+            pytest.fail("Could not find 'Active Farms' after scrolling")
+        time.sleep(60)
+        element.click()  # ✅ Actually click the element
+        test_flow_steps.append({"step": "Click Active Farms", "status": "Success"})
+
 
 def click_navigation_button(driver, obj, test_flow_steps):
     # ── Step 2: Navigation button ──────────────────────────────────────
@@ -96,7 +100,7 @@ def start_audio_recording(driver, obj, test_flow_steps):
 def stop_audio_recording(driver, obj, test_flow_steps):
     # ── Step 4: Stop audio recording ───────────────────────────────────
     with allure.step("4. Stop audio recording"):
-        time.sleep(2)
+        time.sleep(10)
         if not smart_click(driver, "Stop audio", obj.stop_audio_xpath):
             pytest.fail("Could not click 'stop audio'.")
         time.sleep(3)

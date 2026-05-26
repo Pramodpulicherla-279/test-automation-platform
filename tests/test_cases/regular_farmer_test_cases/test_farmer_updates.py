@@ -11,7 +11,7 @@ import os
 from selenium.common.exceptions import WebDriverException
 from utils.wait_utils import find_and_click, smart_click
 import sys
-from pages.regular_farmer_app.farmer_update_page import click_humburger_menu, load_locators_once, start_video, stop_video, tab_on_video_play
+from pages.regular_farmer_app.farmer_update_page import  load_locators_once, start_video, stop_video, tab_on_video_play
 from pages.regular_farmer_app.farmer_update_page import (
     # click_humberger_menu,
     # click_historical_farms,
@@ -57,8 +57,6 @@ class TestFarmer:
         try:
              # step - 1; click on active farm card
             click_active_farms(driver, self, test_flow_steps)
-            # click_humberger_menu(driver, self, test_flow_steps)
-            # click_historical_farms(driver, self, test_flow_steps)
             click_navigation_button(driver, self, test_flow_steps)
             start_audio_recording(driver, self, test_flow_steps)
             stop_audio_recording(driver, self, test_flow_steps)

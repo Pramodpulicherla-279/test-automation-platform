@@ -24,8 +24,10 @@ from pages.regular_farmer_app.diagnosis_updates_page import (
     click_disease_confirm_button,
     click_curative_ok_button,
     start_audio_recording,
+    start_general_remarks_audio,
     stop_audio_recording,
     start_video_recording,
+    stop_general_remarks_audio,
     stop_video_recording,
     image_capture_icon,
     photo_capture_with_comment,
@@ -33,10 +35,22 @@ from pages.regular_farmer_app.diagnosis_updates_page import (
     click_submit_button,
     click_profile_icon,
     click_profile_button,
-    click_diagnosis_tab,
+    # click_diagnosis_tab,
     click_diagnosis_dropdown,
+    select_first_media_item,
+
     android_back,
     photo_capture
+)
+from pages.regular_farmer_app.farmer_update_page import (
+    crop_info_icon,
+    cross_icon,
+    download_icon,
+    play_audio_icon,
+    pause_audio_icon,
+    start_video,
+    stop_video,
+    tab_on_video_play,
 )
 
 sys.dont_write_bytecode = True
@@ -74,11 +88,21 @@ class TestDiagnosisUpdates:
             photo_capture_with_comment(driver, self, test_flow_steps)
             # image_save_button(driver, self, test_flow_steps)        
             enter_general_remarks(driver, self, test_flow_steps)
+            start_general_remarks_audio(driver, self, test_flow_steps)
+            stop_general_remarks_audio(driver, self, test_flow_steps)
             click_submit_button(driver, self, test_flow_steps)
             click_profile_icon(driver, self, test_flow_steps)
             click_profile_button(driver, self, test_flow_steps)
-            click_diagnosis_tab(driver, self, test_flow_steps)
+            # click_diagnosis_tab(driver, self, test_flow_steps)
             click_diagnosis_dropdown(driver, self, test_flow_steps)
+            # select_audio_from_dropdown(driver, self, test_flow_steps)
+            # select_first_media_item(driver, self, test_flow_steps)
+            crop_info_icon(driver, self, test_flow_steps)
+            cross_icon(driver, self, test_flow_steps)
+            download_icon(driver, self, test_flow_steps)
+            play_audio_icon(driver, self, test_flow_steps)
+            pause_audio_icon(driver, self, test_flow_steps)
+            android_back(driver, self, test_flow_steps)
             android_back(driver, self, test_flow_steps)
             android_back(driver, self, test_flow_steps)
 
@@ -105,8 +129,15 @@ class TestDiagnosisUpdates:
             click_submit_button(driver, self, test_flow_steps)
             click_profile_icon(driver, self, test_flow_steps)
             click_profile_button(driver, self, test_flow_steps)
-            click_diagnosis_tab(driver, self, test_flow_steps)
+            # click_diagnosis_tab(driver, self, test_flow_steps)
             click_diagnosis_dropdown(driver, self, test_flow_steps)
+            select_first_media_item(driver, self, test_flow_steps)
+            crop_info_icon(driver, self, test_flow_steps)
+            cross_icon(driver, self, test_flow_steps)
+            download_icon(driver, self, test_flow_steps)
+            play_audio_icon(driver, self, test_flow_steps)
+            pause_audio_icon(driver, self, test_flow_steps)
+            android_back(driver, self, test_flow_steps)
             android_back(driver, self, test_flow_steps)
             android_back(driver, self, test_flow_steps)
     
@@ -130,7 +161,17 @@ class TestDiagnosisUpdates:
             start_video_recording(driver, self, test_flow_steps)
             stop_video_recording(driver, self, test_flow_steps)
             click_submit_button(driver, self, test_flow_steps)
-    
+            click_profile_icon(driver, self, test_flow_steps)
+            click_profile_button(driver, self, test_flow_steps)
+            click_diagnosis_dropdown(driver, self, test_flow_steps)
+            select_first_media_item(driver, self, test_flow_steps)
+            crop_info_icon(driver, self, test_flow_steps)
+            cross_icon(driver, self, test_flow_steps)
+            download_icon(driver, self, test_flow_steps)
+            start_video(driver, self, test_flow_steps)
+            tab_on_video_play(driver, self, test_flow_steps)
+            stop_video(driver, self, test_flow_steps)
+            android_back(driver, self, test_flow_steps)
         finally:
             os.makedirs("test-flows", exist_ok=True)
             with open("test-flows/diagnosis_updates_flow.json", "w") as f:
@@ -150,6 +191,13 @@ class TestDiagnosisUpdates:
             image_capture_icon(driver, self, test_flow_steps)
             photo_capture(driver, self, test_flow_steps)
             click_submit_button(driver, self, test_flow_steps)
+            click_profile_icon(driver, self, test_flow_steps)
+            click_profile_button(driver, self, test_flow_steps)
+            click_diagnosis_dropdown(driver, self, test_flow_steps)
+            select_first_media_item(driver, self, test_flow_steps)
+            crop_info_icon(driver, self, test_flow_steps)
+            cross_icon(driver, self, test_flow_steps)
+            download_icon(driver, self, test_flow_steps)
     
         finally:
             os.makedirs("test-flows", exist_ok=True)
@@ -171,6 +219,13 @@ class TestDiagnosisUpdates:
             click_camera_icon(driver, self, test_flow_steps)
             photo_capture_with_comment(driver, self, test_flow_steps)
             click_submit_button(driver, self, test_flow_steps)
+            click_profile_icon(driver, self, test_flow_steps)
+            click_profile_button(driver, self, test_flow_steps)
+            click_diagnosis_dropdown(driver, self, test_flow_steps)
+            select_first_media_item(driver, self, test_flow_steps)
+            crop_info_icon(driver, self, test_flow_steps)
+            cross_icon(driver, self, test_flow_steps)
+            download_icon(driver, self, test_flow_steps)
     
         finally:
             os.makedirs("test-flows", exist_ok=True)
@@ -196,6 +251,13 @@ class TestDiagnosisUpdates:
             image_capture_icon(driver, self, test_flow_steps)
             photo_capture_with_comment(driver, self, test_flow_steps)       
             click_submit_button(driver, self, test_flow_steps)
+            click_profile_icon(driver, self, test_flow_steps)
+            click_profile_button(driver, self, test_flow_steps)
+            click_diagnosis_dropdown(driver, self, test_flow_steps)
+            select_first_media_item(driver, self, test_flow_steps)
+            crop_info_icon(driver, self, test_flow_steps)
+            cross_icon(driver, self, test_flow_steps)
+            download_icon(driver, self, test_flow_steps)
     
         finally:
             os.makedirs("test-flows", exist_ok=True)

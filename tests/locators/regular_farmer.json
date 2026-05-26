@@ -141,13 +141,16 @@
     "video_stop": "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[3]/android.widget.ImageView",
     "image_cross_button": "//android.widget.ImageView",
     "general_remarks_commentbox": "//android.widget.EditText",
-    "image_general_audio_delete": "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup(android.view ViewGroup android.view ViewGroup android.view ViewGroup[1]/android.widget.FrameLayout/android.view ViewGroup android.view ViewGroup android view(ViewGroup android view(ViewGroup android view(ViewGroup android view(ViewGroup android view(ViewGroup android view(ViewGroup[2]/android.widget.ScrollView android view(ViewGroup android view(ViewGroup[2]/android view(ViewGroup/com.horcrux.svg.SvgView/com.horcrux.svg.GroupView/com.horcrux.svg.RectView",
+    "general_start_audio": "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[1]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view ViewGroup[2]/android.widget.ScrollView/android.view ViewGroup/android.view ViewGroup[2]/android view(ViewGroup/com.horcrux.svg.SvgView/com.horcrux.svg.GroupView/com.horcrux.svg.RectView",
+    "general_stop_audio": "//android.view.ViewGroup[contains(@content-desc,'00:')]",
+    "image_general_audio_delete": "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view ViewGroup(android.view ViewGroup android.view ViewGroup android.view ViewGroup[1]/android.widget.FrameLayout/android.view ViewGroup android.view ViewGroup android view(ViewGroup android view(ViewGroup android view(ViewGroup android view(ViewGroup android view(ViewGroup android view(ViewGroup[2]/android.widget.ScrollView android view(ViewGroup android view(ViewGroup[2]/android view(ViewGroup/com.horcrux.svg.SvgView/com.horcrux.svg.GroupView/com.horcrux.svg.RectView",
     "submit_button": "//android.view.ViewGroup[@content-desc=\"Submit\"]",
     "back_button": "//android.view.ViewGroup[@content-desc=\"Back\"]",
-    "crop_health_three_dots":"//android.widget.TextView[@text=\"󰇙\"]",
+    "crop_health_three_dots": "//android.widget.TextView[@text=\"󰇙\"]",
     "profile_button": "//android.view.ViewGroup[@content-desc=\"Profile\"]",
     "profile_diagnosis_tab": "//android.view.ViewGroup[@content-desc=\"Diagnosis\"]",
-    "profile_diagnosis_dropdown": "(//android.view.ViewGroup[contains(@content-desc,':')])[1]"
+    "profile_diagnosis_dropdown": "(//android.view.ViewGroup[contains(@content-desc,':')])[1]",
+    "select_first_media_item": "(//android.view.ViewGroup[contains(@content-desc, 'MB')])[1]"
   },
   "Pop_Updates": {
     "click_pop_updates": "//android.view.ViewGroup[@content-desc=\"POP Update\"]",
