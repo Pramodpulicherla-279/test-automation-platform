@@ -599,3 +599,93 @@ def scroll_until_element_visible(driver, xpath, max_scrolls=8):
         )
 
     return None  # ✅ Explicit None so caller's `if not` check works
+
+def scroll_up_and_tap_by_text(driver, text_to_find, max_swipes=5):
+    for i in range(max_swipes):
+        try:
+            universal_xpath = (
+                f"//*[contains(@text, '{text_to_find}') "
+                f"or contains(@content-desc, '{text_to_find}')]"
+            )
+
+            element = driver.find_element(
+                AppiumBy.XPATH,
+                universal_xpath
+            )
+            location = element.location
+            size = element.size
+
+            center_x = location['x'] + size['width'] / 2
+            center_y = location['y'] + size['height'] / 2
+
+            print(
+                f"Found '{text_to_find}'. "
+                f"Tapping at ({center_x}, {center_y})"
+            )
+
+            allure.attach(
+                f"Tapping '{text_to_find}' "
+                f"at ({center_x}, {center_y})",
+                name="Dynamic Coordinate Tap",
+                attachment_type=allure.attachment_type.TEXT
+            )
+
+            # ---------------------------------------------------------
+            # 3. Tap element using W3C actions
+            # ---------------------------------------------------------
+            actions = ActionBuilder(driver)
+            finger = actions.pointer_action
+
+            finger.move_to_location(center_x, center_y)
+            finger.pointer_down()
+            finger.pause(0.1)
+            finger.pointer_up()
+
+            actions.perform()
+
+            return True
+
+        except NoSuchElementException:
+
+            if i < max_swipes - 1:
+
+                print(
+                    f"'{text_to_find}' not found, "
+                    f"scrolling UP..."
+                )
+
+                screen_size = driver.get_window_size()
+
+                start_x = screen_size['width'] / 2
+
+                # Finger starts upper-middle
+                start_y = screen_size['height'] * 0.55
+
+                # Finger moves downward
+                end_y = screen_size['height'] * 0.85
+
+                actions = ActionBuilder(driver)
+                finger = actions.pointer_action
+
+                finger.move_to_location(start_x, start_y)
+                finger.pointer_down()
+                finger.pause(0.5)
+
+                finger.move_to_location(start_x, end_y)
+                finger.pause(0.5)
+
+                finger.pointer_up()
+
+                actions.perform()
+
+                time.sleep(2)
+
+            else:
+                print(
+                    f"Could not find element "
+                    f"'{text_to_find}' after {max_swipes} swipes."
+                )
+
+                return False
+
+    return False
