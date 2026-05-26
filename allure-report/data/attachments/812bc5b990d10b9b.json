@@ -1,0 +1,23 @@
+{
+  "ticket_id": "RUN-20260526-183805",
+  "issue_id": "ISS-001",
+  "app_name": "Krishivaas Telangana Farmer",
+  "app_version": "0.8.6",
+  "module": "TestCropHealth",
+  "feature": "Weather and Moisture Validation",
+  "issue_summary": "Automation Failure: test_crop_health_diary_activity_flow",
+  "title": "Automation Failure: test_crop_health_diary_activity_flow",
+  "test_name": "test_crop_health_diary_activity_flow",
+  "steps_executed": [],
+  "developer_name": "@Anuj",
+  "description": "selenium.common.exceptions.TimeoutException: Message:\nStacktrace:\nNoSuchElementError: An element could not be located on the page using the given search parameters.\nat AndroidUiautomator2Driver.findElOrEls (C:\\Users\\ram\\.appium\\node_modules\\appium-uiautomator2-driver\\node_modules\\appium-android-driver\\lib\\commands\\find.ts:86:11)\nat processTicksAndRejections (node:internal/process/task_queues:103:5)\nat AndroidUiautomator2Driver.findElOrElsWithProcessing (C:\\Users\\ram\\AppData\\Roaming\\npm\\node_modules\\appium\\node_modules\\@appium\\base-driver\\lib\\basedriver\\commands\\find.ts:60:12)\nat AndroidUiautomator2Driver.findElement (C:\\Users\\ram\\AppData\\Roaming\\npm\\node_modules\\appium\\node_modules\\@appium\\base-driver\\lib\\basedriver\\commands\\find.ts:75:12)\npytest.fail(f\"Could not click notification icon: {str(e)}\")\nFailed: Could not click notification icon: Message:",
+  "start_date": "2026-05-26T18:39:09.846342",
+  "end_date": "2026-05-26T18:53:20.439653",
+  "sprint": "Automation",
+  "fix_version": [
+    "Production"
+  ],
+  "affects_version": [
+    "Krishivaas Telangana Farmer"
+  ]
+}
