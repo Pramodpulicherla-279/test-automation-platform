@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 [
     {
         "step": "Click Next button on language selection",
@@ -33,3 +34,6 @@
         "status": "Success"
     }
 ]
+=======
+[]
+>>>>>>> bd74e6b6d4f214cb71cd952f26cf2e0f415e9897
