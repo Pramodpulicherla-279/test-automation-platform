@@ -1,0 +1,200 @@
+[
+    {
+        "step": "Click Active Farms",
+        "status": "Success"
+    },
+    {
+        "step": "Click navigation button",
+        "status": "Success"
+    },
+    {
+        "step": "Click farm location",
+        "status": "Success"
+    },
+    {
+        "step": "Click current location",
+        "status": "Success"
+    },
+    {
+        "step": "Android back button pressed",
+        "status": "Success"
+    },
+    {
+        "timestamp": "2026-05-27T16:00:07",
+        "action": "crop_health_pixel_check_initial",
+        "result": {
+            "screen": "crop_health",
+            "green_pct": 48.23,
+            "blue_pct": 0.04,
+            "passed": true,
+            "reason": "OK"
+        }
+    },
+    {
+        "timestamp": "2026-05-27T16:00:07",
+        "action": "stress_level_at_latest_date",
+        "result": {
+            "healthy_pct": 35.44,
+            "moderate_pct": 28.76,
+            "stressed_pct": 8.4,
+            "severe_pct": 0.0,
+            "dominant": "healthy"
+        }
+    },
+    {
+        "timestamp": "2026-05-27T16:00:08",
+        "action": "date_slider_before_minus_captured",
+        "result": "ok"
+    },
+    {
+        "step": "Click minus icon on date slider",
+        "status": "Success"
+    },
+    {
+        "timestamp": "2026-05-27T16:00:20",
+        "action": "date_slider_minus_map_changed",
+        "result": {
+            "ssim_score": 0.9964,
+            "map_changed": false,
+            "green_before_pct": 48.23,
+            "green_after_pct": 48.23,
+            "green_delta": 0.0,
+            "stress_before": "healthy",
+            "stress_after": "healthy",
+            "full_stress_before": {
+                "healthy_pct": 35.44,
+                "moderate_pct": 28.76,
+                "stressed_pct": 8.4,
+                "severe_pct": 0.0,
+                "dominant": "healthy"
+            },
+            "full_stress_after": {
+                "healthy_pct": 35.44,
+                "moderate_pct": 28.77,
+                "stressed_pct": 8.4,
+                "severe_pct": 0.0,
+                "dominant": "healthy"
+            }
+        }
+    },
+    {
+        "timestamp": "2026-05-27T16:00:20",
+        "action": "stress_level_at_previous_date",
+        "result": {
+            "healthy_pct": 35.44,
+            "moderate_pct": 28.77,
+            "stressed_pct": 8.4,
+            "severe_pct": 0.0,
+            "dominant": "healthy"
+        }
+    },
+    {
+        "timestamp": "2026-05-27T16:00:22",
+        "action": "date_slider_before_plus_captured",
+        "result": "ok"
+    },
+    {
+        "step": "Click plus icon on date slider",
+        "status": "Success"
+    },
+    {
+        "timestamp": "2026-05-27T16:00:35",
+        "action": "date_slider_plus_map_changed",
+        "result": {
+            "ssim_score": 0.9964,
+            "map_changed": false,
+            "green_before_pct": 48.23,
+            "green_after_pct": 48.23,
+            "green_delta": 0.0,
+            "stress_before": "healthy",
+            "stress_after": "healthy",
+            "full_stress_before": {
+                "healthy_pct": 35.44,
+                "moderate_pct": 28.77,
+                "stressed_pct": 8.4,
+                "severe_pct": 0.0,
+                "dominant": "healthy"
+            },
+            "full_stress_after": {
+                "healthy_pct": 35.44,
+                "moderate_pct": 28.76,
+                "stressed_pct": 8.4,
+                "severe_pct": 0.0,
+                "dominant": "healthy"
+            }
+        }
+    },
+    {
+        "timestamp": "2026-05-27T16:00:35",
+        "action": "stress_level_after_returning_to_latest",
+        "result": {
+            "healthy_pct": 35.44,
+            "moderate_pct": 28.76,
+            "stressed_pct": 8.4,
+            "severe_pct": 0.0,
+            "dominant": "healthy"
+        }
+    },
+    {
+        "step": "Click diary icon",
+        "status": "Success"
+    },
+    {
+        "step": "Click Add Activity button",
+        "status": "Success"
+    },
+    {
+        "step": "Click Add Activity button",
+        "status": "Success"
+    },
+    {
+        "step": "Enter activity name",
+        "status": "Success",
+        "value": "Ram"
+    },
+    {
+        "step": "Click cost field",
+        "status": "Success"
+    },
+    {
+        "step": "Enter cost amount",
+        "status": "Success",
+        "value": "10000"
+    },
+    {
+        "step": "Click Submit button",
+        "status": "Success"
+    },
+    {
+        "step": "Android back button pressed",
+        "status": "Success"
+    },
+    {
+        "step": "Click weather icon",
+        "status": "Success"
+    },
+    {
+        "step": "Click forecast",
+        "status": "Success"
+    },
+    {
+        "step": "Click hours button",
+        "status": "Success"
+    },
+    {
+        "step": "Click days button",
+        "status": "Success"
+    },
+    {
+        "step": "Click close icon",
+        "status": "Success"
+    },
+    {
+        "step": "Click share icon",
+        "status": "Success"
+    },
+    {
+        "step": "Android back button pressed",
+        "status": "Success"
+    }
+]

@@ -1,0 +1,1 @@
+{"6913829f9b41497628fd5028d718d54d":{"statistic":{"failed":1,"broken":0,"skipped":0,"passed":0,"unknown":0,"total":1},"items":[{"uid":"f134feafe6189568","status":"failed","statusDetails":"Failed: Could not find or click the 'maximise icon'.","time":{"start":1779877757725,"stop":1779877930542,"duration":172817}}]}}
