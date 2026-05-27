@@ -116,19 +116,10 @@ class TestOnboarding:
 # ===========================================================================
 
 def add_farm(driver, obj, test_flow_steps):
-    """
-    Clicks the Add Farm button then waits for the Farm Name field to
-    auto-populate.  Uses a safe inner-function so NoSuchElementException
-    during the polling loop is swallowed (WebDriverWait re-tries) instead
-    of propagating and aborting the wait prematurely.
-    """
     with allure.step("1. Click Add Farm button"):
         if not smart_click(driver, "Add Farm button", obj.add_farm_button_xpath, "Add Farm"):
             pytest.fail("Could not find or click the 'Add Farm' button.")
-
-        # Give the Add-Farm screen time to load before starting the poll
         time.sleep(3)
-
         farm_name = None
         wait = WebDriverWait(driver, 30)
 

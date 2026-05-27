@@ -36,11 +36,11 @@ app.add_middleware(
 
 app.include_router(websocket_router, prefix="/ws")
 app.include_router(test_router, prefix="/test")
-app.include_router(jira_router, prefix="/jira")
-app.include_router(llm_router, prefix="/llm")
-app.include_router(slack_router, prefix="/slack")
-app.include_router(api_testing_router, prefix="/api-testing")
-app.include_router(network_simulate_router, prefix="/network-simulate")
+# app.include_router(jira_router, prefix="/jira")
+# app.include_router(llm_router, prefix="/llm")
+# app.include_router(slack_router, prefix="/slack")
+# app.include_router(api_testing_router, prefix="/api-testing")
+# app.include_router(network_simulate_router, prefix="/network-simulate")
 
 # Health Check
 

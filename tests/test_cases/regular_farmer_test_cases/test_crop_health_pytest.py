@@ -49,6 +49,13 @@ from tests.pages.regular_farmer_app.crop_health_page import (
     plus_icon,
     minus_icon,
 )
+from utils.image_validation import capture_screen
+from utils.opencv_crop_health import (
+    calculate_green_percentage,
+    calculate_blue_percentage,
+    get_pixel_value
+)
+from utils.ocr_validation import extract_text
 
 sys.dont_write_bytecode = True
 
