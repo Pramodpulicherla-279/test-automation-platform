@@ -49,6 +49,7 @@
     "sowing_date": "//android.view.View[@content-desc=\"30 July 2025\"]",
     "transplanted_date": "//android.view.View[@content-desc=\"30 July 2025\"]",
     "ok_button": "//android.widget.Button[@resource-id=\"android:id/button1\"]",
+    "plantation_date_input": "//android.view.ViewGroup[@content-desc=\"Plantation Date *, --/--/----, \"]",
     "direct_sowing": {
       "intercrop_name": "//android.widget.TextView[@text=\"Inter-Crop Name\"]",
       "intercrop_sowingdate": "//android.widget.TextView[@text=\"--/--/----\"]",
@@ -66,6 +67,7 @@
     "back_arrow_icon": "//com.horcrux.svg.PathView"
   },
   "farm_card_three_dots_menu": {
+    "farm_card_three_dots":"//android.view.ViewGroup[@content-desc=\"Areca Nut  , Samad New Farmer Farm 1, 1.75 Acre\"]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]",
     "Overview": "//android.view.ViewGroup[@content-desc=\"Overview\"]",
     "edit_farm": "//android.view.ViewGroup[@content-desc=\"Edit Farm\"]",
     "delete_farm": "//android.view.ViewGroup[@content-desc=\"Delete Farm\"]",

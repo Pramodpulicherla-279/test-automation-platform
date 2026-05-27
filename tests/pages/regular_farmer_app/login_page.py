@@ -70,8 +70,8 @@ def login_enter_phone(driver, obj, test_flow_steps):
             EC.presence_of_element_located((AppiumBy.XPATH, obj.phone_number_input_xpath))
         )
         phone_input.clear()
-        phone_input.send_keys("7660852538")
-        test_flow_steps.append({"step": "Enter valid phone number", "status": "Success", "value": "7660852538"})
+        phone_input.send_keys("8179605618")
+        test_flow_steps.append({"step": "Enter valid phone number", "status": "Success", "value": "8179605618"})
 
 def login_submit_phone(driver, obj, test_flow_steps):
     with allure.step("7. Tap next button"):

@@ -410,8 +410,8 @@ def driver(request):
     options.device_name   = "AndroidDevice"
     options.app           = apk_path
 
-    options.set_capability("appium:noReset", False)
-    options.set_capability("appium:fullReset", True)
+    options.set_capability("appium:noReset", True)
+    options.set_capability("appium:fullReset", False)
 
     options.set_capability("appium:ignoreHiddenApiPolicyError", False)
     options.set_capability("appium:uiautomator2ServerLaunchTimeout", 60000)

@@ -152,7 +152,7 @@ def crop_name_item(driver, obj, test_flow_steps):
             driver,
             "select crop from dropdown (OCR)",
             obj.crop_name_item_xpath,
-            "Areca",
+            "Apples",
             screenshot_path="screenshots/crop_dropdown.png",
             force_ocr=True,
             ocr_attempts=3,
@@ -267,8 +267,7 @@ def save_approve_boundary(driver, obj, test_flow_steps):
         except Exception:
             pass  # Fall through to smart_click which has its own retry
 
-        if not smart_click(driver, "Save and approve boundary",
-                           obj.save_approve_button_xpath, "Save boundary"):
+        if not smart_click(driver, "Save and approve boundary", obj.save_approve_button_xpath, "Save boundary"):
             pytest.fail("Could not find or click the 'Save boundary' button.")
         test_flow_steps.append({"step": "Click Save and approve boundary", "status": "Success"})
 
@@ -445,7 +444,7 @@ def edit_boundary_from_three_dots(driver, obj, test_flow_steps):
 
 def draw_boundary_on_map(driver, obj, test_flow_steps):
     with allure.step("36. Draw boundary polygon on map"):
-        time.sleep(10)  # Wait for map to fully load
+        time.sleep(15)  # Wait for map to fully load
         coordinates = [
             (390, 760),   # Top-left corner
             (690, 760),   # Top-right corner
