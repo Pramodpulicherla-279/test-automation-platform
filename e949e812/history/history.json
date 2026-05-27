@@ -1,0 +1,1 @@
+{"6913829f9b41497628fd5028d718d54d":{"statistic":{"failed":1,"broken":0,"skipped":0,"passed":0,"unknown":0,"total":1},"items":[{"uid":"9278c34407122ceb","status":"failed","statusDetails":"Failed: Could not find or click the 'close tab icon'.","time":{"start":1779882280776,"stop":1779882458406,"duration":177630}}]}}

@@ -1,0 +1,23 @@
+{
+  "ticket_id": "RUN-20260527-171431",
+  "issue_id": "ISS-001",
+  "app_name": "Krishivaas Farmer",
+  "app_version": "1.3.94",
+  "module": "TestCropHealth",
+  "feature": "Weather and Moisture Validation",
+  "issue_summary": "Automation Failure: test_crop_health_diary_activity_flow",
+  "title": "Automation Failure: test_crop_health_diary_activity_flow",
+  "test_name": "test_crop_health_diary_activity_flow",
+  "steps_executed": [],
+  "developer_name": "@Anuj",
+  "description": "pytest.fail(\"Could not find or click the 'close tab icon'.\")\nFailed: Could not find or click the 'close tab icon'.",
+  "start_date": "2026-05-27T17:14:32.802965",
+  "end_date": "2026-05-27T17:17:52.486714",
+  "sprint": "Automation",
+  "fix_version": [
+    "Production"
+  ],
+  "affects_version": [
+    "Krishivaas Farmer"
+  ]
+}
