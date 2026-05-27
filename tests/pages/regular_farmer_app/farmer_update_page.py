@@ -2,16 +2,14 @@ from socket import timeout
 import time
 import allure
 import pytest
-from appium.webdriver.common.appiumby import AppiumBy
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from tests.conftest import driver
 import json
 import os
-from selenium.common.exceptions import WebDriverException
-from utils.wait_utils import find_and_click, scroll_until_element_visible, smart_click
-from utils.ui_actions import android_back_func
 import sys
+
+from appium.webdriver.common.appiumby import AppiumBy
+from selenium.webdriver.support import expected_conditions as EC
+from utils.wait_utils import scroll_until_element_visible, smart_click
+from utils.ui_actions import android_back_func
 sys.dont_write_bytecode = True
 
 def load_locators_once(self, request):
@@ -70,11 +68,11 @@ def load_locators_once(self, request):
 
 def click_active_farms(driver, obj, test_flow_steps):
     with allure.step("Click Active Farms"):
-        time.sleep(5)
+        time.sleep(10)
         element = scroll_until_element_visible(driver, obj.active_farms_xpath)
         if element is None:
             pytest.fail("Could not find 'Active Farms' after scrolling")
-        time.sleep(60)
+        # time.sleep(60)
         element.click()  # ✅ Actually click the element
         test_flow_steps.append({"step": "Click Active Farms", "status": "Success"})
 

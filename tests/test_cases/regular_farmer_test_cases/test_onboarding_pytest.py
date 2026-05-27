@@ -18,6 +18,7 @@ from tests.pages.regular_farmer_app.onboarding_page import (
     submit_farm,
     crop_name_input,
     crop_name_item,
+    pending_farms_three_dots_menu,
     intercrop_name,
     intercrop_dropdown,
     plantation_date,
@@ -82,73 +83,6 @@ class TestOnboarding:
             draw_boundary_on_map(driver, self, test_flow_steps)
             save_approve_boundary(driver, self, test_flow_steps)
 
-            # =================================================================
-            # Section 2 — Add Farm → Skip Crop → Draw Boundary
-            # =================================================================
-            # add_farm(driver, self, test_flow_steps)
-            # draw_on_map_button(driver, self, test_flow_steps)   # ← FIX
-            # Submit_farm(driver, self, test_flow_steps)
-            # skip_crop(driver, self, test_flow_steps)
-            # draw_boundary_on_map(driver, self, test_flow_steps)
-            # save_approve_boundary(driver, self, test_flow_steps)
-
-            # =================================================================
-            # Section 3 — Pending Farms Flow
-            # =================================================================
-            # hamburger_menu(driver, self, test_flow_steps)
-            # pending_farms_tab(driver, self, test_flow_steps)
-
-            # # Filter by Type → Active
-            # type_dropdown(driver, self, test_flow_steps)
-            # active_dropdown(driver, self, test_flow_steps)
-
-            # Edit a farm from its card three-dots menu
-            # farm_card_three_dots(driver, self, test_flow_steps)
-            # edit_farm(driver, self, test_flow_steps)
-            # submit_farm(driver, self, test_flow_steps)
-
-            # # Delete a farm from its card three-dots menu
-            # farm_card_three_dots(driver, self, test_flow_steps)
-            # delete_farm(driver, self, test_flow_steps)
-
-            # # Add crop via three-dots menu
-            # farm_card_three_dots(driver, self, test_flow_steps)
-            # add_crop(driver, self, test_flow_steps)
-            # crop_name_input(driver, self, test_flow_steps)
-            # crop_name_item(driver, self, test_flow_steps)
-            # plantation_date(driver, self, test_flow_steps)
-            # ok_button(driver, self, test_flow_steps)
-            # intercrop_name(driver, self, test_flow_steps)
-            # intercrop_dropdown(driver, self, test_flow_steps)
-            # submit_crop(driver, self, test_flow_steps)
-            # draw_boundary_on_map(driver, self, test_flow_steps)
-            # save_approve_boundary(driver, self, test_flow_steps)
-
-            # # Edit crop → cancel
-            # farm_card_three_dots(driver, self, test_flow_steps)
-            # edit_crop(driver, self, test_flow_steps)
-            # crop_name_input(driver, self, test_flow_steps)
-            # crop_name_item(driver, self, test_flow_steps)
-            # plantation_date(driver, self, test_flow_steps)
-            # ok_button(driver, self, test_flow_steps)
-            # intercrop_name(driver, self, test_flow_steps)
-            # intercrop_dropdown(driver, self, test_flow_steps)
-            # update_crop(driver, self, test_flow_steps)
-
-            # farm_card_three_dots(driver, self, test_flow_steps)
-            # edit_crop(driver, self, test_flow_steps)
-            
-
-            # # Delete crop
-            # farm_card_three_dots(driver, self, test_flow_steps)
-            # delete_crop(driver, self, test_flow_steps)
-
-            # # Add boundary via three-dots menu
-            # farm_card_three_dots(driver, self, test_flow_steps)
-            # add_boundary_from_three_dots(driver, self, test_flow_steps)
-            # draw_boundary_on_map(driver, self, test_flow_steps)
-            # save_approve_boundary(driver, self, test_flow_steps)
-
         finally:
             os.makedirs("test-flows", exist_ok=True)
             with open("test-flows/onboarding_flow_success.json", "w") as f:
@@ -198,65 +132,49 @@ class TestOnboarding:
     #         draw_on_map_button(driver, self, test_flow_steps) 
     #         submit_farm(driver, self, test_flow_steps)
     #         android_back(driver, self, test_flow_steps)
-    #         three_dots_menu(driver, self, test_flow_steps)
+    #         hamburger_menu(driver, self, test_flow_steps)
+    #         pending_farms_tab(driver, self, test_flow_steps)
+    #         pending_farms_three_dots_menu(driver, self, test_flow_steps)
     #         add_crop(driver, self, test_flow_steps)
-    #         skip_crop(driver, self, test_flow_steps)
+    #         crop_name_input(driver, self, test_flow_steps)
+    #         crop_name_item(driver, self, test_flow_steps)
+    #         plantation_date(driver, self, test_flow_steps)
+    #         ok_button(driver, self, test_flow_steps)
+    #         submit_crop(driver, self, test_flow_steps)
     #         draw_boundary_on_map(driver, self, test_flow_steps)
     #         save_approve_boundary(driver, self, test_flow_steps)
     #         android_back(driver, self, test_flow_steps)
-            # hamburger_menu(driver, self, test_flow_steps)
-            # pending_farms_tab(driver, self, test_flow_steps)
+    #         # hamburger_menu(driver, self, test_flow_steps)
+    #         # pending_farms_tab(driver, self, test_flow_steps)
 
-        
-        # finally:
-        #     os.makedirs("test-flows", exist_ok=True)
-        #     with open("test-flows/onboarding_flow_success.json", "w") as f:
-        #         json.dump(test_flow_steps, f, indent=4)
-
-    @allure.title("TC_005 -- add farm > add crop > pending farms > add boundary")
-    def test_tc_005(self, driver):
-        test_flow_steps = []
-        try:
-            add_farm(driver, self, test_flow_steps)
-            draw_on_map_button(driver, self, test_flow_steps)
-            submit_farm(driver, self, test_flow_steps)
-            crop_name_input(driver, self, test_flow_steps)
-            crop_name_item(driver, self, test_flow_steps)
-            plantation_date(driver, self, test_flow_steps)
-            ok_button(driver, self, test_flow_steps)
-            submit_crop(driver, self, test_flow_steps)
-            hamburger_menu(driver, self, test_flow_steps)
-            pending_farms_tab(driver, self, test_flow_steps)
-            three_dots_menu(driver, self, test_flow_steps)
-            add_boundary_from_three_dots(driver, self, test_flow_steps)
-            draw_boundary_on_map(driver, self, test_flow_steps)
-            save_approve_boundary(driver, self, test_flow_steps)
-            # android_back(driver, self, test_flow_steps)
-            # android_back(driver, self, test_flow_steps)
-        
-        finally:
-            os.makedirs("test-flows", exist_ok=True)
-            with open("test-flows/onboarding_flow_success.json", "w") as f:
-                json.dump(test_flow_steps, f, indent=4)
-
-    # @allure.title("TC_006 -- add farm > skip crop > add boundary")
-    # def test_tc_006(self, driver):
-    #     test_flow_steps = []
-    #     try:
-    #         add_farm(driver, self, test_flow_steps)
         
     #     finally:
     #         os.makedirs("test-flows", exist_ok=True)
     #         with open("test-flows/onboarding_flow_success.json", "w") as f:
     #             json.dump(test_flow_steps, f, indent=4)
 
-    # @allure.title("TC_007 -- add farm > skip crop > add boundary")
-    # def test_tc_007(self, driver):
+    # @allure.title("TC_005 -- add farm > add crop > pending farms > add boundary")
+    # def test_tc_005(self, driver):
     #     test_flow_steps = []
     #     try:
     #         add_farm(driver, self, test_flow_steps)
+    #         draw_on_map_button(driver, self, test_flow_steps)
+    #         submit_farm(driver, self, test_flow_steps)
+    #         crop_name_input(driver, self, test_flow_steps)
+    #         crop_name_item(driver, self, test_flow_steps)
+    #         plantation_date(driver, self, test_flow_steps)
+    #         ok_button(driver, self, test_flow_steps)
+    #         submit_crop(driver, self, test_flow_steps)
+    #         android_back(driver, self, test_flow_steps)
+    #         pending_farms_three_dots_menu(driver, self, test_flow_steps)
+    #         add_boundary_from_three_dots(driver, self, test_flow_steps)
+    #         draw_boundary_on_map(driver, self, test_flow_steps)
+    #         save_approve_boundary(driver, self, test_flow_steps)
+    #         # android_back(driver, self, test_flow_steps)
+    #         # android_back(driver, self, test_flow_steps)
         
     #     finally:
     #         os.makedirs("test-flows", exist_ok=True)
     #         with open("test-flows/onboarding_flow_success.json", "w") as f:
     #             json.dump(test_flow_steps, f, indent=4)
+

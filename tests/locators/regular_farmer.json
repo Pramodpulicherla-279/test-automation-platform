@@ -17,8 +17,8 @@
     "my_historical_farms": "//android.widget.TextView[@text=\"My Historical Farms\"]",
     "my_crops": "//android.widget.TextView[@text=\"My Crops\"]",
     "add_farm_button": "//android.view.ViewGroup[@content-desc=\"Add Farm\"]",
-    "hamburger_menu": "//android.widget.ImageView[@content-desc=\"Menu\"]",
-    "pending_farms_tab": "//android.view.ViewGroup[@content-desc=\"Pending Farms, 󰅂\"]"
+    "hamburger_menu": "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[1]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[3]/android.widget.ImageView",
+    "pending_farms_tab": "//android.widget.TextView[@text=\"Pending Farms\"]"
   },
   "my_active_farms_screen": {},
   "determine_boundary_modal": {
@@ -169,7 +169,8 @@
     "All_tab": "//android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup[1]/android.view.ViewGroup",
     "only_farms": "//android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup",
     "farms_with_no_crops": "//android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup[3]/android.view.ViewGroup",
-    "farms_with_no_boundary": "//android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup[4]/android.view.ViewGroup"
+    "farms_with_no_boundary": "//android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup[4]/android.view.ViewGroup",
+    "three_dots_menu": "//android.view.ViewGroup[contains(@content-desc,'Apples')]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]"
   },
     "crop_health": {
         "historical_farms": "//android.widget.TextView[@text=\"Historical Farms\"]",
