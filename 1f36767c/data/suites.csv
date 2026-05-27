@@ -1,0 +1,2 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","181536","TC_001 -- Crop Health, Diary, Weather, Notification, leaf & soil Moisture Flow","tests.test_cases.regular_farmer_test_cases","Wed May 27 18:25:44 IST 2026","passed","Wed May 27 18:28:46 IST 2026","TestCropHealth","test_crop_health_pytest","",""
