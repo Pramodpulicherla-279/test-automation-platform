@@ -1,0 +1,1 @@
+{"6913829f9b41497628fd5028d718d54d":{"statistic":{"failed":0,"broken":1,"skipped":0,"passed":0,"unknown":0,"total":1},"items":[{"uid":"26b3e6ac38db9c1a","status":"broken","statusDetails":"NameError: name 'dashboard_screen_xpaths' is not defined","time":{"start":1779873957596,"stop":1779873957596,"duration":0}}]}}
