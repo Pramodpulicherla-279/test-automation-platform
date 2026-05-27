@@ -1,0 +1,96 @@
+[
+    {
+        "step": "Click Active Farms",
+        "status": "Success"
+    },
+    {
+        "step": "Click navigation button",
+        "status": "Success"
+    },
+    {
+        "step": "Click current location",
+        "status": "Success"
+    },
+    {
+        "step": "Click farm location",
+        "status": "Success"
+    },
+    {
+        "step": "Android back button pressed",
+        "status": "Success"
+    },
+    {
+        "timestamp": "2026-05-27T19:01:41",
+        "action": "crop_health_pixel_check_initial",
+        "result": {
+            "screen": "crop_health",
+            "green_pct": 47.24,
+            "blue_pct": 0.09,
+            "passed": true,
+            "reason": "OK"
+        }
+    },
+    {
+        "timestamp": "2026-05-27T19:01:41",
+        "action": "stress_level_at_latest_date",
+        "result": {
+            "healthy_pct": 31.52,
+            "moderate_pct": 26.01,
+            "stressed_pct": 8.29,
+            "severe_pct": 0.01,
+            "dominant": "healthy"
+        }
+    },
+    {
+        "timestamp": "2026-05-27T19:01:43",
+        "action": "date_slider_before_minus_captured",
+        "result": "ok"
+    },
+    {
+        "step": "Click minus icon on date slider",
+        "status": "Success"
+    },
+    {
+        "timestamp": "2026-05-27T19:01:53",
+        "action": "date_slider_minus_map_changed",
+        "result": {
+            "ssim_score": 0.9759,
+            "map_changed": false,
+            "green_before_pct": 47.24,
+            "green_after_pct": 47.62,
+            "green_delta": 0.38,
+            "stress_before": "healthy",
+            "stress_after": "healthy",
+            "full_stress_before": {
+                "healthy_pct": 31.52,
+                "moderate_pct": 26.01,
+                "stressed_pct": 8.29,
+                "severe_pct": 0.01,
+                "dominant": "healthy"
+            },
+            "full_stress_after": {
+                "healthy_pct": 31.7,
+                "moderate_pct": 25.99,
+                "stressed_pct": 8.0,
+                "severe_pct": 0.0,
+                "dominant": "healthy"
+            }
+        }
+    },
+    {
+        "timestamp": "2026-05-27T19:01:53",
+        "action": "stress_level_at_previous_date",
+        "result": {
+            "healthy_pct": 31.7,
+            "moderate_pct": 25.99,
+            "stressed_pct": 8.0,
+            "severe_pct": 0.0,
+            "dominant": "healthy"
+        }
+    },
+    {
+        "timestamp": "2026-05-27T19:01:55",
+        "action": "date_slider_before_plus_captured",
+        "result": "ok"
+    }
+]

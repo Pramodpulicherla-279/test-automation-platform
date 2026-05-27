@@ -17,7 +17,7 @@
     "my_historical_farms": "//android.widget.TextView[@text=\"My Historical Farms\"]",
     "my_crops": "//android.widget.TextView[@text=\"My Crops\"]",
     "add_farm_button": "//android.view.ViewGroup[@content-desc=\"Add Farm\"]",
-    "hamburger_menu": "//android.widget.ImageView[@content-desc=\"Menu\"]",
+    "hamburger_menu": "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[1]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[3]/android.widget.ImageView",
     "pending_farms_tab": "//android.view.ViewGroup[@content-desc=\"Pending Farms, 󰅂\"]"
   },
   "my_active_farms_screen": {},
@@ -98,8 +98,8 @@
     "media_files": "//android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup[1]/android.view.ViewGroup/android.widget.HorizontalScrollView/android.view.ViewGroup/android.view.ViewGroup[1]/android.view.ViewGroup/android.view.ViewGroup/android.widget.ImageView",
     "crop_info_icon": "//android.widget.HorizontalScrollView/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/com.horcrux.svg.SvgView/com.horcrux.svg.GroupView/com.horcrux.svg.RectView",
     "cross_icon": "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup/android.view.ViewGroup[1]/com.horcrux.svg.SvgView/com.horcrux.svg.GroupView/com.horcrux.svg.PathView[2]",
-    "plus_icon": "//android.widget.HorizontalScrollView/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[3]/android.view.ViewGroup[1]/com.horcrux.svg.SvgView/com.horcrux.svg.GroupView/com.horcrux.svg.PathView",
-    "minus_icon": "//android.widget.HorizontalScrollView/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[3]/android.view.ViewGroup[3]/com.horcrux.svg.SvgView/com.horcrux.svg.GroupView/com.horcrux.svg.PathView",
+    "plus_icon": "//android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup[1]/android.view.ViewGroup[2]/android.view.ViewGroup[1]/android.view.ViewGroup[2]/com.horcrux.svg.SvgView",
+    "minus_icon": "//android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup[1]/android.view.ViewGroup[2]/android.view.ViewGroup[1]/android.view.ViewGroup[1]/com.horcrux.svg.SvgView",
     "download_icon": "//android.widget.HorizontalScrollView/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[3]/com.horcrux.svg.SvgView/com.horcrux.svg.GroupView/com.horcrux.svg.RectView",
     "play_audio_icon": "//android.widget.HorizontalScrollView/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[1]/android.view.ViewGroup/android.view.ViewGroup[1]/com.horcrux.svg.SvgView/com.horcrux.svg.GroupView/com.horcrux.svg.GroupView/com.horcrux.svg.PathView",
     "pause_audio_icon": "//android.widget.HorizontalScrollView/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[1]/android.view.ViewGroup/android.view.ViewGroup[1]/com.horcrux.svg.SvgView/com.horcrux.svg.GroupView/com.horcrux.svg.GroupView/com.horcrux.svg.PathView",
@@ -172,12 +172,18 @@
     "farms_with_no_boundary": "//android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup[4]/android.view.ViewGroup"
   },
     "crop_health": {
+        "hamburger_menu": "//android.widget.ImageView[@content-desc=\"Menu\"]",
         "historical_farms": "//android.widget.TextView[@text=\"Historical Farms\"]",
-        "active_farms": "//android.view.ViewGroup[@content-desc=\"DSR Paddy  , Maloth Ram Farm 2, 1.03 Acre\"]/android.view.ViewGroup",
+        "active_farms": "//android.view.ViewGroup[@content-desc=\"Green Chilli  , RamM Farm 7, 0.54 Acre\"]/android.view.ViewGroup",
         "navigation_button": "//android.view.ViewGroup[@content-desc=\"Navigation\"]/com.horcrux.svg.SvgView/com.horcrux.svg.GroupView/com.horcrux.svg.RectView",
         "navigation_back_button": "//android.view.ViewGroup[@content-desc=\"Back\"]",
-        "diary_icon": "//android.view.ViewGroup[@content-desc=\"Diary\"]"
-    },
+        "diary_icon": "//android.view.ViewGroup[@content-desc=\"Diary\"]",
+        "minus_icon": "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup[1]/android.view.ViewGroup[2]/android.view.ViewGroup[2]/android.view.ViewGroup[1]/com.horcrux.svg.SvgView",
+        "plus_icon":  "//android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup[1]/android.view.ViewGroup[2]/android.view.ViewGroup[1]/android.view.ViewGroup[2]/com.horcrux.svg.SvgView",
+        "farm_location": "//android.view.ViewGroup[@content-desc=\"Location\"]",
+        "current_location": "//android.view.ViewGroup[@content-desc=\"Current Location\"]"
+      
+      },
     "diary_screen": {
         "add_activity_button": "//android.view.ViewGroup[@content-desc=\"Add Activity\"]",
         "activity_placeholder": "//android.widget.EditText[@text=\"Write your activity\"]",
@@ -195,20 +201,19 @@
         "hours_button": "//android.widget.TextView[@text=\"48 Hours\"]",
         "days_button": "//android.widget.TextView[@text=\"15 Days\"]",
         "close_icon": "//com.horcrux.svg.PathView",
-        "share_icon": "(//android.view.ViewGroup[@content-desc=\"\"])[2]",
-        "maximise_icon": "//android.widget.TextView[@text=\"\"]",
+        "share_icon": "(//android.widget.TextView[@text=\"\"])[2]",
+        "maximise_icon": "//android.widget.TextView[@text=\"\"]",
+        "close_tab": "//android.widget.TextView[@text=\"\"]",
         "notification_icon": "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/com.horcrux.svg.SvgView/com.horcrux.svg.GroupView/com.horcrux.svg.PathView",
         "expert_comments": "//android.widget.TextView[@text=\"Expert Comments\"]",
         "crop_stress": "//android.widget.TextView[@text=\"Crop Stress\"]"
     },
     "soil_moisture_screen": {
-        "soil_moisture_card": "//android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup/android.view.ViewGroup[1]/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout",
         "soil_moisture_navigation": "//android.view.ViewGroup[@content-desc=\"Navigation\"]/com.horcrux.svg.SvgView/com.horcrux.svg.GroupView/com.horcrux.svg.RectView",
         "soil_moisture_share_icon": "(//android.widget.TextView[@text=\"\"])[2]",
         "soil_moisture_maximise_icon": "//android.widget.TextView[@text=\"\"]"
     },
     "leaf_moisture_screen": {
-        "leaf_moisture_card": "//android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup/android.view.ViewGroup[1]/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout",
         "leaf_moisture_navigation": "//android.view.ViewGroup[@content-desc=\"Navigation\"]/com.horcrux.svg.SvgView/com.horcrux.svg.GroupView/com.horcrux.svg.RectView",
         "leaf_moisture_share_icon": "(//android.widget.TextView[@text=\"\"])[2]",
         "leaf_moisture_maximise_icon": "//android.widget.TextView[@text=\"\"]"

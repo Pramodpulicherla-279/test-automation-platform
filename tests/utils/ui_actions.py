@@ -152,7 +152,7 @@ def scroll_and_tap_by_text(driver, text_to_find, max_swipes=5):
     print(f"   -> Failed to find '{text_to_find}' after scrolling.")
     return False
 
-def android_back_func(driver) -> bool:
+def android_back(driver) -> bool:
     """Navigate back on Android (driver.back() + fallback to KEYCODE_BACK)."""
     try:
         driver.back()

@@ -1219,3 +1219,192 @@ def scroll_up_and_tap_by_text(driver, text_to_find, max_swipes=5):
                 return False
 
     return False
+
+def scroll_to_card_icons_and_click(
+    driver,
+    card_title_text: str,
+    icon_xpath: str,
+    next_card_title_text: str | None = None,
+    name: str = "icon",
+    max_swipes: int = 25,       # raised from default 10–12
+    nudge_px: int = 180,        # raised from ~100
+) -> bool:
+ 
+    size     = driver.get_window_size()
+    screen_w = size["width"]
+    screen_h = size["height"]
+ 
+    # ── Centre column is the safest scrollable zone ───────────────────────
+    SWIPE_X = int(screen_w * 0.50)   # FIX #1 — was 0.15
+ 
+    # ── helpers ──────────────────────────────────────────────────────────────
+    def _find_text(text: str):
+        """Return first displayed element whose text matches, or None."""
+        for by, expr in [
+            (AppiumBy.XPATH, f'//*[@text="{text}"]'),
+            (AppiumBy.XPATH, f'//*[contains(@text,"{text}")]'),
+            (AppiumBy.ACCESSIBILITY_ID, text),
+        ]:
+            try:
+                els = driver.find_elements(by, expr)
+                for el in els:
+                    if el.is_displayed():
+                        return el
+            except Exception:
+                pass
+        return None
+ 
+    def _swipe(px: int, direction: str = "up") -> None:
+        """
+        direction='up'   → scroll content UP (finger moves up → content goes up)
+        direction='down' → scroll content DOWN (finger moves down)
+        """
+        px = max(60, min(abs(px), screen_h - 120))
+        if direction == "up":
+            start_y = int(screen_h * 0.78)
+            end_y   = start_y - px
+        else:
+            start_y = int(screen_h * 0.30)
+            end_y   = start_y + px
+ 
+        ab     = ActionBuilder(driver)
+        finger = ab.pointer_action
+        finger.move_to_location(SWIPE_X, start_y)
+        finger.pointer_down()
+        finger.pause(0.15)
+        finger.move_to_location(SWIPE_X, end_y)
+        finger.pause(0.10)
+        finger.pointer_up()
+        ab.perform()
+        time.sleep(0.7)
+ 
+    def _tap(el) -> bool:
+        try:
+            el.click()
+            return True
+        except Exception:
+            pass
+        try:
+            loc = el.location
+            sz  = el.size
+            ab  = ActionBuilder(driver)
+            f   = ab.pointer_action
+            f.move_to_location(
+                loc["x"] + sz["width"] // 2,
+                loc["y"] + sz["height"] // 2,
+            )
+            f.pointer_down()
+            f.pause(0.1)
+            f.pointer_up()
+            ab.perform()
+            return True
+        except Exception as exc:
+            print(f"[WARN] Tap failed for '{name}': {exc}")
+            return False
+ 
+    # ── Phase 0: scroll hard until card title is visible ─────────────────
+    # FIX #3 — new phase; scroll aggressively (45 % of screen per swipe)
+    # and stop when the title is in the top 60 % of the viewport.
+    print(f"[scroll_to_card_icons_and_click] Phase 0 — hunting for '{card_title_text}'...")
+    PHASE0_TARGET_Y = int(screen_h * 0.55)   # title should be above this line
+    PHASE0_RATIO_PX = int(screen_h * 0.45)
+ 
+    for i in range(max_swipes):
+        el = _find_text(card_title_text)
+        if el and el.is_displayed():
+            y = el.location["y"]
+            if y < PHASE0_TARGET_Y:
+                print(f"[Phase 0] '{card_title_text}' at Y={y} — good position, stopping.")
+                break
+            # Title visible but too low — one more gentle scroll to lift it
+            print(f"[Phase 0] '{card_title_text}' at Y={y} — scrolling to lift it.")
+            _swipe(int(screen_h * 0.25), "up")
+        else:
+            print(f"[Phase 0] Not visible yet, swipe {i+1}/{max_swipes}")
+            _swipe(PHASE0_RATIO_PX, "up")
+    else:
+        print(f"[ERROR] Phase 0: Could not find '{card_title_text}' after {max_swipes} swipes.")
+        return False
+ 
+    # ── Phase 1 (legacy compat): re-confirm title is on screen ───────────
+    title_el = _find_text(card_title_text)
+    if not title_el or not title_el.is_displayed():
+        print(f"[ERROR] Phase 1: Lost card title '{card_title_text}' after Phase 0.")
+        return False
+    print(f"[Phase 1] Card title '{card_title_text}' confirmed at Y={title_el.location['y']}.")
+ 
+    # ── Phase 2: nudge down inside the card until icon is found ──────────
+    # FIX #2 — nudge_px raised to 180; lost-title retry increased to 3.
+    for nudge in range(max_swipes):
+ 
+        # Refresh title position
+        title_el = _find_text(card_title_text)
+        if not title_el:
+            # Title scrolled off — scroll back up and retry
+            recovered = False
+            for _ in range(3):                       # FIX #4 — was 1
+                _swipe(200, "down")
+                time.sleep(0.4)
+                title_el = _find_text(card_title_text)
+                if title_el and title_el.is_displayed():
+                    recovered = True
+                    break
+            if not recovered:
+                print(f"[WARN] Phase 2 nudge {nudge}: Lost '{card_title_text}'. Aborting.")
+                return False
+ 
+        card_y = title_el.location["y"]
+ 
+        # Upper bound: Y of next card's title
+        next_y = screen_h
+        if next_card_title_text:
+            nxt = _find_text(next_card_title_text)
+            if nxt and nxt.is_displayed():
+                next_y = nxt.location["y"]
+ 
+        # Collect candidate icon elements within the card's Y band
+        try:
+            candidates = driver.find_elements(AppiumBy.XPATH, icon_xpath)
+        except Exception:
+            candidates = []
+ 
+        valid = []
+        for el in candidates:
+            try:
+                if not el.is_displayed():
+                    continue
+                el_y = el.location["y"]
+                el_sz = el.size
+                if el_sz["width"] <= 0 or el_sz["height"] <= 0:
+                    continue
+                if el_y < (card_y - 20):
+                    continue           # belongs to a card above
+                if el_y >= next_y:
+                    continue           # belongs to the next card
+                if not (0 <= el_y < screen_h):
+                    continue           # off-screen
+                valid.append(el)
+            except Exception:
+                continue
+ 
+        if valid:
+            valid.sort(key=lambda e: e.location["y"])
+            target = valid[0]
+            t_y    = target.location["y"]
+            print(
+                f"[FOUND] '{name}' icon at Y={t_y} "
+                f"(card_y={card_y}, next_y={next_y}, nudge={nudge})"
+            )
+            if _tap(target):
+                print(f"[CLICKED] '{name}' successfully.")
+                return True
+            print(f"[WARN] Tap failed for '{name}', will retry on next nudge.")
+        else:
+            print(
+                f"[Phase 2] No valid '{name}' icon in band [{card_y}, {next_y}) "
+                f"at nudge {nudge}/{max_swipes}. Nudging {nudge_px}px down..."
+            )
+            _swipe(nudge_px, "up")   # scroll up = content moves up = lower content appears
+ 
+    print(f"[ERROR] Phase 2: Failed to click '{name}' after {max_swipes} nudges.")
+    return False

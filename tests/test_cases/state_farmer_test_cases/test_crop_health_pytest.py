@@ -30,7 +30,7 @@ from utils.screenshot_utils import (
     get_title_region_pil,
 )
 
-from tests.pages.state_farmer_app.crop_health_page import (
+from tests.pages.state_farmer_app.crop_health_pages import (
     active_farms,
     load_locators_once,
     navigation_button,

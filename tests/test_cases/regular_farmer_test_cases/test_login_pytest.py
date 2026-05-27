@@ -42,11 +42,6 @@ class TestLogin:
             login_verify_otp(driver, self, test_flow_steps)
 
         finally:
-
             os.makedirs("test-flows", exist_ok=True)
-
-            with open(
-                "test-flows/login_flow_success.json",
-                "w"
-            ) as f:
+            with open("test-flows/login_flow_success.json", "w") as f:
                 json.dump(test_flow_steps, f, indent=4)
