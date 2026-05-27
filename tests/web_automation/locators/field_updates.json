@@ -1,0 +1,12 @@
+{
+    "three_dots": "xpath=//*[contains(@class, 'three-dot-btn')]",
+    "overview_option": "xpath=//*[contains(@class, 'dropdown-item overview-action add-agent-update-action')]",
+    "field_updates_tab": "text=Field Updates",
+    "add_field_update_btn": "#btnAddAgentUpdate",
+    "date_input" : "#updateDateInput",
+    "upload_files_btn": "#crop_files",
+    "general_remarks_input": "#general_remarks",
+    "save_btn": "#mdl_btnFieldAgentUpd",
+    "cancel_btn": "text=Cancel",
+    "cross_icon": "//*[@id=\"rtmAgentFarmerUpdateModal\"]/div/div/div[1]/button"
+}

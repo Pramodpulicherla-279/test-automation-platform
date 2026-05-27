@@ -1,0 +1,6 @@
+{
+  "email_input": "#email",
+  "password_input": "#password",
+  "login_button": "#loginBtn",
+  "dashboard_text": "#real-time-title"
+}

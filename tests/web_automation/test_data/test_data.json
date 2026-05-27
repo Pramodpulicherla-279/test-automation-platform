@@ -1,0 +1,37 @@
+{
+  "_base_url": "https://staging.krishivaas.ai/login",
+  "base_url": "https://krishivaas.in/login",
+
+  "login": {
+    "username":"Testteam@yopmail.com",
+    "password":"Test@2025",
+    "expected_dashboard_text":"Real Time Monitoring Dashboard"
+  },
+
+  "onboarding": {
+    "farmer_name":"pramod",
+    "field_agent":"Ram User"
+  },
+  "field_update": {
+    "date":"2024-06-30",
+    "notes":"This is a test field update note."
+  },
+  "crop_health": {
+    "data_1": {
+      "crop_name":"DSR Paddy",
+      "farmer_name":"Maloth Ram",
+      "crop_id": "#14450",
+      "acreage":"1.03 acre",
+      "sowing_date":"04 Jan 2026",
+      "last_clear_image": "07 May 2026",
+      "last_update_date":"09 May 2026",
+      "caution": "1.94%",
+      "warnings": "0.65%",
+      "stressed": "2.81%",
+      "severely_stressed": "0.65%",
+      "crop_stage":"Crop Stage: Maturity",
+      "wind_speed":"(Wind Speed)\n12.4 Km/h",
+      "date":"07-05-2026 | Day 124"
+    }
+  }
+}

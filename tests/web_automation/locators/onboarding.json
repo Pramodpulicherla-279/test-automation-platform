@@ -1,0 +1,55 @@
+{
+  "sidebar": {
+    "historical_tab": "text=Historical",
+    "historical_farmers": "//*[@id=\"main-menu-navigation\"]/li[4]/ul/li[1]/a/span"
+  },
+  "hamburger_menu_icon": "xpath=//*[contains(@class, 'nav-link menu-toggle')]",
+  "bell_icon": "#count-notification",
+  "current_season": "text=Current Season",
+  "organization": "//span[normalize-space()='Organization']",
+  "farmer_list": "text=Farmers List",
+  "add_button": "xpath=//*[contains(@class, 'btn add-new btn-primary mt-50 addfmrbtn add-new-farmer')]",
+  "add_new_farmer": "text=Add New Farmer",
+  "select_farmer": "text=Samad Farmer",
+  "ram_farmer": "text=Maloth Ram",
+  "pending_farms_btn": "text=Pending Farms",
+  "farm_type_dropdown": "#farm_crop_type",
+  "only_farms_option": "text=Only Farms (No Crop & No Boundary)",
+  "search_pending_farms_btn": "#searchBtn",
+  "three_dots_pending_farm": "#dropdown-action1",
+  "add_crop_btn_pending_farms": "xpath=//*[contains(@class, 'dropdown-item add-crop-button-farmer-listing')]",
+  "add_boundary_btn": "#showBoundaryScreen",
+  "add_farmer" :{
+    "add_farmer_text": "Farmer Details",
+    "farmer_name": "[name='first_name']",
+    "email": "#txtFarmerEmail",
+    "field_agent_input": "[name='agent']",
+    "field_agent_option": "text=Ram User",
+    "mobile_number": "#mobile_number",
+    "business_unit_input": "#business_unit",
+    "save_button" : "#submitBtn",
+    "business_unit_option": "text=bu1 (315)"
+  },
+  "add_farm":{
+    "add_farm_btn": "#add-farm",
+    "save_farm_btn": "#submitFarmBtn"
+  },
+  "add_crop":{
+    "crop_input": "#select2-crop_name-container",
+    "crop_option": "//li[normalize-space()='Bengal Gram']",
+    "crop_duration_input": "#select2-crop_name_duration-container",
+    "crop_duration_option": "//li[normalize-space()='Short(90 days)']",
+    "sowing_type_input": "text=Direct Sowing",
+    "sowing_date_input": "#fp-default",
+    "sowing_date_option": "//span[contains(@class,'flatpickr-day') and @aria-label='May 1, 2026']",
+    "save_crop_btn": "#submitBtnForCrop",
+    "skip_crop_btn": "text=Skip",
+    "cancel_btn": "text=Cancel"
+  },
+  "add_boundary": {
+    "map_canvas": "xpath=//*[contains(@class, 'mapbox-gl-draw_ctrl-draw-btn mapbox-gl-draw_polygon')]",
+    "save_boundary_btn": "#btnUpdFarmCropBoundry",
+    "cancel_boundary_btn": "#redirectToFarmerDetails"
+    
+  } 
+}

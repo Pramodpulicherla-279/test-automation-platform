@@ -11,12 +11,14 @@ from appium.webdriver.common.appiumby import AppiumBy
 from selenium.webdriver.common.actions.action_builder import ActionBuilder
 import sys
 from selenium.webdriver.common.by import By
+
 sys.dont_write_bytecode = True
 
 
 def _console_log(msg: str) -> None:
     # flush=True is important when output is piped (subprocess -> backend -> UI)
     print(msg, flush=True)
+
 
 def _auto_ui_shot(driver, label: str) -> None:
     """
@@ -34,6 +36,7 @@ def _auto_ui_shot(driver, label: str) -> None:
             # Never break test flow because screenshots failed
             pass
 
+
 def find_and_click(driver, by, value, fallback_text=None, timeout=20):
     try:
         # 1. Try to click using the primary locator (e.g., XPath)
@@ -46,14 +49,16 @@ def find_and_click(driver, by, value, fallback_text=None, timeout=20):
         return True
     except TimeoutException:
         print(f"Primary locator failed. Trying fallback text: '{fallback_text}'")
-        
+
         # 2. If primary locator fails, try the fallback text
         if fallback_text:
             try:
                 # Construct a generic XPath to find any element containing the text
                 fallback_xpath = f"//*[contains(@text, '{fallback_text}')]"
-                print(f"Attempting to click element with fallback locator: xpath='{fallback_xpath}'")
-                
+                print(
+                    f"Attempting to click element with fallback locator: xpath='{fallback_xpath}'"
+                )
+
                 element = WebDriverWait(driver, 5).until(
                     EC.element_to_be_clickable((AppiumBy.XPATH, fallback_xpath))
                 )
@@ -95,6 +100,7 @@ def find_and_click(driver, by, value, fallback_text=None, timeout=20):
 
 #         return None, False
 
+
 def _xpath_literal(s: str) -> str:
     """Return an XPath string literal that safely handles quotes."""
     if s is None:
@@ -103,9 +109,12 @@ def _xpath_literal(s: str) -> str:
         return f"'{s}'"
     # concat('foo', "'", 'bar')
     parts = s.split("'")
-    return "concat(" + ", \"'\", ".join([f"'{p}'" for p in parts]) + ")"
+    return "concat(" + ', "\'", '.join([f"'{p}'" for p in parts]) + ")"
 
-def _swipe_vertical_w3c(driver, start_y_ratio=0.8, end_y_ratio=0.2, x_ratio=0.5, pause_s=0.05):
+
+def _swipe_vertical_w3c(
+    driver, start_y_ratio=0.8, end_y_ratio=0.2, x_ratio=0.5, pause_s=0.05
+):
     """Reliable vertical swipe using W3C actions (works in parallel / modern Appium)."""
     size = driver.get_window_size()
     start_x = int(size["width"] * x_ratio)
@@ -124,9 +133,11 @@ def _swipe_vertical_w3c(driver, start_y_ratio=0.8, end_y_ratio=0.2, x_ratio=0.5,
     
     actions.perform()
 
+
 def _escape_uiautomator_text(s: str) -> str:
     """Escape for embedding inside UiAutomator Java string literals."""
     return (s or "").replace("\\", "\\\\").replace('"', '\\"')
+
 
 # def _android_scroll_into_view(driver, text: str):
 
@@ -140,7 +151,10 @@ def _escape_uiautomator_text(s: str) -> str:
 #     parts = s.split("'")
 #     return "concat(" + ", \"'\", ".join([f"'{p}'" for p in parts]) + ")"
 
-def _swipe_vertical_w3c(driver, start_y_ratio=0.8, end_y_ratio=0.2, x_ratio=0.5, pause_s=0.05):
+
+def _swipe_vertical_w3c(
+    driver, start_y_ratio=0.8, end_y_ratio=0.2, x_ratio=0.5, pause_s=0.05
+):
     """Reliable vertical swipe using W3C actions (works in parallel / modern Appium)."""
     size = driver.get_window_size()
     start_x = int(size["width"] * x_ratio)
@@ -156,9 +170,11 @@ def _swipe_vertical_w3c(driver, start_y_ratio=0.8, end_y_ratio=0.2, x_ratio=0.5,
     finger.pointer_up()
     actions.perform()
 
+
 def _escape_uiautomator_text(s: str) -> str:
     """Escape for embedding inside UiAutomator Java string literals."""
     return (s or "").replace("\\", "\\\\").replace('"', '\\"')
+
 
 def _android_scroll_into_view(driver, text: str):
     """
@@ -169,7 +185,7 @@ def _android_scroll_into_view(driver, text: str):
 
     # Try textContains first
     ua_text = (
-        'new UiScrollable(new UiSelector().scrollable(true))'
+        "new UiScrollable(new UiSelector().scrollable(true))"
         f'.scrollIntoView(new UiSelector().textContains("{t}"));'
     )
     try:
@@ -181,7 +197,7 @@ def _android_scroll_into_view(driver, text: str):
 
     # Then descriptionContains (content-desc)
     ua_desc = (
-        'new UiScrollable(new UiSelector().scrollable(true))'
+        "new UiScrollable(new UiSelector().scrollable(true))"
         f'.scrollIntoView(new UiSelector().descriptionContains("{t}"));'
     )
     try:
@@ -193,6 +209,7 @@ def _android_scroll_into_view(driver, text: str):
 
     return None
 
+
 def _ocr_screenshot_path(driver, name: str, attempt: int) -> str:
     """
     Prefer saving OCR screenshots into the same per-test ui_screenshots folder.
@@ -202,6 +219,7 @@ def _ocr_screenshot_path(driver, name: str, attempt: int) -> str:
     if callable(fn):
         return fn(f"ocr__{name}__attempt_{attempt}")
     return "screenshots/ocr_fallback.png"
+
 
 def smart_find_element(
     driver,
@@ -248,7 +266,9 @@ def smart_find_element(
 
     # 2) Secondary Strategy (Android): UiScrollable (only if enabled)
     if fallback_text and enable_scroll:
-        print(f"   -> Attempting Android UiScrollable scrollIntoView for {fallback_text!r}...")
+        print(
+            f"   -> Attempting Android UiScrollable scrollIntoView for {fallback_text!r}..."
+        )
         el = _android_scroll_into_view(driver, fallback_text)
         if el:
             print(f"   -> Found {fallback_text!r} via UiScrollable! Skipping OCR.")
@@ -257,7 +277,9 @@ def smart_find_element(
     # 3) Secondary Strategy: DOM Text Search (only if enabled)
     if fallback_text and enable_dom_fallback:
         literal = _xpath_literal(fallback_text)
-        text_xpath = f"//*[contains(@text, {literal}) or contains(@content-desc, {literal})]"
+        text_xpath = (
+            f"//*[contains(@text, {literal}) or contains(@content-desc, {literal})]"
+        )
         print(f"   -> Attempting DOM fallback for text {fallback_text!r}...")
 
         last_source = None
@@ -276,13 +298,17 @@ def smart_find_element(
                     try:
                         source = driver.page_source
                         if last_source is not None and source == last_source:
-                            print("   -> Page source did not change after swipe; stopping DOM scroll search.")
+                            print(
+                                "   -> Page source did not change after swipe; stopping DOM scroll search."
+                            )
                             break
                         last_source = source
                     except Exception:
                         pass
 
-                print(f"   -> Not visible yet (attempt {i+1}/{max_swipes}). Scrolling down...")
+                print(
+                    f"   -> Not visible yet (attempt {i + 1}/{max_swipes}). Scrolling down..."
+                )
                 _swipe_vertical_w3c(driver)
 
     # 4) OCR Strategy (Last Resort or Forced)
@@ -312,7 +338,9 @@ def smart_find_element(
                 print(f"OCR clicked on '{fallback_text}' successfully.")
                 return None, True
 
-            print(f"OCR did not find '{fallback_text}' (attempt {attempt}/{ocr_attempts}).")
+            print(
+                f"OCR did not find '{fallback_text}' (attempt {attempt}/{ocr_attempts})."
+            )
             time.sleep(ocr_wait_s)
 
     return None, False
@@ -414,22 +442,6 @@ def smart_click(
     _auto_ui_shot(driver, f"after__click__{name}__not_found")
     return False
 
-
-def _swipe_vertical_w3c_top(driver):
-    """Scroll back toward top of page (upward swipe)."""
-    from selenium.webdriver.common.actions.action_builder import ActionBuilder
-    size = driver.get_window_size()
-    start_x = size["width"] // 2
-    # Swipe UP: start at 20% of screen, end at 80%
-    actions = ActionBuilder(driver)
-    f = actions.pointer_action
-    f.move_to_location(start_x, int(size["height"] * 0.2))
-    f.pointer_down()
-    f.pause(0.05)
-    f.move_to_location(start_x, int(size["height"] * 0.8))
-    f.pointer_up()
-    actions.perform()
-
 def scroll_and_click_by_text_robust(driver, text_to_find, max_swipes=5):
     """
     Scrolls down to find an element with specific text, then attempts to click it.
@@ -440,19 +452,23 @@ def scroll_and_click_by_text_robust(driver, text_to_find, max_swipes=5):
             # First, find the element by its text
             element_xpath = f"//*[contains(@text, '{text_to_find}')]"
             text_element = driver.find_element(AppiumBy.XPATH, element_xpath)
-            
+
             # --- THE CRITICAL LOGIC ---
             # Check if the element itself is clickable. If not, find its ancestor.
-            if text_element.get_attribute('clickable') == 'true':
-                print(f"Text element '{text_to_find}' is directly clickable. Clicking it.")
+            if text_element.get_attribute("clickable") == "true":
+                print(
+                    f"Text element '{text_to_find}' is directly clickable. Clicking it."
+                )
                 text_element.click()
                 return True
             else:
-                print(f"Element with text '{text_to_find}' is not clickable. Searching for a clickable parent...")
+                print(
+                    f"Element with text '{text_to_find}' is not clickable. Searching for a clickable parent..."
+                )
                 # This XPath finds the first ancestor of the text element that IS clickable.
                 parent_xpath = f"({element_xpath})/ancestor::*[@clickable='true']"
                 clickable_parent = driver.find_element(AppiumBy.XPATH, parent_xpath)
-                
+
                 print("Found a clickable parent. Clicking it.")
                 clickable_parent.click()
                 return True
@@ -461,9 +477,9 @@ def scroll_and_click_by_text_robust(driver, text_to_find, max_swipes=5):
             # If the element isn't on screen, scroll down
             print(f"'{text_to_find}' not found, scrolling...")
             size = driver.get_window_size()
-            start_x = size['width'] / 2
-            start_y = size['height'] * 0.8
-            end_y = size['height'] * 0.2
+            start_x = size["width"] / 2
+            start_y = size["height"] * 0.8
+            end_y = size["height"] * 0.2
             driver.swipe(start_x, start_y, start_x, end_y, 400)
 
     print(f"Failed to find or click '{text_to_find}' after {max_swipes} swipes.")
@@ -982,39 +998,44 @@ def scroll_and_tap_by_text(driver, text_to_find, max_swipes=5):
             # 1. Use the universal XPath to find the element (this part is correct)
             universal_xpath = f"//*[contains(@text, '{text_to_find}') or contains(@content-desc, '{text_to_find}')]"
             element = driver.find_element(AppiumBy.XPATH, universal_xpath)
-            
+
             # 2. Dynamically get the element's location (this part is correct)
             location = element.location
             size = element.size
-            center_x = location['x'] + size['width'] / 2
-            center_y = location['y'] + size['height'] / 2
-            
-            print(f"Found '{text_to_find}'. Tapping at dynamic coordinates: ({center_x}, {center_y})")
-            allure.attach(f"Tapping '{text_to_find}' on {driver.capabilities.get('deviceName')} at ({center_x}, {center_y})", 
-                          name="Dynamic Coordinate Tap", attachment_type=allure.attachment_type.TEXT)
-            
+            center_x = location["x"] + size["width"] / 2
+            center_y = location["y"] + size["height"] / 2
+
+            print(
+                f"Found '{text_to_find}'. Tapping at dynamic coordinates: ({center_x}, {center_y})"
+            )
+            allure.attach(
+                f"Tapping '{text_to_find}' on {driver.capabilities.get('deviceName')} at ({center_x}, {center_y})",
+                name="Dynamic Coordinate Tap",
+                attachment_type=allure.attachment_type.TEXT,
+            )
+
             # --- REPLACEMENT for TouchAction ---
             # 3. Perform the raw tap action using W3C Actions
             actions = ActionBuilder(driver)
             finger = actions.pointer_action
             finger.move_to_location(center_x, center_y)
             finger.pointer_down()
-            finger.pause(0.1) # A brief pause improves tap reliability
+            finger.pause(0.1)  # A brief pause improves tap reliability
             finger.pointer_up()
             actions.perform()
             # --- END REPLACEMENT ---
-            
+
             return True
-            
+
         except NoSuchElementException:
             # 4. If not found, scroll down and try again
             if i < max_swipes - 1:
                 print(f"'{text_to_find}' not found, scrolling down...")
                 screen_size = driver.get_window_size()
-                start_x = screen_size['width'] / 2
-                start_y = screen_size['height'] * 0.85
-                end_y = screen_size['height'] * 0.55
-                
+                start_x = screen_size["width"] / 2
+                start_y = screen_size["height"] * 0.8
+                end_y = screen_size["height"] * 0.2
+
                 # --- REPLACEMENT for driver.swipe() ---
                 actions = ActionBuilder(driver)
                 finger = actions.pointer_action
@@ -1032,15 +1053,18 @@ def scroll_and_tap_by_text(driver, text_to_find, max_swipes=5):
                 
             else:
                 # This is the last swipe attempt, and it still wasn't found.
-                print(f"Could not find element '{text_to_find}' after {max_swipes} swipes.")
+                print(
+                    f"Could not find element '{text_to_find}' after {max_swipes} swipes."
+                )
                 return False
-                
+
     return False
+
 
 def wait_for_otp(fetch_otp_func, timeout=30, poll_interval=2):
     """
     Waits dynamically for OTP using polling.
-    
+
     fetch_otp_func → function that returns OTP or None
     """
     start_time = time.time()
@@ -1053,6 +1077,7 @@ def wait_for_otp(fetch_otp_func, timeout=30, poll_interval=2):
 
     raise TimeoutError("OTP not received within timeout")
 
+
 def wait_for_element(driver, xpath, timeout=20):
     return WebDriverWait(driver, timeout).until(
         EC.visibility_of_element_located((By.XPATH, xpath))
@@ -1063,6 +1088,7 @@ def wait_and_click(driver, xpath, timeout=20):
     element = wait_for_element(driver, xpath, timeout)
     element.click()
     return True
+
 
 def wait_for_otp_filled(driver, otp_xpath, expected_length=6, timeout=30):
     def otp_ready(driver):
@@ -1080,288 +1106,116 @@ def wait_for_otp_filled(driver, otp_xpath, expected_length=6, timeout=30):
 
     return WebDriverWait(driver, timeout).until(otp_ready)
 
-def scroll_until_element_visible(driver, xpath, max_scrolls=4, click=True):
+    ######################## Scroller func ######################
+
+
+def scroll_until_element_visible(driver, xpath, max_scrolls=4):
     for attempt in range(max_scrolls):
         try:
             element = driver.find_element(AppiumBy.XPATH, xpath)
             if element.is_displayed():
-                if click:
-                    try:
-                        element.click()
-                    except Exception:
-                        # W3C fallback tap
-                        from selenium.webdriver.common.actions.action_builder import ActionBuilder
-                        loc = element.location
-                        sz  = element.size
-                        ab  = ActionBuilder(driver)
-                        f   = ab.pointer_action
-                        f.move_to_location(loc["x"] + sz["width"] // 2,
-                                           loc["y"] + sz["height"] // 2)
-                        f.pointer_down()
-                        f.pause(0.1)
-                        f.pointer_up()
-                        ab.perform()
-                return element
+                return element  # ✅ Return the element to the caller
         except Exception:
-            pass  # element not in DOM yet, keep scrolling
- 
+            pass  # Element not in DOM yet, keep scrolling
+
+        # Scroll up (swipe from bottom to top)
         size = driver.get_window_size()
         driver.swipe(
-            start_x=size["width"] // 2,
-            start_y=int(size["height"] * 0.8),
-            end_x=size["width"] // 2,
-            end_y=int(size["height"] * 0.2),
-            duration=500,
+            start_x=size["width"] / 2,
+            start_y=size["height"] * 0.8,
+            end_x=size["width"] / 2,
+            end_y=size["height"] * 0.2,
+            duration=500
         )
- 
-    return None
 
-def scroll_to_card_icons_and_click(
-    driver,
-    card_title_text: str,
-    icon_xpath: str,
-    next_card_title_text: str = None,
-    name: str = "card icon",
-    max_swipes: int = 20,
-    nudge_px: int = 120,
-):
-    """
-    Scroll until the ICON that belongs to a specific card is both
-    visible AND spatially inside that card's bounds, then click it.
- 
-    Why this is needed
-    ------------------
-    Crop Health / Soil Moisture / Leaf Moisture cards all share the
-    same icon XPaths (Navigation, Share, Maximise).  Simply scrolling
-    to the card TITLE leaves the icons below the fold.  We must keep
-    nudging down until an icon candidate whose Y-position is
-        >= card_title_y   AND   < next_card_title_y (if known)
-    is visible, then click that one.
- 
-    Parameters
-    ----------
-    driver               : Appium driver
-    card_title_text      : Text of the card header, e.g. "Soil Moisture"
-    icon_xpath           : XPath shared across all cards
-    next_card_title_text : Text of the NEXT card header so we can set an
-                           upper-bound on the icon Y.  Pass None if there
-                           is no card below.
-    name                 : Human-readable label for logs
-    max_swipes           : Safety limit on scroll attempts
-    nudge_px             : Pixels per small downward nudge once title visible
-    """
-    from selenium.webdriver.common.actions.action_builder import ActionBuilder
-    from appium.webdriver.common.appiumby import AppiumBy
-    import time
- 
-    size     = driver.get_window_size()
-    screen_h = size["height"]
-    screen_w = size["width"]
- 
-    def _find_text(text):
-        """Return element or None (no exception)."""
+    return None  # ✅ Explicit None so caller's `if not` check works
+
+def scroll_up_and_tap_by_text(driver, text_to_find, max_swipes=5):
+    for i in range(max_swipes):
         try:
-            return driver.find_element(
-                AppiumBy.XPATH,
-                f"//*[contains(@text,{_quote(text)}) "
-                f"or contains(@content-desc,{_quote(text)})]",
+            universal_xpath = (
+                f"//*[contains(@text, '{text_to_find}') "
+                f"or contains(@content-desc, '{text_to_find}')]"
             )
-        except Exception:
-            return None
- 
-    def _quote(s):
-        """Safe XPath string literal."""
-        if "'" not in s:
-            return f"'{s}'"
-        parts = s.split("'")
-        return "concat(" + ", \"'\", ".join(f"'{p}'" for p in parts) + ")"
- 
-    def scroll_to_card_icons_and_click(
-    driver,
-    card_title_text: str,
-    icon_xpath: str,
-    next_card_title_text: str | None = None,
-    name: str = "icon",
-    max_swipes: int = 25,       # raised from default 10–12
-    nudge_px: int = 180,        # raised from ~100
-) -> bool:
-   
- 
-        size     = driver.get_window_size()
-        screen_w = size["width"]
-        screen_h = size["height"]
-     
-        # ── Centre column is the safest scrollable zone ───────────────────────
-        SWIPE_X = int(screen_w * 0.50)   # FIX #1 — was 0.15
-     
-        # ── helpers ──────────────────────────────────────────────────────────────
-        def _find_text(text: str):
-            """Return first displayed element whose text matches, or None."""
-            for by, expr in [
-                (AppiumBy.XPATH, f'//*[@text="{text}"]'),
-                (AppiumBy.XPATH, f'//*[contains(@text,"{text}")]'),
-                (AppiumBy.ACCESSIBILITY_ID, text),
-            ]:
-                try:
-                    els = driver.find_elements(by, expr)
-                    for el in els:
-                        if el.is_displayed():
-                            return el
-                except Exception:
-                    pass
-            return None
-     
-        def _swipe(px: int, direction: str = "up") -> None:
-            """
-            direction='up'   → scroll content UP (finger moves up → content goes up)
-            direction='down' → scroll content DOWN (finger moves down)
-            """
-            px = max(60, min(abs(px), screen_h - 120))
-            if direction == "up":
-                start_y = int(screen_h * 0.78)
-                end_y   = start_y - px
-            else:
-                start_y = int(screen_h * 0.30)
-                end_y   = start_y + px
-     
-            ab     = ActionBuilder(driver)
-            finger = ab.pointer_action
-            finger.move_to_location(SWIPE_X, start_y)
+
+            element = driver.find_element(
+                AppiumBy.XPATH,
+                universal_xpath
+            )
+            location = element.location
+            size = element.size
+
+            center_x = location['x'] + size['width'] / 2
+            center_y = location['y'] + size['height'] / 2
+
+            print(
+                f"Found '{text_to_find}'. "
+                f"Tapping at ({center_x}, {center_y})"
+            )
+
+            allure.attach(
+                f"Tapping '{text_to_find}' "
+                f"at ({center_x}, {center_y})",
+                name="Dynamic Coordinate Tap",
+                attachment_type=allure.attachment_type.TEXT
+            )
+
+            # ---------------------------------------------------------
+            # 3. Tap element using W3C actions
+            # ---------------------------------------------------------
+            actions = ActionBuilder(driver)
+            finger = actions.pointer_action
+
+            finger.move_to_location(center_x, center_y)
             finger.pointer_down()
-            finger.pause(0.15)
-            finger.move_to_location(SWIPE_X, end_y)
-            finger.pause(0.10)
+            finger.pause(0.1)
             finger.pointer_up()
-            ab.perform()
-            time.sleep(0.7)
-     
-        def _tap(el) -> bool:
-            try:
-                el.click()
-                return True
-            except Exception:
-                pass
-            try:
-                loc = el.location
-                sz  = el.size
-                ab  = ActionBuilder(driver)
-                f   = ab.pointer_action
-                f.move_to_location(
-                    loc["x"] + sz["width"] // 2,
-                    loc["y"] + sz["height"] // 2,
+
+            actions.perform()
+
+            return True
+
+        except NoSuchElementException:
+
+            if i < max_swipes - 1:
+
+                print(
+                    f"'{text_to_find}' not found, "
+                    f"scrolling UP..."
                 )
-                f.pointer_down()
-                f.pause(0.1)
-                f.pointer_up()
-                ab.perform()
-                return True
-            except Exception as exc:
-                print(f"[WARN] Tap failed for '{name}': {exc}")
+
+                screen_size = driver.get_window_size()
+
+                start_x = screen_size['width'] / 2
+
+                # Finger starts upper-middle
+                start_y = screen_size['height'] * 0.55
+
+                # Finger moves downward
+                end_y = screen_size['height'] * 0.85
+
+                actions = ActionBuilder(driver)
+                finger = actions.pointer_action
+
+                finger.move_to_location(start_x, start_y)
+                finger.pointer_down()
+                finger.pause(0.5)
+
+                finger.move_to_location(start_x, end_y)
+                finger.pause(0.5)
+
+                finger.pointer_up()
+
+                actions.perform()
+
+                time.sleep(2)
+
+            else:
+                print(
+                    f"Could not find element "
+                    f"'{text_to_find}' after {max_swipes} swipes."
+                )
+
                 return False
-     
-        # ── Phase 0: scroll hard until card title is visible ─────────────────
-        # FIX #3 — new phase; scroll aggressively (45 % of screen per swipe)
-        # and stop when the title is in the top 60 % of the viewport.
-        print(f"[scroll_to_card_icons_and_click] Phase 0 — hunting for '{card_title_text}'...")
-        PHASE0_TARGET_Y = int(screen_h * 0.55)   # title should be above this line
-        PHASE0_RATIO_PX = int(screen_h * 0.45)
-     
-        for i in range(max_swipes):
-            el = _find_text(card_title_text)
-            if el and el.is_displayed():
-                y = el.location["y"]
-                if y < PHASE0_TARGET_Y:
-                    print(f"[Phase 0] '{card_title_text}' at Y={y} — good position, stopping.")
-                    break
-                # Title visible but too low — one more gentle scroll to lift it
-                print(f"[Phase 0] '{card_title_text}' at Y={y} — scrolling to lift it.")
-                _swipe(int(screen_h * 0.25), "up")
-            else:
-                print(f"[Phase 0] Not visible yet, swipe {i+1}/{max_swipes}")
-                _swipe(PHASE0_RATIO_PX, "up")
-        else:
-            print(f"[ERROR] Phase 0: Could not find '{card_title_text}' after {max_swipes} swipes.")
-            return False
-     
-        # ── Phase 1 (legacy compat): re-confirm title is on screen ───────────
-        title_el = _find_text(card_title_text)
-        if not title_el or not title_el.is_displayed():
-            print(f"[ERROR] Phase 1: Lost card title '{card_title_text}' after Phase 0.")
-            return False
-        print(f"[Phase 1] Card title '{card_title_text}' confirmed at Y={title_el.location['y']}.")
-     
-        # ── Phase 2: nudge down inside the card until icon is found ──────────
-        # FIX #2 — nudge_px raised to 180; lost-title retry increased to 3.
-        for nudge in range(max_swipes):
-     
-            # Refresh title position
-            title_el = _find_text(card_title_text)
-            if not title_el:
-                # Title scrolled off — scroll back up and retry
-                recovered = False
-                for _ in range(3):                       # FIX #4 — was 1
-                    _swipe(200, "down")
-                    time.sleep(0.4)
-                    title_el = _find_text(card_title_text)
-                    if title_el and title_el.is_displayed():
-                        recovered = True
-                        break
-                if not recovered:
-                    print(f"[WARN] Phase 2 nudge {nudge}: Lost '{card_title_text}'. Aborting.")
-                    return False
-     
-            card_y = title_el.location["y"]
-     
-            # Upper bound: Y of next card's title
-            next_y = screen_h
-            if next_card_title_text:
-                nxt = _find_text(next_card_title_text)
-                if nxt and nxt.is_displayed():
-                    next_y = nxt.location["y"]
-     
-            # Collect candidate icon elements within the card's Y band
-            try:
-                candidates = driver.find_elements(AppiumBy.XPATH, icon_xpath)
-            except Exception:
-                candidates = []
-     
-            valid = []
-            for el in candidates:
-                try:
-                    if not el.is_displayed():
-                        continue
-                    el_y = el.location["y"]
-                    el_sz = el.size
-                    if el_sz["width"] <= 0 or el_sz["height"] <= 0:
-                        continue
-                    if el_y < (card_y - 20):
-                        continue           # belongs to a card above
-                    if el_y >= next_y:
-                        continue           # belongs to the next card
-                    if not (0 <= el_y < screen_h):
-                        continue           # off-screen
-                    valid.append(el)
-                except Exception:
-                    continue
-     
-            if valid:
-                valid.sort(key=lambda e: e.location["y"])
-                target = valid[0]
-                t_y    = target.location["y"]
-                print(
-                    f"[FOUND] '{name}' icon at Y={t_y} "
-                    f"(card_y={card_y}, next_y={next_y}, nudge={nudge})"
-                )
-                if _tap(target):
-                    print(f"[CLICKED] '{name}' successfully.")
-                    return True
-                print(f"[WARN] Tap failed for '{name}', will retry on next nudge.")
-            else:
-                print(
-                    f"[Phase 2] No valid '{name}' icon in band [{card_y}, {next_y}) "
-                    f"at nudge {nudge}/{max_swipes}. Nudging {nudge_px}px down..."
-                )
-                _swipe(nudge_px, "up")   # scroll up = content moves up = lower content appears
-     
-        print(f"[ERROR] Phase 2: Failed to click '{name}' after {max_swipes} nudges.")
-        return False
+
+    return False

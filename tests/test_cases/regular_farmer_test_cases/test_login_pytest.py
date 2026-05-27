@@ -1,18 +1,10 @@
-import time
 import allure
 import pytest
-from appium.webdriver.common.appiumby import AppiumBy
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from utils.wait_utils import smart_find_element, smart_click
-from utils.ocr_utils import extract_text_with_coordinates
 import json
 import os
-from socket import timeout
-from selenium.common.exceptions import WebDriverException
-from utils.wait_utils import find_and_click
 import sys
-from pages.regular_farmer_app.login import (
+from pages.regular_farmer_app.login_page import (
     login_success,
     login_permissions,
     login_permissions_location,
@@ -37,7 +29,6 @@ class TestLogin:
     @allure.story("Successful Login")
     @allure.title("Verify user can login with valid credentials")
     def test_login_success(self, driver):
-        # This list will store the details of each step in the test flow
         test_flow_steps = []
 
         try:

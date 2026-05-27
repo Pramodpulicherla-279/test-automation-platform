@@ -35,7 +35,7 @@ from .gdrive_loader import download_apk, extract_app_icon, get_apk_info
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-APKS_DIR = os.path.join(BASE_DIR, "backend", "temp_apks")
+APKS_DIR = os.path.join(BASE_DIR, "temp_apks")
 os.makedirs(APKS_DIR, exist_ok=True)
 
 DOWNLOAD_PROCESS_OBJ = None
