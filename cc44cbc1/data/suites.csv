@@ -1,0 +1,4 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","102876","TC_004 -- add farm > pending farms > add crop > add boundary","","2026-05-27","passed","2026-05-27","","","",""
+"","83744","TC_002 -- add farm > skip crop > add boundary","tests.test_cases.regular_farmer_test_cases","2026-05-27","passed","2026-05-27","TestOnboarding","test_onboarding_pytest","",""
+"","98777","TC_001 -- add farm > add crop > add boundary","tests.test_cases.regular_farmer_test_cases","2026-05-27","passed","2026-05-27","TestOnboarding","test_onboarding_pytest","",""
