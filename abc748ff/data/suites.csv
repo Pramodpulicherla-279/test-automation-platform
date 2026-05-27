@@ -1,0 +1,2 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","12279","FC_001 -- Crop Health Diary, Weather & Moisture Flow (Regular Farmer)","tests.test_cases.regular_farmer_test_cases","Wed May 27 14:36:16 IST 2026","failed","Wed May 27 14:36:28 IST 2026","TestCropHealth","test_crop_health_pytest","",""
