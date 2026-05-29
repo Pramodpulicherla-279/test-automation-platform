@@ -1,0 +1,23 @@
+{
+  "ticket_id": "RUN-20260529-111131",
+  "issue_id": "ISS-001",
+  "app_name": "Krishivaas Farmer",
+  "app_version": "1.3.92",
+  "module": "TestDiagnosisUpdates",
+  "feature": "Authentication",
+  "issue_summary": "Automation Failure: test_tc_001",
+  "title": "Automation Failure: test_tc_001",
+  "test_name": "test_tc_001",
+  "steps_executed": [],
+  "developer_name": "@Anuj",
+  "description": "pytest.fail(\"Could not click Crop Info\")\nFailed: Could not click Crop Info",
+  "start_date": "2026-05-29T11:11:32.760513",
+  "end_date": "2026-05-29T11:15:45.619966",
+  "sprint": "Automation",
+  "fix_version": [
+    "Production"
+  ],
+  "affects_version": [
+    "Krishivaas Farmer"
+  ]
+}

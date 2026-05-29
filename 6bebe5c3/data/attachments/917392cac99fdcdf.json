@@ -1,0 +1,23 @@
+{
+  "ticket_id": "RUN-20260529-111131",
+  "issue_id": "ISS-006",
+  "app_name": "Krishivaas Farmer",
+  "app_version": "1.3.92",
+  "module": "TestDiagnosisUpdates",
+  "feature": "Authentication",
+  "issue_summary": "Automation Failure: test_tc_006",
+  "title": "Automation Failure: test_tc_006",
+  "test_name": "test_tc_006",
+  "steps_executed": [],
+  "developer_name": "@Anuj",
+  "description": "pytest.fail(\"Could not click Diagnosis Button\")\nFailed: Could not click Diagnosis Button",
+  "start_date": "2026-05-29T11:18:12.378061",
+  "end_date": "2026-05-29T11:18:47.067557",
+  "sprint": "Automation",
+  "fix_version": [
+    "Production"
+  ],
+  "affects_version": [
+    "Krishivaas Farmer"
+  ]
+}
