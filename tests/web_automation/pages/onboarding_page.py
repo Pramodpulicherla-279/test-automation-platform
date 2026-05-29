@@ -39,6 +39,7 @@ class OnboardingPage:
 
     def click_farmer_list(self):
         with allure.step("Click Farmer List"):
+            self.page.wait_for_timeout(5000)
             self.page.wait_for_selector(self.locators["farmer_list"], state="visible")
             self.page.click(self.locators["farmer_list"])
 
