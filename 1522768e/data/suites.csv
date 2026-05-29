@@ -1,0 +1,8 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","10005","TC_004 -- Diagnosis Updates with image without comment ","tests.test_cases.regular_farmer_test_cases","2026-05-29","broken","2026-05-29","TestDiagnosisUpdates","test_diagnosis_updates","",""
+"","10005","TC_007 -- Diagnosis Updates with image & video ","tests.test_cases.regular_farmer_test_cases","2026-05-29","broken","2026-05-29","TestDiagnosisUpdates","test_diagnosis_updates","",""
+"","10011","TC_003 -- Diagnosis Updates with video ","tests.test_cases.regular_farmer_test_cases","2026-05-29","broken","2026-05-29","TestDiagnosisUpdates","test_diagnosis_updates","",""
+"","10009","TC_006 -- Diagnosis Updates without general remarks ","tests.test_cases.regular_farmer_test_cases","2026-05-29","broken","2026-05-29","TestDiagnosisUpdates","test_diagnosis_updates","",""
+"","10006","TC_002 -- Diagnosis Updates with audio ","tests.test_cases.regular_farmer_test_cases","2026-05-29","broken","2026-05-29","TestDiagnosisUpdates","test_diagnosis_updates","",""
+"","269203","TC_001 -- Diagnosis Updates with image, audio, and video","tests.test_cases.regular_farmer_test_cases","2026-05-29","failed","2026-05-29","TestDiagnosisUpdates","test_diagnosis_updates","",""
+"","10003","TC_008 -- Diagnosis Updates with image & audio","tests.test_cases.regular_farmer_test_cases","2026-05-29","broken","2026-05-29","TestDiagnosisUpdates","test_diagnosis_updates","",""
