@@ -1,0 +1,3 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","35732","Verify user can login with valid credentials","tests.test_cases.regular_farmer_test_cases","2026-05-29","passed","2026-05-29","TestLogin","test_login_pytest","",""
+"","187896","TC_001 -- Crop Health, Diary, Weather, Notification, leaf & soil Moisture Flow","tests.test_cases.regular_farmer_test_cases","2026-05-29","passed","2026-05-29","TestCropHealth","test_crop_health_pytest","",""
