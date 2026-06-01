@@ -124,25 +124,35 @@ const mapPayloadToIssue = (payload) => ({
 
 /* ─── Styles ──────────────────────────────────────────────────────────────── */
 const S = {
-  label: { fontSize: "0.72rem", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "2px", display: "block" },
+  label: {
+    fontSize: "0.7rem", fontWeight: 600, color: "#64748B",
+    marginBottom: "3px", display: "block", letterSpacing: "0.01em",
+  },
   input: (locked) => ({
     width: "100%", boxSizing: "border-box",
-    background: locked ? "var(--bg-console)" : "var(--input-bg)",
-    border: "1px solid var(--border-color)", borderRadius: "5px",
-    padding: "5px 9px", fontSize: "0.78rem",
-    color: locked ? "var(--text-secondary)" : "var(--text-primary)",
+    background: locked ? "#F8FAFC" : "#FFFFFF",
+    border: "1px solid #E2E8F0",
+    borderRadius: "6px",
+    padding: "5px 8px", fontSize: "0.78rem",
+    color: locked ? "#94A3B8" : "#0F172A",
     cursor: locked ? "not-allowed" : "text",
+    fontFamily: "inherit",
+    transition: "border-color 0.15s",
   }),
   btn: (color, bg = "none") => ({
-    display: "inline-flex", alignItems: "center", gap: "4px",
-    background: bg, border: `1.5px solid ${color}`,
-    borderRadius: "5px", padding: "5px 14px",
-    cursor: "pointer", fontSize: "0.78rem", color, fontWeight: 700,
+    display: "inline-flex", alignItems: "center", gap: "5px",
+    background: bg === "none" ? "transparent" : bg,
+    border: `1.5px solid ${color}`,
+    borderRadius: "6px", padding: "5px 13px",
+    cursor: "pointer", fontSize: "0.75rem", color,
+    fontWeight: 700, fontFamily: "inherit",
     textDecoration: "none", whiteSpace: "nowrap",
+    transition: "opacity 0.15s",
   }),
   badge: (bg, color) => ({
-    fontSize: "0.65rem", fontWeight: 800, flexShrink: 0,
-    background: bg, color, borderRadius: "4px", padding: "1px 6px",
+    fontSize: "0.63rem", fontWeight: 800, flexShrink: 0,
+    background: bg, color, borderRadius: "4px", padding: "2px 7px",
+    letterSpacing: "0.01em",
   }),
 };
 
@@ -238,9 +248,9 @@ function IssueCard({ iss, idx, isOpen, onToggle, onRemove, onCreated, serverRead
   };
 
   return (
-    <div style={{ borderLeft:  `3px solid ${pColor}`, borderRadius:  "6px", border:  "1px solid var(--border-color)", marginBottom:  "4px", background:  "var(--bg-card)" }}>
+    <div style={{ borderLeft: `3px solid ${pColor}`, borderRadius: "6px", border: "1px solid #E2E8F0", marginBottom: "4px", background: "#FFFFFF", overflow: "hidden" }}>
       {/* Child row */}
-      <button onClick={onToggle} style={{ width:  "100%", display:  "flex", alignItems:  "center", gap:  "6px", padding:  "6px 10px", background: isOpen ? "var(--input-bg)" : "transparent", border:  "none", cursor:  "pointer", textAlign:  "left", borderBottom: isOpen ? "1px solid var(--border-color)" : "none", borderRadius: isOpen ? "5px 5px 0 0" : "5px" }}>
+      <button onClick={onToggle} style={{ width: "100%", display: "flex", alignItems: "center", gap: "6px", padding: "6px 10px", background: isOpen ? "#F8FAFC" : "transparent", border: "none", cursor: "pointer", textAlign: "left", borderBottom: isOpen ? "1px solid #E2E8F0" : "none", borderRadius: isOpen ? "4px 4px 0 0" : "4px" }}>
         {isOpen ? <ChevronDown size={12} color="var(--text-secondary)" /> : <ChevronRight size={12} color="var(--text-secondary)" />}
         <span style={S.badge("#dbeafe",  "#1d4ed8")}>AUTO</span>
         {fields.module && <span style={S.badge("#ede9fe",  "#7c3aed")}>{fields.module}</span>}
@@ -405,8 +415,8 @@ function RunGroup({ ticketId, issues, openChildren, onToggleChild, onRemoveIssue
   const pending = total - created;
 
   return (
-    <div style={{ border: "1px solid var(--border-color)", borderRadius: "8px", background: "var(--bg-card)", marginBottom: "6px" }}>
-      <button onClick={onToggleGroup} style={{ width: "100%", display: "flex", alignItems: "center", gap: "8px", padding: "9px 12px", background: isGroupOpen ? "var(--input-bg)" : "var(--bg-console)", border: "none", cursor: "pointer", textAlign: "left", borderBottom: isGroupOpen ? "1px solid var(--border-color)" : "none" }}>
+    <div style={{ border: "1px solid #E2E8F0", borderRadius: "8px", background: "#FFFFFF", marginBottom: "6px", overflow: "hidden" }}>
+      <button onClick={onToggleGroup} style={{ width: "100%", display: "flex", alignItems: "center", gap: "8px", padding: "9px 12px", background: isGroupOpen ? "#F8FAFC" : "#FAFAFA", border: "none", cursor: "pointer", textAlign: "left", borderBottom: isGroupOpen ? "1px solid #E2E8F0" : "none" }}>
         {isGroupOpen ? <FolderOpen size={15} color="var(--accent-blue)" /> : <Folder size={15} color="var(--accent-blue)" />}
         {isGroupOpen ? <ChevronDown size={13} color="var(--text-secondary)" /> : <ChevronRight size={13} color="var(--text-secondary)" />}
         <span style={{ fontWeight: 800, fontSize: "0.8rem", color: "var(--accent-blue)", fontFamily: "monospace", letterSpacing: "0.03em" }}>
@@ -605,54 +615,54 @@ export default function IssuePanel({ modules = [], jiraIssues = [], onHistoryUpd
   return (
     <div style={{
       display: "flex", flexDirection: "column",
-      height: isFullScreen ? "100vh" : "350px",
+      /* On large screens the wrapper div is stretched by the flex parent,
+         so height: 100% fills the full panel height without overflow.
+         Full-screen mode overrides to 100vh. */
+      height: isFullScreen ? "100vh" : "100%",
+      minHeight: "360px",
       ...(isFullScreen
-        ? { position: "fixed", top: 0, left: 0, width: "100vw", zIndex: 9999, borderRadius: 0 }
-        : { borderRadius: "0.75rem" }),
-      background: "var(--bg-card)", border: "1px solid var(--border-color)",
-      overflow: "hidden", fontFamily: "'Courier New', Courier, monospace",
-      boxShadow: "0 2px 4px rgba(15,23,42,.04), 0 8px 24px rgba(15,23,42,.08)",
-      minHeight: 0,
+        ? { position: "fixed", inset: 0, zIndex: 9999, borderRadius: 0 }
+        : { borderRadius: "14px" }),
+      background: "#FFFFFF",
+      border: "1px solid #E2E8F0",
+      overflow: "hidden",
+      fontFamily: "-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif",
+      boxShadow: "0 1px 3px rgba(15,23,42,.06), 0 1px 2px rgba(15,23,42,.04)",
     }}>
 
       {serverReady === false && (
-        <div style={{ background: "#fef2f2", borderBottom: "1px solid #fecaca", padding: "5px 12px", fontSize: "0.7rem", color: "#b91c1c", flexShrink: 0 }}>
+        <div style={{ background: "#FEF2F2", borderBottom: "1px solid #FECACA", padding: "5px 12px", fontSize: "0.7rem", color: "#B91C1C", flexShrink: 0 }}>
           ⚠️ Old server detected — restart backend with new server.py
         </div>
       )}
 
-      {/* Header */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0.55rem 0.75rem", borderBottom: "1px solid var(--border-color)", background: "var(--bg-console)", flexShrink: 0 }}>
+      {/* ── Header ── */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0.6rem 0.85rem", borderBottom: "1px solid #E2E8F0", background: "#F8FAFC", flexShrink: 0 }}>
         <div style={{ display: "flex", alignItems: "center", gap: "7px" }}>
-          <AlertCircle size={13} color="var(--accent-blue)" />
-          <span style={{ fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".05em", color: "var(--text-secondary)" }}>ISSUE LIST</span>
+          <AlertCircle size={13} color="#2563EB" />
+          <span style={{ fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".06em", color: "#64748B" }}>Issue List</span>
           <span title={wsConnected ? "Connected" : "Disconnected"}>
-            {wsConnected ? <Wifi size={11} color="#16a34a" /> : <WifiOff size={11} color="#dc2626" />}
-          </span>
-          <span style={{
-            fontSize: "0.63rem", fontWeight: 700, borderRadius: "4px", padding: "1px 5px",
-            background: serverReady === true ? "#dcfce7" : serverReady === false ? "#fee2e2" : "#f1f5f9",
-            color:      serverReady === true ? "#16a34a" : serverReady === false ? "#dc2626" : "#64748b",
-          }}>
-            {serverReady === null ? "…" : serverReady ? "v2 ✓" : "OLD"}
+            {wsConnected ? <Wifi size={11} color="#059669" /> : <WifiOff size={11} color="#DC2626" />}
           </span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-          {[`${totalIssues} total`, `${sortedTicketIds.length} run${sortedTicketIds.length !== 1 ? "s" : ""}`, `${totalCreated} created`].map(lbl => (
-            <span key={lbl} style={{ fontSize: "0.65rem", color: "var(--text-secondary)", background: "var(--border-color)", borderRadius: "999px", padding: "2px 7px" }}>{lbl}</span>
+          {[`${totalIssues} issues`, `${sortedTicketIds.length} run${sortedTicketIds.length !== 1 ? "s" : ""}`, `${totalCreated} created`].map(lbl => (
+            <span key={lbl} style={{ fontSize: "0.63rem", color: "#64748B", background: "#F1F5F9", border: "1px solid #E2E8F0", borderRadius: "999px", padding: "2px 8px", fontWeight: 600 }}>{lbl}</span>
           ))}
-          <button onClick={() => setIsFullScreen(f => !f)} style={{ background: "none", border: "none", cursor: "pointer", color: "#94a3b8", display: "flex", alignItems: "center", padding: "2px" }}>
+          <button onClick={() => setIsFullScreen(f => !f)} style={{ background: "none", border: "none", cursor: "pointer", color: "#94A3B8", display: "flex", alignItems: "center", padding: "3px", marginLeft: "2px" }}>
             {isFullScreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
           </button>
         </div>
       </div>
 
-      {/* Groups list */}
-      <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: "8px", display: "flex", flexDirection: "column", minHeight: 0 }}>
+      {/* ── Groups list ── */}
+      <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: "8px", display: "flex", flexDirection: "column", minHeight: 0, scrollbarWidth: "thin", scrollbarColor: "#E2E8F0 transparent" }}>
         {sortedTicketIds.length === 0 && (
-          <div style={{ textAlign: "center", color: "var(--text-secondary)", fontSize: "0.77rem", padding: "24px 16px" }}>
-            <div style={{ fontSize: "1.4rem", marginBottom: "6px" }}>🔍</div>
-            {wsConnected ? "Waiting for test failures… issues appear here automatically." : "WebSocket disconnected — is backend running?"}
+          <div style={{ textAlign: "center", color: "#94A3B8", fontSize: "0.78rem", padding: "32px 16px", lineHeight: "1.6" }}>
+            <div style={{ fontSize: "1.6rem", marginBottom: "8px" }}>🔍</div>
+            {wsConnected
+              ? "Waiting for test failures…\nFailed test issues appear here automatically."
+              : "WebSocket disconnected — is backend running?"}
           </div>
         )}
         {sortedTicketIds.map(tid => (

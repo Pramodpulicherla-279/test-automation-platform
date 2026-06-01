@@ -592,18 +592,29 @@ async def post_run_notify(
 
     # ── Step 4 — resolve report URL ──────────────────────────────────────────
     print(f"[{run_id[:8]}] Step 3: Resolving report URL...")
+
+    # ── GitHub Pages deploy TEMPORARILY DISABLED ─────────────────────────────
+    # Reason: auto_push_to_github() and deploy_to_github_pages() run blocking
+    # git-clone / git-push operations inside loop.run_in_executor().
+    # When the remote is slow or the gh-pages CDN takes up to 3 minutes to
+    # propagate, these hold a thread-pool thread for the full duration —
+    # starving the FastAPI event loop and making the server unresponsive.
+    # Re-enable once these are moved to a dedicated background worker.
+    #
     # 1. Start local server
     # local_url  = await loop.run_in_executor(None, start_allure_server)
-     # 2. Push to GitHub
-    await loop.run_in_executor(None, lambda: auto_push_to_github(run_id))
+    # 2. Push to GitHub
+    # await loop.run_in_executor(None, lambda: auto_push_to_github(run_id))
     # 3. Deploy to GitHub Pages
-    ghpages_url = await loop.run_in_executor(None, lambda: deploy_to_github_pages(run_id))
-   # 4. Decide final URL
-    if not ghpages_url:
-        log_to_ui(f"[{run_id[:8]}] ❌ GitHub Pages deploy failed", "ERROR")
-        return   # 🚨 STOP execution
+    # ghpages_url = await loop.run_in_executor(None, lambda: deploy_to_github_pages(run_id))
+    # 4. Decide final URL
+    # if not ghpages_url:
+    #     log_to_ui(f"[{run_id[:8]}] ❌ GitHub Pages deploy failed", "ERROR")
+    #     return   # 🚨 STOP execution
+    # report_url = ghpages_url
 
-    report_url = ghpages_url
+    # Temporary fallback: serve the Allure report locally via FastAPI.
+    report_url = "http://localhost:8000/allure-report/index.html"
     print(f"[{run_id[:8]}] Step 3: Report URL → {report_url}")
 
     if run_id in runs:

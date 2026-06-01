@@ -48,6 +48,7 @@ import requests as http_requests
 from pathlib import Path
 from typing import List, Optional
 
+import socket as _socket
 import pytest
 import allure
 from appium import webdriver
@@ -395,6 +396,35 @@ def pytest_runtest_setup(item):
         pass
 
 
+# ── Appium readiness guard ────────────────────────────────────────────────────
+def _wait_for_appium(host: str = "127.0.0.1", port: int = 4723,
+                     timeout: int = 30, poll_interval: int = 2) -> None:
+    """
+    Poll Appium's TCP port before handing control to webdriver.Remote.
+
+    Without this guard, webdriver.Remote raises a cryptic MaxRetryError /
+    WinError 10061 when Appium hasn't finished starting yet (or was never
+    started at all).
+
+    Raises pytest.fail with a human-readable message so the developer knows
+    exactly what to do instead of digging through urllib3 tracebacks.
+    """
+    deadline = time.monotonic() + timeout
+    print(f"[Appium] Waiting for server at {host}:{port} (up to {timeout}s)…")
+    while time.monotonic() < deadline:
+        with _socket.socket(_socket.AF_INET, _socket.SOCK_STREAM) as s:
+            s.settimeout(1)
+            if s.connect_ex((host, port)) == 0:
+                print(f"[Appium] ✅ Server is ready at {host}:{port}")
+                return
+        time.sleep(poll_interval)
+    pytest.fail(
+        f"\n\n[Appium] ❌ Server is NOT reachable at {host}:{port} after {timeout}s.\n"
+        f"  → Start Appium first:  appium -p {port}\n"
+        f"  → Or use the 'Start Server' button in the UI before running tests.\n"
+    )
+
+
 # ── Driver fixture ────────────────────────────────────────────────────────────
 @pytest.fixture(scope="session")
 def driver(request):
@@ -403,6 +433,11 @@ def driver(request):
         pytest.fail("No APK path provided!")
     if not os.path.exists(apk_path):
         pytest.fail(f"APK file not found at: {apk_path}")
+
+    # Verify Appium is actually reachable before attempting a WebDriver session.
+    # This converts the opaque MaxRetryError / WinError 10061 into a clear
+    # pytest failure message telling the developer exactly what to do.
+    _wait_for_appium()
 
     print(f"Initializing Appium with APK: {apk_path}")
     options = UiAutomator2Options()

@@ -7,7 +7,6 @@ import pytest
 from appium.webdriver.common.appiumby import AppiumBy
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from tests.conftest import driver
 import json
 import os
 from selenium.common.exceptions import WebDriverException
@@ -108,15 +107,11 @@ def load_locators_once(self, request):
 def click_active_farms(driver, obj, test_flow_steps):
     with allure.step("Click Active Farms"):
         time.sleep(10)
-
         element = scroll_until_element_visible(driver, obj.click_active_farms_xpath)
-
+        # if element is None:
         if element is None:
             pytest.fail("Could not find 'Active Farms' after scrolling")
-
         element.click()  # ✅ Actually click the element
-
-        time.sleep(2)
         test_flow_steps.append({"step": "Click Active Farms", "status": "Success"})
 
 # ─────────────────────────────────────────────────────────────
@@ -221,7 +216,7 @@ def stop_audio_recording(driver, obj, test_flow_steps):
    time.sleep(2)
    if not smart_click(driver, "Audio Stop", obj.image_desc_audio_stop_xpath):
             pytest.fail("Could not stop audio recording")
-   time.sleep(3)
+   time.sleep(8)
    test_flow_steps.append({
             "step": "Stop Audio Recording",
             "status": "Success"
@@ -271,12 +266,12 @@ def stop_video_recording(driver, obj, test_flow_steps):
 
     with allure.step("Stop Video Recording"):
 
-        time.sleep(2)
+        time.sleep(60)
 
         if not smart_click(driver, "Video Stop", obj.image_desc_video_stop_xpath):
             pytest.fail("Could not stop video recording")
 
-        time.sleep(3)
+        time.sleep(10)
 
         test_flow_steps.append({
             "step": "Stop Video Recording",
@@ -356,7 +351,7 @@ def start_general_remarks_audio(driver, obj, test_flow_steps):
 
     with allure.step("Start General Remarks Audio"):
 
-        time.sleep(2)
+        time.sleep(8)
 
         if not smart_click(driver, "General Remarks Audio Start", obj.image_desc_general_audio_start_xpath):
             pytest.fail("Could not start General Remarks audio recording")

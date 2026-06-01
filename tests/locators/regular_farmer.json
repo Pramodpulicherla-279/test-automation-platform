@@ -124,7 +124,7 @@
     "field_images": "//android.view.ViewGroup[@content-desc=\"Field Images\"]"
   },
   "Diagnosis_updates": {
-    "active_farms": "//android.view.ViewGroup[@content-desc=\"Green Chilli  , RamM Farm 7, 0.54 Acre\"]/android.view.ViewGroup",
+    "active_farms": "//android.view.ViewGroup[@content-desc=\"Groundnut  , RamM Farm 8, 3.38 Acre\"]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[1]/android.widget.ImageView",
     "diagnosis_tab": "//android.view.ViewGroup[@content-desc=\"Diagnosis\"]/com.horcrux.svg.SvgView/com.horcrux.svg.GroupView/com.horcrux.svg.RectView",
     "click_first_ok_button": "//android.view.ViewGroup[@content-desc=\"OK\"]",
     "click_Symptom_ok_button": "//android.view.ViewGroup[@content-desc=\"OK\"]",
@@ -142,7 +142,7 @@
     "video_stop": "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[3]/android.widget.ImageView",
     "image_cross_button": "//android.widget.ImageView",
     "general_remarks_commentbox": "//android.widget.EditText",
-    "general_start_audio": "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[1]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view ViewGroup[2]/android.widget.ScrollView/android.view ViewGroup/android.view ViewGroup[2]/android view(ViewGroup/com.horcrux.svg.SvgView/com.horcrux.svg.GroupView/com.horcrux.svg.RectView",
+    "general_start_audio": "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[1]/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup/com.horcrux.svg.SvgView/com.horcrux.svg.GroupView/com.horcrux.svg.RectView",
     "general_stop_audio": "//android.view.ViewGroup[contains(@content-desc,'00:')]",
     "image_general_audio_delete": "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view ViewGroup(android.view ViewGroup android.view ViewGroup android.view ViewGroup[1]/android.widget.FrameLayout/android.view ViewGroup android.view ViewGroup android view(ViewGroup android view(ViewGroup android view(ViewGroup android view(ViewGroup android view(ViewGroup android view(ViewGroup[2]/android.widget.ScrollView android view(ViewGroup android view(ViewGroup[2]/android view(ViewGroup/com.horcrux.svg.SvgView/com.horcrux.svg.GroupView/com.horcrux.svg.RectView",
     "submit_button": "//android.view.ViewGroup[@content-desc=\"Submit\"]",

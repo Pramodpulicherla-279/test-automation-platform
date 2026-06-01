@@ -1,9 +1,31 @@
+import React from 'react';
+import { Activity, Server, Smartphone, LayoutDashboard } from 'lucide-react';
+import { ReadyState } from 'react-use-websocket';
 
-import React, { useState, useEffect, useRef } from 'react';
+/* ── StatusChip ─────────────────────────────────────────────────────────── */
+function StatusChip({ icon, label, ok, last = false }) {
+  return (
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: '6px',
+      padding: '5px 12px',
+      borderRight: last ? 'none' : '1px solid #E2E8F0',
+    }}>
+      {icon}
+      <span style={{
+        fontSize: '0.72rem',
+        fontWeight: 600,
+        color: ok ? '#059669' : '#94A3B8',
+        letterSpacing: '0.01em',
+      }}>
+        {label}
+      </span>
+    </div>
+  );
+}
 
-import { Activity, Server, Smartphone } from "lucide-react";
-import { ReadyState } from "react-use-websocket";
-
+/* ── Header ──────────────────────────────────────────────────────────────── */
 export default function Header({
   appIcon,
   appTitle,
@@ -14,72 +36,76 @@ export default function Header({
   uiIssuesLoading,
   onToggleUiIssues,
 }) {
+  const wsOpen     = readyState === ReadyState.OPEN;
+  const appiumOn   = appiumStatus === 'running';
 
   return (
     <header className="app-header">
-      {appIcon ? (
-        <div className="app-header-left">
-          <img src={appIcon} alt="App Logo" className="app-logo" />
-          <h1>{appTitle || "Android App"}</h1>
+
+      {/* ── Left: brand or loaded app icon ── */}
+      <div className="app-header-left">
+        {appIcon ? (
+          <img src={appIcon} alt="App icon" className="app-logo" />
+        ) : (
+          <div style={{
+            width: '32px', height: '32px',
+            background: 'linear-gradient(135deg, #2563EB 0%, #7C3AED 100%)',
+            borderRadius: '8px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 2px 6px rgba(37,99,235,0.25)',
+            flexShrink: 0,
+          }}>
+            <LayoutDashboard size={16} color="#fff" />
+          </div>
+        )}
+        <div>
+          <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#0F172A', lineHeight: 1.2 }}>
+            {appTitle || 'TAP / Android'}
+          </div>
+          {!appTitle && (
+            <div style={{ fontSize: '0.65rem', color: '#94A3B8', marginTop: '1px' }}>
+              Test Automation Platform
+            </div>
+          )}
         </div>
-      ) : (
-        <div className="w-16 h-16 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-500" />
-      )}
+      </div>
 
-      {/* <div>
-        <h1 className="brand-title">TAP / Android</h1>
-        <p className="brand-subtitle">Test Automation Platform • Live Profiler</p>
-      </div> */}
-
+      {/* ── Right: status chips + button ── */}
       <div className="status-cont">
+
+        {/* Status chips row */}
         <div className="status-box">
-          <div className="system-status">
-            <Smartphone
-              size={18}
-              color={isDeviceConnected ? "#4ade80" : "#ef4444"}
-              style={{ marginRight: "6px" }}
-            />
-            <span style={{ color: isDeviceConnected ? "#4ade80" : "#ef4444" }}>
-              {isDeviceConnected ? "Device Connected" : "No Device"}
-            </span>
-          </div>
-
-          <div className="system-status">
-            <Server
-              size={18}
-              color={readyState === ReadyState.OPEN ? "#4ade80" : "#ef4444"}
-              style={{ marginRight: "6px" }}
-            />
-            <span style={{ color: readyState === ReadyState.OPEN ? "#4ade80" : "#ef4444" }}>
-              {readyState === ReadyState.OPEN ? "Server Connected" : "Offline"}
-            </span>
-          </div>
-
-          <div className="system-status" style={{ borderRight: "none" }}>
-            <Activity
-              size={18}
-              color={appiumStatus === "running" ? "#4ade80" : "#94a3b8"}
-              style={{ marginRight: "6px" }}
-            />
-            <span style={{ color: appiumStatus === "running" ? "#4ade80" : "#94a3b8" }}>
-              Appium {appiumStatus === "running" ? "Active" : "Off"}
-            </span>
-          </div>
+          <StatusChip
+            icon={<Smartphone size={15} color={isDeviceConnected ? '#059669' : '#DC2626'} />}
+            label={isDeviceConnected ? 'Device Connected' : 'No Device'}
+            ok={isDeviceConnected}
+          />
+          <StatusChip
+            icon={<Server size={15} color={wsOpen ? '#059669' : '#DC2626'} />}
+            label={wsOpen ? 'Server Online' : 'Offline'}
+            ok={wsOpen}
+          />
+          <StatusChip
+            icon={<Activity size={15} color={appiumOn ? '#059669' : '#94A3B8'} />}
+            label={appiumOn ? 'Appium Active' : 'Appium Off'}
+            ok={appiumOn}
+            last
+          />
         </div>
 
+        {/* View UI Issues */}
         <button
           onClick={onToggleUiIssues}
           disabled={uiIssuesLoading}
           className="view-UI-button"
-          style={{
-            padding: "8px 12px",
-            backgroundColor: "#334155",
-            color: "#e2e8f0",
-            border: "1px solid #475569",
-          }}
-          title={uiIssuesOpen ? "Close UI Screenshot Issues screen" : "Open UI Screenshot Issues screen"}
+          title={uiIssuesOpen ? 'Close UI Screenshot Issues' : 'Open UI Screenshot Issues'}
+          style={uiIssuesOpen ? {
+            background: '#EFF6FF',
+            color: '#2563EB',
+            border: '1px solid #BFDBFE',
+          } : {}}
         >
-          {uiIssuesOpen ? "Close UI Issues" : "View UI Issues"}
+          {uiIssuesLoading ? 'Loading…' : uiIssuesOpen ? 'Close UI Issues' : 'View UI Issues'}
         </button>
       </div>
     </header>

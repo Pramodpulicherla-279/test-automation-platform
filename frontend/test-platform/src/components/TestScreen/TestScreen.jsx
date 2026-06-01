@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import Header from "../Header/Header";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { Play, Terminal, Activity, CheckCircle, Circle, AlertCircle, Cpu, Maximize2, Minimize2 } from 'lucide-react';
+// import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'; // disabled: MetricsChart
+import { Play, Terminal, Activity, CheckCircle, Circle, AlertCircle, /* Cpu, */ Maximize2, Minimize2 } from 'lucide-react';
 import UIScreenshotIssues from '../UIScreenshotIssues/UIScreenshotIssues';
 import IssuePanel from '../IssuePanel/IssuePanel';
 import NetworkConfigPanel from '../NetworkConfig/NetworkConfig'
@@ -19,8 +19,8 @@ const APP_VARIANTS = {
             { name: 'Login', path: 'tests/test_cases/regular_farmer_test_cases/test_login_pytest.py' },
             { name: 'Crophealth', path: 'tests/test_cases/regular_farmer_test_cases/test_crop_health_pytest.py' },
             { name: 'Farmer Updates ', path: 'tests/test_cases/regular_farmer_test_cases/test_farmer_updates.py' },
-            { name: 'Onboarding', path: 'tests/test_cases/regular_farmer_test_cases/test_onboarding_pytest.py' },
             { name: 'Diagnosis Updates', path: 'tests/test_cases/regular_farmer_test_cases/test_diagnosis_updates.py' },
+            { name: 'Onboarding', path: 'tests/test_cases/regular_farmer_test_cases/test_onboarding_pytest.py' },
         ]
     },
     CLIENT: {
@@ -92,6 +92,8 @@ const ModuleFlow = ({ modules, isRunning, onToggleModule }) => (
 );
 
 /* ─── MetricsChart ───────────────────────────────────────────────────────── */
+/* Temporarily disabled — live profiler metrics are not yet wired to a
+   backend data source. Re-enable once the /ws/metrics endpoint is ready.
 const MetricsChart = ({ data }) => (
     <div className="dashboard-card chart-card">
         <h3 className="card-title">
@@ -112,6 +114,7 @@ const MetricsChart = ({ data }) => (
         </div>
     </div>
 );
+*/
 
 const staticApiLogs = [
     { time: "10:00:01.234", type: "info", message: "GET /api/v1/health-check - 200 OK (12ms)" },
@@ -129,16 +132,6 @@ const LogConsole = ({ logs, statusMode = 'idle' }) => {
     const [activeTab, setActiveTab] = useState('test');
     const [apiLogs, setApiLogs] = useState([]);
 
-    const filteredLogs = logs.filter((log) => {
-        if (!searchTerm) return true;
-        const q = searchTerm.toLowerCase();
-        return (
-            log.message.toLowerCase().includes(q) ||
-            log.type.toLowerCase().includes(q) ||
-            String(log.time).toLowerCase().includes(q)
-        );
-    });
-
     const normalizedSearch = searchTerm.toLowerCase().trim();
 
     const matchesSearch = (log) => {
@@ -150,170 +143,85 @@ const LogConsole = ({ logs, statusMode = 'idle' }) => {
         );
     };
 
-    // Styles for the status bar
+    /* Status bar — animated stripe while running, solid colour on result */
     const getBarStyle = () => {
-        const baseStyle = {
-            height: '4px',
-            flexGrow: 1,
-            margin: '0 15px',
-            borderRadius: '2px',
-            transition: 'all 0.3s ease',
-            opacity: statusMode === 'idle' ? 0.2 : 1,
-            backgroundColor: statusMode === 'idle' ? '#475569' : '#fff',
-        };
-
-        if (statusMode === 'running') {
-            return {
-                ...baseStyle,
-                background: 'linear-gradient(90deg, #3b82f633 0%, #3b82f6 50%, #3b82f633 100%)',
-                backgroundSize: '200% 100%',
-                animation: 'gradientLoad 2s linear infinite',
-            };
-        } else if (statusMode === 'failure') {
-            return {
-                ...baseStyle,
-                backgroundColor: '#ef4444',
-                boxShadow: '0 0 8px #ef444466',
-                animation: 'blinkRed 1.5s infinite',
-            };
-        } else if (statusMode === 'success') {
-            return {
-                ...baseStyle,
-                backgroundColor: '#22c55e',
-                boxShadow: '0 0 8px #22c55e66',
-                animation: 'blinkGreen 1.5s infinite',
-            };
-        }
-        return baseStyle;
+        const base = { height: '3px', flexGrow: 1, margin: '0 12px', borderRadius: '2px', transition: 'all 0.3s ease' };
+        if (statusMode === 'running')  return { ...base, background: 'linear-gradient(90deg,#bfdbfe 0%,#2563EB 50%,#bfdbfe 100%)', backgroundSize: '200% 100%', animation: 'gradientLoad 2s linear infinite' };
+        if (statusMode === 'failure')  return { ...base, background: '#DC2626', animation: 'blinkRed 1.5s infinite' };
+        if (statusMode === 'success')  return { ...base, background: '#059669', animation: 'blinkGreen 1.5s infinite' };
+        return { ...base, background: '#E2E8F0' };
     };
 
-    // Determine which logs to display based on the active tab
     const currentLogs = activeTab === 'test' ? logs : apiLogs;
+
+    /* Auto-scroll to bottom on new logs */
+    useEffect(() => {
+        if (endRef.current) endRef.current.scrollIntoView({ behavior: 'smooth' });
+    }, [currentLogs.length]);
 
     useEffect(() => {
         if (activeTab !== 'api') return;
-
         const interval = setInterval(async () => {
             try {
-                const res = await fetch("http://localhost:8000/api-testing/logs");
+                const res  = await fetch('http://localhost:8000/api-testing/logs');
                 const data = await res.json();
-
-                const formatted = data.map(log => ({
-                    time: log.timestamp,
-                    type: log.status >= 400 ? "error" : "info",
-                    message: `${log.method} ${log.endpoint} - ${log.status} (${log.response_time_ms} ms)`
-                }));
-
-                setApiLogs(formatted.reverse());
-            } catch (e) {
-                console.error("API log fetch error", e);
-            }
+                setApiLogs(data.map(log => ({
+                    time:    log.timestamp,
+                    type:    log.status >= 400 ? 'error' : 'info',
+                    message: `${log.method} ${log.endpoint} - ${log.status} (${log.response_time_ms} ms)`,
+                })).reverse());
+            } catch { /* ignore */ }
         }, 2000);
-
         return () => clearInterval(interval);
     }, [activeTab]);
 
     return (
         <div className={`log-console ${isFullScreen ? 'full-screen' : ''}`}>
-            <style>{`
-        @keyframes gradientLoad {
-          0% { background-position: 100% 0; }
-          100% { background-position: -100% 0; }
-        }
-        @keyframes blinkRed {
-          0%, 100% { opacity: 1; box-shadow: 0 0 8px #ef444466; }
-          50% { opacity: 0.4; box-shadow: none; }
-        }
-        @keyframes blinkGreen {
-          0%, 100% { opacity: 1; box-shadow: 0 0 8px #22c55e66; }
-          50% { opacity: 0.4; box-shadow: none; }
-        }
-          .log-tabs {
-                    display: flex;
-                    background-color: none;
-                    border-bottom: 1px solid #334155;
-                    padding: 0 16px;
-                }
-                .log-tab-btn {
-                    background: none;
-                    border: none;
-                    color: #94a3b8;
-                    padding: 8px 16px;
-                    font-size: 0.85rem;
-                    font-weight: 600;
-                    cursor: pointer;
-                    border-bottom: 2px solid transparent;
-                    transition: all 0.2s;
-                }
-                .log-tab-btn:hover {
-                    color: #e2e8f0;
-                }
-                .log-tab-btn.active {
-                    color: #3b82f6;
-                    border-bottom-color: #3b82f6;
-                }
-      `}</style>
 
+            {/* ── Header row ── */}
             <div className="console-header-row">
                 <h3 className="console-header">
-                    <Terminal size={14} /> LIVE LOGS CONSOLE
+                    <Terminal size={13} /> LIVE LOGS
                 </h3>
                 <div style={getBarStyle()} />
-                {/* Search bar */}
                 <div className="log-search">
                     <input
                         type="text"
-                        placeholder={`Search ${activeTab} logs...`}
+                        placeholder={`Search logs…`}
                         value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onChange={e => setSearchTerm(e.target.value)}
                         className="text-input"
+                        style={{ width: '160px', padding: '4px 8px', fontSize: '0.72rem' }}
                     />
                 </div>
                 <button
-                    onClick={() => setIsFullScreen(!isFullScreen)}
-                    style={{
-                        background: 'none',
-                        border: 'none',
-                        cursor: 'pointer',
-                        marginLeft: '8px',
-                        color: '#94a3b8',
-                        display: 'flex',
-                        alignItems: 'center',
-                        padding: '4px'
-                    }}
-                    title={isFullScreen ? "Exit Full Screen" : "Full Screen"}
+                    onClick={() => setIsFullScreen(f => !f)}
+                    title={isFullScreen ? 'Exit Full Screen' : 'Full Screen'}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94A3B8', display: 'flex', alignItems: 'center', padding: '3px', marginLeft: '4px' }}
                 >
-                    {isFullScreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
+                    {isFullScreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
                 </button>
             </div>
-            {/* Tabs Row */}
+
+            {/* ── Tab row ── */}
             <div className="log-tabs">
-                <button
-                    className={`log-tab-btn ${activeTab === 'test' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('test')}
-                >
-                    Test Logs
-                </button>
-                <button
-                    className={`log-tab-btn ${activeTab === 'api' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('api')}
-                >
-                    API Logs
-                </button>
+                <button className={`log-tab-btn ${activeTab === 'test' ? 'active' : ''}`} onClick={() => setActiveTab('test')}>Test Logs</button>
+                <button className={`log-tab-btn ${activeTab === 'api'  ? 'active' : ''}`} onClick={() => setActiveTab('api')}>API Logs</button>
             </div>
+
+            {/* ── Log lines ── */}
             <div className="console-body">
-                {currentLogs.map((log, i) => {
-                    const isMatch = matchesSearch(log);
-                    return (
-                        <div
-                            key={i}
-                            className={`log-line ${log.type.toLowerCase()} ${isMatch ? 'log-line-highlight' : ''}`}
-                        >
-                            <span className="timestamp">[{log.time}]</span>
-                            <span className="message">{log.message}</span>
-                        </div>
-                    );
-                })}
+                {currentLogs.length === 0 && (
+                    <div style={{ color: '#94A3B8', fontSize: '0.75rem', padding: '1.5rem', textAlign: 'center' }}>
+                        No logs yet — start a test run to see output here.
+                    </div>
+                )}
+                {currentLogs.map((log, i) => (
+                    <div key={i} className={`log-line ${log.type.toLowerCase()} ${matchesSearch(log) ? 'log-line-highlight' : ''}`}>
+                        <span className="timestamp">[{log.time}]</span>
+                        <span className="message">{log.message}</span>
+                    </div>
+                ))}
                 <div ref={endRef} />
             </div>
         </div>
@@ -664,21 +572,21 @@ function TestScreen({ onHistoryUpdate }) {
             )}
 
             {showStopPopup && (
-                <div style={{ position: 'fixed', top: '30%', left: 0, right: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-                    <div className="dashboard-card" style={{ width: '400px', padding: '24px', border: '1px solid #ebebeb' }}>
-                        <h3 style={{ marginTop: 0, color: '#333', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <AlertCircle color="#f59e0b" /> Test Stopped
+                <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+                    <div className="dashboard-card" style={{ width: '400px', padding: '24px', boxShadow: '0 20px 48px rgba(15,23,42,0.18)' }}>
+                        <h3 style={{ margin: '0 0 8px', color: '#0F172A', fontSize: '1rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <AlertCircle size={18} color="#D97706" /> Test Stopped
                         </h3>
-                        <p style={{ color: '#94a3b8', margin: '16px 0 24px 0' }}>
-                            Tests were stopped manually. Generate the partial report?
+                        <p style={{ color: '#64748B', margin: '0 0 20px', fontSize: '0.85rem', lineHeight: '1.6' }}>
+                            Tests were stopped manually. Would you like to generate a partial Allure report from the results collected so far?
                         </p>
-                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
                             <button onClick={() => setShowStopPopup(false)}
-                                style={{ padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', backgroundColor: 'transparent', border: '1px solid #475569', color: '#333' }}>
+                                style={{ padding: '7px 16px', borderRadius: '6px', cursor: 'pointer', background: 'transparent', border: '1px solid #E2E8F0', color: '#475569', fontSize: '0.8rem', fontWeight: 600, fontFamily: 'inherit' }}>
                                 No, Close
                             </button>
                             <button onClick={handleGenerateReport}
-                                style={{ padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', backgroundColor: '#3b82f6', border: 'none', color: 'white', fontWeight: '500' }}>
+                                style={{ padding: '7px 18px', borderRadius: '6px', cursor: 'pointer', background: '#2563EB', border: 'none', color: '#fff', fontSize: '0.8rem', fontWeight: 600, fontFamily: 'inherit' }}>
                                 Yes, Generate Report
                             </button>
                         </div>
@@ -686,17 +594,27 @@ function TestScreen({ onHistoryUpdate }) {
                 </div>
             )}
 
+            {/* ── Two-panel layout: left = controls, right = logs+issues ── */}
             <div className="dashboard-grid">
-                <div className='dashboard-grid-1'>
+
+                {/* ── LEFT PANEL: Appium controls + Module Flow + Network Config ── */}
+                <div className="dashboard-left-panel">
+
+                    {/* Controls card */}
                     <div className="dashboard-card">
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '15px', marginBottom: '15px', borderBottom: '1px solid #334155' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: appiumStatus === 'running' ? '#4ade80' : '#ef4444', boxShadow: appiumStatus === 'running' ? '0 0 8px #4ade80' : 'none' }} />
-                                <span className="input-label" style={{ marginBottom: 0 }}>Appium Server</span>
+                        {/* Appium server row */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '12px', marginBottom: '12px', borderBottom: '1px solid #E2E8F0' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+                                <div style={{ width: '9px', height: '9px', borderRadius: '50%', backgroundColor: appiumStatus === 'running' ? '#059669' : '#DC2626', boxShadow: appiumStatus === 'running' ? '0 0 0 3px rgba(5,150,105,.15)' : 'none', flexShrink: 0 }} />
+                                <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#475569', letterSpacing: '0.03em' }}>APPIUM SERVER</span>
+                                <span style={{ fontSize: '0.68rem', fontWeight: 600, color: appiumStatus === 'running' ? '#059669' : '#94A3B8', background: appiumStatus === 'running' ? '#ECFDF5' : '#F1F5F9', borderRadius: '4px', padding: '1px 6px' }}>
+                                    {appiumStatus === 'running' ? 'Running' : 'Stopped'}
+                                </span>
                             </div>
-                            <button onClick={toggleAppium} className="input-label"
-                                style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid #CBD5E1', backgroundColor: appiumStatus === 'running' ? '#1e293b' : '#0f172a', color: appiumStatus === 'running' ? '#ef4444' : '#4ade80', cursor: 'pointer', fontWeight: '600', transition: 'all 0.2s' }}>
-                                {appiumStatus === 'running' ? 'Stop Server' : 'Start Server'}
+                            <button
+                                onClick={toggleAppium}
+                                style={{ padding: '5px 12px', borderRadius: '6px', border: appiumStatus === 'running' ? '1px solid #FECACA' : '1px solid #BFDBFE', backgroundColor: appiumStatus === 'running' ? '#FEF2F2' : '#EFF6FF', color: appiumStatus === 'running' ? '#DC2626' : '#2563EB', cursor: 'pointer', fontWeight: 700, fontSize: '0.72rem', fontFamily: 'inherit', transition: 'all 0.15s' }}>
+                                {appiumStatus === 'running' ? 'Stop' : 'Start'}
                             </button>
                         </div>
                         <div className="input-group mb-4">
@@ -715,7 +633,6 @@ function TestScreen({ onHistoryUpdate }) {
                                 onChange={e => { setApkUrl(e.target.value); if (e.target.value) setSelectedApk(''); }}
                                 className="text-input" disabled={isRunning || !!selectedApk} />
                         </div>
-
                         <div className="input-group mt-2">
                             <label className="input-label">OR Select Existing APK</label>
                             <select className="text-input" value={selectedApk}
@@ -725,7 +642,6 @@ function TestScreen({ onHistoryUpdate }) {
                                 {existingApks.map(name => <option key={name} value={name}>{name}</option>)}
                             </select>
                         </div>
-
                         <div className="action-row mt-4">
                             <button onClick={handleRunTest} disabled={isRunning} className={`run-button ${isRunning ? 'disabled' : ''}`}>
                                 <Play size={18} fill="currentColor" />
@@ -736,38 +652,39 @@ function TestScreen({ onHistoryUpdate }) {
                             )}
                             {showNewTestButton && (
                                 <button onClick={handleReset} className="run-button ml-2"
-                                    style={{ backgroundColor: '#334155', color: '#e2e8f0', border: '1px solid #475569' }}>
+                                    style={{ backgroundColor: '#F1F5F9', color: '#475569', border: '1px solid #E2E8F0', boxShadow: 'none' }}>
                                     Start New Test
                                 </button>
                             )}
                         </div>
                     </div>
 
-                    {/* Module Flow */}
+                    {/* Module Flow status */}
                     <div className="grid-item-flo">
                         <ModuleFlow modules={modules} isRunning={isRunning} onToggleModule={toggleModuleSelection} />
                     </div>
-                </div>
-                <div>
-                    <NetworkConfigPanel setNetworkConfig={setNetworkConfig} />
-                </div>
-                <div className="grid-item-chart">
-                    <MetricsChart data={metrics} />
-                </div>
 
-                {/* Logs + IssuePanel */}
-                <div className="grid-item-logs" style={{ display: 'flex', gap: '1rem', alignItems: 'stretch' }}>
-                    <div style={{ flex: '0 0 60%', minWidth: 0 }}>
+                    {/* Network Config */}
+                    <NetworkConfigPanel setNetworkConfig={setNetworkConfig} />
+
+                </div>{/* /dashboard-left-panel */}
+
+                {/* ── RIGHT PANEL: Live Logs + Issue Panel side by side ── */}
+                <div className="dashboard-right-panel">
+                    {/* Log console — grows to fill all remaining width */}
+                    <div style={{ flex: '1 1 auto', minWidth: 0, overflow: 'hidden' }}>
                         <LogConsole logs={logs} statusMode={getConsoleStatus()} />
                     </div>
-                    <div style={{ flex: '0 0 calc(40% - 1rem)', minWidth: 0 }}>
+                    {/* Issue panel — fixed 340px, never overflows */}
+                    <div style={{ flex: '0 0 340px', width: '340px', display: 'flex', flexDirection: 'column' }}>
                         <IssuePanel
                             modules={modules}
                             onHistoryUpdate={onHistoryUpdate}
                         />
                     </div>
-                </div>
-            </div>
+                </div>{/* /dashboard-right-panel */}
+
+            </div>{/* /dashboard-grid */}
         </div>
     );
 }

@@ -4,8 +4,8 @@
     --border-light: #e2e8f0;
     --text-primary: #0f172a;
     --text-secondary: #64748b;
-    --accent: #0f172a; /* Dark slate for minimal look instead of bright blue */
-    --accent-hover: #334155;
+    --accent: #2563EB;
+    --accent-hover: #1D4ED8;
     --radius-md: 10px;
     --radius-sm: 6px;
     --font-stack: system-ui, -apple-system, sans-serif;

@@ -20,29 +20,29 @@
         "status": "Success"
     },
     {
-        "timestamp": "2026-05-29T13:30:00",
+        "timestamp": "2026-06-01T09:52:02",
         "action": "crop_health_pixel_check_initial",
         "result": {
             "screen": "crop_health",
-            "green_pct": 47.28,
-            "blue_pct": 0.05,
+            "green_pct": 46.53,
+            "blue_pct": 0.09,
             "passed": true,
             "reason": "OK"
         }
     },
     {
-        "timestamp": "2026-05-29T13:30:00",
+        "timestamp": "2026-06-01T09:52:02",
         "action": "stress_level_at_latest_date",
         "result": {
-            "healthy_pct": 34.15,
-            "moderate_pct": 30.64,
-            "stressed_pct": 8.75,
+            "healthy_pct": 30.67,
+            "moderate_pct": 26.78,
+            "stressed_pct": 8.53,
             "severe_pct": 0.0,
             "dominant": "healthy"
         }
     },
     {
-        "timestamp": "2026-05-29T13:30:02",
+        "timestamp": "2026-06-01T09:52:04",
         "action": "date_slider_before_minus_captured",
         "result": "ok"
     },
@@ -51,45 +51,45 @@
         "status": "Success"
     },
     {
-        "timestamp": "2026-05-29T13:30:16",
+        "timestamp": "2026-06-01T09:52:14",
         "action": "date_slider_minus_map_changed",
         "result": {
-            "ssim_score": 0.9791,
+            "ssim_score": 0.9761,
             "map_changed": false,
-            "green_before_pct": 47.27,
-            "green_after_pct": 47.59,
-            "green_delta": 0.32,
+            "green_before_pct": 46.54,
+            "green_after_pct": 46.92,
+            "green_delta": 0.38,
             "stress_before": "healthy",
             "stress_after": "healthy",
             "full_stress_before": {
-                "healthy_pct": 34.15,
-                "moderate_pct": 30.61,
-                "stressed_pct": 8.75,
+                "healthy_pct": 30.67,
+                "moderate_pct": 26.78,
+                "stressed_pct": 8.52,
                 "severe_pct": 0.0,
                 "dominant": "healthy"
             },
             "full_stress_after": {
-                "healthy_pct": 34.32,
-                "moderate_pct": 30.56,
-                "stressed_pct": 8.54,
+                "healthy_pct": 30.84,
+                "moderate_pct": 26.73,
+                "stressed_pct": 8.25,
                 "severe_pct": 0.0,
                 "dominant": "healthy"
             }
         }
     },
     {
-        "timestamp": "2026-05-29T13:30:16",
+        "timestamp": "2026-06-01T09:52:14",
         "action": "stress_level_at_previous_date",
         "result": {
-            "healthy_pct": 34.32,
-            "moderate_pct": 30.56,
-            "stressed_pct": 8.54,
+            "healthy_pct": 30.84,
+            "moderate_pct": 26.73,
+            "stressed_pct": 8.25,
             "severe_pct": 0.0,
             "dominant": "healthy"
         }
     },
     {
-        "timestamp": "2026-05-29T13:30:19",
+        "timestamp": "2026-06-01T09:52:15",
         "action": "date_slider_before_plus_captured",
         "result": "ok"
     },
@@ -98,39 +98,39 @@
         "status": "Success"
     },
     {
-        "timestamp": "2026-05-29T13:30:32",
+        "timestamp": "2026-06-01T09:52:27",
         "action": "date_slider_plus_map_changed",
         "result": {
-            "ssim_score": 0.982,
+            "ssim_score": 0.9753,
             "map_changed": false,
-            "green_before_pct": 47.6,
-            "green_after_pct": 47.31,
-            "green_delta": -0.29,
+            "green_before_pct": 46.92,
+            "green_after_pct": 46.53,
+            "green_delta": -0.39,
             "stress_before": "healthy",
             "stress_after": "healthy",
             "full_stress_before": {
-                "healthy_pct": 34.32,
-                "moderate_pct": 30.56,
-                "stressed_pct": 8.54,
+                "healthy_pct": 30.84,
+                "moderate_pct": 26.73,
+                "stressed_pct": 8.25,
                 "severe_pct": 0.0,
                 "dominant": "healthy"
             },
             "full_stress_after": {
-                "healthy_pct": 34.16,
-                "moderate_pct": 30.65,
-                "stressed_pct": 8.75,
+                "healthy_pct": 30.67,
+                "moderate_pct": 26.76,
+                "stressed_pct": 8.53,
                 "severe_pct": 0.0,
                 "dominant": "healthy"
             }
         }
     },
     {
-        "timestamp": "2026-05-29T13:30:32",
+        "timestamp": "2026-06-01T09:52:27",
         "action": "stress_level_after_returning_to_latest",
         "result": {
-            "healthy_pct": 34.16,
-            "moderate_pct": 30.65,
-            "stressed_pct": 8.75,
+            "healthy_pct": 30.67,
+            "moderate_pct": 26.76,
+            "stressed_pct": 8.53,
             "severe_pct": 0.0,
             "dominant": "healthy"
         }
